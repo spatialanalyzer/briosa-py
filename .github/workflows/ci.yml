@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-conformance:
+    name: Build, package, and shared conformance
+    runs-on: windows-latest
+    timeout-minutes: 25
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+      DOTNET_NOLOGO: 'true'
+
+    steps:
+      - name: Check out client
+        uses: actions/checkout@v6
+
+      - name: Read protocol lock
+        id: protocol
+        shell: pwsh
+        run: |
+          $lock = Get-Content protocol.lock.json -Raw | ConvertFrom-Json
+          "source_revision=$($lock.artifact.source_revision)" | Out-File $env:GITHUB_OUTPUT -Append
+          "briosa_version=$($lock.artifact.briosa_version)" | Out-File $env:GITHUB_OUTPUT -Append
+          "artifact_file_name=$($lock.artifact.file_name)" | Out-File $env:GITHUB_OUTPUT -Append
+
+      - name: Check out pinned Briosa source
+        uses: actions/checkout@v6
+        with:
+          repository: spatialanalyzer/briosa
+          ref: ${{ steps.protocol.outputs.source_revision }}
+          path: briosa-source
+
+      - name: Install Buf
+        uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          version: 1.72.0
+          github_token: ${{ github.token }}
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: briosa-source/global.json
+
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install client and development tools
+        run: python -m pip install -e ".[dev]"
+
+      - name: Rebuild pinned protocol artifact
+        shell: pwsh
+        run: >
+          ./briosa-source/eng/New-ProtocolArtifact.ps1
+          -Version "${{ steps.protocol.outputs.briosa_version }}"
+          -SourceRevision "${{ steps.protocol.outputs.source_revision }}"
+          -OutputDirectory "${{ github.workspace }}/artifacts/protocol"
+
+      - name: Verify protocol and generated-code drift
+        run: >
+          python eng/import_protocol_artifact.py
+          "artifacts/protocol/${{ steps.protocol.outputs.artifact_file_name }}"
+
+      - name: Verify formatting
+        run: python -m ruff format --check .
+
+      - name: Lint
+        run: python -m ruff check .
+
+      - name: Type check
+        run: python -m mypy
+
+      - name: Test
+        run: python -m pytest
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Run shared conformance
+        shell: pwsh
+        run: >
+          ./eng/Test-Conformance.ps1
+          -ProtocolArtifactPath "artifacts/protocol/${{ steps.protocol.outputs.artifact_file_name }}"
+          -BriosaRepository briosa-source
+          -PythonPath python
