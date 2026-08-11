@@ -18,7 +18,13 @@ The complete generation identity is committed in [`protocol.lock.json`](protocol
 
 Until Briosa publishes its first v0.2 release asset, the lock uses the reversible `source_commit_bootstrap` channel. CI rebuilds `0.2.0-dev.2` from immutable Briosa merge commit `1a0714345981592b37e26a90ffc4db0de32fe388` and verifies ZIP SHA-256 `4ce33ac6ecc9db382e870aa2c005f90a25128ad863fcf007c855d00470ea3e39`.
 
-## Install and use
+## Public API contract
+
+The approved v1 design is defined in the [Briosa Python public API contract](docs/public-api-contract.md). It records the Python-specific decisions reviewed in [Discussion #6](https://github.com/orgs/spatialanalyzer/discussions/6#discussioncomment-17926452) and inherits cross-language guarantees from the authoritative [first-party client behavioral contract](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md).
+
+The current code is an early bootstrap implementation and does not yet satisfy every contract rule. The example below documents the behavior in this checkout rather than the final v1 surface.
+
+## Install and use the current bootstrap
 
 Install the package into your application environment:
 
@@ -44,7 +50,7 @@ async def read_working_directory() -> str | None:
         return result.directory if result.HasField("directory") else None
 ```
 
-`get_server_snapshot()` validates the pinned protocol, catalog, exact SA target, and initial single-tenant isolation mode before returning discovery data. `snapshot.supports(...)` exposes capability discovery. Generated protobuf messages and gRPC stubs remain public under `briosa.core` and `briosa.sa` for lower-level use.
+`get_server_snapshot()` validates the pinned protocol, catalog, exact SA target, and initial single-tenant isolation mode before returning discovery data. `snapshot.supports(...)` exposes capability discovery. Generated protobuf messages and gRPC stubs are currently importable under `briosa.core` and `briosa.sa`, but those imports and generated-message return values are bootstrap behavior rather than a supported part of the v1 idiomatic API. Raw gRPC consumers should generate bindings from the exact locked protocol artifact.
 
 Protobuf presence is intentional: `result.HasField("directory")` distinguishes an absent output from a successfully retrieved empty string. Do not replace presence checks with truthiness checks.
 

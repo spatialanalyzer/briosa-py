@@ -19,6 +19,12 @@ For the current bootstrap artifact:
 
 The bootstrap channel is temporary. A released Briosa asset should use the default `github_release` source channel.
 
+## Public API boundary
+
+The generated namespaces and identity module are transport implementation details of the idiomatic client, as defined by the [Python public API contract](../docs/public-api-contract.md) and the authoritative [first-party client behavioral contract](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md). Their physical location does not make them a supported v1 public surface. Handwritten adapters map between generated wire values and handwritten public parameters, domain types, results, and exceptions.
+
+Consumers that need raw protobuf or gRPC APIs should generate them independently from the same exact protocol artifact instead of depending on `briosa-client` internals.
+
 ## Shared conformance
 
 `Test-Conformance.ps1` requires the pinned protocol ZIP and an exact Briosa source checkout:
