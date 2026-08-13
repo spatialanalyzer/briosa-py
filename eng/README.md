@@ -16,6 +16,10 @@ Generated transport modules are private implementation details. Handwritten
 public dataclasses, enums, lifecycle orchestration, and exceptions live beside
 them but never expose a generated value.
 
-`tools/client_conformance.py` emits the normalized lifecycle contract
-implemented by this package. Behavioral tests use fake server/transport
-boundaries and require neither SpatialAnalyzer nor a license.
+`Test-Conformance.ps1` verifies the immutable package named by
+`conformance.lock.json`, then runs the shared Briosa scenario runner against the
+public-API-only `tools/client_conformance.py` fixture. The package supplies the
+real Briosa server plus a portable fake SDK/application host, so lifecycle,
+compatibility, capability, failure, interruption, worker-loss, recovery, and
+cleanup behavior can run in ordinary Windows CI without SpatialAnalyzer or a
+license.

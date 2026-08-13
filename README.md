@@ -57,11 +57,15 @@ python -m venv .venv
 ./.venv/Scripts/python -m ruff check .
 ./.venv/Scripts/python -m mypy
 ./.venv/Scripts/python -m pytest
+./eng/Test-Conformance.ps1 `
+  -ArtifactPath C:\path\to\briosa-client-conformance-0.2.0-lifecycle-sa-2026.1.0529.7-win-x64.zip `
+  -PythonExecutable ./.venv/Scripts/python.exe
 ./.venv/Scripts/python -m build
 ```
 
-Ordinary builds and tests use fake server/transport boundaries and require
-neither SpatialAnalyzer nor a license.
+Unit tests use fake server/transport boundaries. The shared conformance suite
+runs the real client and server against a portable fake SDK/application host.
+Neither path requires SpatialAnalyzer nor a license.
 
 ## Protocol regeneration
 

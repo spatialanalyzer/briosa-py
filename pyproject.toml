@@ -51,6 +51,7 @@ include = [
   "/README.md",
   "/LICENSE",
   "/protocol.lock.json",
+  "/conformance.lock.json",
   "/pyproject.toml",
 ]
 
