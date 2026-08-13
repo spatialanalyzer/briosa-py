@@ -1,7 +1,7 @@
 # Briosa Python public API contract
 
-- Status: Accepted Python v1 design target; implementation is pre-conformance
-- Last reviewed: 2026-08-10
+- Status: Accepted Python v1 design target; lifecycle foundation conforming
+- Last reviewed: 2026-08-12
 
 ## Authority and scope
 
@@ -96,8 +96,6 @@ The canonical shape is:
 
 ```python
 options = BriosaClientOptions(
-    endpoint="http://127.0.0.1:50051",
-    startup_timeout=30.0,
     command_timeout=None,
 )
 
@@ -105,8 +103,8 @@ async with BriosaClient(options) as client:
     working_directory = await client.get_working_directory()
 ```
 
-The snippet is a v1 design example, not an example for the current bootstrap
-release.
+The snippet is the implemented lifecycle shape. Endpoint selection remains a
+private local-server concern rather than a public startup option.
 
 ## Deferred design decisions
 
@@ -130,26 +128,13 @@ An ambiguity in shared behavior is resolved in `spatialanalyzer/briosa` before a
 Python implementation proceeds. This document cannot create a Python-only
 exception to the shared safety contract.
 
-## Current-bootstrap incompatibilities
+## Implemented Lifecycle Foundation
 
-The `0.1.0` bootstrap predates this contract. Its current behavior remains
-documented in the project README, but it is not the v1 compatibility surface.
-
-| Area | Current bootstrap | Accepted v1 direction |
-| --- | --- | --- |
-| Protocol baseline | A manifest-schema-1 artifact uses split, versioned core and target packages. | The client locks the final target-qualified v1 protocol artifact selected by the server product. |
-| Construction | `BriosaClient(address, default_timeout=30.0)` creates a gRPC channel and stubs immediately. | Immutable options and client construction are dormant; the default command timeout is `None`. |
-| Startup | Callers invoke discovery themselves through `get_server_snapshot()`; the context manager does not establish readiness. | `start()` verifies and atomically publishes each generation before MP admission. |
-| Shutdown | `close()` releases the channel, and context exit calls `close()`. | Reusable `stop()`, final `aclose()`, and context-managed `start()`/`aclose()`. |
-| Command results | `get_working_directory()` returns a generated protobuf result. | A single MP output returns its handwritten or built-in Python value directly. |
-| Discovery and capabilities | `BriosaServerSnapshot` contains generated discovery messages. | Handwritten public discovery and capability values. |
-| Failures | `BriosaCallError` exposes `grpc.StatusCode` and a generated `OperationError`. | The handwritten error hierarchy, `OperationFailure`, and `RpcStatusCode`. |
-| Caller deadlines | A positive 30-second timeout is imposed by default, with per-method `timeout=` overrides. | No extra command deadline by default; one-off controls use normal asyncio facilities. |
-| Generated API | Generated `briosa.core` and target-qualified modules are importable and appear in public values. | Generated protobuf and gRPC code is a private transport detail and is not re-exported. |
-
-Pre-v1 implementation work may remove or change bootstrap APIs without preserving
-parallel aliases. Documentation and tests must state whether they describe the
-bootstrap or this v1 target.
+The package now uses dormant construction, explicit reusable asynchronous
+lifecycle, async context management, private generated transport, handwritten
+public states and errors, Python-native cancellation, exact-target compatibility
+checks, and detached MP results required by this contract. Subsequent vertical
+slices add handwritten MP methods without changing this lifecycle foundation.
 
 ## Python v1 non-goals
 

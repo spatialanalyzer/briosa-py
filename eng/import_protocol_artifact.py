@@ -20,6 +20,7 @@ SOURCE_ROOT = REPOSITORY_ROOT / "src"
 BRIOSA_ROOT = SOURCE_ROOT / "briosa"
 GENERATED_TREES = (BRIOSA_ROOT / "core", BRIOSA_ROOT / "sa")
 IDENTITY_PATH = BRIOSA_ROOT / "protocol_identity.py"
+GENERATED_PATTERNS = ("*_pb2.py", "*_pb2.pyi", "*_pb2_grpc.py")
 
 
 def _sha256(path: Path) -> str:
@@ -69,13 +70,13 @@ def _extract_verified(artifact: Path, destination: Path) -> tuple[Path, dict[str
 
     bundle_root = destination / roots.pop()
     manifest = _load_json(bundle_root / "manifest.json")
-    _require(manifest.get("schema_version"), 1, "Unsupported protocol manifest schema")
+    _require(manifest.get("schema_version"), 2, "Unsupported protocol manifest schema")
     _require(
         manifest.get("artifact_kind"), "briosa_protocol", "Unexpected artifact kind"
     )
     _require(
-        manifest.get("client_generation_contract_version"),
-        1,
+        manifest.get("client_generation_contract"),
+        "standard-protobuf-grpc",
         "Unsupported client generation contract",
     )
     _require(manifest.get("artifact_name"), artifact.stem, "Artifact name drift")
@@ -117,14 +118,6 @@ def _extract_verified(artifact: Path, destination: Path) -> tuple[Path, dict[str
     return bundle_root, manifest
 
 
-def _write_generated_init(path: Path) -> None:
-    path.write_text(
-        '"""Generated Briosa protobuf namespace. Do not edit."""\n',
-        encoding="utf-8",
-        newline="\n",
-    )
-
-
 def _generate(
     bundle_root: Path,
     output_root: Path,
@@ -150,15 +143,6 @@ def _generate(
     subprocess.run(command, cwd=proto_root, check=True)
 
     generated_package = output_root / "briosa"
-    for package in (
-        generated_package / "core",
-        generated_package / "core" / "v1alpha1",
-        generated_package / "sa",
-        generated_package / "sa" / "v2026_1_0529_7",
-        generated_package / "sa" / "v2026_1_0529_7" / "v1alpha1",
-    ):
-        package.mkdir(parents=True, exist_ok=True)
-        _write_generated_init(package / "__init__.py")
 
     identity_values = {
         "ARTIFACT_NAME": manifest["artifact_name"],
@@ -167,12 +151,9 @@ def _generate(
         "SOURCE_REVISION": manifest["source_revision"],
         "PROTOCOL_SCHEMA_SHA256": manifest["protocol_schema_sha256"],
         "DESCRIPTOR_SET_SHA256": manifest["descriptor_set_sha256"],
-        "CORE_PROTOCOL_PACKAGE": manifest["core_protocol_package"],
-        "TARGET_PROTOCOL_PACKAGE": manifest["target_protocol_package"],
+        "PROTOCOL_PACKAGE": manifest["protocol_package"],
+        "CLIENT_GENERATION_CONTRACT": manifest["client_generation_contract"],
         "SPATIAL_ANALYZER_TARGET": manifest["spatial_analyzer_target"],
-        "CATALOG_ID": manifest["catalog_id"],
-        "CATALOG_REVISION": manifest["catalog_revision"],
-        "CONFORMANCE_FIXTURE_SHA256": manifest["conformance_fixture_sha256"],
     }
     identity_lines = [
         '"""Generated exact Briosa protocol identity. Do not edit."""',
@@ -201,7 +182,7 @@ def _make_lock(
     generated_files: list[dict[str, str]],
 ) -> dict[str, Any]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "artifact": {
             "name": manifest["artifact_name"],
             "file_name": artifact.name,
@@ -212,21 +193,13 @@ def _make_lock(
             "source_channel": source_channel,
         },
         "protocol": {
-            "generation_contract_version": 1,
+            "generation_contract": manifest["client_generation_contract"],
             "schema_sha256": manifest["protocol_schema_sha256"],
             "descriptor_sha256": manifest["descriptor_set_sha256"],
-            "core_package": manifest["core_protocol_package"],
-            "target_package": manifest["target_protocol_package"],
+            "package": manifest["protocol_package"],
         },
-        "catalog": {
-            "id": manifest["catalog_id"],
-            "revision": manifest["catalog_revision"],
-            "spatial_analyzer_target": manifest["spatial_analyzer_target"],
-            "coverage_sha256": manifest["catalog_coverage_sha256"],
-        },
-        "conformance": {
-            "sha256": manifest["conformance_fixture_sha256"],
-            "fixture_sets": manifest["conformance_fixture_sets"],
+        "target": {
+            "spatial_analyzer": manifest["spatial_analyzer_target"],
         },
         "generation": {
             "grpcio_tools_version": importlib.metadata.version("grpcio-tools"),
@@ -243,6 +216,9 @@ def _apply_generated(generated_root: Path) -> None:
     for tree in GENERATED_TREES:
         if tree.exists():
             shutil.rmtree(tree)
+    for pattern in GENERATED_PATTERNS:
+        for path in BRIOSA_ROOT.glob(pattern):
+            path.unlink()
     IDENTITY_PATH.unlink(missing_ok=True)
     for source in sorted((generated_root / "briosa").rglob("*")):
         if not source.is_file():
