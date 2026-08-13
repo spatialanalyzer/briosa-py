@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from briosa.core.v1alpha1 import discovery_pb2 as briosa_dot_core_dot_v1alpha1_dot_discovery__pb2
+from briosa import discovery_pb2 as briosa_dot_discovery__pb2
 
 GRPC_GENERATED_VERSION = '1.74.0'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in briosa/core/v1alpha1/discovery_pb2_grpc.py depends on'
+        + f' but the generated code in briosa/discovery_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -26,7 +26,7 @@ if _version_not_supported:
 
 
 class DiscoveryServiceStub(object):
-    """Provides low-sensitivity server identity and exact-target capability metadata.
+    """Provides low-sensitivity server identity and capability metadata.
     """
 
     def __init__(self, channel):
@@ -36,19 +36,19 @@ class DiscoveryServiceStub(object):
             channel: A grpc.Channel.
         """
         self.GetServerInfo = channel.unary_unary(
-                '/briosa.core.v1alpha1.DiscoveryService/GetServerInfo',
-                request_serializer=briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.GetServerInfoRequest.SerializeToString,
-                response_deserializer=briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.GetServerInfoResponse.FromString,
+                '/briosa.DiscoveryService/GetServerInfo',
+                request_serializer=briosa_dot_discovery__pb2.GetServerInfoRequest.SerializeToString,
+                response_deserializer=briosa_dot_discovery__pb2.GetServerInfoResponse.FromString,
                 _registered_method=True)
         self.ListCapabilities = channel.unary_unary(
-                '/briosa.core.v1alpha1.DiscoveryService/ListCapabilities',
-                request_serializer=briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.ListCapabilitiesRequest.SerializeToString,
-                response_deserializer=briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.ListCapabilitiesResponse.FromString,
+                '/briosa.DiscoveryService/ListCapabilities',
+                request_serializer=briosa_dot_discovery__pb2.ListCapabilitiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_discovery__pb2.ListCapabilitiesResponse.FromString,
                 _registered_method=True)
 
 
 class DiscoveryServiceServicer(object):
-    """Provides low-sensitivity server identity and exact-target capability metadata.
+    """Provides low-sensitivity server identity and capability metadata.
     """
 
     def GetServerInfo(self, request, context):
@@ -59,7 +59,7 @@ class DiscoveryServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ListCapabilities(self, request, context):
-        """Lists only operations in this build's reviewed command catalog.
+        """Lists only implemented operations enabled by the active runtime policy.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -70,24 +70,24 @@ def add_DiscoveryServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetServerInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetServerInfo,
-                    request_deserializer=briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.GetServerInfoRequest.FromString,
-                    response_serializer=briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.GetServerInfoResponse.SerializeToString,
+                    request_deserializer=briosa_dot_discovery__pb2.GetServerInfoRequest.FromString,
+                    response_serializer=briosa_dot_discovery__pb2.GetServerInfoResponse.SerializeToString,
             ),
             'ListCapabilities': grpc.unary_unary_rpc_method_handler(
                     servicer.ListCapabilities,
-                    request_deserializer=briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.ListCapabilitiesRequest.FromString,
-                    response_serializer=briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.ListCapabilitiesResponse.SerializeToString,
+                    request_deserializer=briosa_dot_discovery__pb2.ListCapabilitiesRequest.FromString,
+                    response_serializer=briosa_dot_discovery__pb2.ListCapabilitiesResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'briosa.core.v1alpha1.DiscoveryService', rpc_method_handlers)
+            'briosa.DiscoveryService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('briosa.core.v1alpha1.DiscoveryService', rpc_method_handlers)
+    server.add_registered_method_handlers('briosa.DiscoveryService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
 class DiscoveryService(object):
-    """Provides low-sensitivity server identity and exact-target capability metadata.
+    """Provides low-sensitivity server identity and capability metadata.
     """
 
     @staticmethod
@@ -104,9 +104,9 @@ class DiscoveryService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/briosa.core.v1alpha1.DiscoveryService/GetServerInfo',
-            briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.GetServerInfoRequest.SerializeToString,
-            briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.GetServerInfoResponse.FromString,
+            '/briosa.DiscoveryService/GetServerInfo',
+            briosa_dot_discovery__pb2.GetServerInfoRequest.SerializeToString,
+            briosa_dot_discovery__pb2.GetServerInfoResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -131,9 +131,9 @@ class DiscoveryService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/briosa.core.v1alpha1.DiscoveryService/ListCapabilities',
-            briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.ListCapabilitiesRequest.SerializeToString,
-            briosa_dot_core_dot_v1alpha1_dot_discovery__pb2.ListCapabilitiesResponse.FromString,
+            '/briosa.DiscoveryService/ListCapabilities',
+            briosa_dot_discovery__pb2.ListCapabilitiesRequest.SerializeToString,
+            briosa_dot_discovery__pb2.ListCapabilitiesResponse.FromString,
             options,
             channel_credentials,
             insecure,

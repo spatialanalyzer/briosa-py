@@ -1,62 +1,52 @@
 # Briosa Python client
 
-`briosa-client` is the thin asynchronous Python client for the open-source [Briosa](https://github.com/spatialanalyzer/briosa) gRPC bridge.
+`briosa-client` is the asynchronous Python client for the open-source
+[Briosa](https://github.com/spatialanalyzer/briosa) SpatialAnalyzer bridge. It
+provides idiomatic lifecycle and MP APIs while keeping generated protobuf and
+gRPC types private.
 
-The package does not contain SpatialAnalyzer, the SpatialAnalyzer SDK, Briosa Server, or a license. Useful operation calls require a separately installed compatible Briosa server and a separately installed, running, licensed SpatialAnalyzer instance.
+The package does not include SpatialAnalyzer, the SA SDK, or a license. It
+targets SpatialAnalyzer `2026.1.0529.7` exactly and Python 3.10 or later. The
+complete protocol identity is pinned in [`protocol.lock.json`](protocol.lock.json).
 
-## Current compatibility
-
-| Coordinate | Pinned value |
-| --- | --- |
-| SpatialAnalyzer | `2026.1.0529.7` exactly |
-| Core protocol | `briosa.core.v1alpha1` |
-| Target protocol | `briosa.sa.v2026_1_0529_7.v1alpha1` |
-| Catalog | `briosa.sa.2026.1.0529.7`, revision `5` |
-| Python | 3.10 or later |
-
-The complete generation identity is committed in [`protocol.lock.json`](protocol.lock.json). Client package versions, Briosa server versions, protocol packages, catalog revisions, and SpatialAnalyzer releases are independent coordinates. Compatibility with any other SpatialAnalyzer release is not inferred.
-
-Until Briosa publishes its first v0.2 release asset, the lock uses the reversible `source_commit_bootstrap` channel. CI rebuilds `0.2.0-dev.2` from immutable Briosa merge commit `1a0714345981592b37e26a90ffc4db0de32fe388` and verifies ZIP SHA-256 `4ce33ac6ecc9db382e870aa2c005f90a25128ad863fcf007c855d00470ea3e39`.
-
-## Public API contract
-
-The approved v1 design is defined in the [Briosa Python public API contract](docs/public-api-contract.md). It records the Python-specific decisions reviewed in [Discussion #6](https://github.com/orgs/spatialanalyzer/discussions/6#discussioncomment-17926452) and inherits cross-language guarantees from the authoritative [first-party client behavioral contract](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md).
-
-The current code is an early bootstrap implementation and does not yet satisfy every contract rule. The example below documents the behavior in this checkout rather than the final v1 surface.
-
-## Install and use the current bootstrap
-
-Install the package into your application environment:
-
-```console
-python -m pip install briosa-client
-```
-
-The API is asynchronous and applies a deadline to every RPC:
+## Usage
 
 ```python
 from briosa import BriosaClient
 
 
-async def read_working_directory() -> str | None:
-    async with BriosaClient(
-        "http://127.0.0.1:50051", default_timeout=30.0
-    ) as client:
-        snapshot = await client.get_server_snapshot()
-        if not snapshot.ready_for_mp:
-            return None
-
-        result = await client.get_working_directory()
-        return result.directory if result.HasField("directory") else None
+async with BriosaClient() as briosa:
+    working_directory = await briosa.get_working_directory()
 ```
 
-`get_server_snapshot()` validates the pinned protocol, catalog, exact SA target, and initial single-tenant isolation mode before returning discovery data. `snapshot.supports(...)` exposes capability discovery. Generated protobuf messages and gRPC stubs are currently importable under `briosa.core` and `briosa.sa`, but those imports and generated-message return values are bootstrap behavior rather than a supported part of the v1 idiomatic API. Raw gRPC consumers should generate bindings from the exact locked protocol artifact.
+Construction is dormant. Entering the async context, or calling `start()`,
+locates and launches the matching local Briosa server, starts a disconnected SA
+SDK generation, launches SpatialAnalyzer, connects the SDK, and verifies MP
+readiness. `BriosaStartOptions` can select a control-plane-only startup or
+connect to an eligible application that is already running.
 
-Protobuf presence is intentional: `result.HasField("directory")` distinguishes an absent output from a successfully retrieved empty string. Do not replace presence checks with truthiness checks.
+Application and SDK state, launch, connect, stop, and recovery methods remain
+available for diagnosis and explicit control. `stop()`, `aclose()`, and async
+context exit stop the owned server and SDK but never close SpatialAnalyzer.
 
-Failed RPCs raise `BriosaCallError`. Its canonical `status_code` is independent from its optional typed `operation_error`; binary metadata is decoded from `briosa-operation-error-bin`, and status text is never parsed. `completion_unknown` and `reconciliation_required` remain distinct from worker recovery. The client performs no automatic operation replay.
+The client retains lifecycle generations and supplies guards automatically.
+Typed lifecycle failures, compatibility failures, task cancellation, ambiguous
+MP completion, and replay guidance remain distinct. MP operations are never
+automatically replayed.
 
-Override a single deadline with `timeout=`. Cancel an in-flight RPC idiomatically by cancelling the containing `asyncio.Task`; cancellation does not imply the SpatialAnalyzer command was stopped or is safe to replay.
+See the [Briosa documentation](https://spatialanalyzer.github.io/briosa-docs/api/python/)
+for the complete Next API contract.
+
+## Server distribution lookup
+
+The client resolves the matching server distribution in this order:
+
+1. `BRIOSA_SERVER_PATH`
+2. A package-local `briosa-server/Briosa.Server.exe`
+3. `%LOCALAPPDATA%/Briosa/servers/<briosa-version>/sa-<sa-target>/Briosa.Server.exe`
+
+The locator is private so the installer/package layout can evolve without
+adding executable paths to the public startup options.
 
 ## Development
 
@@ -70,17 +60,19 @@ python -m venv .venv
 ./.venv/Scripts/python -m build
 ```
 
-Ordinary installation, builds, and unit tests require neither SpatialAnalyzer nor Briosa Server.
+Ordinary builds and tests use fake server/transport boundaries and require
+neither SpatialAnalyzer nor a license.
 
-## Protocol regeneration and conformance
-
-Regenerate only from an exact Briosa protocol ZIP with its adjacent `.zip.sha256` file:
+## Protocol regeneration
 
 ```powershell
-./.venv/Scripts/python eng/import_protocol_artifact.py C:\path\to\briosa-protocol-....zip --update
-./.venv/Scripts/python eng/import_protocol_artifact.py C:\path\to\briosa-protocol-....zip
+./.venv/Scripts/python eng/import_protocol_artifact.py `
+  C:\path\to\briosa-protocol-0.2.0-lifecycle-sa-2026.1.0529.7.zip `
+  --update --source-channel source_commit_bootstrap
+
+./.venv/Scripts/python eng/import_protocol_artifact.py `
+  C:\path\to\briosa-protocol-0.2.0-lifecycle-sa-2026.1.0529.7.zip
 ```
 
-`--update` is an intentional dependency update. Verification regenerates into a temporary directory and fails on artifact, manifest, coordinate, generator, generated-file, or file-list drift. Never edit `src/briosa/core`, `src/briosa/sa`, `src/briosa/protocol_identity.py`, or `protocol.lock.json` by hand.
-
-`eng/Test-Conformance.ps1` builds the pinned packaged Briosa server, substitutes its fake worker, and runs every shared live and typed-error fixture. It requires 64-bit Windows and the .NET SDK but not SpatialAnalyzer or a license. See [`eng/README.md`](eng/README.md) for exact commands.
+Never edit generated `*_pb2.py`, `*_pb2.pyi`, `*_pb2_grpc.py`,
+`protocol_identity.py`, or `protocol.lock.json` files by hand.

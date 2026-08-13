@@ -1,29 +1,40 @@
 from __future__ import annotations
 
-from typing import Any, cast
+import asyncio
 
 import grpc
 import pytest
 
-from briosa import BriosaCallError, BriosaClient, BriosaCompatibilityError
-from briosa.client import _validate_compatibility
-from briosa.core.v1alpha1 import (
+from briosa import (
+    BriosaClient,
+    BriosaClientOptions,
+    BriosaLifecycleError,
+    BriosaOperationError,
+    BriosaSpatialAnalyzerError,
+    BriosaStartOptions,
+    BriosaTransportError,
+    OperationFailureKind,
+    RecoveryGuidance,
+    ReplayGuidance,
+    ReplaySafety,
+    RpcStatusCode,
+    SpatialAnalyzerApplicationState,
+    SpatialAnalyzerLaunchOptions,
+    SpatialAnalyzerLifecycleFailureKind,
     discovery_pb2,
+    lifecycle_pb2,
     operation_outcomes_pb2,
-    version_coordinates_pb2,
 )
+from briosa.client import OwnedServer
 from briosa.protocol_identity import (
     ARTIFACT_NAME,
-    ARTIFACT_SHA256,
     BRIOSA_VERSION,
-    CATALOG_ID,
-    CATALOG_REVISION,
-    CORE_PROTOCOL_PACKAGE,
+    CLIENT_GENERATION_CONTRACT,
+    PROTOCOL_PACKAGE,
     SOURCE_REVISION,
     SPATIAL_ANALYZER_TARGET,
-    TARGET_PROTOCOL_PACKAGE,
 )
-from briosa.sa.v2026_1_0529_7.v1alpha1 import operations_pb2
+from briosa.transport import ClientTransport, map_rpc_error, map_sdk_state
 
 
 class FakeRpcError(grpc.RpcError):
@@ -45,127 +56,424 @@ class FakeRpcError(grpc.RpcError):
         return self._metadata
 
 
-def matching_identity() -> tuple[
-    discovery_pb2.GetServerInfoResponse, discovery_pb2.ListCapabilitiesResponse
-]:
-    return (
-        discovery_pb2.GetServerInfoResponse(
-            version=version_coordinates_pb2.VersionCoordinates(
-                core_protocol_package=CORE_PROTOCOL_PACKAGE,
-                spatial_analyzer_target=SPATIAL_ANALYZER_TARGET,
-                target_protocol_package=TARGET_PROTOCOL_PACKAGE,
-                catalog_revision=CATALOG_REVISION,
+class FakeOwnedServer:
+    target = "127.0.0.1:49152"
+    has_exited = False
+
+    def __init__(self) -> None:
+        self.closed = False
+
+    async def close(self) -> None:
+        self.closed = True
+
+
+class FakeServerLauncher:
+    def __init__(self) -> None:
+        self.server = FakeOwnedServer()
+        self.launch_count = 0
+
+    async def launch(self) -> OwnedServer:
+        self.launch_count += 1
+        return self.server
+
+
+class FakeTransport:
+    def __init__(self) -> None:
+        self.calls: list[str] = []
+        self.sdk_generation = 0
+        self.connected = False
+        self.launch_failure: grpc.RpcError | None = None
+        self.publish_ready_snapshot = True
+        self.connect_generations: list[int] = []
+        self.stop_generations: list[int] = []
+        self.close_generations: list[int] = []
+        self.close_application_count = 0
+
+    async def get_server_snapshot(
+        self, timeout: float | None = None
+    ) -> tuple[
+        discovery_pb2.GetServerInfoResponse,
+        discovery_pb2.ListCapabilitiesResponse,
+    ]:
+        self.calls.append("snapshot")
+        return matching_snapshot(self.connected and self.publish_ready_snapshot)
+
+    async def get_application_state(
+        self, timeout: float | None = None
+    ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
+        self.calls.append("get-sa-state")
+        return application_not_running()
+
+    async def launch_application(
+        self,
+        options: SpatialAnalyzerLaunchOptions,
+        timeout: float | None = None,
+    ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
+        self.calls.append("launch-sa")
+        if self.launch_failure is not None:
+            raise self.launch_failure
+        return lifecycle_pb2.SpatialAnalyzerLifecycleState(
+            state_revision=2,
+            application_state=lifecycle_pb2.SPATIAL_ANALYZER_APPLICATION_STATE_RUNNING,
+            ownership=lifecycle_pb2.SPATIAL_ANALYZER_OWNERSHIP_SERVER_LAUNCHED,
+            application_generation=2,
+        )
+
+    async def close_application(
+        self, expected_generation: int, timeout: float | None = None
+    ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
+        self.calls.append("close-sa")
+        self.close_application_count += 1
+        self.close_generations.append(expected_generation)
+        return application_not_running()
+
+    async def get_sdk_state(
+        self, timeout: float | None = None
+    ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        self.calls.append("get-sdk-state")
+        return self._sdk_state()
+
+    async def start_sdk(
+        self, timeout: float | None = None
+    ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        self.calls.append("start-sdk")
+        self.sdk_generation += 1
+        self.connected = False
+        return self._sdk_state()
+
+    async def connect_sdk(
+        self,
+        expected_generation: int,
+        *,
+        reconnect: bool,
+        timeout: float | None = None,
+    ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        self.calls.append("reconnect-sdk" if reconnect else "connect-sdk")
+        self.connect_generations.append(expected_generation)
+        self.connected = True
+        return self._sdk_state()
+
+    async def stop_sdk(
+        self, expected_generation: int, timeout: float | None = None
+    ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        self.calls.append("stop-sdk")
+        self.stop_generations.append(expected_generation)
+        self.connected = False
+        self.sdk_generation = 0
+        return self._sdk_state()
+
+    async def recover_sdk(
+        self, expected_generation: int, timeout: float | None = None
+    ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        self.calls.append("recover-sdk")
+        self.sdk_generation += 1
+        self.connected = False
+        return self._sdk_state()
+
+    async def get_working_directory(self, timeout: float | None = None) -> str:
+        self.calls.append("get-working-directory")
+        return r"C:\Working"
+
+    async def close(self) -> None:
+        self.calls.append("close-transport")
+
+    def _sdk_state(self) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        state = lifecycle_pb2.SpatialAnalyzerSdkLifecycleState(
+            state_revision=3,
+            sdk_state=(
+                lifecycle_pb2.SPATIAL_ANALYZER_SDK_STATE_STOPPED
+                if self.sdk_generation == 0
+                else lifecycle_pb2.SPATIAL_ANALYZER_SDK_STATE_READY
+                if self.connected
+                else lifecycle_pb2.SPATIAL_ANALYZER_SDK_STATE_RUNNING
             ),
-            target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
-        ),
-        discovery_pb2.ListCapabilitiesResponse(
-            catalog_id=CATALOG_ID,
-            catalog_revision=CATALOG_REVISION,
-            spatial_analyzer_target=SPATIAL_ANALYZER_TARGET,
-            target_protocol_package=TARGET_PROTOCOL_PACKAGE,
-        ),
+            connection_state=(
+                discovery_pb2.SPATIAL_ANALYZER_CONNECTION_STATE_CONNECTED
+                if self.connected
+                else discovery_pb2.SPATIAL_ANALYZER_CONNECTION_STATE_DISCONNECTED
+            ),
+            execution_readiness_state=(
+                discovery_pb2.SPATIAL_ANALYZER_EXECUTION_READINESS_STATE_EXECUTION_READY
+                if self.connected
+                else discovery_pb2.SPATIAL_ANALYZER_EXECUTION_READINESS_STATE_UNVERIFIED
+            ),
+            ready_for_mp=self.connected,
+            recovery_state=lifecycle_pb2.SPATIAL_ANALYZER_SDK_RECOVERY_STATE_NOT_REQUIRED,
+        )
+        if self.sdk_generation > 0:
+            state.sdk_generation = self.sdk_generation
+        return state
+
+
+def create_client(
+    launcher: FakeServerLauncher,
+    transport: FakeTransport,
+    options: BriosaClientOptions | None = None,
+) -> BriosaClient:
+    return BriosaClient(
+        options,
+        _server_launcher=launcher,
+        _transport_factory=lambda _target: transport,
     )
 
 
-def test_protocol_identity_matches_pinned_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.2.0-dev.2-sa-2026.1.0529.7-catalog-5"
-    assert (
-        ARTIFACT_SHA256
-        == "4ce33ac6ecc9db382e870aa2c005f90a25128ad863fcf007c855d00470ea3e39"
+def application_not_running() -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
+    return lifecycle_pb2.SpatialAnalyzerLifecycleState(
+        state_revision=1,
+        application_state=lifecycle_pb2.SPATIAL_ANALYZER_APPLICATION_STATE_NOT_RUNNING,
+        ownership=lifecycle_pb2.SPATIAL_ANALYZER_OWNERSHIP_NONE,
     )
-    assert BRIOSA_VERSION == "0.2.0-dev.2"
-    assert SOURCE_REVISION == "1a0714345981592b37e26a90ffc4db0de32fe388"
+
+
+def matching_snapshot(
+    ready: bool,
+) -> tuple[
+    discovery_pb2.GetServerInfoResponse,
+    discovery_pb2.ListCapabilitiesResponse,
+]:
+    server = discovery_pb2.GetServerInfoResponse(
+        version={
+            "briosa_version": BRIOSA_VERSION,
+            "source_revision": SOURCE_REVISION,
+            "protocol_package": PROTOCOL_PACKAGE,
+            "spatial_analyzer_target": SPATIAL_ANALYZER_TARGET,
+        },
+        worker_state=discovery_pb2.WORKER_RUNTIME_STATE_READY,
+        spatial_analyzer_connection_state=(
+            discovery_pb2.SPATIAL_ANALYZER_CONNECTION_STATE_CONNECTED
+            if ready
+            else discovery_pb2.SPATIAL_ANALYZER_CONNECTION_STATE_DISCONNECTED
+        ),
+        spatial_analyzer_execution_readiness_state=(
+            discovery_pb2.SPATIAL_ANALYZER_EXECUTION_READINESS_STATE_EXECUTION_READY
+            if ready
+            else discovery_pb2.SPATIAL_ANALYZER_EXECUTION_READINESS_STATE_UNVERIFIED
+        ),
+        ready_for_mp=ready,
+        target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
+    )
+    capabilities = discovery_pb2.ListCapabilitiesResponse(
+        protocol_package=PROTOCOL_PACKAGE,
+        spatial_analyzer_target=SPATIAL_ANALYZER_TARGET,
+        operations=[
+            {
+                "operation_id": "file_operations.get_working_directory",
+                "grpc_service": "briosa.FileOperations",
+                "rpc": "GetWorkingDirectory",
+                "fully_qualified_method": "/briosa.FileOperations/GetWorkingDirectory",
+            }
+        ],
+    )
+    return server, capabilities
+
+
+def application_lifecycle_failure() -> FakeRpcError:
+    detail = lifecycle_pb2.SpatialAnalyzerLifecycleError(
+        rpc="LaunchSpatialAnalyzer",
+        kind=lifecycle_pb2.SPATIAL_ANALYZER_LIFECYCLE_FAILURE_KIND_LAUNCH_FAILED,
+        diagnostic_code="sa-launch-failed",
+        recovery_guidance=lifecycle_pb2.LIFECYCLE_RECOVERY_GUIDANCE_CORRECT_ENVIRONMENT,
+        state=application_not_running(),
+    )
+    return FakeRpcError(
+        grpc.StatusCode.FAILED_PRECONDITION,
+        (("briosa-spatial-analyzer-lifecycle-error-bin", detail.SerializeToString()),),
+    )
+
+
+def test_protocol_identity_matches_merged_lifecycle_artifact() -> None:
+    assert ARTIFACT_NAME == "briosa-protocol-0.2.0-lifecycle-sa-2026.1.0529.7"
+    assert SOURCE_REVISION == "cd36842dcbdc910a05a96e22453a54f5769b05fe"
+    assert PROTOCOL_PACKAGE == "briosa"
+    assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2026.1.0529.7"
-    assert CATALOG_REVISION == "5"
 
 
-def test_compatibility_accepts_exact_identity() -> None:
-    _validate_compatibility(*matching_identity())
+def test_construction_is_dormant_and_options_fail_closed() -> None:
+    launcher = FakeServerLauncher()
+    _ = create_client(launcher, FakeTransport())
+    assert launcher.launch_count == 0
+    with pytest.raises(ValueError):
+        BriosaClientOptions(command_timeout=0)
+    with pytest.raises(ValueError):
+        BriosaStartOptions(start_spatial_analyzer_sdk=False)
+    with pytest.raises(ValueError):
+        BriosaStartOptions(
+            launch_spatial_analyzer=False,
+            launch_options=SpatialAnalyzerLaunchOptions(start_minimized=True),
+        )
 
 
-def test_compatibility_rejects_catalog_and_isolation_drift() -> None:
-    server_info, capabilities = matching_identity()
-    capabilities.catalog_revision = "different"
-    with pytest.raises(BriosaCompatibilityError) as catalog_error:
-        _validate_compatibility(server_info, capabilities)
-    assert catalog_error.value.diagnostic_code == "capability-catalog-revision-mismatch"
+@pytest.mark.asyncio
+async def test_default_startup_and_stop_leave_spatial_analyzer_running() -> None:
+    launcher = FakeServerLauncher()
+    transport = FakeTransport()
+    client = create_client(launcher, transport)
 
-    server_info, capabilities = matching_identity()
-    server_info.target_isolation_mode = (
-        discovery_pb2.TARGET_ISOLATION_MODE_LEASE_ISOLATED
+    await client.start()
+    directory = await client.get_working_directory()
+    await client.stop()
+
+    assert directory == r"C:\Working"
+    assert transport.calls == [
+        "snapshot",
+        "start-sdk",
+        "launch-sa",
+        "connect-sdk",
+        "snapshot",
+        "get-working-directory",
+        "stop-sdk",
+        "close-transport",
+    ]
+    assert launcher.server.closed
+    assert transport.close_application_count == 0
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_control_plane_only_startup_does_not_create_sdk_or_sa() -> None:
+    transport = FakeTransport()
+    client = create_client(FakeServerLauncher(), transport)
+    await client.start(
+        BriosaStartOptions(
+            start_spatial_analyzer_sdk=False,
+            launch_spatial_analyzer=False,
+            connect_to_spatial_analyzer=False,
+        )
     )
-    with pytest.raises(BriosaCompatibilityError) as isolation_error:
-        _validate_compatibility(server_info, capabilities)
-    assert isolation_error.value.diagnostic_code == "target-isolation-mode-mismatch"
+    snapshot = await client.get_server_snapshot()
+    assert not snapshot.ready_for_mp
+    with pytest.raises(BriosaLifecycleError):
+        await client.get_working_directory()
+    assert transport.calls == ["snapshot", "snapshot"]
+    await client.aclose()
 
 
-def test_typed_error_preserves_unknown_completion_and_reconciliation() -> None:
+@pytest.mark.asyncio
+async def test_partial_failure_preserves_diagnostic_control_plane() -> None:
+    launcher = FakeServerLauncher()
+    transport = FakeTransport()
+    transport.launch_failure = application_lifecycle_failure()
+    client = create_client(launcher, transport)
+
+    with pytest.raises(BriosaSpatialAnalyzerError) as captured:
+        await client.start()
+    state = await client.get_spatial_analyzer_state()
+
+    assert captured.value.kind is SpatialAnalyzerLifecycleFailureKind.LAUNCH_FAILED
+    assert captured.value.diagnostic_code == "sa-launch-failed"
+    assert state.application_state is SpatialAnalyzerApplicationState.NOT_RUNNING
+    assert not launcher.server.closed
+    await client.stop()
+    assert launcher.server.closed
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_failed_final_readiness_does_not_publish_mp_admission() -> None:
+    transport = FakeTransport()
+    transport.publish_ready_snapshot = False
+    client = create_client(FakeServerLauncher(), transport)
+
+    with pytest.raises(BriosaLifecycleError):
+        await client.start()
+    assert (await client.get_spatial_analyzer_sdk_state()).ready_for_mp
+    with pytest.raises(BriosaLifecycleError):
+        await client.get_working_directory()
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_concurrent_starts_share_one_server_and_generation_guards() -> None:
+    launcher = FakeServerLauncher()
+    transport = FakeTransport()
+    client = create_client(launcher, transport)
+
+    await asyncio.gather(client.start(), client.start())
+    await client.reconnect_to_spatial_analyzer()
+    await client.stop_spatial_analyzer_sdk()
+    await client.start_spatial_analyzer_sdk()
+    await client.close_owned_spatial_analyzer()
+
+    assert launcher.launch_count == 1
+    assert transport.connect_generations == [1, 1]
+    assert transport.stop_generations[0] == 1
+    assert transport.close_generations == [2]
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_async_context_starts_and_finally_closes_only_owned_resources() -> None:
+    launcher = FakeServerLauncher()
+    transport = FakeTransport()
+    client = create_client(launcher, transport)
+
+    async with client as entered:
+        assert entered is client
+        assert await entered.get_working_directory() == r"C:\Working"
+
+    assert launcher.server.closed
+    assert transport.close_application_count == 0
+    with pytest.raises(BriosaLifecycleError):
+        await client.start()
+
+
+def test_incident_preserves_string_operation_id() -> None:
+    mapped = map_sdk_state(
+        lifecycle_pb2.SpatialAnalyzerSdkLifecycleState(
+            sdk_state=lifecycle_pb2.SPATIAL_ANALYZER_SDK_STATE_FAULTED,
+            connection_state=discovery_pb2.SPATIAL_ANALYZER_CONNECTION_STATE_FAULTED,
+            execution_readiness_state=(
+                discovery_pb2.SPATIAL_ANALYZER_EXECUTION_READINESS_STATE_OPERATOR_RECOVERY_REQUIRED
+            ),
+            recovery_state=lifecycle_pb2.SPATIAL_ANALYZER_SDK_RECOVERY_STATE_RECOVERY_AVAILABLE,
+            last_incident={
+                "sdk_generation": 4,
+                "termination_kind": (
+                    lifecycle_pb2.SPATIAL_ANALYZER_SDK_TERMINATION_KIND_WATCHDOG_TERMINATED
+                ),
+                "operation_id": "file_operations.get_working_directory",
+            },
+        )
+    )
+    assert mapped.last_incident is not None
+    assert mapped.last_incident.operation_id == "file_operations.get_working_directory"
+
+
+def test_operation_error_is_detached_and_preserves_unknown_completion() -> None:
     detail = operation_outcomes_pb2.OperationError(
-        operation_id="conformance.mutating_operation",
+        operation_id="construction_operations.mutating_operation",
         kind=operation_outcomes_pb2.OPERATION_FAILURE_KIND_WORKER_WATCHDOG_TIMEOUT,
         diagnostic_code="worker-execution-watchdog-timeout",
         execution_disposition=operation_outcomes_pb2.EXECUTION_DISPOSITION_STARTED_OUTCOME_UNKNOWN,
         recovery_guidance=operation_outcomes_pb2.RECOVERY_GUIDANCE_WORKER_REPLACEMENT,
         replay_guidance=operation_outcomes_pb2.REPLAY_GUIDANCE_RECONCILE_BEFORE_REPLAY,
-        replay_safety=operation_outcomes_pb2.REPLAY_SAFETY_UNSAFE,
+        replay_safety=operation_outcomes_pb2.REPLAY_SAFETY_UNKNOWN,
     )
-    error = FakeRpcError(
-        grpc.StatusCode.UNAVAILABLE,
-        (("briosa-operation-error-bin", detail.SerializeToString()),),
+    mapped = map_rpc_error(
+        FakeRpcError(
+            grpc.StatusCode.UNAVAILABLE,
+            (("briosa-operation-error-bin", detail.SerializeToString()),),
+        )
     )
-
-    mapped = BriosaCallError.from_rpc_error(error)
-
-    assert mapped.status_code is grpc.StatusCode.UNAVAILABLE
-    assert mapped.operation_error == detail
-    assert mapped.completion_unknown
-    assert mapped.reconciliation_required
-    assert not mapped.operation_error_malformed
-
-
-def test_malformed_typed_error_does_not_parse_status_text() -> None:
-    error = FakeRpcError(
-        grpc.StatusCode.DATA_LOSS, (("briosa-operation-error-bin", b"\xff"),)
-    )
-    mapped = BriosaCallError.from_rpc_error(error)
-    assert mapped.status_code is grpc.StatusCode.DATA_LOSS
-    assert mapped.operation_error is None
-    assert mapped.operation_error_malformed
-    assert "untrusted detail" not in str(mapped)
+    assert isinstance(mapped, BriosaOperationError)
+    assert mapped.status_code is RpcStatusCode.UNAVAILABLE
+    assert mapped.failure.kind is OperationFailureKind.WORKER_WATCHDOG_TIMEOUT
+    assert mapped.failure.recovery_guidance is RecoveryGuidance.WORKER_REPLACEMENT
+    assert mapped.failure.replay_guidance is ReplayGuidance.RECONCILE_BEFORE_REPLAY
+    assert mapped.failure.replay_safety is ReplaySafety.UNKNOWN
+    assert mapped.completion_unknown is True
+    assert mapped.reconciliation_required is True
 
 
-def test_optional_string_preserves_absent_and_default_like_presence() -> None:
-    absent = operations_pb2.GetWorkingDirectoryResult()
-    present_empty = operations_pb2.GetWorkingDirectoryResult(directory="")
-    assert not absent.HasField("directory")
-    assert present_empty.HasField("directory")
-    assert present_empty.directory == ""
+def test_transport_error_uses_handwritten_status() -> None:
+    error = FakeRpcError(grpc.StatusCode.UNAVAILABLE)
+    mapped = map_rpc_error(error)
+    assert isinstance(mapped, BriosaTransportError)
+    assert mapped.status_code is RpcStatusCode.UNAVAILABLE
+    assert mapped.diagnostic_code == "transport-unavailable"
 
 
-@pytest.mark.asyncio
-async def test_failed_operation_is_not_automatically_replayed() -> None:
-    class FailingOperations:
-        calls = 0
-
-        async def GetWorkingDirectory(self, request: Any, *, timeout: float) -> None:
-            self.calls += 1
-            raise FakeRpcError(grpc.StatusCode.UNAVAILABLE)
-
-    client = BriosaClient("http://127.0.0.1:50051")
-    operations = FailingOperations()
-    cast(Any, client)._file_operations = operations
-    try:
-        with pytest.raises(BriosaCallError):
-            await client.get_working_directory()
-        assert operations.calls == 1
-    finally:
-        await client.close()
-
-
-def test_address_and_timeouts_fail_closed() -> None:
-    with pytest.raises(ValueError):
-        BriosaClient("ftp://localhost:50051")
-    with pytest.raises(ValueError):
-        BriosaClient("http://localhost:50051/path")
-    with pytest.raises(ValueError):
-        BriosaClient("http://localhost:50051", default_timeout=0)
+def test_fake_transport_satisfies_private_protocol() -> None:
+    transport: ClientTransport = FakeTransport()
+    assert transport is not None

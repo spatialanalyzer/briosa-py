@@ -1,25 +1,50 @@
-"""Typed failures exposed by the Briosa client."""
+"""Handwritten failures exposed by the Briosa Python client."""
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-from typing import Protocol, cast
-
-import grpc
-from google.protobuf.message import DecodeError
-
-from briosa.core.v1alpha1 import operation_outcomes_pb2
-
-_ERROR_TRAILER = "briosa-operation-error-bin"
-
-
-class _RpcFailure(Protocol):
-    def code(self) -> grpc.StatusCode: ...
-
-    def trailing_metadata(self) -> Iterable[tuple[str, str | bytes]] | None: ...
+from briosa.models import (
+    ExecutionDisposition,
+    LifecycleRecoveryGuidance,
+    OperationFailure,
+    RpcStatusCode,
+    SpatialAnalyzerLifecycleFailureKind,
+    SpatialAnalyzerLifecycleState,
+    SpatialAnalyzerSdkLifecycleFailureKind,
+    SpatialAnalyzerSdkLifecycleState,
+)
 
 
-class BriosaCompatibilityError(Exception):
+class BriosaError(Exception):
+    """Base class for Briosa client failures."""
+
+
+class BriosaStartupError(BriosaError):
+    """Reports failure to establish an owned local server session."""
+
+    def __init__(self, diagnostic_code: str) -> None:
+        super().__init__(f"Briosa startup failed ({diagnostic_code}).")
+        self.diagnostic_code = diagnostic_code
+
+
+class BriosaLifecycleError(BriosaError):
+    """Reports invalid client lifecycle use or a competing transition."""
+
+    def __init__(self, diagnostic_code: str) -> None:
+        super().__init__(
+            f"Briosa lifecycle operation is unavailable ({diagnostic_code})."
+        )
+        self.diagnostic_code = diagnostic_code
+
+
+class BriosaProtocolError(BriosaError):
+    """Reports an invalid value or shape returned by the server."""
+
+    def __init__(self, diagnostic_code: str) -> None:
+        super().__init__(f"Briosa returned invalid protocol data ({diagnostic_code}).")
+        self.diagnostic_code = diagnostic_code
+
+
+class BriosaCompatibilityError(BriosaError):
     """Reports a mismatch with this package's pinned protocol identity."""
 
     def __init__(self, diagnostic_code: str) -> None:
@@ -29,62 +54,78 @@ class BriosaCompatibilityError(Exception):
         self.diagnostic_code = diagnostic_code
 
 
-class BriosaCallError(Exception):
-    """A failed gRPC call with an optional typed, value-free operation detail."""
+class BriosaSpatialAnalyzerError(BriosaError):
+    """Reports a typed SpatialAnalyzer application lifecycle failure."""
 
     def __init__(
         self,
-        status_code: grpc.StatusCode,
-        operation_error: operation_outcomes_pb2.OperationError | None,
-        *,
-        operation_error_malformed: bool,
+        kind: SpatialAnalyzerLifecycleFailureKind,
+        diagnostic_code: str,
+        recovery_guidance: LifecycleRecoveryGuidance,
+        state: SpatialAnalyzerLifecycleState,
     ) -> None:
-        super().__init__(f"Briosa call failed with gRPC status {status_code.name}.")
+        super().__init__(
+            f"SpatialAnalyzer lifecycle operation failed ({diagnostic_code})."
+        )
+        self.kind = kind
+        self.diagnostic_code = diagnostic_code
+        self.recovery_guidance = recovery_guidance
+        self.state = state
+
+
+class BriosaSpatialAnalyzerSdkError(BriosaError):
+    """Reports a typed SpatialAnalyzer SDK lifecycle failure."""
+
+    def __init__(
+        self,
+        kind: SpatialAnalyzerSdkLifecycleFailureKind,
+        diagnostic_code: str,
+        recovery_guidance: LifecycleRecoveryGuidance,
+        state: SpatialAnalyzerSdkLifecycleState,
+    ) -> None:
+        super().__init__(
+            f"SpatialAnalyzer SDK lifecycle operation failed ({diagnostic_code})."
+        )
+        self.kind = kind
+        self.diagnostic_code = diagnostic_code
+        self.recovery_guidance = recovery_guidance
+        self.state = state
+
+
+class BriosaOperationError(BriosaError):
+    """Reports a valid typed Briosa operation failure."""
+
+    def __init__(
+        self,
+        status_code: RpcStatusCode,
+        failure: OperationFailure,
+    ) -> None:
+        super().__init__(
+            f"Briosa operation '{failure.operation_id}' failed "
+            f"({failure.diagnostic_code})."
+        )
         self.status_code = status_code
-        self.operation_error = operation_error
-        self.operation_error_malformed = operation_error_malformed
+        self.failure = failure
 
     @property
     def completion_unknown(self) -> bool:
-        """Whether execution started but the outcome is unknown."""
         return (
-            self.operation_error is not None
-            and self.operation_error.execution_disposition
-            == operation_outcomes_pb2.EXECUTION_DISPOSITION_STARTED_OUTCOME_UNKNOWN
+            self.failure.execution_disposition
+            is ExecutionDisposition.STARTED_OUTCOME_UNKNOWN
         )
 
     @property
     def reconciliation_required(self) -> bool:
-        """Whether reconciliation is required before any manual replay."""
         return (
             self.completion_unknown
-            and self.operation_error is not None
-            and self.operation_error.replay_guidance
-            == operation_outcomes_pb2.REPLAY_GUIDANCE_RECONCILE_BEFORE_REPLAY
+            and self.failure.replay_guidance.value == "reconcile_before_replay"
         )
 
-    @classmethod
-    def from_rpc_error(cls, error: grpc.RpcError) -> BriosaCallError:
-        """Decode a typed operation detail without inspecting status text."""
-        failure = cast(_RpcFailure, error)
-        operation_error = None
-        malformed = False
-        metadata = failure.trailing_metadata() or ()
-        for key, value in metadata:
-            if key != _ERROR_TRAILER:
-                continue
-            if not isinstance(value, bytes):
-                malformed = True
-                break
-            try:
-                operation_error = operation_outcomes_pb2.OperationError.FromString(
-                    value
-                )
-            except DecodeError:
-                malformed = True
-            break
-        return cls(
-            failure.code(),
-            operation_error,
-            operation_error_malformed=malformed,
-        )
+
+class BriosaTransportError(BriosaError):
+    """Reports a transport failure without a valid typed operation detail."""
+
+    def __init__(self, status_code: RpcStatusCode, diagnostic_code: str) -> None:
+        super().__init__(f"Briosa transport failed ({diagnostic_code}).")
+        self.status_code = status_code
+        self.diagnostic_code = diagnostic_code

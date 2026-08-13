@@ -1,5 +1,5 @@
-from briosa.core.v1alpha1 import operation_outcomes_pb2 as _operation_outcomes_pb2
-from briosa.core.v1alpha1 import version_coordinates_pb2 as _version_coordinates_pb2
+from briosa import operation_outcomes_pb2 as _operation_outcomes_pb2
+from briosa import version_coordinates_pb2 as _version_coordinates_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
@@ -8,6 +8,20 @@ from collections.abc import Iterable as _Iterable, Mapping as _Mapping
 from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
+
+class RuntimeIdentityEvidenceSource(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    RUNTIME_IDENTITY_EVIDENCE_SOURCE_UNSPECIFIED: _ClassVar[RuntimeIdentityEvidenceSource]
+    RUNTIME_IDENTITY_EVIDENCE_SOURCE_UNAVAILABLE: _ClassVar[RuntimeIdentityEvidenceSource]
+    RUNTIME_IDENTITY_EVIDENCE_SOURCE_RUNTIME_VERIFICATION: _ClassVar[RuntimeIdentityEvidenceSource]
+    RUNTIME_IDENTITY_EVIDENCE_SOURCE_OPERATOR_ATTESTATION: _ClassVar[RuntimeIdentityEvidenceSource]
+
+class RuntimeIdentityMatchState(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    RUNTIME_IDENTITY_MATCH_STATE_UNSPECIFIED: _ClassVar[RuntimeIdentityMatchState]
+    RUNTIME_IDENTITY_MATCH_STATE_UNAVAILABLE: _ClassVar[RuntimeIdentityMatchState]
+    RUNTIME_IDENTITY_MATCH_STATE_EXACT_MATCH: _ClassVar[RuntimeIdentityMatchState]
+    RUNTIME_IDENTITY_MATCH_STATE_MISMATCH: _ClassVar[RuntimeIdentityMatchState]
 
 class TargetIsolationMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -47,6 +61,8 @@ class ConnectedSpatialAnalyzerVersionState(int, metaclass=_enum_type_wrapper.Enu
     CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_UNAVAILABLE: _ClassVar[ConnectedSpatialAnalyzerVersionState]
     CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_VERIFIED_MATCH: _ClassVar[ConnectedSpatialAnalyzerVersionState]
     CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_VERIFIED_MISMATCH: _ClassVar[ConnectedSpatialAnalyzerVersionState]
+    CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MATCH: _ClassVar[ConnectedSpatialAnalyzerVersionState]
+    CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MISMATCH: _ClassVar[ConnectedSpatialAnalyzerVersionState]
 
 class OperationExecutionScope(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -63,6 +79,14 @@ class OperationEffect(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     OPERATION_EFFECT_READ_ONLY: _ClassVar[OperationEffect]
     OPERATION_EFFECT_MUTATING: _ClassVar[OperationEffect]
     OPERATION_EFFECT_UNKNOWN: _ClassVar[OperationEffect]
+RUNTIME_IDENTITY_EVIDENCE_SOURCE_UNSPECIFIED: RuntimeIdentityEvidenceSource
+RUNTIME_IDENTITY_EVIDENCE_SOURCE_UNAVAILABLE: RuntimeIdentityEvidenceSource
+RUNTIME_IDENTITY_EVIDENCE_SOURCE_RUNTIME_VERIFICATION: RuntimeIdentityEvidenceSource
+RUNTIME_IDENTITY_EVIDENCE_SOURCE_OPERATOR_ATTESTATION: RuntimeIdentityEvidenceSource
+RUNTIME_IDENTITY_MATCH_STATE_UNSPECIFIED: RuntimeIdentityMatchState
+RUNTIME_IDENTITY_MATCH_STATE_UNAVAILABLE: RuntimeIdentityMatchState
+RUNTIME_IDENTITY_MATCH_STATE_EXACT_MATCH: RuntimeIdentityMatchState
+RUNTIME_IDENTITY_MATCH_STATE_MISMATCH: RuntimeIdentityMatchState
 TARGET_ISOLATION_MODE_UNSPECIFIED: TargetIsolationMode
 TARGET_ISOLATION_MODE_SINGLE_TENANT: TargetIsolationMode
 TARGET_ISOLATION_MODE_LEASE_ISOLATED: TargetIsolationMode
@@ -87,6 +111,8 @@ CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_UNSPECIFIED: ConnectedSpatialAnalyzerVe
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_UNAVAILABLE: ConnectedSpatialAnalyzerVersionState
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_VERIFIED_MATCH: ConnectedSpatialAnalyzerVersionState
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_VERIFIED_MISMATCH: ConnectedSpatialAnalyzerVersionState
+CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MATCH: ConnectedSpatialAnalyzerVersionState
+CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MISMATCH: ConnectedSpatialAnalyzerVersionState
 OPERATION_EXECUTION_SCOPE_UNSPECIFIED: OperationExecutionScope
 OPERATION_EXECUTION_SCOPE_SELF_CONTAINED: OperationExecutionScope
 OPERATION_EXECUTION_SCOPE_GLOBAL_STATE_READ: OperationExecutionScope
@@ -103,7 +129,7 @@ class GetServerInfoRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class GetServerInfoResponse(_message.Message):
-    __slots__ = ("version", "worker_state", "spatial_analyzer_connection_state", "ready_for_mp", "connected_spatial_analyzer_version", "connected_spatial_analyzer_version_state", "spatial_analyzer_execution_readiness_state", "target_isolation_mode")
+    __slots__ = ("version", "worker_state", "spatial_analyzer_connection_state", "ready_for_mp", "connected_spatial_analyzer_version", "connected_spatial_analyzer_version_state", "spatial_analyzer_execution_readiness_state", "target_isolation_mode", "activated_sdk_identity", "connected_spatial_analyzer_identity")
     VERSION_FIELD_NUMBER: _ClassVar[int]
     WORKER_STATE_FIELD_NUMBER: _ClassVar[int]
     SPATIAL_ANALYZER_CONNECTION_STATE_FIELD_NUMBER: _ClassVar[int]
@@ -112,6 +138,8 @@ class GetServerInfoResponse(_message.Message):
     CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_FIELD_NUMBER: _ClassVar[int]
     SPATIAL_ANALYZER_EXECUTION_READINESS_STATE_FIELD_NUMBER: _ClassVar[int]
     TARGET_ISOLATION_MODE_FIELD_NUMBER: _ClassVar[int]
+    ACTIVATED_SDK_IDENTITY_FIELD_NUMBER: _ClassVar[int]
+    CONNECTED_SPATIAL_ANALYZER_IDENTITY_FIELD_NUMBER: _ClassVar[int]
     version: _version_coordinates_pb2.VersionCoordinates
     worker_state: WorkerRuntimeState
     spatial_analyzer_connection_state: SpatialAnalyzerConnectionState
@@ -120,25 +148,33 @@ class GetServerInfoResponse(_message.Message):
     connected_spatial_analyzer_version_state: ConnectedSpatialAnalyzerVersionState
     spatial_analyzer_execution_readiness_state: SpatialAnalyzerExecutionReadinessState
     target_isolation_mode: TargetIsolationMode
-    def __init__(self, version: _Optional[_Union[_version_coordinates_pb2.VersionCoordinates, _Mapping]] = ..., worker_state: _Optional[_Union[WorkerRuntimeState, str]] = ..., spatial_analyzer_connection_state: _Optional[_Union[SpatialAnalyzerConnectionState, str]] = ..., ready_for_mp: bool = ..., connected_spatial_analyzer_version: _Optional[str] = ..., connected_spatial_analyzer_version_state: _Optional[_Union[ConnectedSpatialAnalyzerVersionState, str]] = ..., spatial_analyzer_execution_readiness_state: _Optional[_Union[SpatialAnalyzerExecutionReadinessState, str]] = ..., target_isolation_mode: _Optional[_Union[TargetIsolationMode, str]] = ...) -> None: ...
+    activated_sdk_identity: RuntimeIdentityEvidence
+    connected_spatial_analyzer_identity: RuntimeIdentityEvidence
+    def __init__(self, version: _Optional[_Union[_version_coordinates_pb2.VersionCoordinates, _Mapping]] = ..., worker_state: _Optional[_Union[WorkerRuntimeState, str]] = ..., spatial_analyzer_connection_state: _Optional[_Union[SpatialAnalyzerConnectionState, str]] = ..., ready_for_mp: bool = ..., connected_spatial_analyzer_version: _Optional[str] = ..., connected_spatial_analyzer_version_state: _Optional[_Union[ConnectedSpatialAnalyzerVersionState, str]] = ..., spatial_analyzer_execution_readiness_state: _Optional[_Union[SpatialAnalyzerExecutionReadinessState, str]] = ..., target_isolation_mode: _Optional[_Union[TargetIsolationMode, str]] = ..., activated_sdk_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ..., connected_spatial_analyzer_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ...) -> None: ...
+
+class RuntimeIdentityEvidence(_message.Message):
+    __slots__ = ("version", "source", "match_state")
+    VERSION_FIELD_NUMBER: _ClassVar[int]
+    SOURCE_FIELD_NUMBER: _ClassVar[int]
+    MATCH_STATE_FIELD_NUMBER: _ClassVar[int]
+    version: str
+    source: RuntimeIdentityEvidenceSource
+    match_state: RuntimeIdentityMatchState
+    def __init__(self, version: _Optional[str] = ..., source: _Optional[_Union[RuntimeIdentityEvidenceSource, str]] = ..., match_state: _Optional[_Union[RuntimeIdentityMatchState, str]] = ...) -> None: ...
 
 class ListCapabilitiesRequest(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...
 
 class ListCapabilitiesResponse(_message.Message):
-    __slots__ = ("catalog_id", "catalog_revision", "spatial_analyzer_target", "target_protocol_package", "operations")
-    CATALOG_ID_FIELD_NUMBER: _ClassVar[int]
-    CATALOG_REVISION_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("spatial_analyzer_target", "protocol_package", "operations")
     SPATIAL_ANALYZER_TARGET_FIELD_NUMBER: _ClassVar[int]
-    TARGET_PROTOCOL_PACKAGE_FIELD_NUMBER: _ClassVar[int]
+    PROTOCOL_PACKAGE_FIELD_NUMBER: _ClassVar[int]
     OPERATIONS_FIELD_NUMBER: _ClassVar[int]
-    catalog_id: str
-    catalog_revision: str
     spatial_analyzer_target: str
-    target_protocol_package: str
+    protocol_package: str
     operations: _containers.RepeatedCompositeFieldContainer[OperationCapability]
-    def __init__(self, catalog_id: _Optional[str] = ..., catalog_revision: _Optional[str] = ..., spatial_analyzer_target: _Optional[str] = ..., target_protocol_package: _Optional[str] = ..., operations: _Optional[_Iterable[_Union[OperationCapability, _Mapping]]] = ...) -> None: ...
+    def __init__(self, spatial_analyzer_target: _Optional[str] = ..., protocol_package: _Optional[str] = ..., operations: _Optional[_Iterable[_Union[OperationCapability, _Mapping]]] = ...) -> None: ...
 
 class OperationCapability(_message.Message):
     __slots__ = ("operation_id", "grpc_service", "rpc", "fully_qualified_method", "effect", "replay_safety", "execution_scope")

@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from briosa.sa.v2026_1_0529_7.v1alpha1 import operations_pb2 as briosa_dot_sa_dot_v2026__1__0529__7_dot_v1alpha1_dot_operations__pb2
+from briosa import construction_operations_pb2 as briosa_dot_construction__operations__pb2
 
 GRPC_GENERATED_VERSION = '1.74.0'
 GRPC_VERSION = grpc.__version__
@@ -18,14 +18,14 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in briosa/sa/v2026_1_0529_7/v1alpha1/operations_pb2_grpc.py depends on'
+        + f' but the generated code in briosa/construction_operations_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class FileOperationsStub(object):
+class ConstructionOperationsStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -34,44 +34,44 @@ class FileOperationsStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetWorkingDirectory = channel.unary_unary(
-                '/briosa.sa.v2026_1_0529_7.v1alpha1.FileOperations/GetWorkingDirectory',
-                request_serializer=briosa_dot_sa_dot_v2026__1__0529__7_dot_v1alpha1_dot_operations__pb2.GetWorkingDirectoryRequest.SerializeToString,
-                response_deserializer=briosa_dot_sa_dot_v2026__1__0529__7_dot_v1alpha1_dot_operations__pb2.GetWorkingDirectoryResult.FromString,
+        self.GetActiveCollectionName = channel.unary_unary(
+                '/briosa.ConstructionOperations/GetActiveCollectionName',
+                request_serializer=briosa_dot_construction__operations__pb2.GetActiveCollectionNameRequest.SerializeToString,
+                response_deserializer=briosa_dot_construction__operations__pb2.GetActiveCollectionNameResult.FromString,
                 _registered_method=True)
 
 
-class FileOperationsServicer(object):
+class ConstructionOperationsServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GetWorkingDirectory(self, request, context):
-        """Returns the directory SpatialAnalyzer uses to resolve measurement-plan-relative paths.
+    def GetActiveCollectionName(self, request, context):
+        """Executes the "Get Active Collection Name" MP command.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_FileOperationsServicer_to_server(servicer, server):
+def add_ConstructionOperationsServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetWorkingDirectory': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetWorkingDirectory,
-                    request_deserializer=briosa_dot_sa_dot_v2026__1__0529__7_dot_v1alpha1_dot_operations__pb2.GetWorkingDirectoryRequest.FromString,
-                    response_serializer=briosa_dot_sa_dot_v2026__1__0529__7_dot_v1alpha1_dot_operations__pb2.GetWorkingDirectoryResult.SerializeToString,
+            'GetActiveCollectionName': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetActiveCollectionName,
+                    request_deserializer=briosa_dot_construction__operations__pb2.GetActiveCollectionNameRequest.FromString,
+                    response_serializer=briosa_dot_construction__operations__pb2.GetActiveCollectionNameResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'briosa.sa.v2026_1_0529_7.v1alpha1.FileOperations', rpc_method_handlers)
+            'briosa.ConstructionOperations', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('briosa.sa.v2026_1_0529_7.v1alpha1.FileOperations', rpc_method_handlers)
+    server.add_registered_method_handlers('briosa.ConstructionOperations', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class FileOperations(object):
+class ConstructionOperations(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetWorkingDirectory(request,
+    def GetActiveCollectionName(request,
             target,
             options=(),
             channel_credentials=None,
@@ -84,9 +84,9 @@ class FileOperations(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/briosa.sa.v2026_1_0529_7.v1alpha1.FileOperations/GetWorkingDirectory',
-            briosa_dot_sa_dot_v2026__1__0529__7_dot_v1alpha1_dot_operations__pb2.GetWorkingDirectoryRequest.SerializeToString,
-            briosa_dot_sa_dot_v2026__1__0529__7_dot_v1alpha1_dot_operations__pb2.GetWorkingDirectoryResult.FromString,
+            '/briosa.ConstructionOperations/GetActiveCollectionName',
+            briosa_dot_construction__operations__pb2.GetActiveCollectionNameRequest.SerializeToString,
+            briosa_dot_construction__operations__pb2.GetActiveCollectionNameResult.FromString,
             options,
             channel_credentials,
             insecure,

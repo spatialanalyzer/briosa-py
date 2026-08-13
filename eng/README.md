@@ -1,41 +1,21 @@
 # Engineering workflows
 
-## Protocol artifact
-
-`import_protocol_artifact.py` accepts one exact Briosa protocol ZIP and requires its adjacent `.zip.sha256` sidecar. With `--update`, it verifies the full archive, generates the Python protobuf messages, `.pyi` types, asynchronous-capable gRPC transport stubs, identity constants, and `protocol.lock.json`. Without `--update`, it regenerates in a temporary directory and fails on any ZIP, manifest, coordinate, toolchain, file-list, or generated-byte drift.
-
-Generation is pinned to `grpcio-tools==1.74.0` (`libprotoc 31.1`). Generated namespaces are `src/briosa/core` and `src/briosa/sa`; `src/briosa/protocol_identity.py` is also generated. Change the protocol artifact or importer and regenerate—never edit those outputs or the lock by hand.
-
-For the current bootstrap artifact:
+`import_protocol_artifact.py` verifies one schema-2 Briosa protocol ZIP and its
+adjacent checksum. `--update` regenerates the direct `src/briosa/*_pb2.py`,
+`.pyi`, and `*_pb2_grpc.py` transport files plus the exact identity and lock.
+Verification mode regenerates in a temporary directory and fails on identity,
+toolchain, file-list, or generated-byte drift.
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.2.0-dev.2-sa-2026.1.0529.7-catalog-5.zip `
+  C:\path\to\briosa-protocol-0.2.0-lifecycle-sa-2026.1.0529.7.zip `
   --update --source-channel source_commit_bootstrap
-
-./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.2.0-dev.2-sa-2026.1.0529.7-catalog-5.zip
 ```
 
-The bootstrap channel is temporary. A released Briosa asset should use the default `github_release` source channel.
+Generated transport modules are private implementation details. Handwritten
+public dataclasses, enums, lifecycle orchestration, and exceptions live beside
+them but never expose a generated value.
 
-## Public API boundary
-
-The generated namespaces and identity module are transport implementation details of the idiomatic client, as defined by the [Python public API contract](../docs/public-api-contract.md) and the authoritative [first-party client behavioral contract](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md). Their physical location does not make them a supported v1 public surface. Handwritten adapters map between generated wire values and handwritten public parameters, domain types, results, and exceptions.
-
-Consumers that need raw protobuf or gRPC APIs should generate them independently from the same exact protocol artifact instead of depending on `briosa-client` internals.
-
-## Shared conformance
-
-`Test-Conformance.ps1` requires the pinned protocol ZIP and an exact Briosa source checkout:
-
-```powershell
-./eng/Test-Conformance.ps1 `
-  -ProtocolArtifactPath C:\path\to\briosa-protocol-0.2.0-dev.2-sa-2026.1.0529.7-catalog-5.zip `
-  -BriosaRepository C:\path\to\briosa `
-  -PythonPath ./.venv/Scripts/python.exe
-```
-
-The script validates every language-neutral typed-error fixture, builds the smoke worker and deterministic Windows server package from the lock's source revision, and runs all nine live scenarios through the public Python client. The scenarios cover readiness, unavailable and policy-denied states, MP and output failure, deadline, cancellation, watchdog recovery, and an unsupported target package. The runner does not print the returned working-directory value.
-
-This workflow requires 64-bit Windows, Python 3.10 or later, and the repository's .NET SDK. It does not install, launch, or connect to SpatialAnalyzer and requires neither an SA license nor proprietary SDK binaries.
+`tools/client_conformance.py` emits the normalized lifecycle contract
+implemented by this package. Behavioral tests use fake server/transport
+boundaries and require neither SpatialAnalyzer nor a license.
