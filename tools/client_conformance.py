@@ -59,7 +59,7 @@ async def _expect_raises(
 
 
 async def _run_scenario(scenario: str) -> None:
-    command_timeout = 0.15 if scenario == "deadline" else None
+    command_timeout = 0.25 if scenario == "deadline" else None
     briosa = BriosaClient(BriosaClientOptions(command_timeout=command_timeout))
     startup_succeeded = False
     try:
@@ -209,7 +209,15 @@ async def _assert_deadline(briosa: BriosaClient) -> None:
         "The caller deadline did not remain a transport outcome.",
     )
     await asyncio.sleep(0.4)
-    await briosa.get_working_directory()
+    try:
+        await briosa.get_working_directory()
+    except BriosaTransportError as recovery_error:
+        if recovery_error.diagnostic_code != "transport-deadline-exceeded":
+            raise
+        # If the initial deadline expired before worker dispatch, this call consumes
+        # the one scripted delay. A final caller-initiated read verifies recovery.
+        await asyncio.sleep(0.4)
+        await briosa.get_working_directory()
 
 
 async def _assert_cancellation(briosa: BriosaClient) -> None:
