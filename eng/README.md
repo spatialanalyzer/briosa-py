@@ -9,7 +9,7 @@ toolchain, file-list, or generated-byte drift.
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
   C:\path\to\briosa-protocol-0.2.1-sa-2026.1.0529.7.zip `
-  --update --source-channel github_actions_artifact
+  --update --source-channel github_release
 ```
 
 Generated transport modules are private implementation details. Handwritten
