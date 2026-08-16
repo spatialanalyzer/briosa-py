@@ -1,11 +1,11 @@
 {
   "schema_version": 2,
   "artifact": {
-    "name": "briosa-protocol-0.2.0-sa-2026.1.0529.7",
-    "file_name": "briosa-protocol-0.2.0-sa-2026.1.0529.7.zip",
-    "sha256": "34be1b2c6882f945f58db7dbf2816b848528aa9758fd0c0e8b3a6b61b8110f6b",
-    "briosa_version": "0.2.0",
-    "source_revision": "a009d95c1a5d293bdcbe3edb2edfe9cd99081c2e",
+    "name": "briosa-protocol-0.2.1-sa-2026.1.0529.7",
+    "file_name": "briosa-protocol-0.2.1-sa-2026.1.0529.7.zip",
+    "sha256": "593b050f8b046c4af01b7ecbb1bedbe4a00af7ef4c6d02521f620c5b61ffe072",
+    "briosa_version": "0.2.1",
+    "source_revision": "dc361c55e09cf2b6cdf5b058c9a2b75d52907bd5",
     "source_repository": "https://github.com/spatialanalyzer/briosa",
     "source_channel": "github_actions_artifact"
   },
@@ -156,7 +156,7 @@
       },
       {
         "path": "protocol_identity.py",
-        "sha256": "7c67270cacf1b4bf7c339334ef5ab0b01853cdf3be13cc0cca2a1c05729d7e4d"
+        "sha256": "4200bf239bcb185b3448f7dcacede74c89a4026fb98afbd9c048384cb115e634"
       },
       {
         "path": "relationship_operations_pb2.py",

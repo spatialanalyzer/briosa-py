@@ -58,7 +58,7 @@ python -m venv .venv
 ./.venv/Scripts/python -m mypy
 ./.venv/Scripts/python -m pytest
 ./eng/Test-Conformance.ps1 `
-  -ArtifactPath C:\path\to\briosa-client-conformance-0.2.0-lifecycle-sa-2026.1.0529.7-win-x64.zip `
+  -ArtifactPath C:\path\to\briosa-client-conformance-0.2.1-sa-2026.1.0529.7-win-x64.zip `
   -PythonExecutable ./.venv/Scripts/python.exe
 ./.venv/Scripts/python -m build
 ```
@@ -71,11 +71,11 @@ Neither path requires SpatialAnalyzer nor a license.
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.2.0-lifecycle-sa-2026.1.0529.7.zip `
-  --update --source-channel source_commit_bootstrap
+  C:\path\to\briosa-protocol-0.2.1-sa-2026.1.0529.7.zip `
+  --update --source-channel github_actions_artifact
 
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.2.0-lifecycle-sa-2026.1.0529.7.zip
+  C:\path\to\briosa-protocol-0.2.1-sa-2026.1.0529.7.zip
 ```
 
 Never edit generated `*_pb2.py`, `*_pb2.pyi`, `*_pb2_grpc.py`,
