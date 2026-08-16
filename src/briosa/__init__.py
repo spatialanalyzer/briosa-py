@@ -39,6 +39,10 @@ from briosa.models import (
     SpatialAnalyzerSdkState,
     SpatialAnalyzerSdkTerminationKind,
 )
+from briosa.operation_models import *  # noqa: F403
+from briosa.operation_models import __all__ as _operation_model_exports
+from briosa.operation_values import *  # noqa: F403
+from briosa.operation_values import __all__ as _operation_value_exports
 
 __all__ = [
     "BriosaClient",
@@ -76,4 +80,6 @@ __all__ = [
     "SpatialAnalyzerSdkRecoveryState",
     "SpatialAnalyzerSdkState",
     "SpatialAnalyzerSdkTerminationKind",
+    *_operation_model_exports,
+    *_operation_value_exports,
 ]

@@ -1,18 +1,22 @@
 from __future__ import annotations
 
 import asyncio
+from typing import cast
 
 import grpc
 import pytest
+from google.protobuf.message import Message
 
 from briosa import (
     BriosaClient,
     BriosaClientOptions,
     BriosaLifecycleError,
     BriosaOperationError,
+    BriosaProtocolError,
     BriosaSpatialAnalyzerError,
     BriosaStartOptions,
     BriosaTransportError,
+    Color,
     OperationFailureKind,
     RecoveryGuidance,
     ReplayGuidance,
@@ -21,9 +25,11 @@ from briosa import (
     SpatialAnalyzerApplicationState,
     SpatialAnalyzerLaunchOptions,
     SpatialAnalyzerLifecycleFailureKind,
+    analysis_operations_pb2,
     discovery_pb2,
     lifecycle_pb2,
     operation_outcomes_pb2,
+    view_control_pb2,
 )
 from briosa.client import OwnedServer
 from briosa.protocol_identity import (
@@ -35,6 +41,7 @@ from briosa.protocol_identity import (
     SPATIAL_ANALYZER_TARGET,
 )
 from briosa.transport import ClientTransport, map_rpc_error, map_sdk_state
+from briosa.wave_a_operations import WAVE_A_OPERATIONS
 
 
 class FakeRpcError(grpc.RpcError):
@@ -88,6 +95,8 @@ class FakeTransport:
         self.stop_generations: list[int] = []
         self.close_generations: list[int] = []
         self.close_application_count = 0
+        self.operation_requests: list[tuple[str, Message]] = []
+        self.operation_responses: dict[str, Message] = {}
 
     async def get_server_snapshot(
         self, timeout: float | None = None
@@ -174,6 +183,21 @@ class FakeTransport:
         self.calls.append("get-working-directory")
         return r"C:\Working"
 
+    async def invoke_operation(
+        self,
+        path: str,
+        request: Message,
+        response_type: type[Message],
+        timeout: float | None = None,
+    ) -> Message:
+        self.calls.append(path)
+        self.operation_requests.append((path, request))
+        if path in self.operation_responses:
+            return self.operation_responses[path]
+        if path == "/briosa.AnalysisOperations/GetNumberOfCollections":
+            return analysis_operations_pb2.GetNumberOfCollectionsResult(total_count=3)
+        return response_type()
+
     async def close(self) -> None:
         self.calls.append("close-transport")
 
@@ -257,11 +281,12 @@ def matching_snapshot(
         spatial_analyzer_target=SPATIAL_ANALYZER_TARGET,
         operations=[
             {
-                "operation_id": "file_operations.get_working_directory",
-                "grpc_service": "briosa.FileOperations",
-                "rpc": "GetWorkingDirectory",
-                "fully_qualified_method": "/briosa.FileOperations/GetWorkingDirectory",
+                "operation_id": operation_id,
+                "grpc_service": service,
+                "rpc": rpc,
+                "fully_qualified_method": f"/{service}/{rpc}",
             }
+            for _method, service, rpc, operation_id in WAVE_A_OPERATIONS
         ],
     )
     return server, capabilities
@@ -282,11 +307,56 @@ def application_lifecycle_failure() -> FakeRpcError:
 
 
 def test_protocol_identity_matches_merged_lifecycle_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.2.0-lifecycle-sa-2026.1.0529.7"
-    assert SOURCE_REVISION == "bd19e8f32a8bd717e6cf2ec2aea93b68b8c39c11"
+    assert ARTIFACT_NAME == "briosa-protocol-0.2.0-sa-2026.1.0529.7"
+    assert SOURCE_REVISION == "a009d95c1a5d293bdcbe3edb2edfe9cd99081c2e"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2026.1.0529.7"
+
+
+def test_wave_a_surface_matches_the_published_capability_set() -> None:
+    assert len(WAVE_A_OPERATIONS) == 469
+    assert len({item[3] for item in WAVE_A_OPERATIONS}) == 469
+    assert all(hasattr(BriosaClient, item[0]) for item in WAVE_A_OPERATIONS)
+
+
+@pytest.mark.asyncio
+async def test_wave_a_scalar_and_domain_value_operations_use_generic_transport() -> (
+    None
+):
+    transport = FakeTransport()
+    client = create_client(FakeServerLauncher(), transport)
+    await client.start()
+
+    assert await client.get_number_of_collections() == 3
+    await client.set_background_color(
+        Color(red=1, green=2, blue=3),
+        Color(red=4, green=5, blue=6),
+        Color(red=7, green=8, blue=9),
+        Color(red=10, green=11, blue=12),
+    )
+
+    _, raw_request = transport.operation_requests[-1]
+    request = cast(view_control_pb2.SetBackgroundColorRequest, raw_request)
+    assert request.DESCRIPTOR.full_name == "briosa.SetBackgroundColorRequest"
+    assert request.solid_color_name.red == 1
+    assert request.highlight_color.blue == 12
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_wave_a_missing_required_output_fails_through_public_boundary() -> None:
+    transport = FakeTransport()
+    transport.operation_responses[
+        "/briosa.AnalysisOperations/GetNumberOfCollections"
+    ] = analysis_operations_pb2.GetNumberOfCollectionsResult()
+    client = create_client(FakeServerLauncher(), transport)
+    await client.start()
+
+    with pytest.raises(BriosaProtocolError, match="required-output-missing"):
+        await client.get_number_of_collections()
+
+    await client.aclose()
 
 
 def test_construction_is_dormant_and_options_fail_closed() -> None:

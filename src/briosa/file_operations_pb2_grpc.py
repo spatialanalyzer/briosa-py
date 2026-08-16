@@ -34,19 +34,854 @@ class FileOperationsStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.BackupNow = channel.unary_unary(
+                '/briosa.FileOperations/BackupNow',
+                request_serializer=briosa_dot_file__operations__pb2.BackupNowRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.BackupNowResult.FromString,
+                _registered_method=True)
+        self.CopyGeneralFile = channel.unary_unary(
+                '/briosa.FileOperations/CopyGeneralFile',
+                request_serializer=briosa_dot_file__operations__pb2.CopyGeneralFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.CopyGeneralFileResult.FromString,
+                _registered_method=True)
+        self.DeleteGeneralFile = channel.unary_unary(
+                '/briosa.FileOperations/DeleteGeneralFile',
+                request_serializer=briosa_dot_file__operations__pb2.DeleteGeneralFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.DeleteGeneralFileResult.FromString,
+                _registered_method=True)
+        self.DirectCadAccess = channel.unary_unary(
+                '/briosa.FileOperations/DirectCadAccess',
+                request_serializer=briosa_dot_file__operations__pb2.DirectCadAccessRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.DirectCadAccessResult.FromString,
+                _registered_method=True)
+        self.ExportAsciiFrameSet = channel.unary_unary(
+                '/briosa.FileOperations/ExportAsciiFrameSet',
+                request_serializer=briosa_dot_file__operations__pb2.ExportAsciiFrameSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportAsciiFrameSetResult.FromString,
+                _registered_method=True)
+        self.ExportAsciiFrames = channel.unary_unary(
+                '/briosa.FileOperations/ExportAsciiFrames',
+                request_serializer=briosa_dot_file__operations__pb2.ExportAsciiFramesRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportAsciiFramesResult.FromString,
+                _registered_method=True)
+        self.ExportAsciiPointClouds = channel.unary_unary(
+                '/briosa.FileOperations/ExportAsciiPointClouds',
+                request_serializer=briosa_dot_file__operations__pb2.ExportAsciiPointCloudsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportAsciiPointCloudsResult.FromString,
+                _registered_method=True)
+        self.ExportAsciiPointSet = channel.unary_unary(
+                '/briosa.FileOperations/ExportAsciiPointSet',
+                request_serializer=briosa_dot_file__operations__pb2.ExportAsciiPointSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportAsciiPointSetResult.FromString,
+                _registered_method=True)
+        self.ExportAsciiPoints = channel.unary_unary(
+                '/briosa.FileOperations/ExportAsciiPoints',
+                request_serializer=briosa_dot_file__operations__pb2.ExportAsciiPointsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportAsciiPointsResult.FromString,
+                _registered_method=True)
+        self.ExportDxf = channel.unary_unary(
+                '/briosa.FileOperations/ExportDxf',
+                request_serializer=briosa_dot_file__operations__pb2.ExportDxfRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportDxfResult.FromString,
+                _registered_method=True)
+        self.ExportEmbeddedFile = channel.unary_unary(
+                '/briosa.FileOperations/ExportEmbeddedFile',
+                request_serializer=briosa_dot_file__operations__pb2.ExportEmbeddedFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportEmbeddedFileResult.FromString,
+                _registered_method=True)
+        self.ExportHiddenPointBarXmlFile = channel.unary_unary(
+                '/briosa.FileOperations/ExportHiddenPointBarXmlFile',
+                request_serializer=briosa_dot_file__operations__pb2.ExportHiddenPointBarXmlFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportHiddenPointBarXmlFileResult.FromString,
+                _registered_method=True)
+        self.ExportIgesFileEntireModel = channel.unary_unary(
+                '/briosa.FileOperations/ExportIgesFileEntireModel',
+                request_serializer=briosa_dot_file__operations__pb2.ExportIgesFileEntireModelRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportIgesFileEntireModelResult.FromString,
+                _registered_method=True)
+        self.ExportIgesFilePartialModel = channel.unary_unary(
+                '/briosa.FileOperations/ExportIgesFilePartialModel',
+                request_serializer=briosa_dot_file__operations__pb2.ExportIgesFilePartialModelRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportIgesFilePartialModelResult.FromString,
+                _registered_method=True)
+        self.ExportPtxPointClouds = channel.unary_unary(
+                '/briosa.FileOperations/ExportPtxPointClouds',
+                request_serializer=briosa_dot_file__operations__pb2.ExportPtxPointCloudsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportPtxPointCloudsResult.FromString,
+                _registered_method=True)
+        self.ExportQdasCharacteristics = channel.unary_unary(
+                '/briosa.FileOperations/ExportQdasCharacteristics',
+                request_serializer=briosa_dot_file__operations__pb2.ExportQdasCharacteristicsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportQdasCharacteristicsResult.FromString,
+                _registered_method=True)
+        self.ExportQdasDataList = channel.unary_unary(
+                '/briosa.FileOperations/ExportQdasDataList',
+                request_serializer=briosa_dot_file__operations__pb2.ExportQdasDataListRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportQdasDataListResult.FromString,
+                _registered_method=True)
+        self.ExportScanStripeMeshToStlFile = channel.unary_unary(
+                '/briosa.FileOperations/ExportScanStripeMeshToStlFile',
+                request_serializer=briosa_dot_file__operations__pb2.ExportScanStripeMeshToStlFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportScanStripeMeshToStlFileResult.FromString,
+                _registered_method=True)
+        self.ExportStepFileEntireModel = channel.unary_unary(
+                '/briosa.FileOperations/ExportStepFileEntireModel',
+                request_serializer=briosa_dot_file__operations__pb2.ExportStepFileEntireModelRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportStepFileEntireModelResult.FromString,
+                _registered_method=True)
+        self.ExportStepFilePartialModel = channel.unary_unary(
+                '/briosa.FileOperations/ExportStepFilePartialModel',
+                request_serializer=briosa_dot_file__operations__pb2.ExportStepFilePartialModelRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportStepFilePartialModelResult.FromString,
+                _registered_method=True)
+        self.ExportVdaFsFileEntireModel = channel.unary_unary(
+                '/briosa.FileOperations/ExportVdaFsFileEntireModel',
+                request_serializer=briosa_dot_file__operations__pb2.ExportVdaFsFileEntireModelRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportVdaFsFileEntireModelResult.FromString,
+                _registered_method=True)
+        self.ExportVdaFsFilePartialModel = channel.unary_unary(
+                '/briosa.FileOperations/ExportVdaFsFilePartialModel',
+                request_serializer=briosa_dot_file__operations__pb2.ExportVdaFsFilePartialModelRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportVdaFsFilePartialModelResult.FromString,
+                _registered_method=True)
+        self.ExportVectorContainerToAsciiFile = channel.unary_unary(
+                '/briosa.FileOperations/ExportVectorContainerToAsciiFile',
+                request_serializer=briosa_dot_file__operations__pb2.ExportVectorContainerToAsciiFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ExportVectorContainerToAsciiFileResult.FromString,
+                _registered_method=True)
+        self.FindFilesInDirectory = channel.unary_unary(
+                '/briosa.FileOperations/FindFilesInDirectory',
+                request_serializer=briosa_dot_file__operations__pb2.FindFilesInDirectoryRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.FindFilesInDirectoryResult.FromString,
+                _registered_method=True)
+        self.FindSubDirectoriesInDirectory = channel.unary_unary(
+                '/briosa.FileOperations/FindSubDirectoriesInDirectory',
+                request_serializer=briosa_dot_file__operations__pb2.FindSubDirectoriesInDirectoryRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.FindSubDirectoriesInDirectoryResult.FromString,
+                _registered_method=True)
+        self.GetBooleanFromDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/GetBooleanFromDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.GetBooleanFromDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.GetBooleanFromDataShareFileResult.FromString,
+                _registered_method=True)
+        self.GetDoubleFromDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/GetDoubleFromDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.GetDoubleFromDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.GetDoubleFromDataShareFileResult.FromString,
+                _registered_method=True)
+        self.GetIntegerFromDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/GetIntegerFromDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.GetIntegerFromDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.GetIntegerFromDataShareFileResult.FromString,
+                _registered_method=True)
+        self.GetQdasCatalogEntries = channel.unary_unary(
+                '/briosa.FileOperations/GetQdasCatalogEntries',
+                request_serializer=briosa_dot_file__operations__pb2.GetQdasCatalogEntriesRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.GetQdasCatalogEntriesResult.FromString,
+                _registered_method=True)
+        self.GetStringFromDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/GetStringFromDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.GetStringFromDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.GetStringFromDataShareFileResult.FromString,
+                _registered_method=True)
+        self.GetTransformFromDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/GetTransformFromDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.GetTransformFromDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.GetTransformFromDataShareFileResult.FromString,
+                _registered_method=True)
+        self.GetVectorFromDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/GetVectorFromDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.GetVectorFromDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.GetVectorFromDataShareFileResult.FromString,
+                _registered_method=True)
         self.GetWorkingDirectory = channel.unary_unary(
                 '/briosa.FileOperations/GetWorkingDirectory',
                 request_serializer=briosa_dot_file__operations__pb2.GetWorkingDirectoryRequest.SerializeToString,
                 response_deserializer=briosa_dot_file__operations__pb2.GetWorkingDirectoryResult.FromString,
+                _registered_method=True)
+        self.ImportAsciiPredefinedFormats = channel.unary_unary(
+                '/briosa.FileOperations/ImportAsciiPredefinedFormats',
+                request_serializer=briosa_dot_file__operations__pb2.ImportAsciiPredefinedFormatsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportAsciiPredefinedFormatsResult.FromString,
+                _registered_method=True)
+        self.ImportAsciiPredefinedFrameSetFormats = channel.unary_unary(
+                '/briosa.FileOperations/ImportAsciiPredefinedFrameSetFormats',
+                request_serializer=briosa_dot_file__operations__pb2.ImportAsciiPredefinedFrameSetFormatsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportAsciiPredefinedFrameSetFormatsResult.FromString,
+                _registered_method=True)
+        self.ImportE57File = channel.unary_unary(
+                '/briosa.FileOperations/ImportE57File',
+                request_serializer=briosa_dot_file__operations__pb2.ImportE57FileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportE57FileResult.FromString,
+                _registered_method=True)
+        self.ImportFileAsEmbeddedFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportFileAsEmbeddedFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportFileAsEmbeddedFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportFileAsEmbeddedFileResult.FromString,
+                _registered_method=True)
+        self.ImportFileAsPicture = channel.unary_unary(
+                '/briosa.FileOperations/ImportFileAsPicture',
+                request_serializer=briosa_dot_file__operations__pb2.ImportFileAsPictureRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportFileAsPictureResult.FromString,
+                _registered_method=True)
+        self.ImportHiddenPointBarXmlFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportHiddenPointBarXmlFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportHiddenPointBarXmlFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportHiddenPointBarXmlFileResult.FromString,
+                _registered_method=True)
+        self.ImportIgesFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportIgesFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportIgesFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportIgesFileResult.FromString,
+                _registered_method=True)
+        self.ImportLeicaGsiFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportLeicaGsiFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportLeicaGsiFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportLeicaGsiFileResult.FromString,
+                _registered_method=True)
+        self.ImportLeicaSdbFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportLeicaSdbFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportLeicaSdbFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportLeicaSdbFileResult.FromString,
+                _registered_method=True)
+        self.ImportMpFileAsEmbeddedMp = channel.unary_unary(
+                '/briosa.FileOperations/ImportMpFileAsEmbeddedMp',
+                request_serializer=briosa_dot_file__operations__pb2.ImportMpFileAsEmbeddedMpRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportMpFileAsEmbeddedMpResult.FromString,
+                _registered_method=True)
+        self.ImportNominalsFromXmlFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportNominalsFromXmlFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportNominalsFromXmlFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportNominalsFromXmlFileResult.FromString,
+                _registered_method=True)
+        self.ImportPolyworksFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportPolyworksFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportPolyworksFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportPolyworksFileResult.FromString,
+                _registered_method=True)
+        self.ImportQdasCatalogFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportQdasCatalogFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportQdasCatalogFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportQdasCatalogFileResult.FromString,
+                _registered_method=True)
+        self.ImportSaFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportSaFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportSaFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportSaFileResult.FromString,
+                _registered_method=True)
+        self.ImportSaWindowsPlacement = channel.unary_unary(
+                '/briosa.FileOperations/ImportSaWindowsPlacement',
+                request_serializer=briosa_dot_file__operations__pb2.ImportSaWindowsPlacementRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportSaWindowsPlacementResult.FromString,
+                _registered_method=True)
+        self.ImportSatFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportSatFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportSatFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportSatFileResult.FromString,
+                _registered_method=True)
+        self.ImportStepFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportStepFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportStepFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportStepFileResult.FromString,
+                _registered_method=True)
+        self.ImportStlFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportStlFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportStlFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportStlFileResult.FromString,
+                _registered_method=True)
+        self.ImportVdaFsFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportVdaFsFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportVdaFsFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportVdaFsFileResult.FromString,
+                _registered_method=True)
+        self.ImportVstarsXyzFile = channel.unary_unary(
+                '/briosa.FileOperations/ImportVstarsXyzFile',
+                request_serializer=briosa_dot_file__operations__pb2.ImportVstarsXyzFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportVstarsXyzFileResult.FromString,
+                _registered_method=True)
+        self.ImportVstarsCameras = channel.unary_unary(
+                '/briosa.FileOperations/ImportVstarsCameras',
+                request_serializer=briosa_dot_file__operations__pb2.ImportVstarsCamerasRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.ImportVstarsCamerasResult.FromString,
+                _registered_method=True)
+        self.LoadHtmlForm = channel.unary_unary(
+                '/briosa.FileOperations/LoadHtmlForm',
+                request_serializer=briosa_dot_file__operations__pb2.LoadHtmlFormRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.LoadHtmlFormResult.FromString,
+                _registered_method=True)
+        self.LoadHtmlFormInEdgeBrowser = channel.unary_unary(
+                '/briosa.FileOperations/LoadHtmlFormInEdgeBrowser',
+                request_serializer=briosa_dot_file__operations__pb2.LoadHtmlFormInEdgeBrowserRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.LoadHtmlFormInEdgeBrowserResult.FromString,
+                _registered_method=True)
+        self.MakeEmbeddedFileNameList = channel.unary_unary(
+                '/briosa.FileOperations/MakeEmbeddedFileNameList',
+                request_serializer=briosa_dot_file__operations__pb2.MakeEmbeddedFileNameListRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.MakeEmbeddedFileNameListResult.FromString,
+                _registered_method=True)
+        self.MergeMeasurementsIntoXmlFile = channel.unary_unary(
+                '/briosa.FileOperations/MergeMeasurementsIntoXmlFile',
+                request_serializer=briosa_dot_file__operations__pb2.MergeMeasurementsIntoXmlFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.MergeMeasurementsIntoXmlFileResult.FromString,
+                _registered_method=True)
+        self.NewSaFile = channel.unary_unary(
+                '/briosa.FileOperations/NewSaFile',
+                request_serializer=briosa_dot_file__operations__pb2.NewSaFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.NewSaFileResult.FromString,
+                _registered_method=True)
+        self.OpenSaFile = channel.unary_unary(
+                '/briosa.FileOperations/OpenSaFile',
+                request_serializer=briosa_dot_file__operations__pb2.OpenSaFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.OpenSaFileResult.FromString,
+                _registered_method=True)
+        self.OpenTemplateFile = channel.unary_unary(
+                '/briosa.FileOperations/OpenTemplateFile',
+                request_serializer=briosa_dot_file__operations__pb2.OpenTemplateFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.OpenTemplateFileResult.FromString,
+                _registered_method=True)
+        self.PopPolyBayAnalysisWindow = channel.unary_unary(
+                '/briosa.FileOperations/PopPolyBayAnalysisWindow',
+                request_serializer=briosa_dot_file__operations__pb2.PopPolyBayAnalysisWindowRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.PopPolyBayAnalysisWindowResult.FromString,
+                _registered_method=True)
+        self.PrepareQdasDataList = channel.unary_unary(
+                '/briosa.FileOperations/PrepareQdasDataList',
+                request_serializer=briosa_dot_file__operations__pb2.PrepareQdasDataListRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.PrepareQdasDataListResult.FromString,
+                _registered_method=True)
+        self.RenameGeneralFile = channel.unary_unary(
+                '/briosa.FileOperations/RenameGeneralFile',
+                request_serializer=briosa_dot_file__operations__pb2.RenameGeneralFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.RenameGeneralFileResult.FromString,
+                _registered_method=True)
+        self.Save = channel.unary_unary(
+                '/briosa.FileOperations/Save',
+                request_serializer=briosa_dot_file__operations__pb2.SaveRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SaveResult.FromString,
+                _registered_method=True)
+        self.SaveAsReadOnlyTemplate = channel.unary_unary(
+                '/briosa.FileOperations/SaveAsReadOnlyTemplate',
+                request_serializer=briosa_dot_file__operations__pb2.SaveAsReadOnlyTemplateRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SaveAsReadOnlyTemplateResult.FromString,
+                _registered_method=True)
+        self.SaveAs = channel.unary_unary(
+                '/briosa.FileOperations/SaveAs',
+                request_serializer=briosa_dot_file__operations__pb2.SaveAsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SaveAsResult.FromString,
+                _registered_method=True)
+        self.SetBooleanInDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/SetBooleanInDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.SetBooleanInDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SetBooleanInDataShareFileResult.FromString,
+                _registered_method=True)
+        self.SetDoubleInDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/SetDoubleInDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.SetDoubleInDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SetDoubleInDataShareFileResult.FromString,
+                _registered_method=True)
+        self.SetIntegerInDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/SetIntegerInDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.SetIntegerInDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SetIntegerInDataShareFileResult.FromString,
+                _registered_method=True)
+        self.SetStringInDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/SetStringInDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.SetStringInDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SetStringInDataShareFileResult.FromString,
+                _registered_method=True)
+        self.SetTransformInDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/SetTransformInDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.SetTransformInDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SetTransformInDataShareFileResult.FromString,
+                _registered_method=True)
+        self.SetVectorInDataShareFile = channel.unary_unary(
+                '/briosa.FileOperations/SetVectorInDataShareFile',
+                request_serializer=briosa_dot_file__operations__pb2.SetVectorInDataShareFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.SetVectorInDataShareFileResult.FromString,
+                _registered_method=True)
+        self.TerminateAllRunningMPs = channel.unary_unary(
+                '/briosa.FileOperations/TerminateAllRunningMPs',
+                request_serializer=briosa_dot_file__operations__pb2.TerminateAllRunningMPsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.TerminateAllRunningMPsResult.FromString,
+                _registered_method=True)
+        self.UseNrkxmlLibrary = channel.unary_unary(
+                '/briosa.FileOperations/UseNrkxmlLibrary',
+                request_serializer=briosa_dot_file__operations__pb2.UseNrkxmlLibraryRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.UseNrkxmlLibraryResult.FromString,
+                _registered_method=True)
+        self.VerifyGeneralFileExists = channel.unary_unary(
+                '/briosa.FileOperations/VerifyGeneralFileExists',
+                request_serializer=briosa_dot_file__operations__pb2.VerifyGeneralFileExistsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.VerifyGeneralFileExistsResult.FromString,
+                _registered_method=True)
+        self.VerifyMpFileExists = channel.unary_unary(
+                '/briosa.FileOperations/VerifyMpFileExists',
+                request_serializer=briosa_dot_file__operations__pb2.VerifyMpFileExistsRequest.SerializeToString,
+                response_deserializer=briosa_dot_file__operations__pb2.VerifyMpFileExistsResult.FromString,
                 _registered_method=True)
 
 
 class FileOperationsServicer(object):
     """Missing associated documentation comment in .proto file."""
 
+    def BackupNow(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CopyGeneralFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteGeneralFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DirectCadAccess(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportAsciiFrameSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportAsciiFrames(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportAsciiPointClouds(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportAsciiPointSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportAsciiPoints(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportDxf(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportEmbeddedFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportHiddenPointBarXmlFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportIgesFileEntireModel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportIgesFilePartialModel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportPtxPointClouds(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportQdasCharacteristics(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportQdasDataList(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportScanStripeMeshToStlFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportStepFileEntireModel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportStepFilePartialModel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportVdaFsFileEntireModel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportVdaFsFilePartialModel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExportVectorContainerToAsciiFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def FindFilesInDirectory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def FindSubDirectoriesInDirectory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetBooleanFromDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetDoubleFromDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetIntegerFromDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetQdasCatalogEntries(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStringFromDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetTransformFromDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetVectorFromDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetWorkingDirectory(self, request, context):
-        """Executes the "Get Working Directory" MP command.
-        """
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportAsciiPredefinedFormats(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportAsciiPredefinedFrameSetFormats(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportE57File(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportFileAsEmbeddedFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportFileAsPicture(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportHiddenPointBarXmlFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportIgesFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportLeicaGsiFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportLeicaSdbFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportMpFileAsEmbeddedMp(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportNominalsFromXmlFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportPolyworksFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportQdasCatalogFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportSaFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportSaWindowsPlacement(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportSatFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportStepFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportStlFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportVdaFsFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportVstarsXyzFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportVstarsCameras(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LoadHtmlForm(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LoadHtmlFormInEdgeBrowser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeEmbeddedFileNameList(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MergeMeasurementsIntoXmlFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def NewSaFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def OpenSaFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def OpenTemplateFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def PopPolyBayAnalysisWindow(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def PrepareQdasDataList(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RenameGeneralFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Save(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SaveAsReadOnlyTemplate(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SaveAs(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetBooleanInDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetDoubleInDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetIntegerInDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetStringInDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetTransformInDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetVectorInDataShareFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def TerminateAllRunningMPs(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UseNrkxmlLibrary(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def VerifyGeneralFileExists(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def VerifyMpFileExists(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -54,10 +889,390 @@ class FileOperationsServicer(object):
 
 def add_FileOperationsServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'BackupNow': grpc.unary_unary_rpc_method_handler(
+                    servicer.BackupNow,
+                    request_deserializer=briosa_dot_file__operations__pb2.BackupNowRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.BackupNowResult.SerializeToString,
+            ),
+            'CopyGeneralFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.CopyGeneralFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.CopyGeneralFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.CopyGeneralFileResult.SerializeToString,
+            ),
+            'DeleteGeneralFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteGeneralFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.DeleteGeneralFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.DeleteGeneralFileResult.SerializeToString,
+            ),
+            'DirectCadAccess': grpc.unary_unary_rpc_method_handler(
+                    servicer.DirectCadAccess,
+                    request_deserializer=briosa_dot_file__operations__pb2.DirectCadAccessRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.DirectCadAccessResult.SerializeToString,
+            ),
+            'ExportAsciiFrameSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportAsciiFrameSet,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportAsciiFrameSetRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportAsciiFrameSetResult.SerializeToString,
+            ),
+            'ExportAsciiFrames': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportAsciiFrames,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportAsciiFramesRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportAsciiFramesResult.SerializeToString,
+            ),
+            'ExportAsciiPointClouds': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportAsciiPointClouds,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportAsciiPointCloudsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportAsciiPointCloudsResult.SerializeToString,
+            ),
+            'ExportAsciiPointSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportAsciiPointSet,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportAsciiPointSetRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportAsciiPointSetResult.SerializeToString,
+            ),
+            'ExportAsciiPoints': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportAsciiPoints,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportAsciiPointsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportAsciiPointsResult.SerializeToString,
+            ),
+            'ExportDxf': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportDxf,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportDxfRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportDxfResult.SerializeToString,
+            ),
+            'ExportEmbeddedFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportEmbeddedFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportEmbeddedFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportEmbeddedFileResult.SerializeToString,
+            ),
+            'ExportHiddenPointBarXmlFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportHiddenPointBarXmlFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportHiddenPointBarXmlFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportHiddenPointBarXmlFileResult.SerializeToString,
+            ),
+            'ExportIgesFileEntireModel': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportIgesFileEntireModel,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportIgesFileEntireModelRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportIgesFileEntireModelResult.SerializeToString,
+            ),
+            'ExportIgesFilePartialModel': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportIgesFilePartialModel,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportIgesFilePartialModelRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportIgesFilePartialModelResult.SerializeToString,
+            ),
+            'ExportPtxPointClouds': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportPtxPointClouds,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportPtxPointCloudsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportPtxPointCloudsResult.SerializeToString,
+            ),
+            'ExportQdasCharacteristics': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportQdasCharacteristics,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportQdasCharacteristicsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportQdasCharacteristicsResult.SerializeToString,
+            ),
+            'ExportQdasDataList': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportQdasDataList,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportQdasDataListRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportQdasDataListResult.SerializeToString,
+            ),
+            'ExportScanStripeMeshToStlFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportScanStripeMeshToStlFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportScanStripeMeshToStlFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportScanStripeMeshToStlFileResult.SerializeToString,
+            ),
+            'ExportStepFileEntireModel': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportStepFileEntireModel,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportStepFileEntireModelRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportStepFileEntireModelResult.SerializeToString,
+            ),
+            'ExportStepFilePartialModel': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportStepFilePartialModel,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportStepFilePartialModelRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportStepFilePartialModelResult.SerializeToString,
+            ),
+            'ExportVdaFsFileEntireModel': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportVdaFsFileEntireModel,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportVdaFsFileEntireModelRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportVdaFsFileEntireModelResult.SerializeToString,
+            ),
+            'ExportVdaFsFilePartialModel': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportVdaFsFilePartialModel,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportVdaFsFilePartialModelRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportVdaFsFilePartialModelResult.SerializeToString,
+            ),
+            'ExportVectorContainerToAsciiFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExportVectorContainerToAsciiFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ExportVectorContainerToAsciiFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ExportVectorContainerToAsciiFileResult.SerializeToString,
+            ),
+            'FindFilesInDirectory': grpc.unary_unary_rpc_method_handler(
+                    servicer.FindFilesInDirectory,
+                    request_deserializer=briosa_dot_file__operations__pb2.FindFilesInDirectoryRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.FindFilesInDirectoryResult.SerializeToString,
+            ),
+            'FindSubDirectoriesInDirectory': grpc.unary_unary_rpc_method_handler(
+                    servicer.FindSubDirectoriesInDirectory,
+                    request_deserializer=briosa_dot_file__operations__pb2.FindSubDirectoriesInDirectoryRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.FindSubDirectoriesInDirectoryResult.SerializeToString,
+            ),
+            'GetBooleanFromDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetBooleanFromDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.GetBooleanFromDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.GetBooleanFromDataShareFileResult.SerializeToString,
+            ),
+            'GetDoubleFromDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetDoubleFromDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.GetDoubleFromDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.GetDoubleFromDataShareFileResult.SerializeToString,
+            ),
+            'GetIntegerFromDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetIntegerFromDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.GetIntegerFromDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.GetIntegerFromDataShareFileResult.SerializeToString,
+            ),
+            'GetQdasCatalogEntries': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetQdasCatalogEntries,
+                    request_deserializer=briosa_dot_file__operations__pb2.GetQdasCatalogEntriesRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.GetQdasCatalogEntriesResult.SerializeToString,
+            ),
+            'GetStringFromDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStringFromDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.GetStringFromDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.GetStringFromDataShareFileResult.SerializeToString,
+            ),
+            'GetTransformFromDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTransformFromDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.GetTransformFromDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.GetTransformFromDataShareFileResult.SerializeToString,
+            ),
+            'GetVectorFromDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetVectorFromDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.GetVectorFromDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.GetVectorFromDataShareFileResult.SerializeToString,
+            ),
             'GetWorkingDirectory': grpc.unary_unary_rpc_method_handler(
                     servicer.GetWorkingDirectory,
                     request_deserializer=briosa_dot_file__operations__pb2.GetWorkingDirectoryRequest.FromString,
                     response_serializer=briosa_dot_file__operations__pb2.GetWorkingDirectoryResult.SerializeToString,
+            ),
+            'ImportAsciiPredefinedFormats': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportAsciiPredefinedFormats,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportAsciiPredefinedFormatsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportAsciiPredefinedFormatsResult.SerializeToString,
+            ),
+            'ImportAsciiPredefinedFrameSetFormats': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportAsciiPredefinedFrameSetFormats,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportAsciiPredefinedFrameSetFormatsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportAsciiPredefinedFrameSetFormatsResult.SerializeToString,
+            ),
+            'ImportE57File': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportE57File,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportE57FileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportE57FileResult.SerializeToString,
+            ),
+            'ImportFileAsEmbeddedFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportFileAsEmbeddedFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportFileAsEmbeddedFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportFileAsEmbeddedFileResult.SerializeToString,
+            ),
+            'ImportFileAsPicture': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportFileAsPicture,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportFileAsPictureRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportFileAsPictureResult.SerializeToString,
+            ),
+            'ImportHiddenPointBarXmlFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportHiddenPointBarXmlFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportHiddenPointBarXmlFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportHiddenPointBarXmlFileResult.SerializeToString,
+            ),
+            'ImportIgesFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportIgesFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportIgesFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportIgesFileResult.SerializeToString,
+            ),
+            'ImportLeicaGsiFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportLeicaGsiFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportLeicaGsiFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportLeicaGsiFileResult.SerializeToString,
+            ),
+            'ImportLeicaSdbFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportLeicaSdbFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportLeicaSdbFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportLeicaSdbFileResult.SerializeToString,
+            ),
+            'ImportMpFileAsEmbeddedMp': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportMpFileAsEmbeddedMp,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportMpFileAsEmbeddedMpRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportMpFileAsEmbeddedMpResult.SerializeToString,
+            ),
+            'ImportNominalsFromXmlFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportNominalsFromXmlFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportNominalsFromXmlFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportNominalsFromXmlFileResult.SerializeToString,
+            ),
+            'ImportPolyworksFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportPolyworksFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportPolyworksFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportPolyworksFileResult.SerializeToString,
+            ),
+            'ImportQdasCatalogFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportQdasCatalogFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportQdasCatalogFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportQdasCatalogFileResult.SerializeToString,
+            ),
+            'ImportSaFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportSaFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportSaFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportSaFileResult.SerializeToString,
+            ),
+            'ImportSaWindowsPlacement': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportSaWindowsPlacement,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportSaWindowsPlacementRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportSaWindowsPlacementResult.SerializeToString,
+            ),
+            'ImportSatFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportSatFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportSatFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportSatFileResult.SerializeToString,
+            ),
+            'ImportStepFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportStepFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportStepFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportStepFileResult.SerializeToString,
+            ),
+            'ImportStlFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportStlFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportStlFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportStlFileResult.SerializeToString,
+            ),
+            'ImportVdaFsFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportVdaFsFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportVdaFsFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportVdaFsFileResult.SerializeToString,
+            ),
+            'ImportVstarsXyzFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportVstarsXyzFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportVstarsXyzFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportVstarsXyzFileResult.SerializeToString,
+            ),
+            'ImportVstarsCameras': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportVstarsCameras,
+                    request_deserializer=briosa_dot_file__operations__pb2.ImportVstarsCamerasRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.ImportVstarsCamerasResult.SerializeToString,
+            ),
+            'LoadHtmlForm': grpc.unary_unary_rpc_method_handler(
+                    servicer.LoadHtmlForm,
+                    request_deserializer=briosa_dot_file__operations__pb2.LoadHtmlFormRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.LoadHtmlFormResult.SerializeToString,
+            ),
+            'LoadHtmlFormInEdgeBrowser': grpc.unary_unary_rpc_method_handler(
+                    servicer.LoadHtmlFormInEdgeBrowser,
+                    request_deserializer=briosa_dot_file__operations__pb2.LoadHtmlFormInEdgeBrowserRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.LoadHtmlFormInEdgeBrowserResult.SerializeToString,
+            ),
+            'MakeEmbeddedFileNameList': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeEmbeddedFileNameList,
+                    request_deserializer=briosa_dot_file__operations__pb2.MakeEmbeddedFileNameListRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.MakeEmbeddedFileNameListResult.SerializeToString,
+            ),
+            'MergeMeasurementsIntoXmlFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MergeMeasurementsIntoXmlFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.MergeMeasurementsIntoXmlFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.MergeMeasurementsIntoXmlFileResult.SerializeToString,
+            ),
+            'NewSaFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.NewSaFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.NewSaFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.NewSaFileResult.SerializeToString,
+            ),
+            'OpenSaFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.OpenSaFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.OpenSaFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.OpenSaFileResult.SerializeToString,
+            ),
+            'OpenTemplateFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.OpenTemplateFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.OpenTemplateFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.OpenTemplateFileResult.SerializeToString,
+            ),
+            'PopPolyBayAnalysisWindow': grpc.unary_unary_rpc_method_handler(
+                    servicer.PopPolyBayAnalysisWindow,
+                    request_deserializer=briosa_dot_file__operations__pb2.PopPolyBayAnalysisWindowRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.PopPolyBayAnalysisWindowResult.SerializeToString,
+            ),
+            'PrepareQdasDataList': grpc.unary_unary_rpc_method_handler(
+                    servicer.PrepareQdasDataList,
+                    request_deserializer=briosa_dot_file__operations__pb2.PrepareQdasDataListRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.PrepareQdasDataListResult.SerializeToString,
+            ),
+            'RenameGeneralFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.RenameGeneralFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.RenameGeneralFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.RenameGeneralFileResult.SerializeToString,
+            ),
+            'Save': grpc.unary_unary_rpc_method_handler(
+                    servicer.Save,
+                    request_deserializer=briosa_dot_file__operations__pb2.SaveRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SaveResult.SerializeToString,
+            ),
+            'SaveAsReadOnlyTemplate': grpc.unary_unary_rpc_method_handler(
+                    servicer.SaveAsReadOnlyTemplate,
+                    request_deserializer=briosa_dot_file__operations__pb2.SaveAsReadOnlyTemplateRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SaveAsReadOnlyTemplateResult.SerializeToString,
+            ),
+            'SaveAs': grpc.unary_unary_rpc_method_handler(
+                    servicer.SaveAs,
+                    request_deserializer=briosa_dot_file__operations__pb2.SaveAsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SaveAsResult.SerializeToString,
+            ),
+            'SetBooleanInDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetBooleanInDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.SetBooleanInDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SetBooleanInDataShareFileResult.SerializeToString,
+            ),
+            'SetDoubleInDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetDoubleInDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.SetDoubleInDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SetDoubleInDataShareFileResult.SerializeToString,
+            ),
+            'SetIntegerInDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetIntegerInDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.SetIntegerInDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SetIntegerInDataShareFileResult.SerializeToString,
+            ),
+            'SetStringInDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetStringInDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.SetStringInDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SetStringInDataShareFileResult.SerializeToString,
+            ),
+            'SetTransformInDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetTransformInDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.SetTransformInDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SetTransformInDataShareFileResult.SerializeToString,
+            ),
+            'SetVectorInDataShareFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetVectorInDataShareFile,
+                    request_deserializer=briosa_dot_file__operations__pb2.SetVectorInDataShareFileRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.SetVectorInDataShareFileResult.SerializeToString,
+            ),
+            'TerminateAllRunningMPs': grpc.unary_unary_rpc_method_handler(
+                    servicer.TerminateAllRunningMPs,
+                    request_deserializer=briosa_dot_file__operations__pb2.TerminateAllRunningMPsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.TerminateAllRunningMPsResult.SerializeToString,
+            ),
+            'UseNrkxmlLibrary': grpc.unary_unary_rpc_method_handler(
+                    servicer.UseNrkxmlLibrary,
+                    request_deserializer=briosa_dot_file__operations__pb2.UseNrkxmlLibraryRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.UseNrkxmlLibraryResult.SerializeToString,
+            ),
+            'VerifyGeneralFileExists': grpc.unary_unary_rpc_method_handler(
+                    servicer.VerifyGeneralFileExists,
+                    request_deserializer=briosa_dot_file__operations__pb2.VerifyGeneralFileExistsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.VerifyGeneralFileExistsResult.SerializeToString,
+            ),
+            'VerifyMpFileExists': grpc.unary_unary_rpc_method_handler(
+                    servicer.VerifyMpFileExists,
+                    request_deserializer=briosa_dot_file__operations__pb2.VerifyMpFileExistsRequest.FromString,
+                    response_serializer=briosa_dot_file__operations__pb2.VerifyMpFileExistsResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -69,6 +1284,870 @@ def add_FileOperationsServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class FileOperations(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def BackupNow(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/BackupNow',
+            briosa_dot_file__operations__pb2.BackupNowRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.BackupNowResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CopyGeneralFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/CopyGeneralFile',
+            briosa_dot_file__operations__pb2.CopyGeneralFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.CopyGeneralFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteGeneralFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/DeleteGeneralFile',
+            briosa_dot_file__operations__pb2.DeleteGeneralFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.DeleteGeneralFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DirectCadAccess(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/DirectCadAccess',
+            briosa_dot_file__operations__pb2.DirectCadAccessRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.DirectCadAccessResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportAsciiFrameSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportAsciiFrameSet',
+            briosa_dot_file__operations__pb2.ExportAsciiFrameSetRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportAsciiFrameSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportAsciiFrames(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportAsciiFrames',
+            briosa_dot_file__operations__pb2.ExportAsciiFramesRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportAsciiFramesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportAsciiPointClouds(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportAsciiPointClouds',
+            briosa_dot_file__operations__pb2.ExportAsciiPointCloudsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportAsciiPointCloudsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportAsciiPointSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportAsciiPointSet',
+            briosa_dot_file__operations__pb2.ExportAsciiPointSetRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportAsciiPointSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportAsciiPoints(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportAsciiPoints',
+            briosa_dot_file__operations__pb2.ExportAsciiPointsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportAsciiPointsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportDxf(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportDxf',
+            briosa_dot_file__operations__pb2.ExportDxfRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportDxfResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportEmbeddedFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportEmbeddedFile',
+            briosa_dot_file__operations__pb2.ExportEmbeddedFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportEmbeddedFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportHiddenPointBarXmlFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportHiddenPointBarXmlFile',
+            briosa_dot_file__operations__pb2.ExportHiddenPointBarXmlFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportHiddenPointBarXmlFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportIgesFileEntireModel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportIgesFileEntireModel',
+            briosa_dot_file__operations__pb2.ExportIgesFileEntireModelRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportIgesFileEntireModelResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportIgesFilePartialModel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportIgesFilePartialModel',
+            briosa_dot_file__operations__pb2.ExportIgesFilePartialModelRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportIgesFilePartialModelResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportPtxPointClouds(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportPtxPointClouds',
+            briosa_dot_file__operations__pb2.ExportPtxPointCloudsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportPtxPointCloudsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportQdasCharacteristics(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportQdasCharacteristics',
+            briosa_dot_file__operations__pb2.ExportQdasCharacteristicsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportQdasCharacteristicsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportQdasDataList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportQdasDataList',
+            briosa_dot_file__operations__pb2.ExportQdasDataListRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportQdasDataListResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportScanStripeMeshToStlFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportScanStripeMeshToStlFile',
+            briosa_dot_file__operations__pb2.ExportScanStripeMeshToStlFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportScanStripeMeshToStlFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportStepFileEntireModel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportStepFileEntireModel',
+            briosa_dot_file__operations__pb2.ExportStepFileEntireModelRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportStepFileEntireModelResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportStepFilePartialModel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportStepFilePartialModel',
+            briosa_dot_file__operations__pb2.ExportStepFilePartialModelRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportStepFilePartialModelResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportVdaFsFileEntireModel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportVdaFsFileEntireModel',
+            briosa_dot_file__operations__pb2.ExportVdaFsFileEntireModelRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportVdaFsFileEntireModelResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportVdaFsFilePartialModel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportVdaFsFilePartialModel',
+            briosa_dot_file__operations__pb2.ExportVdaFsFilePartialModelRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportVdaFsFilePartialModelResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExportVectorContainerToAsciiFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ExportVectorContainerToAsciiFile',
+            briosa_dot_file__operations__pb2.ExportVectorContainerToAsciiFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ExportVectorContainerToAsciiFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def FindFilesInDirectory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/FindFilesInDirectory',
+            briosa_dot_file__operations__pb2.FindFilesInDirectoryRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.FindFilesInDirectoryResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def FindSubDirectoriesInDirectory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/FindSubDirectoriesInDirectory',
+            briosa_dot_file__operations__pb2.FindSubDirectoriesInDirectoryRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.FindSubDirectoriesInDirectoryResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetBooleanFromDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/GetBooleanFromDataShareFile',
+            briosa_dot_file__operations__pb2.GetBooleanFromDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.GetBooleanFromDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetDoubleFromDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/GetDoubleFromDataShareFile',
+            briosa_dot_file__operations__pb2.GetDoubleFromDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.GetDoubleFromDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetIntegerFromDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/GetIntegerFromDataShareFile',
+            briosa_dot_file__operations__pb2.GetIntegerFromDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.GetIntegerFromDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetQdasCatalogEntries(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/GetQdasCatalogEntries',
+            briosa_dot_file__operations__pb2.GetQdasCatalogEntriesRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.GetQdasCatalogEntriesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetStringFromDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/GetStringFromDataShareFile',
+            briosa_dot_file__operations__pb2.GetStringFromDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.GetStringFromDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTransformFromDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/GetTransformFromDataShareFile',
+            briosa_dot_file__operations__pb2.GetTransformFromDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.GetTransformFromDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetVectorFromDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/GetVectorFromDataShareFile',
+            briosa_dot_file__operations__pb2.GetVectorFromDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.GetVectorFromDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def GetWorkingDirectory(request,
@@ -87,6 +2166,1194 @@ class FileOperations(object):
             '/briosa.FileOperations/GetWorkingDirectory',
             briosa_dot_file__operations__pb2.GetWorkingDirectoryRequest.SerializeToString,
             briosa_dot_file__operations__pb2.GetWorkingDirectoryResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportAsciiPredefinedFormats(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportAsciiPredefinedFormats',
+            briosa_dot_file__operations__pb2.ImportAsciiPredefinedFormatsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportAsciiPredefinedFormatsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportAsciiPredefinedFrameSetFormats(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportAsciiPredefinedFrameSetFormats',
+            briosa_dot_file__operations__pb2.ImportAsciiPredefinedFrameSetFormatsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportAsciiPredefinedFrameSetFormatsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportE57File(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportE57File',
+            briosa_dot_file__operations__pb2.ImportE57FileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportE57FileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportFileAsEmbeddedFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportFileAsEmbeddedFile',
+            briosa_dot_file__operations__pb2.ImportFileAsEmbeddedFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportFileAsEmbeddedFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportFileAsPicture(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportFileAsPicture',
+            briosa_dot_file__operations__pb2.ImportFileAsPictureRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportFileAsPictureResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportHiddenPointBarXmlFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportHiddenPointBarXmlFile',
+            briosa_dot_file__operations__pb2.ImportHiddenPointBarXmlFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportHiddenPointBarXmlFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportIgesFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportIgesFile',
+            briosa_dot_file__operations__pb2.ImportIgesFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportIgesFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportLeicaGsiFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportLeicaGsiFile',
+            briosa_dot_file__operations__pb2.ImportLeicaGsiFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportLeicaGsiFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportLeicaSdbFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportLeicaSdbFile',
+            briosa_dot_file__operations__pb2.ImportLeicaSdbFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportLeicaSdbFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportMpFileAsEmbeddedMp(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportMpFileAsEmbeddedMp',
+            briosa_dot_file__operations__pb2.ImportMpFileAsEmbeddedMpRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportMpFileAsEmbeddedMpResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportNominalsFromXmlFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportNominalsFromXmlFile',
+            briosa_dot_file__operations__pb2.ImportNominalsFromXmlFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportNominalsFromXmlFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportPolyworksFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportPolyworksFile',
+            briosa_dot_file__operations__pb2.ImportPolyworksFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportPolyworksFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportQdasCatalogFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportQdasCatalogFile',
+            briosa_dot_file__operations__pb2.ImportQdasCatalogFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportQdasCatalogFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportSaFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportSaFile',
+            briosa_dot_file__operations__pb2.ImportSaFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportSaFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportSaWindowsPlacement(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportSaWindowsPlacement',
+            briosa_dot_file__operations__pb2.ImportSaWindowsPlacementRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportSaWindowsPlacementResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportSatFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportSatFile',
+            briosa_dot_file__operations__pb2.ImportSatFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportSatFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportStepFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportStepFile',
+            briosa_dot_file__operations__pb2.ImportStepFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportStepFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportStlFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportStlFile',
+            briosa_dot_file__operations__pb2.ImportStlFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportStlFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportVdaFsFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportVdaFsFile',
+            briosa_dot_file__operations__pb2.ImportVdaFsFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportVdaFsFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportVstarsXyzFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportVstarsXyzFile',
+            briosa_dot_file__operations__pb2.ImportVstarsXyzFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportVstarsXyzFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportVstarsCameras(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/ImportVstarsCameras',
+            briosa_dot_file__operations__pb2.ImportVstarsCamerasRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.ImportVstarsCamerasResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def LoadHtmlForm(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/LoadHtmlForm',
+            briosa_dot_file__operations__pb2.LoadHtmlFormRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.LoadHtmlFormResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def LoadHtmlFormInEdgeBrowser(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/LoadHtmlFormInEdgeBrowser',
+            briosa_dot_file__operations__pb2.LoadHtmlFormInEdgeBrowserRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.LoadHtmlFormInEdgeBrowserResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeEmbeddedFileNameList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/MakeEmbeddedFileNameList',
+            briosa_dot_file__operations__pb2.MakeEmbeddedFileNameListRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.MakeEmbeddedFileNameListResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MergeMeasurementsIntoXmlFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/MergeMeasurementsIntoXmlFile',
+            briosa_dot_file__operations__pb2.MergeMeasurementsIntoXmlFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.MergeMeasurementsIntoXmlFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def NewSaFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/NewSaFile',
+            briosa_dot_file__operations__pb2.NewSaFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.NewSaFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def OpenSaFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/OpenSaFile',
+            briosa_dot_file__operations__pb2.OpenSaFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.OpenSaFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def OpenTemplateFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/OpenTemplateFile',
+            briosa_dot_file__operations__pb2.OpenTemplateFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.OpenTemplateFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def PopPolyBayAnalysisWindow(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/PopPolyBayAnalysisWindow',
+            briosa_dot_file__operations__pb2.PopPolyBayAnalysisWindowRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.PopPolyBayAnalysisWindowResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def PrepareQdasDataList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/PrepareQdasDataList',
+            briosa_dot_file__operations__pb2.PrepareQdasDataListRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.PrepareQdasDataListResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def RenameGeneralFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/RenameGeneralFile',
+            briosa_dot_file__operations__pb2.RenameGeneralFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.RenameGeneralFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Save(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/Save',
+            briosa_dot_file__operations__pb2.SaveRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SaveResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SaveAsReadOnlyTemplate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/SaveAsReadOnlyTemplate',
+            briosa_dot_file__operations__pb2.SaveAsReadOnlyTemplateRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SaveAsReadOnlyTemplateResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SaveAs(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/SaveAs',
+            briosa_dot_file__operations__pb2.SaveAsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SaveAsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetBooleanInDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/SetBooleanInDataShareFile',
+            briosa_dot_file__operations__pb2.SetBooleanInDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SetBooleanInDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetDoubleInDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/SetDoubleInDataShareFile',
+            briosa_dot_file__operations__pb2.SetDoubleInDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SetDoubleInDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetIntegerInDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/SetIntegerInDataShareFile',
+            briosa_dot_file__operations__pb2.SetIntegerInDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SetIntegerInDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetStringInDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/SetStringInDataShareFile',
+            briosa_dot_file__operations__pb2.SetStringInDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SetStringInDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetTransformInDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/SetTransformInDataShareFile',
+            briosa_dot_file__operations__pb2.SetTransformInDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SetTransformInDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetVectorInDataShareFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/SetVectorInDataShareFile',
+            briosa_dot_file__operations__pb2.SetVectorInDataShareFileRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.SetVectorInDataShareFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def TerminateAllRunningMPs(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/TerminateAllRunningMPs',
+            briosa_dot_file__operations__pb2.TerminateAllRunningMPsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.TerminateAllRunningMPsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UseNrkxmlLibrary(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/UseNrkxmlLibrary',
+            briosa_dot_file__operations__pb2.UseNrkxmlLibraryRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.UseNrkxmlLibraryResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def VerifyGeneralFileExists(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/VerifyGeneralFileExists',
+            briosa_dot_file__operations__pb2.VerifyGeneralFileExistsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.VerifyGeneralFileExistsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def VerifyMpFileExists(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.FileOperations/VerifyMpFileExists',
+            briosa_dot_file__operations__pb2.VerifyMpFileExistsRequest.SerializeToString,
+            briosa_dot_file__operations__pb2.VerifyMpFileExistsResult.FromString,
             options,
             channel_credentials,
             insecure,
