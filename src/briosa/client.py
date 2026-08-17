@@ -30,6 +30,12 @@ from briosa.models import (
     SpatialAnalyzerSdkRecoveryMode,
     SpatialAnalyzerSdkState,
 )
+from briosa.operation_protocol import (
+    build_request,
+    map_response,
+    operation_method,
+    response_type,
+)
 from briosa.protocol_identity import BRIOSA_VERSION, SPATIAL_ANALYZER_TARGET
 from briosa.transport import (
     ClientTransport,
@@ -39,8 +45,8 @@ from briosa.transport import (
     map_sdk_state,
     map_snapshot,
 )
+from briosa.wave_a_operations import WaveAOperationsMixin
 
-GET_WORKING_DIRECTORY_METHOD = "/briosa.FileOperations/GetWorkingDirectory"
 _SERVER_PATH_ENVIRONMENT_VARIABLE = "BRIOSA_SERVER_PATH"
 _Result = TypeVar("_Result")
 
@@ -126,7 +132,7 @@ class _Session:
         )
 
 
-class BriosaClient:
+class BriosaClient(WaveAOperationsMixin):
     """One reusable, event-loop-bound owner of a local Briosa server session."""
 
     def __init__(
@@ -316,6 +322,40 @@ class BriosaClient:
             return await session.transport.get_working_directory(
                 self._options.command_timeout
             )
+        except grpc.RpcError as error:
+            raise map_rpc_error(error, session.application_state) from error
+        finally:
+            await asyncio.shield(self._exit_command(session))
+
+    async def _invoke_mp_operation(
+        self,
+        service: str,
+        rpc: str,
+        operation_id: str,
+        values: dict[str, Any],
+        result_type: type[Any] | None,
+    ) -> Any:
+        method = operation_method(service, rpc)
+        request = build_request(method, values)
+        path = f"/{service}/{rpc}"
+        lock = self._bind_loop()
+        async with lock:
+            self._ensure_open()
+            if self._start_task is not None:
+                raise BriosaLifecycleError("client-start-in-progress")
+            session = self._require_session()
+            if not session.command_admission_open:
+                raise BriosaLifecycleError("mp-command-admission-closed")
+            session.active_commands += 1
+            session.commands_drained.clear()
+        try:
+            response = await session.transport.invoke_operation(
+                path,
+                request,
+                response_type(method),
+                self._options.command_timeout,
+            )
+            return map_response(method, response, result_type)
         except grpc.RpcError as error:
             raise map_rpc_error(error, session.application_state) from error
         finally:

@@ -251,7 +251,11 @@ def main() -> int:
     parser.add_argument("--update", action="store_true")
     parser.add_argument(
         "--source-channel",
-        choices=("github_release", "source_commit_bootstrap"),
+        choices=(
+            "github_release",
+            "github_actions_artifact",
+            "source_commit_bootstrap",
+        ),
     )
     args = parser.parse_args()
     artifact = args.artifact.resolve()

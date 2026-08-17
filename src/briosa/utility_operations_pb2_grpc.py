@@ -34,31 +34,568 @@ class UtilityOperationsStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.CloseAllWatchWindows = channel.unary_unary(
+                '/briosa.UtilityOperations/CloseAllWatchWindows',
+                request_serializer=briosa_dot_utility__operations__pb2.CloseAllWatchWindowsRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.CloseAllWatchWindowsResult.FromString,
+                _registered_method=True)
+        self.DeleteFolder = channel.unary_unary(
+                '/briosa.UtilityOperations/DeleteFolder',
+                request_serializer=briosa_dot_utility__operations__pb2.DeleteFolderRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.DeleteFolderResult.FromString,
+                _registered_method=True)
+        self.DeleteItems = channel.unary_unary(
+                '/briosa.UtilityOperations/DeleteItems',
+                request_serializer=briosa_dot_utility__operations__pb2.DeleteItemsRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.DeleteItemsResult.FromString,
+                _registered_method=True)
+        self.DeleteObjects = channel.unary_unary(
+                '/briosa.UtilityOperations/DeleteObjects',
+                request_serializer=briosa_dot_utility__operations__pb2.DeleteObjectsRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.DeleteObjectsResult.FromString,
+                _registered_method=True)
+        self.GetActiveLanguage = channel.unary_unary(
+                '/briosa.UtilityOperations/GetActiveLanguage',
+                request_serializer=briosa_dot_utility__operations__pb2.GetActiveLanguageRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetActiveLanguageResult.FromString,
+                _registered_method=True)
         self.GetActiveUnits = channel.unary_unary(
                 '/briosa.UtilityOperations/GetActiveUnits',
                 request_serializer=briosa_dot_utility__operations__pb2.GetActiveUnitsRequest.SerializeToString,
                 response_deserializer=briosa_dot_utility__operations__pb2.GetActiveUnitsResult.FromString,
+                _registered_method=True)
+        self.GetAngularRepresentation = channel.unary_unary(
+                '/briosa.UtilityOperations/GetAngularRepresentation',
+                request_serializer=briosa_dot_utility__operations__pb2.GetAngularRepresentationRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetAngularRepresentationResult.FromString,
+                _registered_method=True)
+        self.GetCollectionNotes = channel.unary_unary(
+                '/briosa.UtilityOperations/GetCollectionNotes',
+                request_serializer=briosa_dot_utility__operations__pb2.GetCollectionNotesRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetCollectionNotesResult.FromString,
+                _registered_method=True)
+        self.GetFolderCollections = channel.unary_unary(
+                '/briosa.UtilityOperations/GetFolderCollections',
+                request_serializer=briosa_dot_utility__operations__pb2.GetFolderCollectionsRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetFolderCollectionsResult.FromString,
+                _registered_method=True)
+        self.GetFolderNotes = channel.unary_unary(
+                '/briosa.UtilityOperations/GetFolderNotes',
+                request_serializer=briosa_dot_utility__operations__pb2.GetFolderNotesRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetFolderNotesResult.FromString,
+                _registered_method=True)
+        self.GetFoldersByWildcard = channel.unary_unary(
+                '/briosa.UtilityOperations/GetFoldersByWildcard',
+                request_serializer=briosa_dot_utility__operations__pb2.GetFoldersByWildcardRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetFoldersByWildcardResult.FromString,
+                _registered_method=True)
+        self.GetObjectNotes = channel.unary_unary(
+                '/briosa.UtilityOperations/GetObjectNotes',
+                request_serializer=briosa_dot_utility__operations__pb2.GetObjectNotesRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetObjectNotesResult.FromString,
+                _registered_method=True)
+        self.GetOpcDaTagValueDouble = channel.unary_unary(
+                '/briosa.UtilityOperations/GetOpcDaTagValueDouble',
+                request_serializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueDoubleRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueDoubleResult.FromString,
+                _registered_method=True)
+        self.GetOpcDaTagValueInteger = channel.unary_unary(
+                '/briosa.UtilityOperations/GetOpcDaTagValueInteger',
+                request_serializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueIntegerRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueIntegerResult.FromString,
+                _registered_method=True)
+        self.GetOpcDaTagValueString = channel.unary_unary(
+                '/briosa.UtilityOperations/GetOpcDaTagValueString',
+                request_serializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueStringRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueStringResult.FromString,
+                _registered_method=True)
+        self.GetPointNotes = channel.unary_unary(
+                '/briosa.UtilityOperations/GetPointNotes',
+                request_serializer=briosa_dot_utility__operations__pb2.GetPointNotesRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetPointNotesResult.FromString,
+                _registered_method=True)
+        self.GetScreenResolution = channel.unary_unary(
+                '/briosa.UtilityOperations/GetScreenResolution',
+                request_serializer=briosa_dot_utility__operations__pb2.GetScreenResolutionRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.GetScreenResolutionResult.FromString,
                 _registered_method=True)
         self.GetWorkingFrameProperties = channel.unary_unary(
                 '/briosa.UtilityOperations/GetWorkingFrameProperties',
                 request_serializer=briosa_dot_utility__operations__pb2.GetWorkingFramePropertiesRequest.SerializeToString,
                 response_deserializer=briosa_dot_utility__operations__pb2.GetWorkingFramePropertiesResult.FromString,
                 _registered_method=True)
+        self.IncrementPointName = channel.unary_unary(
+                '/briosa.UtilityOperations/IncrementPointName',
+                request_serializer=briosa_dot_utility__operations__pb2.IncrementPointNameRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.IncrementPointNameResult.FromString,
+                _registered_method=True)
+        self.LockImportedItems = channel.unary_unary(
+                '/briosa.UtilityOperations/LockImportedItems',
+                request_serializer=briosa_dot_utility__operations__pb2.LockImportedItemsRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.LockImportedItemsResult.FromString,
+                _registered_method=True)
+        self.LockUnlockSelectedItems = channel.unary_unary(
+                '/briosa.UtilityOperations/LockUnlockSelectedItems',
+                request_serializer=briosa_dot_utility__operations__pb2.LockUnlockSelectedItemsRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.LockUnlockSelectedItemsResult.FromString,
+                _registered_method=True)
+        self.LockUnlockTrappingControl = channel.unary_unary(
+                '/briosa.UtilityOperations/LockUnlockTrappingControl',
+                request_serializer=briosa_dot_utility__operations__pb2.LockUnlockTrappingControlRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.LockUnlockTrappingControlResult.FromString,
+                _registered_method=True)
+        self.MoveCollectionToFolder = channel.unary_unary(
+                '/briosa.UtilityOperations/MoveCollectionToFolder',
+                request_serializer=briosa_dot_utility__operations__pb2.MoveCollectionToFolderRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.MoveCollectionToFolderResult.FromString,
+                _registered_method=True)
+        self.MoveFolderToFolder = channel.unary_unary(
+                '/briosa.UtilityOperations/MoveFolderToFolder',
+                request_serializer=briosa_dot_utility__operations__pb2.MoveFolderToFolderRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.MoveFolderToFolderResult.FromString,
+                _registered_method=True)
+        self.MoveInstrumentsDragGraphically = channel.unary_unary(
+                '/briosa.UtilityOperations/MoveInstrumentsDragGraphically',
+                request_serializer=briosa_dot_utility__operations__pb2.MoveInstrumentsDragGraphicallyRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.MoveInstrumentsDragGraphicallyResult.FromString,
+                _registered_method=True)
+        self.MoveObjectsDragGraphically = channel.unary_unary(
+                '/briosa.UtilityOperations/MoveObjectsDragGraphically',
+                request_serializer=briosa_dot_utility__operations__pb2.MoveObjectsDragGraphicallyRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.MoveObjectsDragGraphicallyResult.FromString,
+                _registered_method=True)
+        self.ScaleObjects = channel.unary_unary(
+                '/briosa.UtilityOperations/ScaleObjects',
+                request_serializer=briosa_dot_utility__operations__pb2.ScaleObjectsRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.ScaleObjectsResult.FromString,
+                _registered_method=True)
+        self.SetActiveCustomLanguage = channel.unary_unary(
+                '/briosa.UtilityOperations/SetActiveCustomLanguage',
+                request_serializer=briosa_dot_utility__operations__pb2.SetActiveCustomLanguageRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetActiveCustomLanguageResult.FromString,
+                _registered_method=True)
+        self.SetActiveUnits = channel.unary_unary(
+                '/briosa.UtilityOperations/SetActiveUnits',
+                request_serializer=briosa_dot_utility__operations__pb2.SetActiveUnitsRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetActiveUnitsResult.FromString,
+                _registered_method=True)
+        self.SetAngularRepresentation = channel.unary_unary(
+                '/briosa.UtilityOperations/SetAngularRepresentation',
+                request_serializer=briosa_dot_utility__operations__pb2.SetAngularRepresentationRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetAngularRepresentationResult.FromString,
+                _registered_method=True)
+        self.SetAutoEventCreation = channel.unary_unary(
+                '/briosa.UtilityOperations/SetAutoEventCreation',
+                request_serializer=briosa_dot_utility__operations__pb2.SetAutoEventCreationRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetAutoEventCreationResult.FromString,
+                _registered_method=True)
+        self.SetAutomaticBackupState = channel.unary_unary(
+                '/briosa.UtilityOperations/SetAutomaticBackupState',
+                request_serializer=briosa_dot_utility__operations__pb2.SetAutomaticBackupStateRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetAutomaticBackupStateResult.FromString,
+                _registered_method=True)
+        self.SetAutomaticRelationshipConstructionState = channel.unary_unary(
+                '/briosa.UtilityOperations/SetAutomaticRelationshipConstructionState',
+                request_serializer=briosa_dot_utility__operations__pb2.SetAutomaticRelationshipConstructionStateRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetAutomaticRelationshipConstructionStateResult.FromString,
+                _registered_method=True)
+        self.SetCollectionNotes = channel.unary_unary(
+                '/briosa.UtilityOperations/SetCollectionNotes',
+                request_serializer=briosa_dot_utility__operations__pb2.SetCollectionNotesRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetCollectionNotesResult.FromString,
+                _registered_method=True)
+        self.SetDecimalDigitsForDisplay = channel.unary_unary(
+                '/briosa.UtilityOperations/SetDecimalDigitsForDisplay',
+                request_serializer=briosa_dot_utility__operations__pb2.SetDecimalDigitsForDisplayRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetDecimalDigitsForDisplayResult.FromString,
+                _registered_method=True)
+        self.SetFolderNotes = channel.unary_unary(
+                '/briosa.UtilityOperations/SetFolderNotes',
+                request_serializer=briosa_dot_utility__operations__pb2.SetFolderNotesRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetFolderNotesResult.FromString,
+                _registered_method=True)
+        self.SetInteractionMode = channel.unary_unary(
+                '/briosa.UtilityOperations/SetInteractionMode',
+                request_serializer=briosa_dot_utility__operations__pb2.SetInteractionModeRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetInteractionModeResult.FromString,
+                _registered_method=True)
+        self.SetLoggingState = channel.unary_unary(
+                '/briosa.UtilityOperations/SetLoggingState',
+                request_serializer=briosa_dot_utility__operations__pb2.SetLoggingStateRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetLoggingStateResult.FromString,
+                _registered_method=True)
+        self.SetNotificationCancelOverride = channel.unary_unary(
+                '/briosa.UtilityOperations/SetNotificationCancelOverride',
+                request_serializer=briosa_dot_utility__operations__pb2.SetNotificationCancelOverrideRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetNotificationCancelOverrideResult.FromString,
+                _registered_method=True)
+        self.SetObjectNotes = channel.unary_unary(
+                '/briosa.UtilityOperations/SetObjectNotes',
+                request_serializer=briosa_dot_utility__operations__pb2.SetObjectNotesRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetObjectNotesResult.FromString,
+                _registered_method=True)
+        self.SetOpcDaTagValueDouble = channel.unary_unary(
+                '/briosa.UtilityOperations/SetOpcDaTagValueDouble',
+                request_serializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueDoubleRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueDoubleResult.FromString,
+                _registered_method=True)
+        self.SetOpcDaTagValueInteger = channel.unary_unary(
+                '/briosa.UtilityOperations/SetOpcDaTagValueInteger',
+                request_serializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueIntegerRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueIntegerResult.FromString,
+                _registered_method=True)
+        self.SetOpcDaTagValueString = channel.unary_unary(
+                '/briosa.UtilityOperations/SetOpcDaTagValueString',
+                request_serializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueStringRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueStringResult.FromString,
+                _registered_method=True)
+        self.SetPointNotes = channel.unary_unary(
+                '/briosa.UtilityOperations/SetPointNotes',
+                request_serializer=briosa_dot_utility__operations__pb2.SetPointNotesRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetPointNotesResult.FromString,
+                _registered_method=True)
+        self.SetUserInterfaceProfile = channel.unary_unary(
+                '/briosa.UtilityOperations/SetUserInterfaceProfile',
+                request_serializer=briosa_dot_utility__operations__pb2.SetUserInterfaceProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetUserInterfaceProfileResult.FromString,
+                _registered_method=True)
+        self.SetViewIdleUpdateFrequency = channel.unary_unary(
+                '/briosa.UtilityOperations/SetViewIdleUpdateFrequency',
+                request_serializer=briosa_dot_utility__operations__pb2.SetViewIdleUpdateFrequencyRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetViewIdleUpdateFrequencyResult.FromString,
+                _registered_method=True)
+        self.SetWildCardAsteriskMode = channel.unary_unary(
+                '/briosa.UtilityOperations/SetWildCardAsteriskMode',
+                request_serializer=briosa_dot_utility__operations__pb2.SetWildCardAsteriskModeRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetWildCardAsteriskModeResult.FromString,
+                _registered_method=True)
+        self.SetWorkingFrame = channel.unary_unary(
+                '/briosa.UtilityOperations/SetWorkingFrame',
+                request_serializer=briosa_dot_utility__operations__pb2.SetWorkingFrameRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.SetWorkingFrameResult.FromString,
+                _registered_method=True)
+        self.StatusDialog = channel.unary_unary(
+                '/briosa.UtilityOperations/StatusDialog',
+                request_serializer=briosa_dot_utility__operations__pb2.StatusDialogRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.StatusDialogResult.FromString,
+                _registered_method=True)
+        self.TrimLogFile = channel.unary_unary(
+                '/briosa.UtilityOperations/TrimLogFile',
+                request_serializer=briosa_dot_utility__operations__pb2.TrimLogFileRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.TrimLogFileResult.FromString,
+                _registered_method=True)
+        self.WriteToLog = channel.unary_unary(
+                '/briosa.UtilityOperations/WriteToLog',
+                request_serializer=briosa_dot_utility__operations__pb2.WriteToLogRequest.SerializeToString,
+                response_deserializer=briosa_dot_utility__operations__pb2.WriteToLogResult.FromString,
+                _registered_method=True)
 
 
 class UtilityOperationsServicer(object):
     """Missing associated documentation comment in .proto file."""
 
+    def CloseAllWatchWindows(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteFolder(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteItems(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteObjects(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetActiveLanguage(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetActiveUnits(self, request, context):
-        """Executes the "Get Active Units" MP command.
-        """
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAngularRepresentation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCollectionNotes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetFolderCollections(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetFolderNotes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetFoldersByWildcard(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetObjectNotes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetOpcDaTagValueDouble(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetOpcDaTagValueInteger(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetOpcDaTagValueString(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointNotes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetScreenResolution(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetWorkingFrameProperties(self, request, context):
-        """Executes the "Get Working Frame Properties" MP command.
-        """
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def IncrementPointName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LockImportedItems(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LockUnlockSelectedItems(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LockUnlockTrappingControl(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MoveCollectionToFolder(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MoveFolderToFolder(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MoveInstrumentsDragGraphically(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MoveObjectsDragGraphically(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ScaleObjects(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetActiveCustomLanguage(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetActiveUnits(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetAngularRepresentation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetAutoEventCreation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetAutomaticBackupState(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetAutomaticRelationshipConstructionState(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetCollectionNotes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetDecimalDigitsForDisplay(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetFolderNotes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetInteractionMode(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetLoggingState(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetNotificationCancelOverride(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetObjectNotes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetOpcDaTagValueDouble(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetOpcDaTagValueInteger(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetOpcDaTagValueString(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetPointNotes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetUserInterfaceProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetViewIdleUpdateFrequency(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetWildCardAsteriskMode(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetWorkingFrame(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StatusDialog(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def TrimLogFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def WriteToLog(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -66,15 +603,260 @@ class UtilityOperationsServicer(object):
 
 def add_UtilityOperationsServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'CloseAllWatchWindows': grpc.unary_unary_rpc_method_handler(
+                    servicer.CloseAllWatchWindows,
+                    request_deserializer=briosa_dot_utility__operations__pb2.CloseAllWatchWindowsRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.CloseAllWatchWindowsResult.SerializeToString,
+            ),
+            'DeleteFolder': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteFolder,
+                    request_deserializer=briosa_dot_utility__operations__pb2.DeleteFolderRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.DeleteFolderResult.SerializeToString,
+            ),
+            'DeleteItems': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteItems,
+                    request_deserializer=briosa_dot_utility__operations__pb2.DeleteItemsRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.DeleteItemsResult.SerializeToString,
+            ),
+            'DeleteObjects': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteObjects,
+                    request_deserializer=briosa_dot_utility__operations__pb2.DeleteObjectsRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.DeleteObjectsResult.SerializeToString,
+            ),
+            'GetActiveLanguage': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetActiveLanguage,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetActiveLanguageRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetActiveLanguageResult.SerializeToString,
+            ),
             'GetActiveUnits': grpc.unary_unary_rpc_method_handler(
                     servicer.GetActiveUnits,
                     request_deserializer=briosa_dot_utility__operations__pb2.GetActiveUnitsRequest.FromString,
                     response_serializer=briosa_dot_utility__operations__pb2.GetActiveUnitsResult.SerializeToString,
             ),
+            'GetAngularRepresentation': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAngularRepresentation,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetAngularRepresentationRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetAngularRepresentationResult.SerializeToString,
+            ),
+            'GetCollectionNotes': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCollectionNotes,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetCollectionNotesRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetCollectionNotesResult.SerializeToString,
+            ),
+            'GetFolderCollections': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFolderCollections,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetFolderCollectionsRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetFolderCollectionsResult.SerializeToString,
+            ),
+            'GetFolderNotes': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFolderNotes,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetFolderNotesRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetFolderNotesResult.SerializeToString,
+            ),
+            'GetFoldersByWildcard': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFoldersByWildcard,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetFoldersByWildcardRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetFoldersByWildcardResult.SerializeToString,
+            ),
+            'GetObjectNotes': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetObjectNotes,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetObjectNotesRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetObjectNotesResult.SerializeToString,
+            ),
+            'GetOpcDaTagValueDouble': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOpcDaTagValueDouble,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueDoubleRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueDoubleResult.SerializeToString,
+            ),
+            'GetOpcDaTagValueInteger': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOpcDaTagValueInteger,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueIntegerRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueIntegerResult.SerializeToString,
+            ),
+            'GetOpcDaTagValueString': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOpcDaTagValueString,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueStringRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetOpcDaTagValueStringResult.SerializeToString,
+            ),
+            'GetPointNotes': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointNotes,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetPointNotesRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetPointNotesResult.SerializeToString,
+            ),
+            'GetScreenResolution': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetScreenResolution,
+                    request_deserializer=briosa_dot_utility__operations__pb2.GetScreenResolutionRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.GetScreenResolutionResult.SerializeToString,
+            ),
             'GetWorkingFrameProperties': grpc.unary_unary_rpc_method_handler(
                     servicer.GetWorkingFrameProperties,
                     request_deserializer=briosa_dot_utility__operations__pb2.GetWorkingFramePropertiesRequest.FromString,
                     response_serializer=briosa_dot_utility__operations__pb2.GetWorkingFramePropertiesResult.SerializeToString,
+            ),
+            'IncrementPointName': grpc.unary_unary_rpc_method_handler(
+                    servicer.IncrementPointName,
+                    request_deserializer=briosa_dot_utility__operations__pb2.IncrementPointNameRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.IncrementPointNameResult.SerializeToString,
+            ),
+            'LockImportedItems': grpc.unary_unary_rpc_method_handler(
+                    servicer.LockImportedItems,
+                    request_deserializer=briosa_dot_utility__operations__pb2.LockImportedItemsRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.LockImportedItemsResult.SerializeToString,
+            ),
+            'LockUnlockSelectedItems': grpc.unary_unary_rpc_method_handler(
+                    servicer.LockUnlockSelectedItems,
+                    request_deserializer=briosa_dot_utility__operations__pb2.LockUnlockSelectedItemsRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.LockUnlockSelectedItemsResult.SerializeToString,
+            ),
+            'LockUnlockTrappingControl': grpc.unary_unary_rpc_method_handler(
+                    servicer.LockUnlockTrappingControl,
+                    request_deserializer=briosa_dot_utility__operations__pb2.LockUnlockTrappingControlRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.LockUnlockTrappingControlResult.SerializeToString,
+            ),
+            'MoveCollectionToFolder': grpc.unary_unary_rpc_method_handler(
+                    servicer.MoveCollectionToFolder,
+                    request_deserializer=briosa_dot_utility__operations__pb2.MoveCollectionToFolderRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.MoveCollectionToFolderResult.SerializeToString,
+            ),
+            'MoveFolderToFolder': grpc.unary_unary_rpc_method_handler(
+                    servicer.MoveFolderToFolder,
+                    request_deserializer=briosa_dot_utility__operations__pb2.MoveFolderToFolderRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.MoveFolderToFolderResult.SerializeToString,
+            ),
+            'MoveInstrumentsDragGraphically': grpc.unary_unary_rpc_method_handler(
+                    servicer.MoveInstrumentsDragGraphically,
+                    request_deserializer=briosa_dot_utility__operations__pb2.MoveInstrumentsDragGraphicallyRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.MoveInstrumentsDragGraphicallyResult.SerializeToString,
+            ),
+            'MoveObjectsDragGraphically': grpc.unary_unary_rpc_method_handler(
+                    servicer.MoveObjectsDragGraphically,
+                    request_deserializer=briosa_dot_utility__operations__pb2.MoveObjectsDragGraphicallyRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.MoveObjectsDragGraphicallyResult.SerializeToString,
+            ),
+            'ScaleObjects': grpc.unary_unary_rpc_method_handler(
+                    servicer.ScaleObjects,
+                    request_deserializer=briosa_dot_utility__operations__pb2.ScaleObjectsRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.ScaleObjectsResult.SerializeToString,
+            ),
+            'SetActiveCustomLanguage': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetActiveCustomLanguage,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetActiveCustomLanguageRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetActiveCustomLanguageResult.SerializeToString,
+            ),
+            'SetActiveUnits': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetActiveUnits,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetActiveUnitsRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetActiveUnitsResult.SerializeToString,
+            ),
+            'SetAngularRepresentation': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetAngularRepresentation,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetAngularRepresentationRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetAngularRepresentationResult.SerializeToString,
+            ),
+            'SetAutoEventCreation': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetAutoEventCreation,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetAutoEventCreationRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetAutoEventCreationResult.SerializeToString,
+            ),
+            'SetAutomaticBackupState': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetAutomaticBackupState,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetAutomaticBackupStateRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetAutomaticBackupStateResult.SerializeToString,
+            ),
+            'SetAutomaticRelationshipConstructionState': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetAutomaticRelationshipConstructionState,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetAutomaticRelationshipConstructionStateRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetAutomaticRelationshipConstructionStateResult.SerializeToString,
+            ),
+            'SetCollectionNotes': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetCollectionNotes,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetCollectionNotesRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetCollectionNotesResult.SerializeToString,
+            ),
+            'SetDecimalDigitsForDisplay': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetDecimalDigitsForDisplay,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetDecimalDigitsForDisplayRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetDecimalDigitsForDisplayResult.SerializeToString,
+            ),
+            'SetFolderNotes': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetFolderNotes,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetFolderNotesRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetFolderNotesResult.SerializeToString,
+            ),
+            'SetInteractionMode': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetInteractionMode,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetInteractionModeRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetInteractionModeResult.SerializeToString,
+            ),
+            'SetLoggingState': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetLoggingState,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetLoggingStateRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetLoggingStateResult.SerializeToString,
+            ),
+            'SetNotificationCancelOverride': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetNotificationCancelOverride,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetNotificationCancelOverrideRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetNotificationCancelOverrideResult.SerializeToString,
+            ),
+            'SetObjectNotes': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetObjectNotes,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetObjectNotesRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetObjectNotesResult.SerializeToString,
+            ),
+            'SetOpcDaTagValueDouble': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetOpcDaTagValueDouble,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueDoubleRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueDoubleResult.SerializeToString,
+            ),
+            'SetOpcDaTagValueInteger': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetOpcDaTagValueInteger,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueIntegerRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueIntegerResult.SerializeToString,
+            ),
+            'SetOpcDaTagValueString': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetOpcDaTagValueString,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueStringRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetOpcDaTagValueStringResult.SerializeToString,
+            ),
+            'SetPointNotes': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetPointNotes,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetPointNotesRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetPointNotesResult.SerializeToString,
+            ),
+            'SetUserInterfaceProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetUserInterfaceProfile,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetUserInterfaceProfileRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetUserInterfaceProfileResult.SerializeToString,
+            ),
+            'SetViewIdleUpdateFrequency': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetViewIdleUpdateFrequency,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetViewIdleUpdateFrequencyRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetViewIdleUpdateFrequencyResult.SerializeToString,
+            ),
+            'SetWildCardAsteriskMode': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetWildCardAsteriskMode,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetWildCardAsteriskModeRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetWildCardAsteriskModeResult.SerializeToString,
+            ),
+            'SetWorkingFrame': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetWorkingFrame,
+                    request_deserializer=briosa_dot_utility__operations__pb2.SetWorkingFrameRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.SetWorkingFrameResult.SerializeToString,
+            ),
+            'StatusDialog': grpc.unary_unary_rpc_method_handler(
+                    servicer.StatusDialog,
+                    request_deserializer=briosa_dot_utility__operations__pb2.StatusDialogRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.StatusDialogResult.SerializeToString,
+            ),
+            'TrimLogFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.TrimLogFile,
+                    request_deserializer=briosa_dot_utility__operations__pb2.TrimLogFileRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.TrimLogFileResult.SerializeToString,
+            ),
+            'WriteToLog': grpc.unary_unary_rpc_method_handler(
+                    servicer.WriteToLog,
+                    request_deserializer=briosa_dot_utility__operations__pb2.WriteToLogRequest.FromString,
+                    response_serializer=briosa_dot_utility__operations__pb2.WriteToLogResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -86,6 +868,141 @@ def add_UtilityOperationsServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class UtilityOperations(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def CloseAllWatchWindows(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/CloseAllWatchWindows',
+            briosa_dot_utility__operations__pb2.CloseAllWatchWindowsRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.CloseAllWatchWindowsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteFolder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/DeleteFolder',
+            briosa_dot_utility__operations__pb2.DeleteFolderRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.DeleteFolderResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteItems(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/DeleteItems',
+            briosa_dot_utility__operations__pb2.DeleteItemsRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.DeleteItemsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteObjects(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/DeleteObjects',
+            briosa_dot_utility__operations__pb2.DeleteObjectsRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.DeleteObjectsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetActiveLanguage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetActiveLanguage',
+            briosa_dot_utility__operations__pb2.GetActiveLanguageRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetActiveLanguageResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def GetActiveUnits(request,
@@ -115,6 +1032,303 @@ class UtilityOperations(object):
             _registered_method=True)
 
     @staticmethod
+    def GetAngularRepresentation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetAngularRepresentation',
+            briosa_dot_utility__operations__pb2.GetAngularRepresentationRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetAngularRepresentationResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCollectionNotes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetCollectionNotes',
+            briosa_dot_utility__operations__pb2.GetCollectionNotesRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetCollectionNotesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetFolderCollections(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetFolderCollections',
+            briosa_dot_utility__operations__pb2.GetFolderCollectionsRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetFolderCollectionsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetFolderNotes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetFolderNotes',
+            briosa_dot_utility__operations__pb2.GetFolderNotesRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetFolderNotesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetFoldersByWildcard(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetFoldersByWildcard',
+            briosa_dot_utility__operations__pb2.GetFoldersByWildcardRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetFoldersByWildcardResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetObjectNotes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetObjectNotes',
+            briosa_dot_utility__operations__pb2.GetObjectNotesRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetObjectNotesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetOpcDaTagValueDouble(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetOpcDaTagValueDouble',
+            briosa_dot_utility__operations__pb2.GetOpcDaTagValueDoubleRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetOpcDaTagValueDoubleResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetOpcDaTagValueInteger(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetOpcDaTagValueInteger',
+            briosa_dot_utility__operations__pb2.GetOpcDaTagValueIntegerRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetOpcDaTagValueIntegerResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetOpcDaTagValueString(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetOpcDaTagValueString',
+            briosa_dot_utility__operations__pb2.GetOpcDaTagValueStringRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetOpcDaTagValueStringResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointNotes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetPointNotes',
+            briosa_dot_utility__operations__pb2.GetPointNotesRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetPointNotesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetScreenResolution(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/GetScreenResolution',
+            briosa_dot_utility__operations__pb2.GetScreenResolutionRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.GetScreenResolutionResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
     def GetWorkingFrameProperties(request,
             target,
             options=(),
@@ -131,6 +1345,897 @@ class UtilityOperations(object):
             '/briosa.UtilityOperations/GetWorkingFrameProperties',
             briosa_dot_utility__operations__pb2.GetWorkingFramePropertiesRequest.SerializeToString,
             briosa_dot_utility__operations__pb2.GetWorkingFramePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def IncrementPointName(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/IncrementPointName',
+            briosa_dot_utility__operations__pb2.IncrementPointNameRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.IncrementPointNameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def LockImportedItems(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/LockImportedItems',
+            briosa_dot_utility__operations__pb2.LockImportedItemsRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.LockImportedItemsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def LockUnlockSelectedItems(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/LockUnlockSelectedItems',
+            briosa_dot_utility__operations__pb2.LockUnlockSelectedItemsRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.LockUnlockSelectedItemsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def LockUnlockTrappingControl(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/LockUnlockTrappingControl',
+            briosa_dot_utility__operations__pb2.LockUnlockTrappingControlRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.LockUnlockTrappingControlResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MoveCollectionToFolder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/MoveCollectionToFolder',
+            briosa_dot_utility__operations__pb2.MoveCollectionToFolderRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.MoveCollectionToFolderResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MoveFolderToFolder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/MoveFolderToFolder',
+            briosa_dot_utility__operations__pb2.MoveFolderToFolderRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.MoveFolderToFolderResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MoveInstrumentsDragGraphically(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/MoveInstrumentsDragGraphically',
+            briosa_dot_utility__operations__pb2.MoveInstrumentsDragGraphicallyRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.MoveInstrumentsDragGraphicallyResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MoveObjectsDragGraphically(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/MoveObjectsDragGraphically',
+            briosa_dot_utility__operations__pb2.MoveObjectsDragGraphicallyRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.MoveObjectsDragGraphicallyResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ScaleObjects(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/ScaleObjects',
+            briosa_dot_utility__operations__pb2.ScaleObjectsRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.ScaleObjectsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetActiveCustomLanguage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetActiveCustomLanguage',
+            briosa_dot_utility__operations__pb2.SetActiveCustomLanguageRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetActiveCustomLanguageResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetActiveUnits(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetActiveUnits',
+            briosa_dot_utility__operations__pb2.SetActiveUnitsRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetActiveUnitsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetAngularRepresentation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetAngularRepresentation',
+            briosa_dot_utility__operations__pb2.SetAngularRepresentationRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetAngularRepresentationResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetAutoEventCreation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetAutoEventCreation',
+            briosa_dot_utility__operations__pb2.SetAutoEventCreationRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetAutoEventCreationResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetAutomaticBackupState(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetAutomaticBackupState',
+            briosa_dot_utility__operations__pb2.SetAutomaticBackupStateRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetAutomaticBackupStateResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetAutomaticRelationshipConstructionState(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetAutomaticRelationshipConstructionState',
+            briosa_dot_utility__operations__pb2.SetAutomaticRelationshipConstructionStateRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetAutomaticRelationshipConstructionStateResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetCollectionNotes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetCollectionNotes',
+            briosa_dot_utility__operations__pb2.SetCollectionNotesRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetCollectionNotesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetDecimalDigitsForDisplay(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetDecimalDigitsForDisplay',
+            briosa_dot_utility__operations__pb2.SetDecimalDigitsForDisplayRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetDecimalDigitsForDisplayResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetFolderNotes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetFolderNotes',
+            briosa_dot_utility__operations__pb2.SetFolderNotesRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetFolderNotesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetInteractionMode(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetInteractionMode',
+            briosa_dot_utility__operations__pb2.SetInteractionModeRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetInteractionModeResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetLoggingState(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetLoggingState',
+            briosa_dot_utility__operations__pb2.SetLoggingStateRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetLoggingStateResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetNotificationCancelOverride(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetNotificationCancelOverride',
+            briosa_dot_utility__operations__pb2.SetNotificationCancelOverrideRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetNotificationCancelOverrideResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetObjectNotes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetObjectNotes',
+            briosa_dot_utility__operations__pb2.SetObjectNotesRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetObjectNotesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetOpcDaTagValueDouble(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetOpcDaTagValueDouble',
+            briosa_dot_utility__operations__pb2.SetOpcDaTagValueDoubleRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetOpcDaTagValueDoubleResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetOpcDaTagValueInteger(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetOpcDaTagValueInteger',
+            briosa_dot_utility__operations__pb2.SetOpcDaTagValueIntegerRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetOpcDaTagValueIntegerResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetOpcDaTagValueString(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetOpcDaTagValueString',
+            briosa_dot_utility__operations__pb2.SetOpcDaTagValueStringRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetOpcDaTagValueStringResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetPointNotes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetPointNotes',
+            briosa_dot_utility__operations__pb2.SetPointNotesRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetPointNotesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetUserInterfaceProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetUserInterfaceProfile',
+            briosa_dot_utility__operations__pb2.SetUserInterfaceProfileRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetUserInterfaceProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetViewIdleUpdateFrequency(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetViewIdleUpdateFrequency',
+            briosa_dot_utility__operations__pb2.SetViewIdleUpdateFrequencyRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetViewIdleUpdateFrequencyResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetWildCardAsteriskMode(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetWildCardAsteriskMode',
+            briosa_dot_utility__operations__pb2.SetWildCardAsteriskModeRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetWildCardAsteriskModeResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetWorkingFrame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/SetWorkingFrame',
+            briosa_dot_utility__operations__pb2.SetWorkingFrameRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.SetWorkingFrameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def StatusDialog(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/StatusDialog',
+            briosa_dot_utility__operations__pb2.StatusDialogRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.StatusDialogResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def TrimLogFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/TrimLogFile',
+            briosa_dot_utility__operations__pb2.TrimLogFileRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.TrimLogFileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def WriteToLog(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.UtilityOperations/WriteToLog',
+            briosa_dot_utility__operations__pb2.WriteToLogRequest.SerializeToString,
+            briosa_dot_utility__operations__pb2.WriteToLogResult.FromString,
             options,
             channel_credentials,
             insecure,

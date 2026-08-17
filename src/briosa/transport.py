@@ -7,7 +7,7 @@ from collections.abc import Iterable
 from typing import Any, Protocol, TypeVar, cast
 
 import grpc
-from google.protobuf.message import DecodeError
+from google.protobuf.message import DecodeError, Message
 
 from briosa import (
     discovery_pb2,
@@ -112,6 +112,14 @@ class ClientTransport(Protocol):
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState: ...
 
     async def get_working_directory(self, timeout: float | None = None) -> str: ...
+
+    async def invoke_operation(
+        self,
+        path: str,
+        request: Message,
+        response_type: type[Message],
+        timeout: float | None = None,
+    ) -> Message: ...
 
     async def close(self) -> None: ...
 
@@ -258,6 +266,20 @@ class GrpcClientTransport:
         if not response.HasField("directory"):
             raise BriosaProtocolError("working-directory-missing")
         return response.directory
+
+    async def invoke_operation(
+        self,
+        path: str,
+        request: Message,
+        response_type: type[Message],
+        timeout: float | None = None,
+    ) -> Message:
+        call = self._channel.unary_unary(
+            path,
+            request_serializer=lambda value: value.SerializeToString(),
+            response_deserializer=response_type.FromString,
+        )
+        return cast(Message, await call(request, timeout=timeout))
 
     async def close(self) -> None:
         await self._channel.close(None)

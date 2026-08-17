@@ -34,31 +34,1019 @@ class AnalysisOperationsStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetIThCollectionName = channel.unary_unary(
-                '/briosa.AnalysisOperations/GetIThCollectionName',
-                request_serializer=briosa_dot_analysis__operations__pb2.GetIThCollectionNameRequest.SerializeToString,
-                response_deserializer=briosa_dot_analysis__operations__pb2.GetIThCollectionNameResult.FromString,
+        self.AngleBetweenLineAndPlane = channel.unary_unary(
+                '/briosa.AnalysisOperations/AngleBetweenLineAndPlane',
+                request_serializer=briosa_dot_analysis__operations__pb2.AngleBetweenLineAndPlaneRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.AngleBetweenLineAndPlaneResult.FromString,
+                _registered_method=True)
+        self.AngleBetweenTwoLines = channel.unary_unary(
+                '/briosa.AnalysisOperations/AngleBetweenTwoLines',
+                request_serializer=briosa_dot_analysis__operations__pb2.AngleBetweenTwoLinesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.AngleBetweenTwoLinesResult.FromString,
+                _registered_method=True)
+        self.AngleBetweenTwoPlanesNormals = channel.unary_unary(
+                '/briosa.AnalysisOperations/AngleBetweenTwoPlanesNormals',
+                request_serializer=briosa_dot_analysis__operations__pb2.AngleBetweenTwoPlanesNormalsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.AngleBetweenTwoPlanesNormalsResult.FromString,
+                _registered_method=True)
+        self.BestFitTransformationGroupToGroup = channel.unary_unary(
+                '/briosa.AnalysisOperations/BestFitTransformationGroupToGroup',
+                request_serializer=briosa_dot_analysis__operations__pb2.BestFitTransformationGroupToGroupRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.BestFitTransformationGroupToGroupResult.FromString,
+                _registered_method=True)
+        self.ComputeGroupToGroupOrientationRxRyRz = channel.unary_unary(
+                '/briosa.AnalysisOperations/ComputeGroupToGroupOrientationRxRyRz',
+                request_serializer=briosa_dot_analysis__operations__pb2.ComputeGroupToGroupOrientationRxRyRzRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.ComputeGroupToGroupOrientationRxRyRzResult.FromString,
+                _registered_method=True)
+        self.CreatePointUncertaintyCloudPointSets = channel.unary_unary(
+                '/briosa.AnalysisOperations/CreatePointUncertaintyCloudPointSets',
+                request_serializer=briosa_dot_analysis__operations__pb2.CreatePointUncertaintyCloudPointSetsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.CreatePointUncertaintyCloudPointSetsResult.FromString,
+                _registered_method=True)
+        self.CreatePointUncertaintyFields = channel.unary_unary(
+                '/briosa.AnalysisOperations/CreatePointUncertaintyFields',
+                request_serializer=briosa_dot_analysis__operations__pb2.CreatePointUncertaintyFieldsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.CreatePointUncertaintyFieldsResult.FromString,
+                _registered_method=True)
+        self.FitGeometryToPointGroup = channel.unary_unary(
+                '/briosa.AnalysisOperations/FitGeometryToPointGroup',
+                request_serializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupResult.FromString,
+                _registered_method=True)
+        self.FitGeometryToPointGroupProjectedToPlane = channel.unary_unary(
+                '/briosa.AnalysisOperations/FitGeometryToPointGroupProjectedToPlane',
+                request_serializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupProjectedToPlaneRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupProjectedToPlaneResult.FromString,
+                _registered_method=True)
+        self.FitGeometryToPoints = channel.unary_unary(
+                '/briosa.AnalysisOperations/FitGeometryToPoints',
+                request_serializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointsResult.FromString,
+                _registered_method=True)
+        self.GetBSplineProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetBSplineProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetBSplinePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetBSplinePropertiesResult.FromString,
+                _registered_method=True)
+        self.GetCircleProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetCircleProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetCirclePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetCirclePropertiesResult.FromString,
+                _registered_method=True)
+        self.GetConeProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetConeProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetConePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetConePropertiesResult.FromString,
+                _registered_method=True)
+        self.GetCoordinateForIthPointInPointSet = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetCoordinateForIthPointInPointSet',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetCoordinateForIthPointInPointSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetCoordinateForIthPointInPointSetResult.FromString,
+                _registered_method=True)
+        self.GetCylinderProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetCylinderProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetCylinderPropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetCylinderPropertiesResult.FromString,
+                _registered_method=True)
+        self.GetEllipseProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetEllipseProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetEllipsePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetEllipsePropertiesResult.FromString,
+                _registered_method=True)
+        self.GetEulerParametersForFrame = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetEulerParametersForFrame',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetEulerParametersForFrameRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetEulerParametersForFrameResult.FromString,
+                _registered_method=True)
+        self.GetEulerParametersForIthFrameInFrameSet = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetEulerParametersForIthFrameInFrameSet',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetEulerParametersForIthFrameInFrameSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetEulerParametersForIthFrameInFrameSetResult.FromString,
+                _registered_method=True)
+        self.GetIthCollectionName = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetIthCollectionName',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetIthCollectionNameRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetIthCollectionNameResult.FromString,
+                _registered_method=True)
+        self.GetIthPointFromGroup = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetIthPointFromGroup',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetIthPointFromGroupRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetIthPointFromGroupResult.FromString,
+                _registered_method=True)
+        self.GetLineProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetLineProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetLinePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetLinePropertiesResult.FromString,
+                _registered_method=True)
+        self.GetMeasurementAuxiliaryData = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetMeasurementAuxiliaryData',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetMeasurementAuxiliaryDataRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetMeasurementAuxiliaryDataResult.FromString,
+                _registered_method=True)
+        self.GetMeasurementInfoData = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetMeasurementInfoData',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetMeasurementInfoDataRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetMeasurementInfoDataResult.FromString,
+                _registered_method=True)
+        self.GetMeasurementWeatherData = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetMeasurementWeatherData',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetMeasurementWeatherDataRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetMeasurementWeatherDataResult.FromString,
                 _registered_method=True)
         self.GetNumberOfCollections = channel.unary_unary(
                 '/briosa.AnalysisOperations/GetNumberOfCollections',
                 request_serializer=briosa_dot_analysis__operations__pb2.GetNumberOfCollectionsRequest.SerializeToString,
                 response_deserializer=briosa_dot_analysis__operations__pb2.GetNumberOfCollectionsResult.FromString,
                 _registered_method=True)
+        self.GetNumberOfFramesInFrameSet = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetNumberOfFramesInFrameSet',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetNumberOfFramesInFrameSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetNumberOfFramesInFrameSetResult.FromString,
+                _registered_method=True)
+        self.GetNumberOfPointsInGroup = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetNumberOfPointsInGroup',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetNumberOfPointsInGroupRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetNumberOfPointsInGroupResult.FromString,
+                _registered_method=True)
+        self.GetNumberOfPointsInPointSet = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetNumberOfPointsInPointSet',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetNumberOfPointsInPointSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetNumberOfPointsInPointSetResult.FromString,
+                _registered_method=True)
+        self.GetObjectReportingFrame = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetObjectReportingFrame',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetObjectReportingFrameRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetObjectReportingFrameResult.FromString,
+                _registered_method=True)
+        self.GetPlaneProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetPlaneProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetPlanePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetPlanePropertiesResult.FromString,
+                _registered_method=True)
+        self.GetPointCoordinate = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetPointCoordinate',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetPointCoordinateRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetPointCoordinateResult.FromString,
+                _registered_method=True)
+        self.GetPointCoordinateCylindrical = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetPointCoordinateCylindrical',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetPointCoordinateCylindricalRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetPointCoordinateCylindricalResult.FromString,
+                _registered_method=True)
+        self.GetPointCoordinatePolar = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetPointCoordinatePolar',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetPointCoordinatePolarRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetPointCoordinatePolarResult.FromString,
+                _registered_method=True)
+        self.GetPointProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetPointProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetPointPropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetPointPropertiesResult.FromString,
+                _registered_method=True)
+        self.GetPointToLineDistance = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetPointToLineDistance',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetPointToLineDistanceRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetPointToLineDistanceResult.FromString,
+                _registered_method=True)
+        self.GetPointToPointDistance = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetPointToPointDistance',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetPointToPointDistanceRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetPointToPointDistanceResult.FromString,
+                _registered_method=True)
+        self.GetPointTolerance = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetPointTolerance',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetPointToleranceRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetPointToleranceResult.FromString,
+                _registered_method=True)
+        self.GetSlotProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetSlotProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetSlotPropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetSlotPropertiesResult.FromString,
+                _registered_method=True)
+        self.GetSphereProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetSphereProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetSpherePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetSpherePropertiesResult.FromString,
+                _registered_method=True)
+        self.GetSurfacePhysicalStats = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetSurfacePhysicalStats',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetSurfacePhysicalStatsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetSurfacePhysicalStatsResult.FromString,
+                _registered_method=True)
+        self.GetTimestampForIthFrameInFrameSet = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetTimestampForIthFrameInFrameSet',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetTimestampForIthFrameInFrameSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetTimestampForIthFrameInFrameSetResult.FromString,
+                _registered_method=True)
+        self.GetTimestampForIthPointInPointSet = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetTimestampForIthPointInPointSet',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetTimestampForIthPointInPointSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetTimestampForIthPointInPointSetResult.FromString,
+                _registered_method=True)
+        self.GetTorusProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetTorusProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetTorusPropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetTorusPropertiesResult.FromString,
+                _registered_method=True)
+        self.GetTransformForIthFrameInFrameSet = channel.unary_unary(
+                '/briosa.AnalysisOperations/GetTransformForIthFrameInFrameSet',
+                request_serializer=briosa_dot_analysis__operations__pb2.GetTransformForIthFrameInFrameSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GetTransformForIthFrameInFrameSetResult.FromString,
+                _registered_method=True)
+        self.GroupToSurfaceFit = channel.unary_unary(
+                '/briosa.AnalysisOperations/GroupToSurfaceFit',
+                request_serializer=briosa_dot_analysis__operations__pb2.GroupToSurfaceFitRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.GroupToSurfaceFitResult.FromString,
+                _registered_method=True)
+        self.ImportGeometryFitProfiles = channel.unary_unary(
+                '/briosa.AnalysisOperations/ImportGeometryFitProfiles',
+                request_serializer=briosa_dot_analysis__operations__pb2.ImportGeometryFitProfilesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.ImportGeometryFitProfilesResult.FromString,
+                _registered_method=True)
+        self.IsObjectOfType = channel.unary_unary(
+                '/briosa.AnalysisOperations/IsObjectOfType',
+                request_serializer=briosa_dot_analysis__operations__pb2.IsObjectOfTypeRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.IsObjectOfTypeResult.FromString,
+                _registered_method=True)
+        self.MakeCircleFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakeCircleFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakeCircleFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakeCircleFitProfileResult.FromString,
+                _registered_method=True)
+        self.MakeConeFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakeConeFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakeConeFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakeConeFitProfileResult.FromString,
+                _registered_method=True)
+        self.MakeCylinderFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakeCylinderFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakeCylinderFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakeCylinderFitProfileResult.FromString,
+                _registered_method=True)
+        self.MakeEllipseFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakeEllipseFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakeEllipseFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakeEllipseFitProfileResult.FromString,
+                _registered_method=True)
+        self.MakeLineFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakeLineFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakeLineFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakeLineFitProfileResult.FromString,
+                _registered_method=True)
+        self.MakeParaboloidFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakeParaboloidFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakeParaboloidFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakeParaboloidFitProfileResult.FromString,
+                _registered_method=True)
+        self.MakePlaneFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakePlaneFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakePlaneFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakePlaneFitProfileResult.FromString,
+                _registered_method=True)
+        self.MakeSlotFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakeSlotFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakeSlotFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakeSlotFitProfileResult.FromString,
+                _registered_method=True)
+        self.MakeSphereFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/MakeSphereFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.MakeSphereFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MakeSphereFitProfileResult.FromString,
+                _registered_method=True)
+        self.MushroomTargetHoleInspection = channel.unary_unary(
+                '/briosa.AnalysisOperations/MushroomTargetHoleInspection',
+                request_serializer=briosa_dot_analysis__operations__pb2.MushroomTargetHoleInspectionRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.MushroomTargetHoleInspectionResult.FromString,
+                _registered_method=True)
+        self.PatchNormalShiftHolePin = channel.unary_unary(
+                '/briosa.AnalysisOperations/PatchNormalShiftHolePin',
+                request_serializer=briosa_dot_analysis__operations__pb2.PatchNormalShiftHolePinRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.PatchNormalShiftHolePinResult.FromString,
+                _registered_method=True)
+        self.PatchNormalShiftPoint = channel.unary_unary(
+                '/briosa.AnalysisOperations/PatchNormalShiftPoint',
+                request_serializer=briosa_dot_analysis__operations__pb2.PatchNormalShiftPointRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.PatchNormalShiftPointResult.FromString,
+                _registered_method=True)
+        self.QueryCloudsToObjects = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryCloudsToObjects',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryCloudsToObjectsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryCloudsToObjectsResult.FromString,
+                _registered_method=True)
+        self.QueryCloudsToSurface = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryCloudsToSurface',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryCloudsToSurfaceRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryCloudsToSurfaceResult.FromString,
+                _registered_method=True)
+        self.QueryFrameToFrame = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryFrameToFrame',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryFrameToFrameRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryFrameToFrameResult.FromString,
+                _registered_method=True)
+        self.QueryGroupsToObjects = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryGroupsToObjects',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryGroupsToObjectsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryGroupsToObjectsResult.FromString,
+                _registered_method=True)
+        self.QueryPointToObjects = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryPointToObjects',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryPointToObjectsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryPointToObjectsResult.FromString,
+                _registered_method=True)
+        self.QueryPointToPointAlongCurve = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryPointToPointAlongCurve',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryPointToPointAlongCurveRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryPointToPointAlongCurveResult.FromString,
+                _registered_method=True)
+        self.QueryPointsToCircle = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryPointsToCircle',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryPointsToCircleRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryPointsToCircleResult.FromString,
+                _registered_method=True)
+        self.QueryPointsToObjects = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryPointsToObjects',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryPointsToObjectsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryPointsToObjectsResult.FromString,
+                _registered_method=True)
+        self.QueryPointsToSinglePoint = channel.unary_unary(
+                '/briosa.AnalysisOperations/QueryPointsToSinglePoint',
+                request_serializer=briosa_dot_analysis__operations__pb2.QueryPointsToSinglePointRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.QueryPointsToSinglePointResult.FromString,
+                _registered_method=True)
+        self.ReComputeCalculatedItems = channel.unary_unary(
+                '/briosa.AnalysisOperations/ReComputeCalculatedItems',
+                request_serializer=briosa_dot_analysis__operations__pb2.ReComputeCalculatedItemsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.ReComputeCalculatedItemsResult.FromString,
+                _registered_method=True)
+        self.RenamePointsBasedOnInterPointDistanceToReferencePoints = channel.unary_unary(
+                '/briosa.AnalysisOperations/RenamePointsBasedOnInterPointDistanceToReferencePoints',
+                request_serializer=briosa_dot_analysis__operations__pb2.RenamePointsBasedOnInterPointDistanceToReferencePointsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.RenamePointsBasedOnInterPointDistanceToReferencePointsResult.FromString,
+                _registered_method=True)
+        self.RenamePointsBasedOnProximityToReferencePoints = channel.unary_unary(
+                '/briosa.AnalysisOperations/RenamePointsBasedOnProximityToReferencePoints',
+                request_serializer=briosa_dot_analysis__operations__pb2.RenamePointsBasedOnProximityToReferencePointsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.RenamePointsBasedOnProximityToReferencePointsResult.FromString,
+                _registered_method=True)
+        self.ReverseBSplines = channel.unary_unary(
+                '/briosa.AnalysisOperations/ReverseBSplines',
+                request_serializer=briosa_dot_analysis__operations__pb2.ReverseBSplinesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.ReverseBSplinesResult.FromString,
+                _registered_method=True)
+        self.ReversePlaneNormals = channel.unary_unary(
+                '/briosa.AnalysisOperations/ReversePlaneNormals',
+                request_serializer=briosa_dot_analysis__operations__pb2.ReversePlaneNormalsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.ReversePlaneNormalsResult.FromString,
+                _registered_method=True)
+        self.ReverseSurfaceNormals = channel.unary_unary(
+                '/briosa.AnalysisOperations/ReverseSurfaceNormals',
+                request_serializer=briosa_dot_analysis__operations__pb2.ReverseSurfaceNormalsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.ReverseSurfaceNormalsResult.FromString,
+                _registered_method=True)
+        self.SetCircleProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetCircleProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetCirclePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetCirclePropertiesResult.FromString,
+                _registered_method=True)
+        self.SetConeProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetConeProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetConePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetConePropertiesResult.FromString,
+                _registered_method=True)
+        self.SetCylinderProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetCylinderProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetCylinderPropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetCylinderPropertiesResult.FromString,
+                _registered_method=True)
+        self.SetDefaultColorizationOptions = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetDefaultColorizationOptions',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetDefaultColorizationOptionsRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetDefaultColorizationOptionsResult.FromString,
+                _registered_method=True)
+        self.SetEllipseProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetEllipseProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetEllipsePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetEllipsePropertiesResult.FromString,
+                _registered_method=True)
+        self.SetGeometryRelationshipFitProfile = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetGeometryRelationshipFitProfile',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetGeometryRelationshipFitProfileRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetGeometryRelationshipFitProfileResult.FromString,
+                _registered_method=True)
+        self.SetLineProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetLineProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetLinePropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetLinePropertiesResult.FromString,
+                _registered_method=True)
+        self.SetMeasurementAuxiliaryData = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetMeasurementAuxiliaryData',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetMeasurementAuxiliaryDataRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetMeasurementAuxiliaryDataResult.FromString,
+                _registered_method=True)
+        self.SetObjectReportingFrame = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetObjectReportingFrame',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetObjectReportingFrameRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetObjectReportingFrameResult.FromString,
+                _registered_method=True)
+        self.SetPointProperties = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetPointProperties',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetPointPropertiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetPointPropertiesResult.FromString,
+                _registered_method=True)
+        self.SetPointWeightsFromUncertainties = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetPointWeightsFromUncertainties',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetPointWeightsFromUncertaintiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetPointWeightsFromUncertaintiesResult.FromString,
+                _registered_method=True)
+        self.SetTransformForIthFrameInFrameSet = channel.unary_unary(
+                '/briosa.AnalysisOperations/SetTransformForIthFrameInFrameSet',
+                request_serializer=briosa_dot_analysis__operations__pb2.SetTransformForIthFrameInFrameSetRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SetTransformForIthFrameInFrameSetResult.FromString,
+                _registered_method=True)
+        self.SphereAxisCheck = channel.unary_unary(
+                '/briosa.AnalysisOperations/SphereAxisCheck',
+                request_serializer=briosa_dot_analysis__operations__pb2.SphereAxisCheckRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.SphereAxisCheckResult.FromString,
+                _registered_method=True)
+        self.TemperatureCompensateAGroup = channel.unary_unary(
+                '/briosa.AnalysisOperations/TemperatureCompensateAGroup',
+                request_serializer=briosa_dot_analysis__operations__pb2.TemperatureCompensateAGroupRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.TemperatureCompensateAGroupResult.FromString,
+                _registered_method=True)
+        self.TransformObjectsFrameToFrame = channel.unary_unary(
+                '/briosa.AnalysisOperations/TransformObjectsFrameToFrame',
+                request_serializer=briosa_dot_analysis__operations__pb2.TransformObjectsFrameToFrameRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.TransformObjectsFrameToFrameResult.FromString,
+                _registered_method=True)
+        self.TransformObjectsByDeltaAboutWorkingFrame = channel.unary_unary(
+                '/briosa.AnalysisOperations/TransformObjectsByDeltaAboutWorkingFrame',
+                request_serializer=briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaAboutWorkingFrameRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaAboutWorkingFrameResult.FromString,
+                _registered_method=True)
+        self.TransformObjectsByDeltaWorldTransformOperator = channel.unary_unary(
+                '/briosa.AnalysisOperations/TransformObjectsByDeltaWorldTransformOperator',
+                request_serializer=briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaWorldTransformOperatorRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaWorldTransformOperatorResult.FromString,
+                _registered_method=True)
+        self.TranslateObjectsByDelta = channel.unary_unary(
+                '/briosa.AnalysisOperations/TranslateObjectsByDelta',
+                request_serializer=briosa_dot_analysis__operations__pb2.TranslateObjectsByDeltaRequest.SerializeToString,
+                response_deserializer=briosa_dot_analysis__operations__pb2.TranslateObjectsByDeltaResult.FromString,
+                _registered_method=True)
 
 
 class AnalysisOperationsServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GetIThCollectionName(self, request, context):
-        """Executes the "Get i-th Collection Name" MP command.
-        """
+    def AngleBetweenLineAndPlane(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AngleBetweenTwoLines(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AngleBetweenTwoPlanesNormals(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def BestFitTransformationGroupToGroup(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ComputeGroupToGroupOrientationRxRyRz(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreatePointUncertaintyCloudPointSets(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreatePointUncertaintyFields(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def FitGeometryToPointGroup(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def FitGeometryToPointGroupProjectedToPlane(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def FitGeometryToPoints(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetBSplineProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCircleProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetConeProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCoordinateForIthPointInPointSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCylinderProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetEllipseProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetEulerParametersForFrame(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetEulerParametersForIthFrameInFrameSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetIthCollectionName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetIthPointFromGroup(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetLineProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetMeasurementAuxiliaryData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetMeasurementInfoData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetMeasurementWeatherData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetNumberOfCollections(self, request, context):
-        """Executes the "Get Number of Collections" MP command.
-        """
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetNumberOfFramesInFrameSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetNumberOfPointsInGroup(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetNumberOfPointsInPointSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetObjectReportingFrame(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPlaneProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointCoordinate(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointCoordinateCylindrical(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointCoordinatePolar(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointToLineDistance(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointToPointDistance(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointTolerance(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSlotProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSphereProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSurfacePhysicalStats(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetTimestampForIthFrameInFrameSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetTimestampForIthPointInPointSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetTorusProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetTransformForIthFrameInFrameSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GroupToSurfaceFit(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportGeometryFitProfiles(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def IsObjectOfType(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeCircleFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeConeFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeCylinderFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeEllipseFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeLineFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeParaboloidFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakePlaneFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeSlotFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeSphereFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MushroomTargetHoleInspection(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def PatchNormalShiftHolePin(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def PatchNormalShiftPoint(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryCloudsToObjects(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryCloudsToSurface(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryFrameToFrame(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryGroupsToObjects(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryPointToObjects(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryPointToPointAlongCurve(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryPointsToCircle(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryPointsToObjects(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryPointsToSinglePoint(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReComputeCalculatedItems(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RenamePointsBasedOnInterPointDistanceToReferencePoints(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RenamePointsBasedOnProximityToReferencePoints(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReverseBSplines(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReversePlaneNormals(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReverseSurfaceNormals(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetCircleProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetConeProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetCylinderProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetDefaultColorizationOptions(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetEllipseProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetGeometryRelationshipFitProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetLineProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetMeasurementAuxiliaryData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetObjectReportingFrame(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetPointProperties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetPointWeightsFromUncertainties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetTransformForIthFrameInFrameSet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SphereAxisCheck(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def TemperatureCompensateAGroup(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def TransformObjectsFrameToFrame(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def TransformObjectsByDeltaAboutWorkingFrame(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def TransformObjectsByDeltaWorldTransformOperator(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def TranslateObjectsByDelta(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -66,15 +1054,465 @@ class AnalysisOperationsServicer(object):
 
 def add_AnalysisOperationsServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetIThCollectionName': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetIThCollectionName,
-                    request_deserializer=briosa_dot_analysis__operations__pb2.GetIThCollectionNameRequest.FromString,
-                    response_serializer=briosa_dot_analysis__operations__pb2.GetIThCollectionNameResult.SerializeToString,
+            'AngleBetweenLineAndPlane': grpc.unary_unary_rpc_method_handler(
+                    servicer.AngleBetweenLineAndPlane,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.AngleBetweenLineAndPlaneRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.AngleBetweenLineAndPlaneResult.SerializeToString,
+            ),
+            'AngleBetweenTwoLines': grpc.unary_unary_rpc_method_handler(
+                    servicer.AngleBetweenTwoLines,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.AngleBetweenTwoLinesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.AngleBetweenTwoLinesResult.SerializeToString,
+            ),
+            'AngleBetweenTwoPlanesNormals': grpc.unary_unary_rpc_method_handler(
+                    servicer.AngleBetweenTwoPlanesNormals,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.AngleBetweenTwoPlanesNormalsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.AngleBetweenTwoPlanesNormalsResult.SerializeToString,
+            ),
+            'BestFitTransformationGroupToGroup': grpc.unary_unary_rpc_method_handler(
+                    servicer.BestFitTransformationGroupToGroup,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.BestFitTransformationGroupToGroupRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.BestFitTransformationGroupToGroupResult.SerializeToString,
+            ),
+            'ComputeGroupToGroupOrientationRxRyRz': grpc.unary_unary_rpc_method_handler(
+                    servicer.ComputeGroupToGroupOrientationRxRyRz,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.ComputeGroupToGroupOrientationRxRyRzRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.ComputeGroupToGroupOrientationRxRyRzResult.SerializeToString,
+            ),
+            'CreatePointUncertaintyCloudPointSets': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreatePointUncertaintyCloudPointSets,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.CreatePointUncertaintyCloudPointSetsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.CreatePointUncertaintyCloudPointSetsResult.SerializeToString,
+            ),
+            'CreatePointUncertaintyFields': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreatePointUncertaintyFields,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.CreatePointUncertaintyFieldsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.CreatePointUncertaintyFieldsResult.SerializeToString,
+            ),
+            'FitGeometryToPointGroup': grpc.unary_unary_rpc_method_handler(
+                    servicer.FitGeometryToPointGroup,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupResult.SerializeToString,
+            ),
+            'FitGeometryToPointGroupProjectedToPlane': grpc.unary_unary_rpc_method_handler(
+                    servicer.FitGeometryToPointGroupProjectedToPlane,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupProjectedToPlaneRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupProjectedToPlaneResult.SerializeToString,
+            ),
+            'FitGeometryToPoints': grpc.unary_unary_rpc_method_handler(
+                    servicer.FitGeometryToPoints,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.FitGeometryToPointsResult.SerializeToString,
+            ),
+            'GetBSplineProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetBSplineProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetBSplinePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetBSplinePropertiesResult.SerializeToString,
+            ),
+            'GetCircleProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCircleProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetCirclePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetCirclePropertiesResult.SerializeToString,
+            ),
+            'GetConeProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetConeProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetConePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetConePropertiesResult.SerializeToString,
+            ),
+            'GetCoordinateForIthPointInPointSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCoordinateForIthPointInPointSet,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetCoordinateForIthPointInPointSetRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetCoordinateForIthPointInPointSetResult.SerializeToString,
+            ),
+            'GetCylinderProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCylinderProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetCylinderPropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetCylinderPropertiesResult.SerializeToString,
+            ),
+            'GetEllipseProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetEllipseProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetEllipsePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetEllipsePropertiesResult.SerializeToString,
+            ),
+            'GetEulerParametersForFrame': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetEulerParametersForFrame,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetEulerParametersForFrameRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetEulerParametersForFrameResult.SerializeToString,
+            ),
+            'GetEulerParametersForIthFrameInFrameSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetEulerParametersForIthFrameInFrameSet,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetEulerParametersForIthFrameInFrameSetRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetEulerParametersForIthFrameInFrameSetResult.SerializeToString,
+            ),
+            'GetIthCollectionName': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetIthCollectionName,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetIthCollectionNameRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetIthCollectionNameResult.SerializeToString,
+            ),
+            'GetIthPointFromGroup': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetIthPointFromGroup,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetIthPointFromGroupRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetIthPointFromGroupResult.SerializeToString,
+            ),
+            'GetLineProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetLineProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetLinePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetLinePropertiesResult.SerializeToString,
+            ),
+            'GetMeasurementAuxiliaryData': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetMeasurementAuxiliaryData,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetMeasurementAuxiliaryDataRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetMeasurementAuxiliaryDataResult.SerializeToString,
+            ),
+            'GetMeasurementInfoData': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetMeasurementInfoData,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetMeasurementInfoDataRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetMeasurementInfoDataResult.SerializeToString,
+            ),
+            'GetMeasurementWeatherData': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetMeasurementWeatherData,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetMeasurementWeatherDataRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetMeasurementWeatherDataResult.SerializeToString,
             ),
             'GetNumberOfCollections': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNumberOfCollections,
                     request_deserializer=briosa_dot_analysis__operations__pb2.GetNumberOfCollectionsRequest.FromString,
                     response_serializer=briosa_dot_analysis__operations__pb2.GetNumberOfCollectionsResult.SerializeToString,
+            ),
+            'GetNumberOfFramesInFrameSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetNumberOfFramesInFrameSet,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetNumberOfFramesInFrameSetRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetNumberOfFramesInFrameSetResult.SerializeToString,
+            ),
+            'GetNumberOfPointsInGroup': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetNumberOfPointsInGroup,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetNumberOfPointsInGroupRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetNumberOfPointsInGroupResult.SerializeToString,
+            ),
+            'GetNumberOfPointsInPointSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetNumberOfPointsInPointSet,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetNumberOfPointsInPointSetRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetNumberOfPointsInPointSetResult.SerializeToString,
+            ),
+            'GetObjectReportingFrame': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetObjectReportingFrame,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetObjectReportingFrameRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetObjectReportingFrameResult.SerializeToString,
+            ),
+            'GetPlaneProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPlaneProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetPlanePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetPlanePropertiesResult.SerializeToString,
+            ),
+            'GetPointCoordinate': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointCoordinate,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetPointCoordinateRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetPointCoordinateResult.SerializeToString,
+            ),
+            'GetPointCoordinateCylindrical': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointCoordinateCylindrical,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetPointCoordinateCylindricalRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetPointCoordinateCylindricalResult.SerializeToString,
+            ),
+            'GetPointCoordinatePolar': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointCoordinatePolar,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetPointCoordinatePolarRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetPointCoordinatePolarResult.SerializeToString,
+            ),
+            'GetPointProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetPointPropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetPointPropertiesResult.SerializeToString,
+            ),
+            'GetPointToLineDistance': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointToLineDistance,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetPointToLineDistanceRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetPointToLineDistanceResult.SerializeToString,
+            ),
+            'GetPointToPointDistance': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointToPointDistance,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetPointToPointDistanceRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetPointToPointDistanceResult.SerializeToString,
+            ),
+            'GetPointTolerance': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointTolerance,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetPointToleranceRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetPointToleranceResult.SerializeToString,
+            ),
+            'GetSlotProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSlotProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetSlotPropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetSlotPropertiesResult.SerializeToString,
+            ),
+            'GetSphereProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSphereProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetSpherePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetSpherePropertiesResult.SerializeToString,
+            ),
+            'GetSurfacePhysicalStats': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSurfacePhysicalStats,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetSurfacePhysicalStatsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetSurfacePhysicalStatsResult.SerializeToString,
+            ),
+            'GetTimestampForIthFrameInFrameSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTimestampForIthFrameInFrameSet,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetTimestampForIthFrameInFrameSetRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetTimestampForIthFrameInFrameSetResult.SerializeToString,
+            ),
+            'GetTimestampForIthPointInPointSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTimestampForIthPointInPointSet,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetTimestampForIthPointInPointSetRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetTimestampForIthPointInPointSetResult.SerializeToString,
+            ),
+            'GetTorusProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTorusProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetTorusPropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetTorusPropertiesResult.SerializeToString,
+            ),
+            'GetTransformForIthFrameInFrameSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTransformForIthFrameInFrameSet,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GetTransformForIthFrameInFrameSetRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GetTransformForIthFrameInFrameSetResult.SerializeToString,
+            ),
+            'GroupToSurfaceFit': grpc.unary_unary_rpc_method_handler(
+                    servicer.GroupToSurfaceFit,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.GroupToSurfaceFitRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.GroupToSurfaceFitResult.SerializeToString,
+            ),
+            'ImportGeometryFitProfiles': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportGeometryFitProfiles,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.ImportGeometryFitProfilesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.ImportGeometryFitProfilesResult.SerializeToString,
+            ),
+            'IsObjectOfType': grpc.unary_unary_rpc_method_handler(
+                    servicer.IsObjectOfType,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.IsObjectOfTypeRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.IsObjectOfTypeResult.SerializeToString,
+            ),
+            'MakeCircleFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeCircleFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakeCircleFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakeCircleFitProfileResult.SerializeToString,
+            ),
+            'MakeConeFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeConeFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakeConeFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakeConeFitProfileResult.SerializeToString,
+            ),
+            'MakeCylinderFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeCylinderFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakeCylinderFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakeCylinderFitProfileResult.SerializeToString,
+            ),
+            'MakeEllipseFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeEllipseFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakeEllipseFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakeEllipseFitProfileResult.SerializeToString,
+            ),
+            'MakeLineFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeLineFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakeLineFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakeLineFitProfileResult.SerializeToString,
+            ),
+            'MakeParaboloidFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeParaboloidFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakeParaboloidFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakeParaboloidFitProfileResult.SerializeToString,
+            ),
+            'MakePlaneFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakePlaneFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakePlaneFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakePlaneFitProfileResult.SerializeToString,
+            ),
+            'MakeSlotFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeSlotFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakeSlotFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakeSlotFitProfileResult.SerializeToString,
+            ),
+            'MakeSphereFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeSphereFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MakeSphereFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MakeSphereFitProfileResult.SerializeToString,
+            ),
+            'MushroomTargetHoleInspection': grpc.unary_unary_rpc_method_handler(
+                    servicer.MushroomTargetHoleInspection,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.MushroomTargetHoleInspectionRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.MushroomTargetHoleInspectionResult.SerializeToString,
+            ),
+            'PatchNormalShiftHolePin': grpc.unary_unary_rpc_method_handler(
+                    servicer.PatchNormalShiftHolePin,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.PatchNormalShiftHolePinRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.PatchNormalShiftHolePinResult.SerializeToString,
+            ),
+            'PatchNormalShiftPoint': grpc.unary_unary_rpc_method_handler(
+                    servicer.PatchNormalShiftPoint,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.PatchNormalShiftPointRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.PatchNormalShiftPointResult.SerializeToString,
+            ),
+            'QueryCloudsToObjects': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryCloudsToObjects,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryCloudsToObjectsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryCloudsToObjectsResult.SerializeToString,
+            ),
+            'QueryCloudsToSurface': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryCloudsToSurface,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryCloudsToSurfaceRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryCloudsToSurfaceResult.SerializeToString,
+            ),
+            'QueryFrameToFrame': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryFrameToFrame,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryFrameToFrameRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryFrameToFrameResult.SerializeToString,
+            ),
+            'QueryGroupsToObjects': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryGroupsToObjects,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryGroupsToObjectsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryGroupsToObjectsResult.SerializeToString,
+            ),
+            'QueryPointToObjects': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryPointToObjects,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryPointToObjectsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryPointToObjectsResult.SerializeToString,
+            ),
+            'QueryPointToPointAlongCurve': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryPointToPointAlongCurve,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryPointToPointAlongCurveRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryPointToPointAlongCurveResult.SerializeToString,
+            ),
+            'QueryPointsToCircle': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryPointsToCircle,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryPointsToCircleRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryPointsToCircleResult.SerializeToString,
+            ),
+            'QueryPointsToObjects': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryPointsToObjects,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryPointsToObjectsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryPointsToObjectsResult.SerializeToString,
+            ),
+            'QueryPointsToSinglePoint': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryPointsToSinglePoint,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.QueryPointsToSinglePointRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.QueryPointsToSinglePointResult.SerializeToString,
+            ),
+            'ReComputeCalculatedItems': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReComputeCalculatedItems,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.ReComputeCalculatedItemsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.ReComputeCalculatedItemsResult.SerializeToString,
+            ),
+            'RenamePointsBasedOnInterPointDistanceToReferencePoints': grpc.unary_unary_rpc_method_handler(
+                    servicer.RenamePointsBasedOnInterPointDistanceToReferencePoints,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.RenamePointsBasedOnInterPointDistanceToReferencePointsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.RenamePointsBasedOnInterPointDistanceToReferencePointsResult.SerializeToString,
+            ),
+            'RenamePointsBasedOnProximityToReferencePoints': grpc.unary_unary_rpc_method_handler(
+                    servicer.RenamePointsBasedOnProximityToReferencePoints,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.RenamePointsBasedOnProximityToReferencePointsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.RenamePointsBasedOnProximityToReferencePointsResult.SerializeToString,
+            ),
+            'ReverseBSplines': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReverseBSplines,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.ReverseBSplinesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.ReverseBSplinesResult.SerializeToString,
+            ),
+            'ReversePlaneNormals': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReversePlaneNormals,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.ReversePlaneNormalsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.ReversePlaneNormalsResult.SerializeToString,
+            ),
+            'ReverseSurfaceNormals': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReverseSurfaceNormals,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.ReverseSurfaceNormalsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.ReverseSurfaceNormalsResult.SerializeToString,
+            ),
+            'SetCircleProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetCircleProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetCirclePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetCirclePropertiesResult.SerializeToString,
+            ),
+            'SetConeProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetConeProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetConePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetConePropertiesResult.SerializeToString,
+            ),
+            'SetCylinderProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetCylinderProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetCylinderPropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetCylinderPropertiesResult.SerializeToString,
+            ),
+            'SetDefaultColorizationOptions': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetDefaultColorizationOptions,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetDefaultColorizationOptionsRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetDefaultColorizationOptionsResult.SerializeToString,
+            ),
+            'SetEllipseProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetEllipseProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetEllipsePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetEllipsePropertiesResult.SerializeToString,
+            ),
+            'SetGeometryRelationshipFitProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetGeometryRelationshipFitProfile,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetGeometryRelationshipFitProfileRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetGeometryRelationshipFitProfileResult.SerializeToString,
+            ),
+            'SetLineProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetLineProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetLinePropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetLinePropertiesResult.SerializeToString,
+            ),
+            'SetMeasurementAuxiliaryData': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetMeasurementAuxiliaryData,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetMeasurementAuxiliaryDataRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetMeasurementAuxiliaryDataResult.SerializeToString,
+            ),
+            'SetObjectReportingFrame': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetObjectReportingFrame,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetObjectReportingFrameRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetObjectReportingFrameResult.SerializeToString,
+            ),
+            'SetPointProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetPointProperties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetPointPropertiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetPointPropertiesResult.SerializeToString,
+            ),
+            'SetPointWeightsFromUncertainties': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetPointWeightsFromUncertainties,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetPointWeightsFromUncertaintiesRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetPointWeightsFromUncertaintiesResult.SerializeToString,
+            ),
+            'SetTransformForIthFrameInFrameSet': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetTransformForIthFrameInFrameSet,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SetTransformForIthFrameInFrameSetRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SetTransformForIthFrameInFrameSetResult.SerializeToString,
+            ),
+            'SphereAxisCheck': grpc.unary_unary_rpc_method_handler(
+                    servicer.SphereAxisCheck,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.SphereAxisCheckRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.SphereAxisCheckResult.SerializeToString,
+            ),
+            'TemperatureCompensateAGroup': grpc.unary_unary_rpc_method_handler(
+                    servicer.TemperatureCompensateAGroup,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.TemperatureCompensateAGroupRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.TemperatureCompensateAGroupResult.SerializeToString,
+            ),
+            'TransformObjectsFrameToFrame': grpc.unary_unary_rpc_method_handler(
+                    servicer.TransformObjectsFrameToFrame,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.TransformObjectsFrameToFrameRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.TransformObjectsFrameToFrameResult.SerializeToString,
+            ),
+            'TransformObjectsByDeltaAboutWorkingFrame': grpc.unary_unary_rpc_method_handler(
+                    servicer.TransformObjectsByDeltaAboutWorkingFrame,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaAboutWorkingFrameRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaAboutWorkingFrameResult.SerializeToString,
+            ),
+            'TransformObjectsByDeltaWorldTransformOperator': grpc.unary_unary_rpc_method_handler(
+                    servicer.TransformObjectsByDeltaWorldTransformOperator,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaWorldTransformOperatorRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaWorldTransformOperatorResult.SerializeToString,
+            ),
+            'TranslateObjectsByDelta': grpc.unary_unary_rpc_method_handler(
+                    servicer.TranslateObjectsByDelta,
+                    request_deserializer=briosa_dot_analysis__operations__pb2.TranslateObjectsByDeltaRequest.FromString,
+                    response_serializer=briosa_dot_analysis__operations__pb2.TranslateObjectsByDeltaResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -88,7 +1526,7 @@ class AnalysisOperations(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetIThCollectionName(request,
+    def AngleBetweenLineAndPlane(request,
             target,
             options=(),
             channel_credentials=None,
@@ -101,9 +1539,630 @@ class AnalysisOperations(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/briosa.AnalysisOperations/GetIThCollectionName',
-            briosa_dot_analysis__operations__pb2.GetIThCollectionNameRequest.SerializeToString,
-            briosa_dot_analysis__operations__pb2.GetIThCollectionNameResult.FromString,
+            '/briosa.AnalysisOperations/AngleBetweenLineAndPlane',
+            briosa_dot_analysis__operations__pb2.AngleBetweenLineAndPlaneRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.AngleBetweenLineAndPlaneResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AngleBetweenTwoLines(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/AngleBetweenTwoLines',
+            briosa_dot_analysis__operations__pb2.AngleBetweenTwoLinesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.AngleBetweenTwoLinesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AngleBetweenTwoPlanesNormals(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/AngleBetweenTwoPlanesNormals',
+            briosa_dot_analysis__operations__pb2.AngleBetweenTwoPlanesNormalsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.AngleBetweenTwoPlanesNormalsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def BestFitTransformationGroupToGroup(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/BestFitTransformationGroupToGroup',
+            briosa_dot_analysis__operations__pb2.BestFitTransformationGroupToGroupRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.BestFitTransformationGroupToGroupResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ComputeGroupToGroupOrientationRxRyRz(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/ComputeGroupToGroupOrientationRxRyRz',
+            briosa_dot_analysis__operations__pb2.ComputeGroupToGroupOrientationRxRyRzRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.ComputeGroupToGroupOrientationRxRyRzResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreatePointUncertaintyCloudPointSets(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/CreatePointUncertaintyCloudPointSets',
+            briosa_dot_analysis__operations__pb2.CreatePointUncertaintyCloudPointSetsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.CreatePointUncertaintyCloudPointSetsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreatePointUncertaintyFields(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/CreatePointUncertaintyFields',
+            briosa_dot_analysis__operations__pb2.CreatePointUncertaintyFieldsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.CreatePointUncertaintyFieldsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def FitGeometryToPointGroup(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/FitGeometryToPointGroup',
+            briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def FitGeometryToPointGroupProjectedToPlane(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/FitGeometryToPointGroupProjectedToPlane',
+            briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupProjectedToPlaneRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.FitGeometryToPointGroupProjectedToPlaneResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def FitGeometryToPoints(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/FitGeometryToPoints',
+            briosa_dot_analysis__operations__pb2.FitGeometryToPointsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.FitGeometryToPointsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetBSplineProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetBSplineProperties',
+            briosa_dot_analysis__operations__pb2.GetBSplinePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetBSplinePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCircleProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetCircleProperties',
+            briosa_dot_analysis__operations__pb2.GetCirclePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetCirclePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetConeProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetConeProperties',
+            briosa_dot_analysis__operations__pb2.GetConePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetConePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCoordinateForIthPointInPointSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetCoordinateForIthPointInPointSet',
+            briosa_dot_analysis__operations__pb2.GetCoordinateForIthPointInPointSetRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetCoordinateForIthPointInPointSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCylinderProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetCylinderProperties',
+            briosa_dot_analysis__operations__pb2.GetCylinderPropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetCylinderPropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetEllipseProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetEllipseProperties',
+            briosa_dot_analysis__operations__pb2.GetEllipsePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetEllipsePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetEulerParametersForFrame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetEulerParametersForFrame',
+            briosa_dot_analysis__operations__pb2.GetEulerParametersForFrameRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetEulerParametersForFrameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetEulerParametersForIthFrameInFrameSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetEulerParametersForIthFrameInFrameSet',
+            briosa_dot_analysis__operations__pb2.GetEulerParametersForIthFrameInFrameSetRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetEulerParametersForIthFrameInFrameSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetIthCollectionName(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetIthCollectionName',
+            briosa_dot_analysis__operations__pb2.GetIthCollectionNameRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetIthCollectionNameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetIthPointFromGroup(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetIthPointFromGroup',
+            briosa_dot_analysis__operations__pb2.GetIthPointFromGroupRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetIthPointFromGroupResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetLineProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetLineProperties',
+            briosa_dot_analysis__operations__pb2.GetLinePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetLinePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetMeasurementAuxiliaryData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetMeasurementAuxiliaryData',
+            briosa_dot_analysis__operations__pb2.GetMeasurementAuxiliaryDataRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetMeasurementAuxiliaryDataResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetMeasurementInfoData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetMeasurementInfoData',
+            briosa_dot_analysis__operations__pb2.GetMeasurementInfoDataRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetMeasurementInfoDataResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetMeasurementWeatherData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetMeasurementWeatherData',
+            briosa_dot_analysis__operations__pb2.GetMeasurementWeatherDataRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetMeasurementWeatherDataResult.FromString,
             options,
             channel_credentials,
             insecure,
@@ -131,6 +2190,1815 @@ class AnalysisOperations(object):
             '/briosa.AnalysisOperations/GetNumberOfCollections',
             briosa_dot_analysis__operations__pb2.GetNumberOfCollectionsRequest.SerializeToString,
             briosa_dot_analysis__operations__pb2.GetNumberOfCollectionsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetNumberOfFramesInFrameSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetNumberOfFramesInFrameSet',
+            briosa_dot_analysis__operations__pb2.GetNumberOfFramesInFrameSetRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetNumberOfFramesInFrameSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetNumberOfPointsInGroup(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetNumberOfPointsInGroup',
+            briosa_dot_analysis__operations__pb2.GetNumberOfPointsInGroupRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetNumberOfPointsInGroupResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetNumberOfPointsInPointSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetNumberOfPointsInPointSet',
+            briosa_dot_analysis__operations__pb2.GetNumberOfPointsInPointSetRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetNumberOfPointsInPointSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetObjectReportingFrame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetObjectReportingFrame',
+            briosa_dot_analysis__operations__pb2.GetObjectReportingFrameRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetObjectReportingFrameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPlaneProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetPlaneProperties',
+            briosa_dot_analysis__operations__pb2.GetPlanePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetPlanePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointCoordinate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetPointCoordinate',
+            briosa_dot_analysis__operations__pb2.GetPointCoordinateRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetPointCoordinateResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointCoordinateCylindrical(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetPointCoordinateCylindrical',
+            briosa_dot_analysis__operations__pb2.GetPointCoordinateCylindricalRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetPointCoordinateCylindricalResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointCoordinatePolar(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetPointCoordinatePolar',
+            briosa_dot_analysis__operations__pb2.GetPointCoordinatePolarRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetPointCoordinatePolarResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetPointProperties',
+            briosa_dot_analysis__operations__pb2.GetPointPropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetPointPropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointToLineDistance(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetPointToLineDistance',
+            briosa_dot_analysis__operations__pb2.GetPointToLineDistanceRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetPointToLineDistanceResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointToPointDistance(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetPointToPointDistance',
+            briosa_dot_analysis__operations__pb2.GetPointToPointDistanceRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetPointToPointDistanceResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointTolerance(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetPointTolerance',
+            briosa_dot_analysis__operations__pb2.GetPointToleranceRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetPointToleranceResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSlotProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetSlotProperties',
+            briosa_dot_analysis__operations__pb2.GetSlotPropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetSlotPropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSphereProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetSphereProperties',
+            briosa_dot_analysis__operations__pb2.GetSpherePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetSpherePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSurfacePhysicalStats(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetSurfacePhysicalStats',
+            briosa_dot_analysis__operations__pb2.GetSurfacePhysicalStatsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetSurfacePhysicalStatsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTimestampForIthFrameInFrameSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetTimestampForIthFrameInFrameSet',
+            briosa_dot_analysis__operations__pb2.GetTimestampForIthFrameInFrameSetRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetTimestampForIthFrameInFrameSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTimestampForIthPointInPointSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetTimestampForIthPointInPointSet',
+            briosa_dot_analysis__operations__pb2.GetTimestampForIthPointInPointSetRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetTimestampForIthPointInPointSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTorusProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetTorusProperties',
+            briosa_dot_analysis__operations__pb2.GetTorusPropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetTorusPropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTransformForIthFrameInFrameSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GetTransformForIthFrameInFrameSet',
+            briosa_dot_analysis__operations__pb2.GetTransformForIthFrameInFrameSetRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GetTransformForIthFrameInFrameSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GroupToSurfaceFit(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/GroupToSurfaceFit',
+            briosa_dot_analysis__operations__pb2.GroupToSurfaceFitRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.GroupToSurfaceFitResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportGeometryFitProfiles(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/ImportGeometryFitProfiles',
+            briosa_dot_analysis__operations__pb2.ImportGeometryFitProfilesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.ImportGeometryFitProfilesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def IsObjectOfType(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/IsObjectOfType',
+            briosa_dot_analysis__operations__pb2.IsObjectOfTypeRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.IsObjectOfTypeResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeCircleFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakeCircleFitProfile',
+            briosa_dot_analysis__operations__pb2.MakeCircleFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakeCircleFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeConeFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakeConeFitProfile',
+            briosa_dot_analysis__operations__pb2.MakeConeFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakeConeFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeCylinderFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakeCylinderFitProfile',
+            briosa_dot_analysis__operations__pb2.MakeCylinderFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakeCylinderFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeEllipseFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakeEllipseFitProfile',
+            briosa_dot_analysis__operations__pb2.MakeEllipseFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakeEllipseFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeLineFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakeLineFitProfile',
+            briosa_dot_analysis__operations__pb2.MakeLineFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakeLineFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeParaboloidFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakeParaboloidFitProfile',
+            briosa_dot_analysis__operations__pb2.MakeParaboloidFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakeParaboloidFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakePlaneFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakePlaneFitProfile',
+            briosa_dot_analysis__operations__pb2.MakePlaneFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakePlaneFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeSlotFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakeSlotFitProfile',
+            briosa_dot_analysis__operations__pb2.MakeSlotFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakeSlotFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeSphereFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MakeSphereFitProfile',
+            briosa_dot_analysis__operations__pb2.MakeSphereFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MakeSphereFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MushroomTargetHoleInspection(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/MushroomTargetHoleInspection',
+            briosa_dot_analysis__operations__pb2.MushroomTargetHoleInspectionRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.MushroomTargetHoleInspectionResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def PatchNormalShiftHolePin(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/PatchNormalShiftHolePin',
+            briosa_dot_analysis__operations__pb2.PatchNormalShiftHolePinRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.PatchNormalShiftHolePinResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def PatchNormalShiftPoint(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/PatchNormalShiftPoint',
+            briosa_dot_analysis__operations__pb2.PatchNormalShiftPointRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.PatchNormalShiftPointResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryCloudsToObjects(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryCloudsToObjects',
+            briosa_dot_analysis__operations__pb2.QueryCloudsToObjectsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryCloudsToObjectsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryCloudsToSurface(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryCloudsToSurface',
+            briosa_dot_analysis__operations__pb2.QueryCloudsToSurfaceRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryCloudsToSurfaceResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryFrameToFrame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryFrameToFrame',
+            briosa_dot_analysis__operations__pb2.QueryFrameToFrameRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryFrameToFrameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryGroupsToObjects(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryGroupsToObjects',
+            briosa_dot_analysis__operations__pb2.QueryGroupsToObjectsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryGroupsToObjectsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryPointToObjects(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryPointToObjects',
+            briosa_dot_analysis__operations__pb2.QueryPointToObjectsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryPointToObjectsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryPointToPointAlongCurve(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryPointToPointAlongCurve',
+            briosa_dot_analysis__operations__pb2.QueryPointToPointAlongCurveRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryPointToPointAlongCurveResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryPointsToCircle(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryPointsToCircle',
+            briosa_dot_analysis__operations__pb2.QueryPointsToCircleRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryPointsToCircleResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryPointsToObjects(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryPointsToObjects',
+            briosa_dot_analysis__operations__pb2.QueryPointsToObjectsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryPointsToObjectsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def QueryPointsToSinglePoint(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/QueryPointsToSinglePoint',
+            briosa_dot_analysis__operations__pb2.QueryPointsToSinglePointRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.QueryPointsToSinglePointResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReComputeCalculatedItems(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/ReComputeCalculatedItems',
+            briosa_dot_analysis__operations__pb2.ReComputeCalculatedItemsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.ReComputeCalculatedItemsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def RenamePointsBasedOnInterPointDistanceToReferencePoints(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/RenamePointsBasedOnInterPointDistanceToReferencePoints',
+            briosa_dot_analysis__operations__pb2.RenamePointsBasedOnInterPointDistanceToReferencePointsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.RenamePointsBasedOnInterPointDistanceToReferencePointsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def RenamePointsBasedOnProximityToReferencePoints(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/RenamePointsBasedOnProximityToReferencePoints',
+            briosa_dot_analysis__operations__pb2.RenamePointsBasedOnProximityToReferencePointsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.RenamePointsBasedOnProximityToReferencePointsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReverseBSplines(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/ReverseBSplines',
+            briosa_dot_analysis__operations__pb2.ReverseBSplinesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.ReverseBSplinesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReversePlaneNormals(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/ReversePlaneNormals',
+            briosa_dot_analysis__operations__pb2.ReversePlaneNormalsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.ReversePlaneNormalsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReverseSurfaceNormals(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/ReverseSurfaceNormals',
+            briosa_dot_analysis__operations__pb2.ReverseSurfaceNormalsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.ReverseSurfaceNormalsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetCircleProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetCircleProperties',
+            briosa_dot_analysis__operations__pb2.SetCirclePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetCirclePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetConeProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetConeProperties',
+            briosa_dot_analysis__operations__pb2.SetConePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetConePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetCylinderProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetCylinderProperties',
+            briosa_dot_analysis__operations__pb2.SetCylinderPropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetCylinderPropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetDefaultColorizationOptions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetDefaultColorizationOptions',
+            briosa_dot_analysis__operations__pb2.SetDefaultColorizationOptionsRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetDefaultColorizationOptionsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetEllipseProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetEllipseProperties',
+            briosa_dot_analysis__operations__pb2.SetEllipsePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetEllipsePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetGeometryRelationshipFitProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetGeometryRelationshipFitProfile',
+            briosa_dot_analysis__operations__pb2.SetGeometryRelationshipFitProfileRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetGeometryRelationshipFitProfileResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetLineProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetLineProperties',
+            briosa_dot_analysis__operations__pb2.SetLinePropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetLinePropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetMeasurementAuxiliaryData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetMeasurementAuxiliaryData',
+            briosa_dot_analysis__operations__pb2.SetMeasurementAuxiliaryDataRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetMeasurementAuxiliaryDataResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetObjectReportingFrame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetObjectReportingFrame',
+            briosa_dot_analysis__operations__pb2.SetObjectReportingFrameRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetObjectReportingFrameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetPointProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetPointProperties',
+            briosa_dot_analysis__operations__pb2.SetPointPropertiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetPointPropertiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetPointWeightsFromUncertainties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetPointWeightsFromUncertainties',
+            briosa_dot_analysis__operations__pb2.SetPointWeightsFromUncertaintiesRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetPointWeightsFromUncertaintiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetTransformForIthFrameInFrameSet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SetTransformForIthFrameInFrameSet',
+            briosa_dot_analysis__operations__pb2.SetTransformForIthFrameInFrameSetRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SetTransformForIthFrameInFrameSetResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SphereAxisCheck(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/SphereAxisCheck',
+            briosa_dot_analysis__operations__pb2.SphereAxisCheckRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.SphereAxisCheckResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def TemperatureCompensateAGroup(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/TemperatureCompensateAGroup',
+            briosa_dot_analysis__operations__pb2.TemperatureCompensateAGroupRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.TemperatureCompensateAGroupResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def TransformObjectsFrameToFrame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/TransformObjectsFrameToFrame',
+            briosa_dot_analysis__operations__pb2.TransformObjectsFrameToFrameRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.TransformObjectsFrameToFrameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def TransformObjectsByDeltaAboutWorkingFrame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/TransformObjectsByDeltaAboutWorkingFrame',
+            briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaAboutWorkingFrameRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaAboutWorkingFrameResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def TransformObjectsByDeltaWorldTransformOperator(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/TransformObjectsByDeltaWorldTransformOperator',
+            briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaWorldTransformOperatorRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.TransformObjectsByDeltaWorldTransformOperatorResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def TranslateObjectsByDelta(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.AnalysisOperations/TranslateObjectsByDelta',
+            briosa_dot_analysis__operations__pb2.TranslateObjectsByDeltaRequest.SerializeToString,
+            briosa_dot_analysis__operations__pb2.TranslateObjectsByDeltaResult.FromString,
             options,
             channel_credentials,
             insecure,
