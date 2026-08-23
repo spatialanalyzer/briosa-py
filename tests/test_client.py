@@ -16,8 +16,11 @@ from briosa import (
     BriosaSpatialAnalyzerError,
     BriosaStartOptions,
     BriosaTransportError,
+    CollectionObjectName,
     Color,
+    ObjectType,
     OperationFailureKind,
+    PointName,
     RecoveryGuidance,
     ReplayGuidance,
     ReplaySafety,
@@ -26,9 +29,12 @@ from briosa import (
     SpatialAnalyzerLaunchOptions,
     SpatialAnalyzerLifecycleFailureKind,
     analysis_operations_pb2,
+    cloud_and_mesh_operations_pb2,
+    construction_operations_pb2,
     discovery_pb2,
     lifecycle_pb2,
     operation_outcomes_pb2,
+    relationship_operations_pb2,
     view_control_pb2,
 )
 from briosa.client import OwnedServer
@@ -42,6 +48,7 @@ from briosa.protocol_identity import (
 )
 from briosa.transport import ClientTransport, map_rpc_error, map_sdk_state
 from briosa.wave_a_operations import WAVE_A_OPERATIONS
+from briosa.wave_b_operations import WAVE_B_OPERATIONS
 
 
 class FakeRpcError(grpc.RpcError):
@@ -306,9 +313,9 @@ def application_lifecycle_failure() -> FakeRpcError:
     )
 
 
-def test_protocol_identity_matches_merged_lifecycle_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.2.1-sa-2026.1.0529.7"
-    assert SOURCE_REVISION == "dc361c55e09cf2b6cdf5b058c9a2b75d52907bd5"
+def test_protocol_identity_matches_merged_wave_b_artifact() -> None:
+    assert ARTIFACT_NAME == "briosa-protocol-0.3.0-sa-2026.1.0529.7"
+    assert SOURCE_REVISION == "6eca210980ff251e4d672047b8efa47f6c04ac9f"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2026.1.0529.7"
@@ -318,6 +325,102 @@ def test_wave_a_surface_matches_the_published_capability_set() -> None:
     assert len(WAVE_A_OPERATIONS) == 469
     assert len({item[3] for item in WAVE_A_OPERATIONS}) == 469
     assert all(hasattr(BriosaClient, item[0]) for item in WAVE_A_OPERATIONS)
+
+
+def test_wave_b_surface_matches_the_published_capability_set() -> None:
+    assert len(WAVE_B_OPERATIONS) == 557
+    assert len(set(WAVE_B_OPERATIONS)) == 557
+    assert len(WAVE_A_OPERATIONS) + len(WAVE_B_OPERATIONS) + 1 == 1027
+    client = create_client(FakeServerLauncher(), FakeTransport())
+    grouped_surfaces = (
+        client.construction_operations,
+        client.gdt_operations,
+        client.instrument_operations,
+        client.robot_calibration_appliance_node_operations,
+        client.robot_operations,
+    )
+    for operation_id in WAVE_B_OPERATIONS:
+        method_name = operation_id.split(".", maxsplit=1)[1]
+        if method_name == "delete_cloud_points_by_xyz_range":
+            method_name = "delete_cloud_points_by_x_y_z_range"
+        assert hasattr(BriosaClient, method_name) or any(
+            hasattr(surface, method_name) for surface in grouped_surfaces
+        )
+
+
+@pytest.mark.asyncio
+async def test_wave_b_defaults_results_groups_and_optional_list_wrappers() -> None:
+    transport = FakeTransport()
+    client = create_client(FakeServerLauncher(), transport)
+    await client.start()
+
+    assert client.construction_operations is not None
+    assert client.gdt_operations is not None
+    assert client.instrument_operations is not None
+    assert client.robot_calibration_appliance_node_operations is not None
+    assert client.robot_operations is not None
+
+    await client.cloud_display_control()
+    _, raw_display_request = transport.operation_requests[-1]
+    display_request = cast(
+        cloud_and_mesh_operations_pb2.CloudDisplayControlRequest,
+        raw_display_request,
+    )
+    assert display_request.thin_draw_increment == 1
+    assert display_request.point_size == 1
+
+    transport.operation_responses[
+        "/briosa.ConstructionOperations/GetActiveCollectionName"
+    ] = construction_operations_pb2.GetActiveCollectionNameResult(
+        currently_active_collection_name="Inspection"
+    )
+    assert await client.get_active_collection_name() == "Inspection"
+
+    transport.operation_responses[
+        "/briosa.CloudAndMeshOperations/GetCloudPointCount"
+    ] = cloud_and_mesh_operations_pb2.GetCloudPointCountResult(
+        points_count=42,
+        planar_offset=0.1,
+        radial_offset=0.2,
+        active_clipping_planes=3,
+    )
+    point_count = await client.get_cloud_point_count(
+        CollectionObjectName(
+            collection_name="Clouds",
+            object_name="Scan 1",
+            object_type=ObjectType.CLOUD,
+        )
+    )
+    assert point_count.points_count == 42
+    assert point_count.active_clipping_planes == 3
+
+    await client.auto_filter_points_groups_clouds_to_surface_faces(
+        [
+            CollectionObjectName(
+                collection_name="Surfaces",
+                object_name="Surface 1",
+                object_type=ObjectType.SURFACE,
+            )
+        ],
+        points=[
+            PointName(
+                collection_name="Points",
+                group_name="Measured",
+                target_name="P1",
+            )
+        ],
+    )
+    _, raw_filter_request = transport.operation_requests[-1]
+    filter_request = cast(
+        relationship_operations_pb2.AutoFilterPointsGroupsCloudsToSurfaceFacesRequest,
+        raw_filter_request,
+    )
+    assert len(filter_request.points.values) == 1
+    assert filter_request.points.values[0].target_name == "P1"
+    assert not filter_request.HasField("groups")
+    assert not filter_request.HasField("clouds")
+
+    await client.aclose()
 
 
 @pytest.mark.asyncio

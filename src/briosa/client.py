@@ -11,7 +11,7 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import TracebackType
-from typing import Any, Protocol, TypeVar
+from typing import Any, Protocol, TypeVar, cast
 
 import grpc
 
@@ -46,6 +46,14 @@ from briosa.transport import (
     map_snapshot,
 )
 from briosa.wave_a_operations import WaveAOperationsMixin
+from briosa.wave_b_operations import (
+    ConstructionOperations,
+    GdtOperations,
+    InstrumentOperations,
+    RobotCalibrationApplianceNodeOperations,
+    RobotOperations,
+    WaveBOperationsMixin,
+)
 
 _SERVER_PATH_ENVIRONMENT_VARIABLE = "BRIOSA_SERVER_PATH"
 _Result = TypeVar("_Result")
@@ -132,7 +140,7 @@ class _Session:
         )
 
 
-class BriosaClient(WaveAOperationsMixin):
+class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
     """One reusable, event-loop-bound owner of a local Briosa server session."""
 
     def __init__(
@@ -148,6 +156,13 @@ class BriosaClient(WaveAOperationsMixin):
         self._loop: asyncio.AbstractEventLoop | None = None
         self._lock: asyncio.Lock | None = None
         self._session: _Session | None = None
+        self.construction_operations = ConstructionOperations(self)
+        self.gdt_operations = GdtOperations(self)
+        self.instrument_operations = InstrumentOperations(self)
+        self.robot_calibration_appliance_node_operations = (
+            RobotCalibrationApplianceNodeOperations(self)
+        )
+        self.robot_operations = RobotOperations(self)
         self._start_task: asyncio.Task[None] | None = None
         self._stop_task: asyncio.Task[None] | None = None
         self._finally_closed = False
@@ -326,6 +341,19 @@ class BriosaClient(WaveAOperationsMixin):
             raise map_rpc_error(error, session.application_state) from error
         finally:
             await asyncio.shield(self._exit_command(session))
+
+    async def get_active_collection_name(self) -> str:
+        """Return the name of the active SpatialAnalyzer collection."""
+        return cast(
+            str,
+            await self._invoke_mp_operation(
+                "briosa.ConstructionOperations",
+                "GetActiveCollectionName",
+                "construction_operations.get_active_collection_name",
+                {},
+                None,
+            ),
+        )
 
     async def _invoke_mp_operation(
         self,

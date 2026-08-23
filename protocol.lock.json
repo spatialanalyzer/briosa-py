@@ -1,18 +1,18 @@
 {
   "schema_version": 2,
   "artifact": {
-    "name": "briosa-protocol-0.2.1-sa-2026.1.0529.7",
-    "file_name": "briosa-protocol-0.2.1-sa-2026.1.0529.7.zip",
-    "sha256": "593b050f8b046c4af01b7ecbb1bedbe4a00af7ef4c6d02521f620c5b61ffe072",
-    "briosa_version": "0.2.1",
-    "source_revision": "dc361c55e09cf2b6cdf5b058c9a2b75d52907bd5",
+    "name": "briosa-protocol-0.3.0-sa-2026.1.0529.7",
+    "file_name": "briosa-protocol-0.3.0-sa-2026.1.0529.7.zip",
+    "sha256": "3f458d9d62f8ccdd52a8719e52386912243de560a294ea8c85e577a2c9e7e687",
+    "briosa_version": "0.3.0",
+    "source_revision": "6eca210980ff251e4d672047b8efa47f6c04ac9f",
     "source_repository": "https://github.com/spatialanalyzer/briosa",
     "source_channel": "github_release"
   },
   "protocol": {
     "generation_contract": "standard-protobuf-grpc",
-    "schema_sha256": "68e4814664ece0f0fb0beb9bff2c53e503f1f93f34a2fbdc1acf28777a5433ea",
-    "descriptor_sha256": "a1724c146797c54c884e43e40edd1514b4e203066d2b016956d2f1d09fc73ee5",
+    "schema_sha256": "5dfe55ace1ff7d310ec4499e5f126d08e1832e2556b1d7b8b026c394c7dd6d30",
+    "descriptor_sha256": "2aec140dab682efc929f549ec1f81d66276a6b14bc1ce3fb71e4425a85cb5b8d",
     "package": "briosa"
   },
   "target": {
@@ -35,16 +35,28 @@
         "sha256": "d3340d46f5adb5725277a70beb5dcb44346546cb95d20e6d8e396791651e27ce"
       },
       {
+        "path": "cloud_and_mesh_operations_pb2.py",
+        "sha256": "07bec1549d685c5a36df321019cdae9d0af06cd22e4f3a225b22522862980ff7"
+      },
+      {
+        "path": "cloud_and_mesh_operations_pb2.pyi",
+        "sha256": "059402a53ae53a40768c67d5e27516c541cdea9642a543a7ee5fe4b8e39054d9"
+      },
+      {
+        "path": "cloud_and_mesh_operations_pb2_grpc.py",
+        "sha256": "c90505927b1c58a15a2340586bcaadc59ba666d07476dc6002ec6f907abab5a9"
+      },
+      {
         "path": "construction_operations_pb2.py",
-        "sha256": "ee0b9c90a12a676ca017ea7ba28a693c6171cc0996a0cace36d270c7d31c7e95"
+        "sha256": "5685a33e21c82fd5eeeb62e95b65e5657f93d46c02c41781b761513fdc49e94a"
       },
       {
         "path": "construction_operations_pb2.pyi",
-        "sha256": "137bf71637cd11c3de493096848b0883a7f98c0d1e680d4e96bc476d868aba17"
+        "sha256": "97d0159bbaa3ef2190dc991baf94c5b7ed633cdec51952a31ebbdd5ac99d3109"
       },
       {
         "path": "construction_operations_pb2_grpc.py",
-        "sha256": "b1ab9fb372b1e60898ff886719161212ca223b9574ecb4e710f380912fe5fa53"
+        "sha256": "5a6fd48878ca9a49b9f6963a86a3969fc42fe82ad5892ba585932bb4ac5824e8"
       },
       {
         "path": "dimension_operations_pb2.py",
@@ -93,6 +105,30 @@
       {
         "path": "file_operations_pb2_grpc.py",
         "sha256": "1f0ff71f5a0dbedd8c856daef8bd2cb385a9ca4474bbb1916a127bb4bb5ca3bf"
+      },
+      {
+        "path": "gdt_operations_pb2.py",
+        "sha256": "b486c4bd6286eb4f6b2a794717920985fe80c800158b4bfa48c2ec9060edd28a"
+      },
+      {
+        "path": "gdt_operations_pb2.pyi",
+        "sha256": "7490c16e1aeef208a9be914fd937a8edf9a9c1631b7d1f9fa3b9d61e22a70f78"
+      },
+      {
+        "path": "gdt_operations_pb2_grpc.py",
+        "sha256": "82ab4449744415fc1a5e645e6e9ad4f1b74601747c9d945c9f114afa57535275"
+      },
+      {
+        "path": "instrument_operations_pb2.py",
+        "sha256": "ea3953c4c7cca7f8ded55bc5bb4d5fff184c54087308965cb60516e102cee7e8"
+      },
+      {
+        "path": "instrument_operations_pb2.pyi",
+        "sha256": "ba529c0833641e66c2ce30046c66e0cbd52b5bb0f5db7fff4c42698c7343a0c6"
+      },
+      {
+        "path": "instrument_operations_pb2_grpc.py",
+        "sha256": "3642ab96d7c4c052ba9e991e78539ae454b970a8986e6ae64515cd6f085cb949"
       },
       {
         "path": "lifecycle_pb2.py",
@@ -156,19 +192,19 @@
       },
       {
         "path": "protocol_identity.py",
-        "sha256": "4200bf239bcb185b3448f7dcacede74c89a4026fb98afbd9c048384cb115e634"
+        "sha256": "adc122389333327cc519a78548b34aad4d268a6284e5fb0bc9bc8429cd74369d"
       },
       {
         "path": "relationship_operations_pb2.py",
-        "sha256": "fa92cd2c235ee99366e86807746bad0eac50b9450a36a5d556a94ff0b4254fe8"
+        "sha256": "79c0f452352cffec9738a98016e41c2040627241ea58d64e6414e48a713bfcdc"
       },
       {
         "path": "relationship_operations_pb2.pyi",
-        "sha256": "457ed8b99336855b4078f9c784bdc49ae48865955a7a9e1e7a4cb0c2130607db"
+        "sha256": "6df3886eb13a88d69cb767abf0a4a5df78e51208bfd24cea1e785dfeec7fde1d"
       },
       {
         "path": "relationship_operations_pb2_grpc.py",
-        "sha256": "b26b8d60e4bd6f0efcf72502ffa75a45cf3d710d4eb446e86ac90f69b738252b"
+        "sha256": "536a88c2390b383cce54505a853d8680b3ce132da5d640ef1f8f604924d82fbc"
       },
       {
         "path": "reporting_operations_pb2.py",
@@ -181,6 +217,30 @@
       {
         "path": "reporting_operations_pb2_grpc.py",
         "sha256": "a38a01e05d081ac0d62164666376a2717ea89cf954e856043e18ebde3d5ce59a"
+      },
+      {
+        "path": "robot_calibration_appliance_node_operations_pb2.py",
+        "sha256": "cb74fa84ba937f9b6e8b42ac4f8bd3f6421df0b935a246521420e63efe453ae5"
+      },
+      {
+        "path": "robot_calibration_appliance_node_operations_pb2.pyi",
+        "sha256": "b9f1a63f8d44e7573943467bffab40e96e75846d3a850040cf5934afbedd8f67"
+      },
+      {
+        "path": "robot_calibration_appliance_node_operations_pb2_grpc.py",
+        "sha256": "b644223ddba311cfff729850a746f4f3b15fc6aeca4a44997eac0ccf564f0e15"
+      },
+      {
+        "path": "robot_operations_pb2.py",
+        "sha256": "737883796b1dcadb9cff75f98f43e55b02ecc6f24c2aede5f468eedd47aa8766"
+      },
+      {
+        "path": "robot_operations_pb2.pyi",
+        "sha256": "4f814212a808154f6d5c4edf4485338d79215677d5e8bae89edc1e9d41ebcabe"
+      },
+      {
+        "path": "robot_operations_pb2_grpc.py",
+        "sha256": "fd24abe77428657c30789f74a140069a16106b27479343d7cc60b490636187c7"
       },
       {
         "path": "scale_bar_operations_pb2.py",
@@ -196,11 +256,11 @@
       },
       {
         "path": "spatial_analyzer_values_pb2.py",
-        "sha256": "e95a649f5657b350aa2931775fd3decd292a042525976e41e4d092e9c851a33b"
+        "sha256": "e216eeb30e65e13282b8ac92f53d40fcae7b48ab765610e3d7482b77264f9cbf"
       },
       {
         "path": "spatial_analyzer_values_pb2.pyi",
-        "sha256": "dbcf25991ce5e4d34cd254bb4a0f69a2e6fe62c58d71e0f2d2985e17b0441aa3"
+        "sha256": "f47d6c9decb5ecd7b343e079c3ef74e16e19076735be03aa5ab36be79277066f"
       },
       {
         "path": "spatial_analyzer_values_pb2_grpc.py",
