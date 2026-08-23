@@ -43,6 +43,10 @@ from briosa.operation_models import *  # noqa: F403
 from briosa.operation_models import __all__ as _operation_model_exports
 from briosa.operation_values import *  # noqa: F403
 from briosa.operation_values import __all__ as _operation_value_exports
+from briosa.wave_b_operation_models import *  # noqa: F403
+from briosa.wave_b_operation_models import __all__ as _wave_b_model_exports
+from briosa.wave_b_operation_values import *  # noqa: F403
+from briosa.wave_b_operation_values import __all__ as _wave_b_value_exports
 
 __all__ = [
     "BriosaClient",
@@ -82,4 +86,6 @@ __all__ = [
     "SpatialAnalyzerSdkTerminationKind",
     *_operation_model_exports,
     *_operation_value_exports,
+    *_wave_b_model_exports,
+    *_wave_b_value_exports,
 ]

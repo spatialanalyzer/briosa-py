@@ -161,6 +161,13 @@ class GeometryType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     GEOMETRY_TYPE_SLOT: _ClassVar[GeometryType]
     GEOMETRY_TYPE_TORUS: _ClassVar[GeometryType]
 
+class OffsetDirectionType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    OFFSET_DIRECTION_TYPE_UNSPECIFIED: _ClassVar[OffsetDirectionType]
+    OFFSET_DIRECTION_TYPE_BOTH: _ClassVar[OffsetDirectionType]
+    OFFSET_DIRECTION_TYPE_POSITIVE_ONLY: _ClassVar[OffsetDirectionType]
+    OFFSET_DIRECTION_TYPE_NEGATIVE_ONLY: _ClassVar[OffsetDirectionType]
+
 class ObjectType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     OBJECT_TYPE_UNSPECIFIED: _ClassVar[ObjectType]
@@ -393,6 +400,13 @@ class WindowState(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     WINDOW_STATE_RESTORE: _ClassVar[WindowState]
     WINDOW_STATE_SHOW: _ClassVar[WindowState]
     WINDOW_STATE_HIDE: _ClassVar[WindowState]
+
+class CloudThinningMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    CLOUD_THINNING_MODE_UNSPECIFIED: _ClassVar[CloudThinningMode]
+    CLOUD_THINNING_MODE_NONE: _ClassVar[CloudThinningMode]
+    CLOUD_THINNING_MODE_RANDOM: _ClassVar[CloudThinningMode]
+    CLOUD_THINNING_MODE_NTH_POINT: _ClassVar[CloudThinningMode]
 ANGULAR_UNITS_UNSPECIFIED: AngularUnits
 ANGULAR_UNITS_DEGREES: AngularUnits
 ANGULAR_UNITS_DEGREES_MINUTES_SECONDS: AngularUnits
@@ -508,6 +522,10 @@ GEOMETRY_TYPE_PARABOLOID: GeometryType
 GEOMETRY_TYPE_ELLIPSE: GeometryType
 GEOMETRY_TYPE_SLOT: GeometryType
 GEOMETRY_TYPE_TORUS: GeometryType
+OFFSET_DIRECTION_TYPE_UNSPECIFIED: OffsetDirectionType
+OFFSET_DIRECTION_TYPE_BOTH: OffsetDirectionType
+OFFSET_DIRECTION_TYPE_POSITIVE_ONLY: OffsetDirectionType
+OFFSET_DIRECTION_TYPE_NEGATIVE_ONLY: OffsetDirectionType
 OBJECT_TYPE_UNSPECIFIED: ObjectType
 OBJECT_TYPE_ANY: ObjectType
 OBJECT_TYPE_B_SPLINE: ObjectType
@@ -672,6 +690,10 @@ WINDOW_STATE_MINIMIZE: WindowState
 WINDOW_STATE_RESTORE: WindowState
 WINDOW_STATE_SHOW: WindowState
 WINDOW_STATE_HIDE: WindowState
+CLOUD_THINNING_MODE_UNSPECIFIED: CloudThinningMode
+CLOUD_THINNING_MODE_NONE: CloudThinningMode
+CLOUD_THINNING_MODE_RANDOM: CloudThinningMode
+CLOUD_THINNING_MODE_NTH_POINT: CloudThinningMode
 
 class ChartName(_message.Message):
     __slots__ = ("name",)
@@ -714,6 +736,14 @@ class CollectionInstrumentId(_message.Message):
     collection_name: str
     instrument_id: int
     def __init__(self, collection_name: _Optional[str] = ..., instrument_id: _Optional[int] = ...) -> None: ...
+
+class CollectionMachineId(_message.Message):
+    __slots__ = ("collection_name", "machine_id")
+    COLLECTION_NAME_FIELD_NUMBER: _ClassVar[int]
+    MACHINE_ID_FIELD_NUMBER: _ClassVar[int]
+    collection_name: str
+    machine_id: int
+    def __init__(self, collection_name: _Optional[str] = ..., machine_id: _Optional[int] = ...) -> None: ...
 
 class CollectionGroupName(_message.Message):
     __slots__ = ("collection_name", "group_name")
@@ -978,3 +1008,21 @@ class PointDeltaReportOptions(_message.Message):
     show_tolerance_fields: bool
     colorize_in_tolerance_fields: bool
     def __init__(self, coordinate_system: _Optional[_Union[CoordinateSystemType, str]] = ..., details_format: _Optional[str] = ..., show_point_a: bool = ..., show_point_b: bool = ..., show_delta: bool = ..., show_magnitude: bool = ..., show_component_1: bool = ..., show_component_2: bool = ..., show_component_3: bool = ..., sort_point_names: bool = ..., show_tolerance_fields: bool = ..., colorize_in_tolerance_fields: bool = ...) -> None: ...
+
+class SurfaceFaceList(_message.Message):
+    __slots__ = ("value",)
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    value: str
+    def __init__(self, value: _Optional[str] = ...) -> None: ...
+
+class CloudThinningOptions(_message.Message):
+    __slots__ = ("mode", "point_increment", "minimum_number_of_points", "maximum_number_of_points")
+    MODE_FIELD_NUMBER: _ClassVar[int]
+    POINT_INCREMENT_FIELD_NUMBER: _ClassVar[int]
+    MINIMUM_NUMBER_OF_POINTS_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_NUMBER_OF_POINTS_FIELD_NUMBER: _ClassVar[int]
+    mode: CloudThinningMode
+    point_increment: int
+    minimum_number_of_points: int
+    maximum_number_of_points: int
+    def __init__(self, mode: _Optional[_Union[CloudThinningMode, str]] = ..., point_increment: _Optional[int] = ..., minimum_number_of_points: _Optional[int] = ..., maximum_number_of_points: _Optional[int] = ...) -> None: ...

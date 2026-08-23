@@ -463,7 +463,7 @@ class VectorName:
     name: str
 
 
-@dataclass(frozen=True, slots=True, kw_only=True)
+@dataclass(frozen=True, slots=True)
 class Vector:
     x: float
     y: float
@@ -485,7 +485,7 @@ class WorldTransform:
     scale_factor: float
 
 
-@dataclass(frozen=True, slots=True, kw_only=True)
+@dataclass(frozen=True, slots=True)
 class Color:
     red: int
     green: int

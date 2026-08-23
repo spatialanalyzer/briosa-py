@@ -309,6 +309,276 @@ class RelationshipOperationsStub(object):
                 request_serializer=briosa_dot_relationship__operations__pb2.SetRelationshipWeightsNormalizedRequest.SerializeToString,
                 response_deserializer=briosa_dot_relationship__operations__pb2.SetRelationshipWeightsNormalizedResult.FromString,
                 _registered_method=True)
+        self.SetRelationshipAssociatedData = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetRelationshipAssociatedData',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetRelationshipAssociatedDataRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetRelationshipAssociatedDataResult.FromString,
+                _registered_method=True)
+        self.MakeVectorGroupToVectorGroupRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeVectorGroupToVectorGroupRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeVectorGroupToVectorGroupRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeVectorGroupToVectorGroupRelationshipResult.FromString,
+                _registered_method=True)
+        self.FilterGeometryRelationshipOutlierCloudPoints = channel.unary_unary(
+                '/briosa.RelationshipOperations/FilterGeometryRelationshipOutlierCloudPoints',
+                request_serializer=briosa_dot_relationship__operations__pb2.FilterGeometryRelationshipOutlierCloudPointsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.FilterGeometryRelationshipOutlierCloudPointsResult.FromString,
+                _registered_method=True)
+        self.SetVectorGroupToVectorGroupCylindricalZone = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetVectorGroupToVectorGroupCylindricalZone',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupCylindricalZoneRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupCylindricalZoneResult.FromString,
+                _registered_method=True)
+        self.DoRelationshipFit = channel.unary_unary(
+                '/briosa.RelationshipOperations/DoRelationshipFit',
+                request_serializer=briosa_dot_relationship__operations__pb2.DoRelationshipFitRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.DoRelationshipFitResult.FromString,
+                _registered_method=True)
+        self.GetGeomRelationshipCriteriaNameList = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetGeomRelationshipCriteriaNameList',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetGeomRelationshipCriteriaNameListRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetGeomRelationshipCriteriaNameListResult.FromString,
+                _registered_method=True)
+        self.SetGroupToNominalGroupViewZooming = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetGroupToNominalGroupViewZooming',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetGroupToNominalGroupViewZoomingRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetGroupToNominalGroupViewZoomingResult.FromString,
+                _registered_method=True)
+        self.SetVectorGroupToVectorGroupFitWeights = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetVectorGroupToVectorGroupFitWeights',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitWeightsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitWeightsResult.FromString,
+                _registered_method=True)
+        self.MakeDynamicEllipseRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeDynamicEllipseRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicEllipseRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicEllipseRelationshipResult.FromString,
+                _registered_method=True)
+        self.SetObjectToObjectDirectionRelationshipTolerances = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetObjectToObjectDirectionRelationshipTolerances',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetObjectToObjectDirectionRelationshipTolerancesRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetObjectToObjectDirectionRelationshipTolerancesResult.FromString,
+                _registered_method=True)
+        self.SetVectorGroupToVectorGroupFitGradientFactor = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetVectorGroupToVectorGroupFitGradientFactor',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitGradientFactorRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitGradientFactorResult.FromString,
+                _registered_method=True)
+        self.StartStopRelationshipTrapping = channel.unary_unary(
+                '/briosa.RelationshipOperations/StartStopRelationshipTrapping',
+                request_serializer=briosa_dot_relationship__operations__pb2.StartStopRelationshipTrappingRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.StartStopRelationshipTrappingResult.FromString,
+                _registered_method=True)
+        self.MakeDynamicCircleRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeDynamicCircleRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicCircleRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicCircleRelationshipResult.FromString,
+                _registered_method=True)
+        self.GetRelationshipAssociatedData = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetRelationshipAssociatedData',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetRelationshipAssociatedDataRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetRelationshipAssociatedDataResult.FromString,
+                _registered_method=True)
+        self.MakeDynamicPlaneRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeDynamicPlaneRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicPlaneRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicPlaneRelationshipResult.FromString,
+                _registered_method=True)
+        self.MakePointToPointRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakePointToPointRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakePointToPointRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakePointToPointRelationshipResult.FromString,
+                _registered_method=True)
+        self.AutoFilterPointsGroupsCloudsToSurfaceFaces = channel.unary_unary(
+                '/briosa.RelationshipOperations/AutoFilterPointsGroupsCloudsToSurfaceFaces',
+                request_serializer=briosa_dot_relationship__operations__pb2.AutoFilterPointsGroupsCloudsToSurfaceFacesRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.AutoFilterPointsGroupsCloudsToSurfaceFacesResult.FromString,
+                _registered_method=True)
+        self.MakeGeometryFitAndCompareToNominalRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeGeometryFitAndCompareToNominalRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeGeometryFitAndCompareToNominalRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeGeometryFitAndCompareToNominalRelationshipResult.FromString,
+                _registered_method=True)
+        self.CreatePointsToObjectsMap = channel.unary_unary(
+                '/briosa.RelationshipOperations/CreatePointsToObjectsMap',
+                request_serializer=briosa_dot_relationship__operations__pb2.CreatePointsToObjectsMapRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.CreatePointsToObjectsMapResult.FromString,
+                _registered_method=True)
+        self.MakeCloudToSwatchRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeCloudToSwatchRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeCloudToSwatchRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeCloudToSwatchRelationshipResult.FromString,
+                _registered_method=True)
+        self.MakeGeometryCompareOnlyRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeGeometryCompareOnlyRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeGeometryCompareOnlyRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeGeometryCompareOnlyRelationshipResult.FromString,
+                _registered_method=True)
+        self.MakeDynamicLineRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeDynamicLineRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicLineRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicLineRelationshipResult.FromString,
+                _registered_method=True)
+        self.AutoFilterCloudsToNominalGeometry2D = channel.unary_unary(
+                '/briosa.RelationshipOperations/AutoFilterCloudsToNominalGeometry2D',
+                request_serializer=briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry2DRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry2DResult.FromString,
+                _registered_method=True)
+        self.MakeDynamicPointRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeDynamicPointRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicPointRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicPointRelationshipResult.FromString,
+                _registered_method=True)
+        self.MakeObjectToObjectDirectionRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeObjectToObjectDirectionRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeObjectToObjectDirectionRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeObjectToObjectDirectionRelationshipResult.FromString,
+                _registered_method=True)
+        self.GetPointsToPointsRelationshipAssociatedData = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetPointsToPointsRelationshipAssociatedData',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetPointsToPointsRelationshipAssociatedDataRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetPointsToPointsRelationshipAssociatedDataResult.FromString,
+                _registered_method=True)
+        self.SetPointsToPointsRelationshipAssociatedData = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetPointsToPointsRelationshipAssociatedData',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetPointsToPointsRelationshipAssociatedDataRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetPointsToPointsRelationshipAssociatedDataResult.FromString,
+                _registered_method=True)
+        self.GetPointToPointRelationshipStatistics = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetPointToPointRelationshipStatistics',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetPointToPointRelationshipStatisticsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetPointToPointRelationshipStatisticsResult.FromString,
+                _registered_method=True)
+        self.MakeFrameToFrameRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeFrameToFrameRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeFrameToFrameRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeFrameToFrameRelationshipResult.FromString,
+                _registered_method=True)
+        self.SetVectorGroupToVectorGroupRelativePolarity = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetVectorGroupToVectorGroupRelativePolarity',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupRelativePolarityRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupRelativePolarityResult.FromString,
+                _registered_method=True)
+        self.MakePointsToObjectsRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakePointsToObjectsRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakePointsToObjectsRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakePointsToObjectsRelationshipResult.FromString,
+                _registered_method=True)
+        self.MakeGroupToGroupRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeGroupToGroupRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeGroupToGroupRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeGroupToGroupRelationshipResult.FromString,
+                _registered_method=True)
+        self.DeleteRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/DeleteRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.DeleteRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.DeleteRelationshipResult.FromString,
+                _registered_method=True)
+        self.MakeAveragePointRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeAveragePointRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeAveragePointRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeAveragePointRelationshipResult.FromString,
+                _registered_method=True)
+        self.SetOptimizationPerturbationParameters = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetOptimizationPerturbationParameters',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetOptimizationPerturbationParametersRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetOptimizationPerturbationParametersResult.FromString,
+                _registered_method=True)
+        self.GetObjectsFromPointsToObjectsMapPointList = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetObjectsFromPointsToObjectsMapPointList',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetObjectsFromPointsToObjectsMapPointListRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetObjectsFromPointsToObjectsMapPointListResult.FromString,
+                _registered_method=True)
+        self.SetOptimizationSearchOptions = channel.unary_unary(
+                '/briosa.RelationshipOperations/SetOptimizationSearchOptions',
+                request_serializer=briosa_dot_relationship__operations__pb2.SetOptimizationSearchOptionsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.SetOptimizationSearchOptionsResult.FromString,
+                _registered_method=True)
+        self.GetRelationshipSigmoidalGapFitConstraints = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetRelationshipSigmoidalGapFitConstraints',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetRelationshipSigmoidalGapFitConstraintsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetRelationshipSigmoidalGapFitConstraintsResult.FromString,
+                _registered_method=True)
+        self.RelationshipWatchWindowTemplate = channel.unary_unary(
+                '/briosa.RelationshipOperations/RelationshipWatchWindowTemplate',
+                request_serializer=briosa_dot_relationship__operations__pb2.RelationshipWatchWindowTemplateRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.RelationshipWatchWindowTemplateResult.FromString,
+                _registered_method=True)
+        self.ExtractGeometryFromPointClouds = channel.unary_unary(
+                '/briosa.RelationshipOperations/ExtractGeometryFromPointClouds',
+                request_serializer=briosa_dot_relationship__operations__pb2.ExtractGeometryFromPointCloudsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.ExtractGeometryFromPointCloudsResult.FromString,
+                _registered_method=True)
+        self.MakeGroupsToObjectsRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeGroupsToObjectsRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeGroupsToObjectsRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeGroupsToObjectsRelationshipResult.FromString,
+                _registered_method=True)
+        self.ComputeGeometryRelationshipUncertainties = channel.unary_unary(
+                '/briosa.RelationshipOperations/ComputeGeometryRelationshipUncertainties',
+                request_serializer=briosa_dot_relationship__operations__pb2.ComputeGeometryRelationshipUncertaintiesRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.ComputeGeometryRelationshipUncertaintiesResult.FromString,
+                _registered_method=True)
+        self.GetPointsToObjectsRelationshipStatistics = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetPointsToObjectsRelationshipStatistics',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetPointsToObjectsRelationshipStatisticsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetPointsToObjectsRelationshipStatisticsResult.FromString,
+                _registered_method=True)
+        self.GetRelationshipStatus = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetRelationshipStatus',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetRelationshipStatusRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetRelationshipStatusResult.FromString,
+                _registered_method=True)
+        self.AutoFilterPointsToNominalGeometry3D = channel.unary_unary(
+                '/briosa.RelationshipOperations/AutoFilterPointsToNominalGeometry3D',
+                request_serializer=briosa_dot_relationship__operations__pb2.AutoFilterPointsToNominalGeometry3DRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.AutoFilterPointsToNominalGeometry3DResult.FromString,
+                _registered_method=True)
+        self.MakeGeometryFitOnlyRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeGeometryFitOnlyRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeGeometryFitOnlyRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeGeometryFitOnlyRelationshipResult.FromString,
+                _registered_method=True)
+        self.MakePointCloudsToObjectsRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakePointCloudsToObjectsRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakePointCloudsToObjectsRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakePointCloudsToObjectsRelationshipResult.FromString,
+                _registered_method=True)
+        self.EditGeometryRelationshipPointList = channel.unary_unary(
+                '/briosa.RelationshipOperations/EditGeometryRelationshipPointList',
+                request_serializer=briosa_dot_relationship__operations__pb2.EditGeometryRelationshipPointListRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.EditGeometryRelationshipPointListResult.FromString,
+                _registered_method=True)
+        self.GetGeneralRelationshipStatistics = channel.unary_unary(
+                '/briosa.RelationshipOperations/GetGeneralRelationshipStatistics',
+                request_serializer=briosa_dot_relationship__operations__pb2.GetGeneralRelationshipStatisticsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GetGeneralRelationshipStatisticsResult.FromString,
+                _registered_method=True)
+        self.MakeGroupToNominalGroupRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakeGroupToNominalGroupRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakeGroupToNominalGroupRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakeGroupToNominalGroupRelationshipResult.FromString,
+                _registered_method=True)
+        self.GenerateGeometryRelationshipSummary = channel.unary_unary(
+                '/briosa.RelationshipOperations/GenerateGeometryRelationshipSummary',
+                request_serializer=briosa_dot_relationship__operations__pb2.GenerateGeometryRelationshipSummaryRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.GenerateGeometryRelationshipSummaryResult.FromString,
+                _registered_method=True)
+        self.MoveCollectionsByMinimizingRelationships = channel.unary_unary(
+                '/briosa.RelationshipOperations/MoveCollectionsByMinimizingRelationships',
+                request_serializer=briosa_dot_relationship__operations__pb2.MoveCollectionsByMinimizingRelationshipsRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MoveCollectionsByMinimizingRelationshipsResult.FromString,
+                _registered_method=True)
+        self.MakePointsToPointsRelationship = channel.unary_unary(
+                '/briosa.RelationshipOperations/MakePointsToPointsRelationship',
+                request_serializer=briosa_dot_relationship__operations__pb2.MakePointsToPointsRelationshipRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.MakePointsToPointsRelationshipResult.FromString,
+                _registered_method=True)
+        self.AutoFilterCloudsToNominalGeometry3D = channel.unary_unary(
+                '/briosa.RelationshipOperations/AutoFilterCloudsToNominalGeometry3D',
+                request_serializer=briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry3DRequest.SerializeToString,
+                response_deserializer=briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry3DResult.FromString,
+                _registered_method=True)
 
 
 class RelationshipOperationsServicer(object):
@@ -644,6 +914,330 @@ class RelationshipOperationsServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SetRelationshipAssociatedData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeVectorGroupToVectorGroupRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def FilterGeometryRelationshipOutlierCloudPoints(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetVectorGroupToVectorGroupCylindricalZone(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DoRelationshipFit(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetGeomRelationshipCriteriaNameList(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetGroupToNominalGroupViewZooming(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetVectorGroupToVectorGroupFitWeights(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeDynamicEllipseRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetObjectToObjectDirectionRelationshipTolerances(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetVectorGroupToVectorGroupFitGradientFactor(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StartStopRelationshipTrapping(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeDynamicCircleRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetRelationshipAssociatedData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeDynamicPlaneRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakePointToPointRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AutoFilterPointsGroupsCloudsToSurfaceFaces(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeGeometryFitAndCompareToNominalRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreatePointsToObjectsMap(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeCloudToSwatchRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeGeometryCompareOnlyRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeDynamicLineRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AutoFilterCloudsToNominalGeometry2D(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeDynamicPointRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeObjectToObjectDirectionRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointsToPointsRelationshipAssociatedData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetPointsToPointsRelationshipAssociatedData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointToPointRelationshipStatistics(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeFrameToFrameRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetVectorGroupToVectorGroupRelativePolarity(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakePointsToObjectsRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeGroupToGroupRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeAveragePointRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetOptimizationPerturbationParameters(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetObjectsFromPointsToObjectsMapPointList(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetOptimizationSearchOptions(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetRelationshipSigmoidalGapFitConstraints(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RelationshipWatchWindowTemplate(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExtractGeometryFromPointClouds(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeGroupsToObjectsRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ComputeGeometryRelationshipUncertainties(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPointsToObjectsRelationshipStatistics(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetRelationshipStatus(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AutoFilterPointsToNominalGeometry3D(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeGeometryFitOnlyRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakePointCloudsToObjectsRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def EditGeometryRelationshipPointList(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetGeneralRelationshipStatistics(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakeGroupToNominalGroupRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GenerateGeometryRelationshipSummary(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MoveCollectionsByMinimizingRelationships(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MakePointsToPointsRelationship(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AutoFilterCloudsToNominalGeometry3D(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RelationshipOperationsServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -921,6 +1515,276 @@ def add_RelationshipOperationsServicer_to_server(servicer, server):
                     servicer.SetRelationshipWeightsNormalized,
                     request_deserializer=briosa_dot_relationship__operations__pb2.SetRelationshipWeightsNormalizedRequest.FromString,
                     response_serializer=briosa_dot_relationship__operations__pb2.SetRelationshipWeightsNormalizedResult.SerializeToString,
+            ),
+            'SetRelationshipAssociatedData': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetRelationshipAssociatedData,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetRelationshipAssociatedDataRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetRelationshipAssociatedDataResult.SerializeToString,
+            ),
+            'MakeVectorGroupToVectorGroupRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeVectorGroupToVectorGroupRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeVectorGroupToVectorGroupRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeVectorGroupToVectorGroupRelationshipResult.SerializeToString,
+            ),
+            'FilterGeometryRelationshipOutlierCloudPoints': grpc.unary_unary_rpc_method_handler(
+                    servicer.FilterGeometryRelationshipOutlierCloudPoints,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.FilterGeometryRelationshipOutlierCloudPointsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.FilterGeometryRelationshipOutlierCloudPointsResult.SerializeToString,
+            ),
+            'SetVectorGroupToVectorGroupCylindricalZone': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetVectorGroupToVectorGroupCylindricalZone,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupCylindricalZoneRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupCylindricalZoneResult.SerializeToString,
+            ),
+            'DoRelationshipFit': grpc.unary_unary_rpc_method_handler(
+                    servicer.DoRelationshipFit,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.DoRelationshipFitRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.DoRelationshipFitResult.SerializeToString,
+            ),
+            'GetGeomRelationshipCriteriaNameList': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetGeomRelationshipCriteriaNameList,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetGeomRelationshipCriteriaNameListRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetGeomRelationshipCriteriaNameListResult.SerializeToString,
+            ),
+            'SetGroupToNominalGroupViewZooming': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetGroupToNominalGroupViewZooming,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetGroupToNominalGroupViewZoomingRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetGroupToNominalGroupViewZoomingResult.SerializeToString,
+            ),
+            'SetVectorGroupToVectorGroupFitWeights': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetVectorGroupToVectorGroupFitWeights,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitWeightsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitWeightsResult.SerializeToString,
+            ),
+            'MakeDynamicEllipseRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeDynamicEllipseRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicEllipseRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicEllipseRelationshipResult.SerializeToString,
+            ),
+            'SetObjectToObjectDirectionRelationshipTolerances': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetObjectToObjectDirectionRelationshipTolerances,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetObjectToObjectDirectionRelationshipTolerancesRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetObjectToObjectDirectionRelationshipTolerancesResult.SerializeToString,
+            ),
+            'SetVectorGroupToVectorGroupFitGradientFactor': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetVectorGroupToVectorGroupFitGradientFactor,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitGradientFactorRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitGradientFactorResult.SerializeToString,
+            ),
+            'StartStopRelationshipTrapping': grpc.unary_unary_rpc_method_handler(
+                    servicer.StartStopRelationshipTrapping,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.StartStopRelationshipTrappingRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.StartStopRelationshipTrappingResult.SerializeToString,
+            ),
+            'MakeDynamicCircleRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeDynamicCircleRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicCircleRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicCircleRelationshipResult.SerializeToString,
+            ),
+            'GetRelationshipAssociatedData': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRelationshipAssociatedData,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetRelationshipAssociatedDataRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetRelationshipAssociatedDataResult.SerializeToString,
+            ),
+            'MakeDynamicPlaneRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeDynamicPlaneRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicPlaneRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicPlaneRelationshipResult.SerializeToString,
+            ),
+            'MakePointToPointRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakePointToPointRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakePointToPointRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakePointToPointRelationshipResult.SerializeToString,
+            ),
+            'AutoFilterPointsGroupsCloudsToSurfaceFaces': grpc.unary_unary_rpc_method_handler(
+                    servicer.AutoFilterPointsGroupsCloudsToSurfaceFaces,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.AutoFilterPointsGroupsCloudsToSurfaceFacesRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.AutoFilterPointsGroupsCloudsToSurfaceFacesResult.SerializeToString,
+            ),
+            'MakeGeometryFitAndCompareToNominalRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeGeometryFitAndCompareToNominalRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeGeometryFitAndCompareToNominalRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeGeometryFitAndCompareToNominalRelationshipResult.SerializeToString,
+            ),
+            'CreatePointsToObjectsMap': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreatePointsToObjectsMap,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.CreatePointsToObjectsMapRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.CreatePointsToObjectsMapResult.SerializeToString,
+            ),
+            'MakeCloudToSwatchRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeCloudToSwatchRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeCloudToSwatchRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeCloudToSwatchRelationshipResult.SerializeToString,
+            ),
+            'MakeGeometryCompareOnlyRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeGeometryCompareOnlyRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeGeometryCompareOnlyRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeGeometryCompareOnlyRelationshipResult.SerializeToString,
+            ),
+            'MakeDynamicLineRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeDynamicLineRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicLineRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicLineRelationshipResult.SerializeToString,
+            ),
+            'AutoFilterCloudsToNominalGeometry2D': grpc.unary_unary_rpc_method_handler(
+                    servicer.AutoFilterCloudsToNominalGeometry2D,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry2DRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry2DResult.SerializeToString,
+            ),
+            'MakeDynamicPointRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeDynamicPointRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeDynamicPointRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeDynamicPointRelationshipResult.SerializeToString,
+            ),
+            'MakeObjectToObjectDirectionRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeObjectToObjectDirectionRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeObjectToObjectDirectionRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeObjectToObjectDirectionRelationshipResult.SerializeToString,
+            ),
+            'GetPointsToPointsRelationshipAssociatedData': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointsToPointsRelationshipAssociatedData,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetPointsToPointsRelationshipAssociatedDataRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetPointsToPointsRelationshipAssociatedDataResult.SerializeToString,
+            ),
+            'SetPointsToPointsRelationshipAssociatedData': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetPointsToPointsRelationshipAssociatedData,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetPointsToPointsRelationshipAssociatedDataRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetPointsToPointsRelationshipAssociatedDataResult.SerializeToString,
+            ),
+            'GetPointToPointRelationshipStatistics': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointToPointRelationshipStatistics,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetPointToPointRelationshipStatisticsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetPointToPointRelationshipStatisticsResult.SerializeToString,
+            ),
+            'MakeFrameToFrameRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeFrameToFrameRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeFrameToFrameRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeFrameToFrameRelationshipResult.SerializeToString,
+            ),
+            'SetVectorGroupToVectorGroupRelativePolarity': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetVectorGroupToVectorGroupRelativePolarity,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupRelativePolarityRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupRelativePolarityResult.SerializeToString,
+            ),
+            'MakePointsToObjectsRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakePointsToObjectsRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakePointsToObjectsRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakePointsToObjectsRelationshipResult.SerializeToString,
+            ),
+            'MakeGroupToGroupRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeGroupToGroupRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeGroupToGroupRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeGroupToGroupRelationshipResult.SerializeToString,
+            ),
+            'DeleteRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.DeleteRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.DeleteRelationshipResult.SerializeToString,
+            ),
+            'MakeAveragePointRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeAveragePointRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeAveragePointRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeAveragePointRelationshipResult.SerializeToString,
+            ),
+            'SetOptimizationPerturbationParameters': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetOptimizationPerturbationParameters,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetOptimizationPerturbationParametersRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetOptimizationPerturbationParametersResult.SerializeToString,
+            ),
+            'GetObjectsFromPointsToObjectsMapPointList': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetObjectsFromPointsToObjectsMapPointList,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetObjectsFromPointsToObjectsMapPointListRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetObjectsFromPointsToObjectsMapPointListResult.SerializeToString,
+            ),
+            'SetOptimizationSearchOptions': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetOptimizationSearchOptions,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.SetOptimizationSearchOptionsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.SetOptimizationSearchOptionsResult.SerializeToString,
+            ),
+            'GetRelationshipSigmoidalGapFitConstraints': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRelationshipSigmoidalGapFitConstraints,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetRelationshipSigmoidalGapFitConstraintsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetRelationshipSigmoidalGapFitConstraintsResult.SerializeToString,
+            ),
+            'RelationshipWatchWindowTemplate': grpc.unary_unary_rpc_method_handler(
+                    servicer.RelationshipWatchWindowTemplate,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.RelationshipWatchWindowTemplateRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.RelationshipWatchWindowTemplateResult.SerializeToString,
+            ),
+            'ExtractGeometryFromPointClouds': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExtractGeometryFromPointClouds,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.ExtractGeometryFromPointCloudsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.ExtractGeometryFromPointCloudsResult.SerializeToString,
+            ),
+            'MakeGroupsToObjectsRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeGroupsToObjectsRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeGroupsToObjectsRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeGroupsToObjectsRelationshipResult.SerializeToString,
+            ),
+            'ComputeGeometryRelationshipUncertainties': grpc.unary_unary_rpc_method_handler(
+                    servicer.ComputeGeometryRelationshipUncertainties,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.ComputeGeometryRelationshipUncertaintiesRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.ComputeGeometryRelationshipUncertaintiesResult.SerializeToString,
+            ),
+            'GetPointsToObjectsRelationshipStatistics': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPointsToObjectsRelationshipStatistics,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetPointsToObjectsRelationshipStatisticsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetPointsToObjectsRelationshipStatisticsResult.SerializeToString,
+            ),
+            'GetRelationshipStatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRelationshipStatus,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetRelationshipStatusRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetRelationshipStatusResult.SerializeToString,
+            ),
+            'AutoFilterPointsToNominalGeometry3D': grpc.unary_unary_rpc_method_handler(
+                    servicer.AutoFilterPointsToNominalGeometry3D,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.AutoFilterPointsToNominalGeometry3DRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.AutoFilterPointsToNominalGeometry3DResult.SerializeToString,
+            ),
+            'MakeGeometryFitOnlyRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeGeometryFitOnlyRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeGeometryFitOnlyRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeGeometryFitOnlyRelationshipResult.SerializeToString,
+            ),
+            'MakePointCloudsToObjectsRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakePointCloudsToObjectsRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakePointCloudsToObjectsRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakePointCloudsToObjectsRelationshipResult.SerializeToString,
+            ),
+            'EditGeometryRelationshipPointList': grpc.unary_unary_rpc_method_handler(
+                    servicer.EditGeometryRelationshipPointList,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.EditGeometryRelationshipPointListRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.EditGeometryRelationshipPointListResult.SerializeToString,
+            ),
+            'GetGeneralRelationshipStatistics': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetGeneralRelationshipStatistics,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GetGeneralRelationshipStatisticsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GetGeneralRelationshipStatisticsResult.SerializeToString,
+            ),
+            'MakeGroupToNominalGroupRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakeGroupToNominalGroupRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakeGroupToNominalGroupRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakeGroupToNominalGroupRelationshipResult.SerializeToString,
+            ),
+            'GenerateGeometryRelationshipSummary': grpc.unary_unary_rpc_method_handler(
+                    servicer.GenerateGeometryRelationshipSummary,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.GenerateGeometryRelationshipSummaryRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.GenerateGeometryRelationshipSummaryResult.SerializeToString,
+            ),
+            'MoveCollectionsByMinimizingRelationships': grpc.unary_unary_rpc_method_handler(
+                    servicer.MoveCollectionsByMinimizingRelationships,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MoveCollectionsByMinimizingRelationshipsRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MoveCollectionsByMinimizingRelationshipsResult.SerializeToString,
+            ),
+            'MakePointsToPointsRelationship': grpc.unary_unary_rpc_method_handler(
+                    servicer.MakePointsToPointsRelationship,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.MakePointsToPointsRelationshipRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.MakePointsToPointsRelationshipResult.SerializeToString,
+            ),
+            'AutoFilterCloudsToNominalGeometry3D': grpc.unary_unary_rpc_method_handler(
+                    servicer.AutoFilterCloudsToNominalGeometry3D,
+                    request_deserializer=briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry3DRequest.FromString,
+                    response_serializer=briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry3DResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -2408,6 +3272,1464 @@ class RelationshipOperations(object):
             '/briosa.RelationshipOperations/SetRelationshipWeightsNormalized',
             briosa_dot_relationship__operations__pb2.SetRelationshipWeightsNormalizedRequest.SerializeToString,
             briosa_dot_relationship__operations__pb2.SetRelationshipWeightsNormalizedResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetRelationshipAssociatedData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetRelationshipAssociatedData',
+            briosa_dot_relationship__operations__pb2.SetRelationshipAssociatedDataRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetRelationshipAssociatedDataResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeVectorGroupToVectorGroupRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeVectorGroupToVectorGroupRelationship',
+            briosa_dot_relationship__operations__pb2.MakeVectorGroupToVectorGroupRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeVectorGroupToVectorGroupRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def FilterGeometryRelationshipOutlierCloudPoints(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/FilterGeometryRelationshipOutlierCloudPoints',
+            briosa_dot_relationship__operations__pb2.FilterGeometryRelationshipOutlierCloudPointsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.FilterGeometryRelationshipOutlierCloudPointsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetVectorGroupToVectorGroupCylindricalZone(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetVectorGroupToVectorGroupCylindricalZone',
+            briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupCylindricalZoneRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupCylindricalZoneResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DoRelationshipFit(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/DoRelationshipFit',
+            briosa_dot_relationship__operations__pb2.DoRelationshipFitRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.DoRelationshipFitResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetGeomRelationshipCriteriaNameList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetGeomRelationshipCriteriaNameList',
+            briosa_dot_relationship__operations__pb2.GetGeomRelationshipCriteriaNameListRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetGeomRelationshipCriteriaNameListResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetGroupToNominalGroupViewZooming(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetGroupToNominalGroupViewZooming',
+            briosa_dot_relationship__operations__pb2.SetGroupToNominalGroupViewZoomingRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetGroupToNominalGroupViewZoomingResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetVectorGroupToVectorGroupFitWeights(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetVectorGroupToVectorGroupFitWeights',
+            briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitWeightsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitWeightsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeDynamicEllipseRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeDynamicEllipseRelationship',
+            briosa_dot_relationship__operations__pb2.MakeDynamicEllipseRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeDynamicEllipseRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetObjectToObjectDirectionRelationshipTolerances(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetObjectToObjectDirectionRelationshipTolerances',
+            briosa_dot_relationship__operations__pb2.SetObjectToObjectDirectionRelationshipTolerancesRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetObjectToObjectDirectionRelationshipTolerancesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetVectorGroupToVectorGroupFitGradientFactor(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetVectorGroupToVectorGroupFitGradientFactor',
+            briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitGradientFactorRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupFitGradientFactorResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def StartStopRelationshipTrapping(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/StartStopRelationshipTrapping',
+            briosa_dot_relationship__operations__pb2.StartStopRelationshipTrappingRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.StartStopRelationshipTrappingResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeDynamicCircleRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeDynamicCircleRelationship',
+            briosa_dot_relationship__operations__pb2.MakeDynamicCircleRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeDynamicCircleRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetRelationshipAssociatedData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetRelationshipAssociatedData',
+            briosa_dot_relationship__operations__pb2.GetRelationshipAssociatedDataRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetRelationshipAssociatedDataResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeDynamicPlaneRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeDynamicPlaneRelationship',
+            briosa_dot_relationship__operations__pb2.MakeDynamicPlaneRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeDynamicPlaneRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakePointToPointRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakePointToPointRelationship',
+            briosa_dot_relationship__operations__pb2.MakePointToPointRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakePointToPointRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AutoFilterPointsGroupsCloudsToSurfaceFaces(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/AutoFilterPointsGroupsCloudsToSurfaceFaces',
+            briosa_dot_relationship__operations__pb2.AutoFilterPointsGroupsCloudsToSurfaceFacesRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.AutoFilterPointsGroupsCloudsToSurfaceFacesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeGeometryFitAndCompareToNominalRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeGeometryFitAndCompareToNominalRelationship',
+            briosa_dot_relationship__operations__pb2.MakeGeometryFitAndCompareToNominalRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeGeometryFitAndCompareToNominalRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreatePointsToObjectsMap(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/CreatePointsToObjectsMap',
+            briosa_dot_relationship__operations__pb2.CreatePointsToObjectsMapRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.CreatePointsToObjectsMapResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeCloudToSwatchRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeCloudToSwatchRelationship',
+            briosa_dot_relationship__operations__pb2.MakeCloudToSwatchRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeCloudToSwatchRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeGeometryCompareOnlyRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeGeometryCompareOnlyRelationship',
+            briosa_dot_relationship__operations__pb2.MakeGeometryCompareOnlyRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeGeometryCompareOnlyRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeDynamicLineRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeDynamicLineRelationship',
+            briosa_dot_relationship__operations__pb2.MakeDynamicLineRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeDynamicLineRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AutoFilterCloudsToNominalGeometry2D(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/AutoFilterCloudsToNominalGeometry2D',
+            briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry2DRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry2DResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeDynamicPointRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeDynamicPointRelationship',
+            briosa_dot_relationship__operations__pb2.MakeDynamicPointRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeDynamicPointRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeObjectToObjectDirectionRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeObjectToObjectDirectionRelationship',
+            briosa_dot_relationship__operations__pb2.MakeObjectToObjectDirectionRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeObjectToObjectDirectionRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointsToPointsRelationshipAssociatedData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetPointsToPointsRelationshipAssociatedData',
+            briosa_dot_relationship__operations__pb2.GetPointsToPointsRelationshipAssociatedDataRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetPointsToPointsRelationshipAssociatedDataResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetPointsToPointsRelationshipAssociatedData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetPointsToPointsRelationshipAssociatedData',
+            briosa_dot_relationship__operations__pb2.SetPointsToPointsRelationshipAssociatedDataRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetPointsToPointsRelationshipAssociatedDataResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointToPointRelationshipStatistics(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetPointToPointRelationshipStatistics',
+            briosa_dot_relationship__operations__pb2.GetPointToPointRelationshipStatisticsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetPointToPointRelationshipStatisticsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeFrameToFrameRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeFrameToFrameRelationship',
+            briosa_dot_relationship__operations__pb2.MakeFrameToFrameRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeFrameToFrameRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetVectorGroupToVectorGroupRelativePolarity(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetVectorGroupToVectorGroupRelativePolarity',
+            briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupRelativePolarityRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetVectorGroupToVectorGroupRelativePolarityResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakePointsToObjectsRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakePointsToObjectsRelationship',
+            briosa_dot_relationship__operations__pb2.MakePointsToObjectsRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakePointsToObjectsRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeGroupToGroupRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeGroupToGroupRelationship',
+            briosa_dot_relationship__operations__pb2.MakeGroupToGroupRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeGroupToGroupRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/DeleteRelationship',
+            briosa_dot_relationship__operations__pb2.DeleteRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.DeleteRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeAveragePointRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeAveragePointRelationship',
+            briosa_dot_relationship__operations__pb2.MakeAveragePointRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeAveragePointRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetOptimizationPerturbationParameters(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetOptimizationPerturbationParameters',
+            briosa_dot_relationship__operations__pb2.SetOptimizationPerturbationParametersRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetOptimizationPerturbationParametersResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetObjectsFromPointsToObjectsMapPointList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetObjectsFromPointsToObjectsMapPointList',
+            briosa_dot_relationship__operations__pb2.GetObjectsFromPointsToObjectsMapPointListRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetObjectsFromPointsToObjectsMapPointListResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetOptimizationSearchOptions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/SetOptimizationSearchOptions',
+            briosa_dot_relationship__operations__pb2.SetOptimizationSearchOptionsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.SetOptimizationSearchOptionsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetRelationshipSigmoidalGapFitConstraints(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetRelationshipSigmoidalGapFitConstraints',
+            briosa_dot_relationship__operations__pb2.GetRelationshipSigmoidalGapFitConstraintsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetRelationshipSigmoidalGapFitConstraintsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def RelationshipWatchWindowTemplate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/RelationshipWatchWindowTemplate',
+            briosa_dot_relationship__operations__pb2.RelationshipWatchWindowTemplateRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.RelationshipWatchWindowTemplateResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExtractGeometryFromPointClouds(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/ExtractGeometryFromPointClouds',
+            briosa_dot_relationship__operations__pb2.ExtractGeometryFromPointCloudsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.ExtractGeometryFromPointCloudsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeGroupsToObjectsRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeGroupsToObjectsRelationship',
+            briosa_dot_relationship__operations__pb2.MakeGroupsToObjectsRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeGroupsToObjectsRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ComputeGeometryRelationshipUncertainties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/ComputeGeometryRelationshipUncertainties',
+            briosa_dot_relationship__operations__pb2.ComputeGeometryRelationshipUncertaintiesRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.ComputeGeometryRelationshipUncertaintiesResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPointsToObjectsRelationshipStatistics(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetPointsToObjectsRelationshipStatistics',
+            briosa_dot_relationship__operations__pb2.GetPointsToObjectsRelationshipStatisticsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetPointsToObjectsRelationshipStatisticsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetRelationshipStatus(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetRelationshipStatus',
+            briosa_dot_relationship__operations__pb2.GetRelationshipStatusRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetRelationshipStatusResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AutoFilterPointsToNominalGeometry3D(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/AutoFilterPointsToNominalGeometry3D',
+            briosa_dot_relationship__operations__pb2.AutoFilterPointsToNominalGeometry3DRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.AutoFilterPointsToNominalGeometry3DResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeGeometryFitOnlyRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeGeometryFitOnlyRelationship',
+            briosa_dot_relationship__operations__pb2.MakeGeometryFitOnlyRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeGeometryFitOnlyRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakePointCloudsToObjectsRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakePointCloudsToObjectsRelationship',
+            briosa_dot_relationship__operations__pb2.MakePointCloudsToObjectsRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakePointCloudsToObjectsRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def EditGeometryRelationshipPointList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/EditGeometryRelationshipPointList',
+            briosa_dot_relationship__operations__pb2.EditGeometryRelationshipPointListRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.EditGeometryRelationshipPointListResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetGeneralRelationshipStatistics(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GetGeneralRelationshipStatistics',
+            briosa_dot_relationship__operations__pb2.GetGeneralRelationshipStatisticsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GetGeneralRelationshipStatisticsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakeGroupToNominalGroupRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakeGroupToNominalGroupRelationship',
+            briosa_dot_relationship__operations__pb2.MakeGroupToNominalGroupRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakeGroupToNominalGroupRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GenerateGeometryRelationshipSummary(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/GenerateGeometryRelationshipSummary',
+            briosa_dot_relationship__operations__pb2.GenerateGeometryRelationshipSummaryRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.GenerateGeometryRelationshipSummaryResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MoveCollectionsByMinimizingRelationships(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MoveCollectionsByMinimizingRelationships',
+            briosa_dot_relationship__operations__pb2.MoveCollectionsByMinimizingRelationshipsRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MoveCollectionsByMinimizingRelationshipsResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MakePointsToPointsRelationship(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/MakePointsToPointsRelationship',
+            briosa_dot_relationship__operations__pb2.MakePointsToPointsRelationshipRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.MakePointsToPointsRelationshipResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AutoFilterCloudsToNominalGeometry3D(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/briosa.RelationshipOperations/AutoFilterCloudsToNominalGeometry3D',
+            briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry3DRequest.SerializeToString,
+            briosa_dot_relationship__operations__pb2.AutoFilterCloudsToNominalGeometry3DResult.FromString,
             options,
             channel_credentials,
             insecure,

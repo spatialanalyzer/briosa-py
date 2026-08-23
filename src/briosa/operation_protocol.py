@@ -13,14 +13,20 @@ from google.protobuf.message import Message
 
 from briosa import (
     analysis_operations_pb2,
+    cloud_and_mesh_operations_pb2,
+    construction_operations_pb2,
     dimension_operations_pb2,
     event_operations_pb2,
     file_operations_pb2,
+    gdt_operations_pb2,
+    instrument_operations_pb2,
     mp_subroutines_pb2,
     mp_task_overview_pb2,
     process_flow_operations_pb2,
     relationship_operations_pb2,
     reporting_operations_pb2,
+    robot_calibration_appliance_node_operations_pb2,
+    robot_operations_pb2,
     scale_bar_operations_pb2,
     utility_operations_pb2,
     variables_pb2,
@@ -28,19 +34,26 @@ from briosa import (
     view_control_pb2,
 )
 from briosa import operation_values as public_values
+from briosa import wave_b_operation_values as wave_b_public_values
 from briosa.errors import BriosaProtocolError
 
 # Imports above intentionally register every Wave A descriptor in the default pool.
 _REGISTERED_MODULES = (
     analysis_operations_pb2,
+    cloud_and_mesh_operations_pb2,
+    construction_operations_pb2,
     dimension_operations_pb2,
     event_operations_pb2,
     file_operations_pb2,
+    gdt_operations_pb2,
+    instrument_operations_pb2,
     mp_subroutines_pb2,
     mp_task_overview_pb2,
     process_flow_operations_pb2,
     relationship_operations_pb2,
     reporting_operations_pb2,
+    robot_calibration_appliance_node_operations_pb2,
+    robot_operations_pb2,
     scale_bar_operations_pb2,
     utility_operations_pb2,
     variables_pb2,
@@ -80,7 +93,22 @@ def map_response(
     outputs = [
         field for field in method.output_type.fields if field.name != "execution"
     ]
-    mapped = {field.name: _read_field(response, field) for field in outputs}
+    result_fields = (
+        {item.name: item for item in fields(result_type)}
+        if result_type is not None and is_dataclass(result_type)
+        else {}
+    )
+    mapped = {
+        field.name: _read_field(
+            response,
+            field,
+            allow_absent=(
+                field.name in result_fields
+                and result_fields[field.name].default is None
+            ),
+        )
+        for field in outputs
+    }
     if not mapped:
         return None
     if len(mapped) == 1:
@@ -92,6 +120,8 @@ def map_response(
 
 def _assign_field(message: Message, field: FieldDescriptor, value: object) -> None:
     if value is None:
+        if field.has_presence:
+            return
         raise TypeError(f"{field.name} cannot be None")
     if field.is_repeated:
         if isinstance(value, str | bytes | bytearray) or not isinstance(
@@ -121,11 +151,19 @@ def _assign_field(message: Message, field: FieldDescriptor, value: object) -> No
 
 
 def _to_wire_message(full_name: str, value: object) -> Message:
-    if not is_dataclass(value) or isinstance(value, type):
-        raise TypeError(f"{full_name} requires its handwritten Briosa value")
     descriptor = _DESCRIPTORS.FindMessageTypeByName(full_name)
     message_type = message_factory.GetMessageClass(descriptor)
     message = message_type()
+    if descriptor.name in {"PointNameList", "CollectionObjectNameList"}:
+        if isinstance(value, str | bytes | bytearray) or not isinstance(
+            value, Iterable
+        ):
+            raise TypeError(f"{full_name} requires a finite non-string iterable")
+        list_field = descriptor.fields_by_name["values"]
+        _assign_field(message, list_field, value)
+        return message
+    if not is_dataclass(value) or isinstance(value, type):
+        raise TypeError(f"{full_name} requires its handwritten Briosa value")
     public_field_names = {item.name for item in fields(value)}
     for field in descriptor.fields:
         if field.name not in public_field_names:
@@ -150,12 +188,19 @@ def _to_wire_enum(field: FieldDescriptor, value: object) -> int:
     return cast(int, match)
 
 
-def _read_field(message: Message, field: FieldDescriptor) -> object:
+def _read_field(
+    message: Message,
+    field: FieldDescriptor,
+    *,
+    allow_absent: bool = False,
+) -> object:
     if field.is_repeated:
         values = getattr(message, field.name)
         mapped = [_from_wire_value(field, item) for item in values]
         return mapped
     if field.has_presence and not message.HasField(field.name):
+        if allow_absent:
+            return None
         raise BriosaProtocolError(f"required-output-missing:{field.name}")
     return _from_wire_value(field, getattr(message, field.name))
 
@@ -166,7 +211,11 @@ def _from_wire_value(field: FieldDescriptor, value: object) -> object:
             raise BriosaProtocolError(f"invalid-message-value:{field.full_name}")
         return _from_wire_message(value)
     if field.type == FieldDescriptor.TYPE_ENUM:
-        enum_class = getattr(public_values, field.enum_type.name)
+        enum_class = _public_value_type(field.enum_type.name)
+        if enum_class is None:
+            raise BriosaProtocolError(
+                f"unsupported-domain-value:{field.enum_type.name}"
+            )
         if not isinstance(value, int):
             raise BriosaProtocolError(f"invalid-enum-value:{field.full_name}")
         wire_value = field.enum_type.values_by_number.get(value)
@@ -178,7 +227,13 @@ def _from_wire_value(field: FieldDescriptor, value: object) -> object:
 
 
 def _from_wire_message(message: Message) -> object:
-    value_type = getattr(public_values, message.DESCRIPTOR.name, None)
+    if message.DESCRIPTOR.name in {"PointNameList", "CollectionObjectNameList"}:
+        list_field = message.DESCRIPTOR.fields_by_name["values"]
+        return [
+            _from_wire_value(list_field, item)
+            for item in getattr(message, list_field.name)
+        ]
+    value_type = _public_value_type(message.DESCRIPTOR.name, required=False)
     if value_type is None:
         raise BriosaProtocolError(
             f"unsupported-domain-value:{message.DESCRIPTOR.full_name}"
@@ -205,6 +260,17 @@ def _from_wire_message(message: Message) -> object:
             raise BriosaProtocolError(f"required-domain-field-missing:{field.name}")
         values[field.name] = _from_wire_value(field, getattr(message, field.name))
     return value_type(**values)
+
+
+def _public_value_type(name: str, *, required: bool = True) -> type[Any] | None:
+    value_type = getattr(public_values, name, None) or getattr(
+        wave_b_public_values,
+        name,
+        None,
+    )
+    if value_type is None and required:
+        raise BriosaProtocolError(f"unsupported-domain-value:{name}")
+    return cast(type[Any] | None, value_type)
 
 
 def _enum_prefix(name: str) -> str:
