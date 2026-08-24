@@ -3,9 +3,9 @@ requires = ["hatchling==1.27.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "briosa-client"
+name = "briosa-2026-1-0529-7"
 version = "0.1.0"
-description = "Thin asynchronous Python client for the Briosa SpatialAnalyzer bridge"
+description = "Exact-target asynchronous Python client for Briosa and SpatialAnalyzer 2026.1.0529.7"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -76,5 +76,11 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 [tool.mypy]
 python_version = "3.10"
 strict = true
-files = ["src/briosa", "tests", "tools", "eng/import_protocol_artifact.py"]
+files = [
+  "src/briosa",
+  "tests",
+  "tools",
+  "eng/import_protocol_artifact.py",
+  "eng/test_package_identity.py",
+]
 exclude = ["^src/briosa/(?:.*_pb2(?:_grpc)?\\.py|.*_pb2\\.pyi)$"]

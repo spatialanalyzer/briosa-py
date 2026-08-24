@@ -18,6 +18,14 @@ idiomatic Python API. It does not copy or redefine shared policy. The Python
 choices were reviewed rule by rule and accepted in
 [Discussion #6](https://github.com/orgs/spatialanalyzer/discussions/6#discussioncomment-17926452).
 
+### Package and import identity
+
+The first exact-target distribution is `briosa-2026-1-0529-7`. Future SA
+targets use distinct distribution names while retaining the stable `briosa`
+import package. Different target distributions therefore belong in separate
+Python environments or processes rather than one environment with a runtime
+target selector.
+
 ## Accepted Python decisions
 
 ### Client and command surface
@@ -145,7 +153,8 @@ does not provide:
   `asyncio.run()`;
 - `_async` aliases, category clients, convenience command aliases, or other
   duplicate MP entry points;
-- a supported raw generated protobuf/gRPC surface inside `briosa-client`;
+- a supported raw generated protobuf/gRPC surface inside the exact-target
+  distribution;
 - cross-thread or cross-event-loop use, implicit command ordering, or a promise of
   parallel SpatialAnalyzer execution; or
 - runtime deep-freezing of detached lists stored in frozen result dataclasses.
