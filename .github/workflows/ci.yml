@@ -109,3 +109,6 @@ jobs:
 
       - name: Build distributions
         run: python -m build
+
+      - name: Verify exact-target package identity
+        run: python eng/test_package_identity.py

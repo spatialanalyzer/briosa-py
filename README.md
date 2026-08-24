@@ -1,6 +1,6 @@
 # Briosa Python client
 
-`briosa-client` is the asynchronous Python client for the open-source
+`briosa-2026-1-0529-7` is the asynchronous Python client for the open-source
 [Briosa](https://github.com/spatialanalyzer/briosa) SpatialAnalyzer bridge. It
 provides idiomatic lifecycle and MP APIs while keeping generated protobuf and
 gRPC types private.
@@ -8,6 +8,22 @@ gRPC types private.
 The package does not include SpatialAnalyzer, the SA SDK, or a license. It
 targets SpatialAnalyzer `2026.1.0529.7` exactly and Python 3.10 or later. The
 complete protocol identity is pinned in [`protocol.lock.json`](protocol.lock.json).
+
+## Package Identity
+
+The distribution is named `briosa-2026-1-0529-7`, while application code keeps
+the stable `briosa` import package. The distribution has not been published to
+PyPI yet. After publication, the intended installation command is:
+
+```powershell
+python -m pip install briosa-2026-1-0529-7==0.1.0
+```
+
+Each exact SpatialAnalyzer target will have a separate distribution name. Two
+target distributions intentionally provide the same `briosa` import package,
+so applications targeting different SA releases should use separate virtual
+environments or processes. There is no universal runtime target selector. Only
+the `2026.1.0529.7` target distribution is implemented today.
 
 ## Usage
 
