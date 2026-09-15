@@ -96,3 +96,25 @@ Neither path requires SpatialAnalyzer nor a license.
 
 Never edit generated `*_pb2.py`, `*_pb2.pyi`, `*_pb2_grpc.py`,
 `protocol_identity.py`, or `protocol.lock.json` files by hand.
+## Server Logging
+
+Pass optional typed `logging` settings through `BriosaStartOptions`:
+
+```python
+from briosa import BriosaLoggingOptions, BriosaLogLevel, BriosaStartOptions
+
+await briosa.start(BriosaStartOptions(
+    logging=BriosaLoggingOptions(
+        minimum_level=BriosaLogLevel.DEBUG,
+        console_enabled=False,
+        max_file_size_mib=20,
+        retained_file_count=10,
+    ),
+))
+```
+
+The remaining controls are `category_levels`, `file_enabled`, `file_directory`,
+`max_age_days`, and `max_total_size_mib`. Omitted settings preserve server
+configuration. Options validate at construction; custom directories must be
+absolute Windows paths. See the [shared startup contract](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md#server-logging-startup-controls)
+and [server observability guide](https://github.com/spatialanalyzer/briosa/blob/main/targets/2026.1.0529.7/docs/operations/server-observability.md).

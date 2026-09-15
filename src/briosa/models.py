@@ -7,6 +7,8 @@ from enum import Enum
 from pathlib import Path
 from typing import cast
 
+from briosa.logging_options import BriosaLoggingOptions
+
 
 class _StrEnum(str, Enum):
     def __str__(self) -> str:
@@ -251,8 +253,11 @@ class BriosaStartOptions:
         default_factory=SpatialAnalyzerLaunchOptions
     )
     startup_timeout: float = 30.0
+    logging: BriosaLoggingOptions | None = None
 
     def __post_init__(self) -> None:
+        if self.logging is not None:
+            self.logging.to_arguments()
         if self.startup_timeout <= 0:
             raise ValueError("startup_timeout must be positive")
         if self.connect_to_spatial_analyzer and not self.start_spatial_analyzer_sdk:
