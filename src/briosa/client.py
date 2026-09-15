@@ -20,6 +20,7 @@ from briosa.errors import (
     BriosaLifecycleError,
     BriosaStartupError,
 )
+from briosa.logging_options import BriosaLoggingOptions
 from briosa.models import (
     BriosaClientOptions,
     BriosaServerSnapshot,
@@ -70,7 +71,9 @@ class OwnedServer(Protocol):
 
 
 class ServerLauncher(Protocol):
-    async def launch(self) -> OwnedServer: ...
+    async def launch(
+        self, logging: BriosaLoggingOptions | None = None
+    ) -> OwnedServer: ...
 
 
 @dataclass(slots=True)
@@ -89,7 +92,7 @@ class _SubprocessServer:
 
 
 class _LocalServerLauncher:
-    async def launch(self) -> OwnedServer:
+    async def launch(self, logging: BriosaLoggingOptions | None = None) -> OwnedServer:
         executable = _resolve_server_executable()
         port = _reserve_loopback_port()
         creation_flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
@@ -97,6 +100,7 @@ class _LocalServerLauncher:
             process = await asyncio.create_subprocess_exec(
                 str(executable),
                 f"--Briosa:Endpoint:Port={port}",
+                *(logging.to_arguments() if logging is not None else []),
                 cwd=str(executable.parent),
                 creationflags=creation_flags,
             )
@@ -418,7 +422,7 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         transport: ClientTransport | None = None
         session: _Session | None = None
         try:
-            server = await self._server_launcher.launch()
+            server = await self._server_launcher.launch(options.logging)
             transport = self._transport_factory(server.target)
             snapshot = await self._wait_for_server(server, transport)
             session = _Session(server, transport, snapshot)

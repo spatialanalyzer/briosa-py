@@ -11,6 +11,8 @@ from briosa import (
     BriosaClient,
     BriosaClientOptions,
     BriosaLifecycleError,
+    BriosaLoggingOptions,
+    BriosaLogLevel,
     BriosaOperationError,
     BriosaProtocolError,
     BriosaSpatialAnalyzerError,
@@ -85,10 +87,54 @@ class FakeServerLauncher:
     def __init__(self) -> None:
         self.server = FakeOwnedServer()
         self.launch_count = 0
+        self.logging: BriosaLoggingOptions | None = None
 
-    async def launch(self) -> OwnedServer:
+    async def launch(self, logging: BriosaLoggingOptions | None = None) -> OwnedServer:
+        self.logging = logging
         self.launch_count += 1
         return self.server
+
+
+@pytest.mark.asyncio
+async def test_logging_controls_reach_owned_server_launch() -> None:
+    logging = BriosaLoggingOptions(
+        minimum_level=BriosaLogLevel.DEBUG,
+        category_levels={"Microsoft": BriosaLogLevel.ERROR},
+        console_enabled=False,
+        file_enabled=True,
+        file_directory=r"C:\Logs with spaces",
+        max_file_size_mib=4,
+        retained_file_count=3,
+        max_age_days=2,
+        max_total_size_mib=12,
+    )
+    arguments = logging.to_arguments()
+    assert "--Logging:LogLevel:Default=Debug" in arguments
+    assert "--Logging:LogLevel:Microsoft=Error" in arguments
+    assert r"--Briosa:Logging:File:Directory=C:\Logs with spaces" in arguments
+    assert "--Briosa:Logging:File:MaxTotalSizeMiB=12" in arguments
+    assert BriosaLoggingOptions().to_arguments() == []
+    assert len(BriosaLoggingOptions(max_file_size_mib=512).to_arguments()) == 1
+    with pytest.raises(ValueError):
+        BriosaLoggingOptions(max_file_size_mib=20, max_total_size_mib=1)
+    with pytest.raises(ValueError):
+        BriosaLoggingOptions(file_directory="relative")
+    with pytest.raises(ValueError):
+        BriosaLoggingOptions(retained_file_count=0)
+    with pytest.raises(ValueError):
+        BriosaLoggingOptions(category_levels={"Default:Injected": BriosaLogLevel.TRACE})
+    launcher = FakeServerLauncher()
+    client = create_client(launcher, FakeTransport())
+    await client.start(
+        BriosaStartOptions(
+            start_spatial_analyzer_sdk=False,
+            launch_spatial_analyzer=False,
+            connect_to_spatial_analyzer=False,
+            logging=logging,
+        )
+    )
+    assert launcher.logging is logging
+    await client.stop()
 
 
 class FakeTransport:

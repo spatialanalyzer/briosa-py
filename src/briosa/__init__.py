@@ -12,6 +12,7 @@ from briosa.errors import (
     BriosaStartupError,
     BriosaTransportError,
 )
+from briosa.logging_options import BriosaLoggingOptions, BriosaLogLevel
 from briosa.models import (
     BriosaClientOptions,
     BriosaServerSnapshot,
@@ -49,6 +50,8 @@ from briosa.wave_b_operation_values import *  # noqa: F403
 from briosa.wave_b_operation_values import __all__ as _wave_b_value_exports
 
 __all__ = [
+    "BriosaLoggingOptions",
+    "BriosaLogLevel",
     "BriosaClient",
     "BriosaClientOptions",
     "BriosaCompatibilityError",
