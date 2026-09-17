@@ -162,9 +162,3 @@ does not provide:
 Changes to shared behavior begin in `spatialanalyzer/briosa`. Changes to an
 accepted Python expression require a reviewed `briosa-py` issue and update this
 document before implementation treats the new shape as normative.
-
-## Implemented targets
-
-Independent SA `2024.1.0508.5` and `2026.1.0529.7` products live under
-`targets/`. See the [repository guide](../README.md) for package selection.
-The target README records signature differences and validation limits.
