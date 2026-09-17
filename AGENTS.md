@@ -12,3 +12,10 @@ This repository contains a thin, asynchronous Python client for Briosa. Shared p
 - Never automatically replay an operation with ambiguous completion. Recovery and replay are independent decisions.
 - Ordinary builds and tests must not require SpatialAnalyzer, an SA license, or proprietary SDK binaries.
 - Keep public documentation and `eng/README.md` synchronized with behavior and tooling.
+
+## Exact-target products
+
+- Work in `targets/<exact-sa-release>/`; each product owns its source, locks, tests, tooling, and package metadata.
+- Run build, regeneration, conformance, and packaging from that target directory.
+- Do not reference another target's runtime source or generated transport.
+- CI must cover both supported targets explicitly. Package versions are independent of server versions.
