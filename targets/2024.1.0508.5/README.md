@@ -12,8 +12,7 @@ complete protocol identity is pinned in [`protocol.lock.json`](protocol.lock.jso
 ## Package Identity
 
 The distribution is named `briosa-2024-1-0508-5`, while application code keeps
-the stable `briosa` import package. The distribution has not been published to
-PyPI yet. After publication, the intended installation command is:
+the stable `briosa` import package. Install the distribution with:
 
 ```powershell
 python -m pip install briosa-2024-1-0508-5==0.1.0
