@@ -15,7 +15,7 @@ The distribution is named `briosa-2026-1-0529-7`, while application code keeps
 the stable `briosa` import package. Install the distribution with:
 
 ```powershell
-python -m pip install briosa-2026-1-0529-7==0.1.0
+python -m pip install briosa-2026-1-0529-7==0.1.1
 ```
 
 Each exact SpatialAnalyzer target will have a separate distribution name. Two
@@ -55,7 +55,7 @@ this package's exact API.
 
 ## Server distribution lookup
 
-Install **Briosa Server 0.6.0 for SA 2026.1.0529.7** with the Briosa Installer.
+Install **Briosa Server 0.6.1 for SA 2026.1.0529.7** with the Briosa Installer.
 Default startup searches these locations in order:
 
 1. `BRIOSA_SERVER_PATH`, pointing to `Briosa.Server.exe`.
@@ -64,7 +64,7 @@ Default startup searches these locations in order:
 4. `%PROGRAMDATA%/Briosa/Packages/products/<package-id>/payload/Briosa.Server.exe`.
 5. The legacy `%LOCALAPPDATA%/Briosa/servers/<briosa-version>/sa-<sa-target>/Briosa.Server.exe`.
 
-For this client, `<package-id>` is `briosa-0.6.0-sa-2026.1.0529.7-win-x64`.
+For this client, `<package-id>` is `briosa-0.6.1-sa-2026.1.0529.7-win-x64`.
 Managed installations must have a matching committed receipt, manifest, and required
 entry points. Missing or invalid candidates are skipped; discovery never selects a
 different server version or SA target. Runtime compatibility checks still apply.
@@ -88,7 +88,7 @@ python -m venv .venv
 ./.venv/Scripts/python -m mypy
 ./.venv/Scripts/python -m pytest
 ./eng/Test-Conformance.ps1 `
-  -ArtifactPath C:\path\to\briosa-client-conformance-0.6.0-sa-2026.1.0529.7-win-x64.zip `
+  -ArtifactPath C:\path\to\briosa-client-conformance-0.6.1-sa-2026.1.0529.7-win-x64.zip `
   -PythonExecutable ./.venv/Scripts/python.exe
 ./.venv/Scripts/python -m build
 ./.venv/Scripts/python eng/test_package_identity.py
@@ -103,11 +103,11 @@ Neither path requires SpatialAnalyzer nor a license.
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.6.0-sa-2026.1.0529.7.zip `
+  C:\path\to\briosa-protocol-0.6.1-sa-2026.1.0529.7.zip `
   --update --source-channel github_release
 
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.6.0-sa-2026.1.0529.7.zip
+  C:\path\to\briosa-protocol-0.6.1-sa-2026.1.0529.7.zip
 ```
 
 Never edit generated `*_pb2.py`, `*_pb2.pyi`, `*_pb2_grpc.py`,
@@ -137,7 +137,7 @@ and [server observability guide](https://github.com/spatialanalyzer/briosa/blob/
 
 ## Compatibility and validation
 
-This package pins the matching Briosa v0.6.0 protocol and conformance bundles.
+This package pins the matching Briosa v0.6.1 protocol and conformance bundles.
 Startup checks the server version, source revision, protocol package, and exact
 SA target before admitting MP calls. The other SA target is not interchangeable.
 
