@@ -9,12 +9,14 @@ import subprocess
 from collections.abc import Awaitable, Callable
 from contextlib import suppress
 from dataclasses import dataclass, field
-from pathlib import Path
 from types import TracebackType
 from typing import Any, Protocol, TypeVar, cast
 
 import grpc
 
+from briosa._server_discovery import (
+    resolve_server_executable as _resolve_server_executable,
+)
 from briosa.errors import (
     BriosaError,
     BriosaLifecycleError,
@@ -37,7 +39,6 @@ from briosa.operation_protocol import (
     operation_method,
     response_type,
 )
-from briosa.protocol_identity import BRIOSA_VERSION, SPATIAL_ANALYZER_TARGET
 from briosa.transport import (
     ClientTransport,
     GrpcClientTransport,
@@ -56,7 +57,6 @@ from briosa.wave_b_operations import (
     WaveBOperationsMixin,
 )
 
-_SERVER_PATH_ENVIRONMENT_VARIABLE = "BRIOSA_SERVER_PATH"
 _Result = TypeVar("_Result")
 
 
@@ -667,31 +667,6 @@ def _require_generation(generation: int | None, diagnostic_code: str) -> int:
     if generation is None or generation <= 0:
         raise BriosaLifecycleError(diagnostic_code)
     return generation
-
-
-def _resolve_server_executable() -> Path:
-    configured = os.environ.get(_SERVER_PATH_ENVIRONMENT_VARIABLE)
-    local_app_data = Path(
-        os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local")
-    )
-    candidates = (
-        Path(configured) if configured else None,
-        Path(__file__).resolve().parent / "briosa-server" / "Briosa.Server.exe",
-        local_app_data
-        / "Briosa"
-        / "servers"
-        / BRIOSA_VERSION
-        / f"sa-{SPATIAL_ANALYZER_TARGET}"
-        / "Briosa.Server.exe",
-    )
-    for candidate in candidates:
-        if (
-            candidate is not None
-            and candidate.name.lower() == "briosa.server.exe"
-            and candidate.is_file()
-        ):
-            return candidate.resolve()
-    raise BriosaStartupError("server-distribution-not-found")
 
 
 def _reserve_loopback_port() -> int:

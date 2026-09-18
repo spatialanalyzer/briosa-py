@@ -29,3 +29,6 @@ Run all commands from this exact-target directory. `Test-Conformance.ps1` runs
 headlessly with `Briosa__Desktop__Mode=Disabled` for its child processes and restores
 the caller's prior value. The package consumer check installs the actual local
 package and validates the stable public namespace/import without launching SA.
+
+`tests/test_server_discovery.py` covers the shared Installer discovery contract
+using isolated user and machine stores. These portable tests do not launch SA.
