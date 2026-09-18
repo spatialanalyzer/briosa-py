@@ -45,14 +45,18 @@ jobs:
     needs: [validate, build]
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: pypi
+    environment: ${{ matrix.environment }}
     permissions:
       contents: read
       id-token: write
     strategy:
       fail-fast: false
       matrix:
-        sa-target: ['2024.1.0508.5', '2026.1.0529.7']
+        include:
+          - sa-target: '2024.1.0508.5'
+            environment: pypi
+          - sa-target: '2026.1.0529.7'
+            environment: pypi-2026.1.0529.7
     steps:
       - name: Download validated packages from this run
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5

@@ -9,12 +9,14 @@ validation, which remain outstanding before v1.0 promotion.
 
 Configure a pending PyPI trusted publisher for each of
 `briosa-2024-1-0508-5` and `briosa-2026-1-0529-7`, using GitHub organization
-`spatialanalyzer`, repository `briosa-py`, workflow `release.yml`, environment
-`pypi`. No API token is needed. The initial projects may be owned by the
+`spatialanalyzer`, repository `briosa-py`, and workflow `release.yml`. Use environment
+`pypi` for SA 2024 and `pypi-2026.1.0529.7` for SA 2026. Pending publishers for
+different project names must have distinct configurations. No API token is
+needed. The initial projects may be owned by the
 maintainer's individual account while organization approval is pending, then
 transferred to the `spatialanalyzer` organization without renaming packages.
 
-Create the GitHub environment `pypi` and restrict deployments to tags
+Create both GitHub environments and restrict deployments to tags
 matching `v*`. Trusted-publisher repository, workflow, and environment names must
 match exactly. Only the publishing job receives `id-token: write`; builds have
 read-only permissions and never receive publishing credentials.
