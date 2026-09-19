@@ -257,7 +257,7 @@ def _protected(path: Path) -> bool:
             input=json.dumps(str(path)),
             encoding="utf-8",
             capture_output=True,
-            timeout=10,
+            timeout=30,
             check=False,
             creationflags=subprocess.CREATE_NO_WINDOW,
         )
