@@ -18,6 +18,7 @@ from briosa import (
     lifecycle_pb2_grpc,
     operation_outcomes_pb2,
 )
+from briosa._installation_policy import compatible
 from briosa.errors import (
     BriosaCompatibilityError,
     BriosaOperationError,
@@ -26,6 +27,7 @@ from briosa.errors import (
     BriosaSpatialAnalyzerSdkError,
     BriosaTransportError,
 )
+from briosa.installation_models import BriosaInstallation, valid_version
 from briosa.models import (
     BriosaOperationCapability,
     BriosaServerSnapshot,
@@ -52,9 +54,7 @@ from briosa.models import (
     SpatialAnalyzerSdkTerminationKind,
 )
 from briosa.protocol_identity import (
-    BRIOSA_VERSION,
     PROTOCOL_PACKAGE,
-    SOURCE_REVISION,
     SPATIAL_ANALYZER_TARGET,
 )
 
@@ -483,8 +483,6 @@ def _validate_compatibility(
         raise BriosaCompatibilityError("server-version-missing")
     version = server.version
     checks = (
-        (version.briosa_version, BRIOSA_VERSION, "server-version-mismatch"),
-        (version.source_revision, SOURCE_REVISION, "server-source-revision-mismatch"),
         (
             version.protocol_package,
             PROTOCOL_PACKAGE,
@@ -509,11 +507,46 @@ def _validate_compatibility(
     for actual, expected, diagnostic_code in checks:
         if actual != expected:
             raise BriosaCompatibilityError(diagnostic_code)
+    if not valid_version(version.briosa_version):
+        raise BriosaCompatibilityError("server-version-invalid")
+    if len(version.source_revision) != 40 or any(
+        c not in "0123456789abcdef" for c in version.source_revision
+    ):
+        raise BriosaCompatibilityError("server-source-revision-invalid")
+    major = server.compatibility.major if server.HasField("compatibility") else 0
+    revision = server.compatibility.revision if server.HasField("compatibility") else 0
+    if (server.HasField("compatibility") and major == 0) or not compatible(
+        major, revision, version.briosa_version, version.source_revision
+    ):
+        raise BriosaCompatibilityError("server-contract-incompatible")
     if (
         server.target_isolation_mode
         != discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT
     ):
         raise BriosaCompatibilityError("target-isolation-mode-mismatch")
+
+
+def validate_installation(
+    server: discovery_pb2.GetServerInfoResponse, installation: BriosaInstallation | None
+) -> None:
+    if installation is None:
+        return
+    actual = (
+        server.version.briosa_version,
+        server.version.source_revision,
+        server.version.spatial_analyzer_target,
+        server.compatibility.major,
+        server.compatibility.revision,
+    )
+    expected = (
+        installation.version,
+        installation.source_revision,
+        installation.spatial_analyzer_target,
+        installation.contract_major,
+        installation.contract_revision,
+    )
+    if actual != expected:
+        raise BriosaCompatibilityError("server-installation-identity-mismatch")
 
 
 def _parse_trailer(error: grpc.RpcError, key: str, message_type: Any) -> Any | None:

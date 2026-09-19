@@ -219,3 +219,6 @@ __marimo__/
 
 # briosa-py
 /artifacts/
+**/artifacts/
+# Exact pinned server checkout used only by compatibility CI.
+/briosa-source/

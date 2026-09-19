@@ -15,6 +15,7 @@ from briosa import (
     BriosaLogLevel,
     BriosaOperationError,
     BriosaProtocolError,
+    BriosaServerSelection,
     BriosaSpatialAnalyzerError,
     BriosaStartOptions,
     BriosaTransportError,
@@ -90,7 +91,11 @@ class FakeServerLauncher:
         self.launch_count = 0
         self.logging: BriosaLoggingOptions | None = None
 
-    async def launch(self, logging: BriosaLoggingOptions | None = None) -> OwnedServer:
+    async def launch(
+        self,
+        logging: BriosaLoggingOptions | None = None,
+        selection: BriosaServerSelection | None = None,
+    ) -> OwnedServer:
         self.logging = logging
         self.launch_count += 1
         return self.server
@@ -329,6 +334,7 @@ def matching_snapshot(
         ),
         ready_for_mp=ready,
         target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
+        compatibility=discovery_pb2.CompatibilityContract(major=1),
     )
     capabilities = discovery_pb2.ListCapabilitiesResponse(
         protocol_package=PROTOCOL_PACKAGE,
@@ -360,9 +366,9 @@ def application_lifecycle_failure() -> FakeRpcError:
     )
 
 
-def test_protocol_identity_matches_merged_wave_b_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.6.1-sa-2026.1.0529.7"
-    assert SOURCE_REVISION == "32a3b56ba4ae31ea5ec6ec3b2aa051eb61c866aa"
+def test_protocol_identity_matches_reviewed_compatibility_artifact() -> None:
+    assert ARTIFACT_NAME == "briosa-protocol-0.7.0-sa-2026.1.0529.7"
+    assert SOURCE_REVISION == "4303a3322074869b35a3f16f9e35484a7bd5c830"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2026.1.0529.7"

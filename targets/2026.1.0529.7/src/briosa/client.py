@@ -14,14 +14,13 @@ from typing import Any, Protocol, TypeVar, cast
 
 import grpc
 
-from briosa._server_discovery import (
-    resolve_server_executable as _resolve_server_executable,
-)
 from briosa.errors import (
     BriosaError,
     BriosaLifecycleError,
     BriosaStartupError,
 )
+from briosa.installation_discovery import read_installation, resolve_installation
+from briosa.installation_models import BriosaInstallation, BriosaServerSelection
 from briosa.logging_options import BriosaLoggingOptions
 from briosa.models import (
     BriosaClientOptions,
@@ -46,6 +45,7 @@ from briosa.transport import (
     map_rpc_error,
     map_sdk_state,
     map_snapshot,
+    validate_installation,
 )
 from briosa.wave_a_operations import WaveAOperationsMixin
 from briosa.wave_b_operations import (
@@ -72,7 +72,9 @@ class OwnedServer(Protocol):
 
 class ServerLauncher(Protocol):
     async def launch(
-        self, logging: BriosaLoggingOptions | None = None
+        self,
+        logging: BriosaLoggingOptions | None = None,
+        selection: BriosaServerSelection | None = None,
     ) -> OwnedServer: ...
 
 
@@ -80,6 +82,7 @@ class ServerLauncher(Protocol):
 class _SubprocessServer:
     process: asyncio.subprocess.Process
     target: str
+    installation: BriosaInstallation
 
     @property
     def has_exited(self) -> bool:
@@ -92,21 +95,40 @@ class _SubprocessServer:
 
 
 class _LocalServerLauncher:
-    async def launch(self, logging: BriosaLoggingOptions | None = None) -> OwnedServer:
-        executable = _resolve_server_executable()
+    async def launch(
+        self,
+        logging: BriosaLoggingOptions | None = None,
+        selection: BriosaServerSelection | None = None,
+    ) -> OwnedServer:
+        options = selection or BriosaServerSelection()
+        installation = await asyncio.to_thread(resolve_installation, options)
+        verified = await asyncio.to_thread(
+            read_installation, installation.executable_path, installation.scope
+        )
+        if verified != installation:
+            raise BriosaStartupError("server-installation-changed")
+        executable = installation.executable_path
+        sa_arguments = (
+            [
+                f"--Briosa:SpatialAnalyzer:ExecutablePath={options.spatial_analyzer_executable_path}"
+            ]
+            if options.spatial_analyzer_executable_path is not None
+            else []
+        )
         port = _reserve_loopback_port()
         creation_flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
         try:
             process = await asyncio.create_subprocess_exec(
                 str(executable),
                 f"--Briosa:Endpoint:Port={port}",
+                *sa_arguments,
                 *(logging.to_arguments() if logging is not None else []),
                 cwd=str(executable.parent),
                 creationflags=creation_flags,
             )
         except OSError as error:
             raise BriosaStartupError("server-process-start-failed") from error
-        return _SubprocessServer(process, f"127.0.0.1:{port}")
+        return _SubprocessServer(process, f"127.0.0.1:{port}", installation)
 
 
 @dataclass(slots=True)
@@ -422,7 +444,9 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         transport: ClientTransport | None = None
         session: _Session | None = None
         try:
-            server = await self._server_launcher.launch(options.logging)
+            server = await self._server_launcher.launch(
+                options.logging, options.server_selection
+            )
             transport = self._transport_factory(server.target)
             snapshot = await self._wait_for_server(server, transport)
             session = _Session(server, transport, snapshot)
@@ -477,7 +501,11 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
             if server.has_exited:
                 raise BriosaStartupError("server-process-exited")
             try:
-                return map_snapshot(*(await transport.get_server_snapshot()))
+                snapshot = await transport.get_server_snapshot()
+                validate_installation(
+                    snapshot[0], getattr(server, "installation", None)
+                )
+                return map_snapshot(*snapshot)
             except grpc.RpcError as error:
                 if error.code() is not grpc.StatusCode.UNAVAILABLE:
                     raise map_rpc_error(error) from error

@@ -7,6 +7,7 @@ from enum import Enum
 from pathlib import Path
 from typing import cast
 
+from briosa.installation_models import BriosaServerSelection
 from briosa.logging_options import BriosaLoggingOptions
 
 
@@ -246,6 +247,9 @@ class SpatialAnalyzerLaunchOptions:
 
 @dataclass(frozen=True, slots=True)
 class BriosaStartOptions:
+    server_selection: BriosaServerSelection = field(
+        default_factory=BriosaServerSelection
+    )
     start_spatial_analyzer_sdk: bool = True
     launch_spatial_analyzer: bool = True
     connect_to_spatial_analyzer: bool = True

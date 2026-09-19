@@ -7,6 +7,7 @@ import asyncio
 import json
 import os
 from collections.abc import Awaitable, Callable
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, TypeVar, cast
 
@@ -15,6 +16,7 @@ from briosa import (
     BriosaClientOptions,
     BriosaCompatibilityError,
     BriosaOperationError,
+    BriosaServerSelection,
     BriosaStartOptions,
     BriosaTransportError,
     ExecutionDisposition,
@@ -73,6 +75,14 @@ async def _run_scenario(scenario: str) -> None:
             start_options = BriosaStartOptions(launch_spatial_analyzer=False)
         else:
             start_options = BriosaStartOptions()
+
+        start_options = replace(
+            start_options,
+            server_selection=BriosaServerSelection(
+                executable_path=Path(os.environ["BRIOSA_SERVER_PATH"]),
+                allow_prerelease=True,
+            ),
+        )
 
         if scenario == "identity-mismatch":
             await _expect_raises(

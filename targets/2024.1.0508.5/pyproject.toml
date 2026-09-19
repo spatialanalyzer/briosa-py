@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "briosa-2024-1-0508-5"
-version = "0.1.1"
+version = "0.2.0"
 description = "Exact-target asynchronous Python client for Briosa and SpatialAnalyzer 2024.1.0508.5"
 readme = "README.md"
 requires-python = ">=3.10"
