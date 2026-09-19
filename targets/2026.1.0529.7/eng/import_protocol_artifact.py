@@ -70,7 +70,24 @@ def _extract_verified(artifact: Path, destination: Path) -> tuple[Path, dict[str
 
     bundle_root = destination / roots.pop()
     manifest = _load_json(bundle_root / "manifest.json")
-    _require(manifest.get("schema_version"), 2, "Unsupported protocol manifest schema")
+    _require(manifest.get("schema_version"), 3, "Unsupported protocol manifest schema")
+    compatibility = manifest.get("compatibility")
+    if (
+        not isinstance(compatibility, dict)
+        or any(
+            type(compatibility.get(key)) is not int
+            or not 0 <= compatibility[key] <= 4294967295
+            for key in ("major", "revision")
+        )
+        or compatibility["major"] == 0
+    ):
+        raise ValueError("Invalid behavioral compatibility coordinates")
+    contract = _load_json(bundle_root / "compatibility/contract.json")
+    _require(
+        contract,
+        {"schemaVersion": 1, **compatibility},
+        "Behavioral contract declaration differs from manifest",
+    )
     _require(
         manifest.get("artifact_kind"), "briosa_protocol", "Unexpected artifact kind"
     )
@@ -149,6 +166,8 @@ def _generate(
         "ARTIFACT_SHA256": artifact_hash,
         "BRIOSA_VERSION": manifest["briosa_version"],
         "SOURCE_REVISION": manifest["source_revision"],
+        "COMPATIBILITY_MAJOR": manifest["compatibility"]["major"],
+        "COMPATIBILITY_REVISION": manifest["compatibility"]["revision"],
         "PROTOCOL_SCHEMA_SHA256": manifest["protocol_schema_sha256"],
         "DESCRIPTOR_SET_SHA256": manifest["descriptor_set_sha256"],
         "PROTOCOL_PACKAGE": manifest["protocol_package"],
@@ -289,6 +308,11 @@ def main() -> int:
             generated_files,
         )
         if args.update:
+            fixtures = REPOSITORY_ROOT / "tests" / "fixtures"
+            fixtures.mkdir(parents=True, exist_ok=True)
+            (fixtures / "selection-cases.json").write_bytes(
+                (bundle_root / "compatibility" / "selection-cases.json").read_bytes()
+            )
             _apply_generated(generated_root)
             LOCK_PATH.write_text(
                 json.dumps(lock, indent=2) + "\n", encoding="utf-8", newline="\n"
@@ -299,6 +323,11 @@ def main() -> int:
                 existing_lock, lock, "Protocol artifact identity or toolchain drifted"
             )
             _verify_generated(generated_root, generated_files)
+            _require(
+                (REPOSITORY_ROOT / "tests/fixtures/selection-cases.json").read_bytes(),
+                (bundle_root / "compatibility/selection-cases.json").read_bytes(),
+                "Shared installation fixtures drifted",
+            )
             print("Verified protocol identity and generated-code drift.")
     return 0
 

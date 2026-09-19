@@ -129,7 +129,7 @@ class GetServerInfoRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class GetServerInfoResponse(_message.Message):
-    __slots__ = ("version", "worker_state", "spatial_analyzer_connection_state", "ready_for_mp", "connected_spatial_analyzer_version", "connected_spatial_analyzer_version_state", "spatial_analyzer_execution_readiness_state", "target_isolation_mode", "activated_sdk_identity", "connected_spatial_analyzer_identity")
+    __slots__ = ("version", "worker_state", "spatial_analyzer_connection_state", "ready_for_mp", "connected_spatial_analyzer_version", "connected_spatial_analyzer_version_state", "spatial_analyzer_execution_readiness_state", "target_isolation_mode", "activated_sdk_identity", "connected_spatial_analyzer_identity", "compatibility")
     VERSION_FIELD_NUMBER: _ClassVar[int]
     WORKER_STATE_FIELD_NUMBER: _ClassVar[int]
     SPATIAL_ANALYZER_CONNECTION_STATE_FIELD_NUMBER: _ClassVar[int]
@@ -140,6 +140,7 @@ class GetServerInfoResponse(_message.Message):
     TARGET_ISOLATION_MODE_FIELD_NUMBER: _ClassVar[int]
     ACTIVATED_SDK_IDENTITY_FIELD_NUMBER: _ClassVar[int]
     CONNECTED_SPATIAL_ANALYZER_IDENTITY_FIELD_NUMBER: _ClassVar[int]
+    COMPATIBILITY_FIELD_NUMBER: _ClassVar[int]
     version: _version_coordinates_pb2.VersionCoordinates
     worker_state: WorkerRuntimeState
     spatial_analyzer_connection_state: SpatialAnalyzerConnectionState
@@ -150,7 +151,16 @@ class GetServerInfoResponse(_message.Message):
     target_isolation_mode: TargetIsolationMode
     activated_sdk_identity: RuntimeIdentityEvidence
     connected_spatial_analyzer_identity: RuntimeIdentityEvidence
-    def __init__(self, version: _Optional[_Union[_version_coordinates_pb2.VersionCoordinates, _Mapping]] = ..., worker_state: _Optional[_Union[WorkerRuntimeState, str]] = ..., spatial_analyzer_connection_state: _Optional[_Union[SpatialAnalyzerConnectionState, str]] = ..., ready_for_mp: bool = ..., connected_spatial_analyzer_version: _Optional[str] = ..., connected_spatial_analyzer_version_state: _Optional[_Union[ConnectedSpatialAnalyzerVersionState, str]] = ..., spatial_analyzer_execution_readiness_state: _Optional[_Union[SpatialAnalyzerExecutionReadinessState, str]] = ..., target_isolation_mode: _Optional[_Union[TargetIsolationMode, str]] = ..., activated_sdk_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ..., connected_spatial_analyzer_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ...) -> None: ...
+    compatibility: CompatibilityContract
+    def __init__(self, version: _Optional[_Union[_version_coordinates_pb2.VersionCoordinates, _Mapping]] = ..., worker_state: _Optional[_Union[WorkerRuntimeState, str]] = ..., spatial_analyzer_connection_state: _Optional[_Union[SpatialAnalyzerConnectionState, str]] = ..., ready_for_mp: bool = ..., connected_spatial_analyzer_version: _Optional[str] = ..., connected_spatial_analyzer_version_state: _Optional[_Union[ConnectedSpatialAnalyzerVersionState, str]] = ..., spatial_analyzer_execution_readiness_state: _Optional[_Union[SpatialAnalyzerExecutionReadinessState, str]] = ..., target_isolation_mode: _Optional[_Union[TargetIsolationMode, str]] = ..., activated_sdk_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ..., connected_spatial_analyzer_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ..., compatibility: _Optional[_Union[CompatibilityContract, _Mapping]] = ...) -> None: ...
+
+class CompatibilityContract(_message.Message):
+    __slots__ = ("major", "revision")
+    MAJOR_FIELD_NUMBER: _ClassVar[int]
+    REVISION_FIELD_NUMBER: _ClassVar[int]
+    major: int
+    revision: int
+    def __init__(self, major: _Optional[int] = ..., revision: _Optional[int] = ...) -> None: ...
 
 class RuntimeIdentityEvidence(_message.Message):
     __slots__ = ("version", "source", "match_state")

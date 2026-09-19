@@ -1,18 +1,18 @@
 {
   "schema_version": 2,
   "artifact": {
-    "name": "briosa-protocol-0.6.1-sa-2024.1.0508.5",
-    "file_name": "briosa-protocol-0.6.1-sa-2024.1.0508.5.zip",
-    "sha256": "4717d6c2e63830e5b065c8541c99e42f322955b34a769042f9cdb0608cdc2f71",
-    "briosa_version": "0.6.1",
-    "source_revision": "32a3b56ba4ae31ea5ec6ec3b2aa051eb61c866aa",
+    "name": "briosa-protocol-0.7.0-preview.2-sa-2024.1.0508.5",
+    "file_name": "briosa-protocol-0.7.0-preview.2-sa-2024.1.0508.5.zip",
+    "sha256": "da57d4404e419fd55bee5c20534222cf77563f900de9a1d2e286d9d36a55ac0c",
+    "briosa_version": "0.7.0-preview.2",
+    "source_revision": "53e97e2f5fc0eeba953b99e5bfaded91ed859828",
     "source_repository": "https://github.com/spatialanalyzer/briosa",
-    "source_channel": "github_release"
+    "source_channel": "source_commit_bootstrap"
   },
   "protocol": {
     "generation_contract": "standard-protobuf-grpc",
-    "schema_sha256": "0f4186e72d861eb49383bddd46e560ef71d454bc844989af388a32420c8a8cf2",
-    "descriptor_sha256": "81ecb85dfd1ce24ade47674cfff4da99dfd0d9fe7d565c0ce0f8cf89ac23c815",
+    "schema_sha256": "dca41837d62bb8f815cfa8952f417a63a9b0b2505b2931ccf0131c4ef4577895",
+    "descriptor_sha256": "6330a979da8a1790dd098179bde8718798ea630eb55ef9099c5f23347ace42f9",
     "package": "briosa"
   },
   "target": {
@@ -72,11 +72,11 @@
       },
       {
         "path": "discovery_pb2.py",
-        "sha256": "123af634a19e7197dd041e2c4e6e6f0ecf06abc6672cf287adb7df1765ccbba5"
+        "sha256": "3305c3b0421c1f20eaf18fa52c689b4cd7dfd8c39113448b68a28623c3b6aea7"
       },
       {
         "path": "discovery_pb2.pyi",
-        "sha256": "d784b38a4b991bb1ac0b6e2a4d172400a64d0837b91940c4f8ad5d24072c67ee"
+        "sha256": "788d3703f7d31d008f47bb62e069872994e7a970d4f8f6194d38db6452e71927"
       },
       {
         "path": "discovery_pb2_grpc.py",
@@ -192,7 +192,7 @@
       },
       {
         "path": "protocol_identity.py",
-        "sha256": "622881cf9513adb96dc5321dc8b9c30008abab37cb1f592cec4314c747ddae9b"
+        "sha256": "005e5aab9fa3b71db2856d5e5821dba7bd7b6d33676365815c36a0cd9276c535"
       },
       {
         "path": "relationship_operations_pb2.py",

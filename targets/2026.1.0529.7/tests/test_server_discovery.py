@@ -1,194 +1,200 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
-from typing import cast
+from typing import Any
 
 import pytest
 
-from briosa._server_discovery import _resolve
-from briosa.errors import BriosaStartupError
-from briosa.protocol_identity import (
-    BRIOSA_VERSION,
-    SOURCE_REVISION,
-    SPATIAL_ANALYZER_TARGET,
+from briosa import (
+    BriosaCompatibilityError,
+    BriosaInstallation,
+    BriosaServerSelection,
+    discover_installations,
+    discovery_pb2,
+    version_coordinates_pb2,
 )
+from briosa._installation_policy import (
+    LEGACY_REVISION,
+    LEGACY_VERSION,
+    select_installation,
+)
+from briosa.installation_discovery import read_installation
+from briosa.protocol_identity import SPATIAL_ANALYZER_TARGET
+from briosa.transport import _validate_compatibility, validate_installation
 
-PRODUCT_ID = f"briosa-{BRIOSA_VERSION}-sa-{SPATIAL_ANALYZER_TARGET}-win-x64"
 
-
-def touch(path: Path) -> Path:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("fixture")
-    return path
+def test_shared_selection_vectors() -> None:
+    data = json.loads(
+        (Path(__file__).parent / "fixtures/selection-cases.json").read_text()
+    )
+    names = {
+        "executablePath": "executable_path",
+        "allowPrerelease": "allow_prerelease",
+        "version": "version",
+        "installationId": "installation_id",
+        "minimumVersion": "minimum_version",
+        "maximumVersionExclusive": "maximum_version_exclusive",
+        "excludedVersions": "excluded_versions",
+        "allowedScopes": "allowed_scopes",
+    }
+    for case in data["cases"]:
+        options = BriosaServerSelection(
+            **{names[k]: v for k, v in case["options"].items()}
+        )
+        candidates = tuple(
+            BriosaInstallation(
+                c["id"],
+                Path(c["path"]),
+                c["version"],
+                c["sourceRevision"],
+                c["target"],
+                c["rid"],
+                c["major"],
+                c["revision"],
+                c["manifestSha256"],
+                c["scope"],
+            )
+            for c in case["candidates"]
+        )
+        selected, code = select_installation(
+            candidates,
+            options,
+            case["target"],
+            case["requiredMajor"],
+            case["minimumRevision"],
+        )
+        assert (selected.installation_id if selected else None) == case["selectedId"], (
+            case["name"]
+        )
+        assert code == case.get("error"), case["name"]
 
 
 def install(root: Path) -> Path:
-    product = root / "Briosa" / "Packages" / "products" / PRODUCT_ID
+    identity = f"briosa-0.7.0-sa-{SPATIAL_ANALYZER_TARGET}-win-x64"
+    product = root / "products" / identity
     payload = product / "payload"
-    server = touch(payload / "Briosa.Server.exe")
-    touch(payload / "Briosa.Worker.exe")
-    (payload / "manifest.json").write_text(
-        json.dumps(
-            {
-                "schemaVersion": 2,
-                "artifactName": PRODUCT_ID,
-                "briosaVersion": BRIOSA_VERSION,
-                "spatialAnalyzerTarget": SPATIAL_ANALYZER_TARGET,
-                "runtimeIdentifier": "win-x64",
-                "sourceRevision": SOURCE_REVISION,
-                "protocolPackage": "briosa",
-                "spatialAnalyzerBundled": False,
-            }
-        )
-    )
+    payload.mkdir(parents=True)
+    manifest = json.dumps(
+        {
+            "schemaVersion": 3,
+            "artifactName": identity,
+            "briosaVersion": "0.7.0",
+            "sourceRevision": "a" * 40,
+            "spatialAnalyzerTarget": SPATIAL_ANALYZER_TARGET,
+            "runtimeIdentifier": "win-x64",
+            "protocolPackage": "briosa",
+            "spatialAnalyzerBundled": False,
+            "compatibility": {"major": 1, "revision": 0},
+        }
+    ).encode()
+    (payload / "manifest.json").write_bytes(manifest)
+    for name in ("Briosa.Server.exe", "Briosa.Worker.exe"):
+        (payload / name).write_text("inert")
     (product / "receipt.json").write_text(
         json.dumps(
             {
                 "schemaVersion": 1,
                 "package": {
-                    "id": PRODUCT_ID,
+                    "id": identity,
                     "component": "server",
-                    "version": BRIOSA_VERSION,
+                    "version": "0.7.0",
                     "spatialAnalyzerTarget": SPATIAL_ANALYZER_TARGET,
                     "runtimeIdentifier": "win-x64",
                 },
                 "files": {
-                    name: "a" * 64
-                    for name in (
-                        "manifest.json",
-                        "Briosa.Server.exe",
-                        "Briosa.Worker.exe",
-                    )
+                    "manifest.json": hashlib.sha256(manifest).hexdigest(),
+                    "Briosa.Server.exe": "a" * 64,
+                    "Briosa.Worker.exe": "a" * 64,
                 },
             }
         )
     )
-    return server
+    return payload / "Briosa.Server.exe"
 
 
-def resolve(root: Path, configured: Path | None = None) -> Path:
-    return _resolve(
-        str(configured) if configured else None,
-        root / "client",
-        str(root / "user"),
-        str(root / "machine"),
+def test_receipt_manifest_identity_is_verified(tmp_path: Path) -> None:
+    path = install(tmp_path)
+    assert read_installation(path, "user").version == "0.7.0"
+    manifest = path.parent / "manifest.json"
+    value = json.loads(manifest.read_text())
+    value["sourceRevision"] = "b" * 40
+    manifest.write_text(json.dumps(value))
+    with pytest.raises(ValueError, match="file evidence"):
+        read_installation(path, "user")
+
+
+def test_missing_worker_is_not_a_distribution(tmp_path: Path) -> None:
+    path = install(tmp_path)
+    (path.parent / "Briosa.Worker.exe").unlink()
+    with pytest.raises(FileNotFoundError):
+        read_installation(path, "user")
+
+
+def test_invalid_explicit_selection_never_falls_back(tmp_path: Path) -> None:
+    report = discover_installations(
+        BriosaServerSelection(executable_path=tmp_path / "missing/Briosa.Server.exe")
+    )
+    assert report.selected is None
+    assert report.diagnostic_code in (
+        "server-installation-invalid",
+        "server-platform-unsupported",
     )
 
 
-def test_explicit_local_user_machine_legacy_precedence(tmp_path: Path) -> None:
-    legacy = touch(
-        tmp_path
-        / "user"
-        / "Briosa"
-        / "servers"
-        / BRIOSA_VERSION
-        / f"sa-{SPATIAL_ANALYZER_TARGET}"
-        / "Briosa.Server.exe"
+def snapshot() -> tuple[Any, Any]:
+    return (
+        discovery_pb2.GetServerInfoResponse(
+            version=version_coordinates_pb2.VersionCoordinates(
+                briosa_version="0.9.0",
+                source_revision="a" * 40,
+                protocol_package="briosa",
+                spatial_analyzer_target=SPATIAL_ANALYZER_TARGET,
+            ),
+            compatibility=discovery_pb2.CompatibilityContract(major=1),
+            target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
+        ),
+        discovery_pb2.ListCapabilitiesResponse(
+            protocol_package="briosa",
+            spatial_analyzer_target=SPATIAL_ANALYZER_TARGET,
+        ),
     )
-    assert resolve(tmp_path) == legacy
-    machine = install(tmp_path / "machine")
-    assert resolve(tmp_path) == machine
-    user = install(tmp_path / "user")
-    assert resolve(tmp_path) == user
-    local = touch(tmp_path / "client" / "briosa-server" / "Briosa.Server.exe")
-    assert resolve(tmp_path) == local
-    custom = touch(tmp_path / "custom" / "Briosa.Server.exe")
-    assert resolve(tmp_path, custom) == custom
-    assert resolve(tmp_path, tmp_path / "absent" / "Briosa.Server.exe") == local
-    assert resolve(tmp_path, touch(tmp_path / "not-Briosa.Server.exe")) == local
 
 
-@pytest.mark.parametrize(
-    ("name", "keys", "value"),
-    [
-        ("receipt.json", ("schemaVersion",), True),
-        ("receipt.json", ("package",), None),
-        ("receipt.json", ("package", "id"), "wrong"),
-        ("receipt.json", ("package", "component"), "installer"),
-        ("receipt.json", ("package", "version"), "99.0.0"),
-        ("receipt.json", ("package", "spatialAnalyzerTarget"), "other"),
-        ("receipt.json", ("package", "runtimeIdentifier"), "win-arm64"),
-        ("receipt.json", ("files",), {}),
-        ("receipt.json", ("files", "Briosa.Worker.exe"), "invalid"),
-        ("manifest.json", ("schemaVersion",), 99),
-        ("manifest.json", ("artifactName",), "wrong"),
-        ("manifest.json", ("briosaVersion",), "99.0.0"),
-        ("manifest.json", ("spatialAnalyzerTarget",), "other"),
-        ("manifest.json", ("runtimeIdentifier",), "win-arm64"),
-        ("manifest.json", ("sourceRevision",), "wrong"),
-        ("manifest.json", ("protocolPackage",), "wrong"),
-        ("manifest.json", ("spatialAnalyzerBundled",), True),
-    ],
-)
-def test_invalid_metadata_is_skipped(
-    tmp_path: Path, name: str, keys: tuple[str, ...], value: object
-) -> None:
-    payload = install(tmp_path / "user").parent
-    path = (payload.parent if name == "receipt.json" else payload) / name
-    document = json.loads(path.read_text())
-    parent = cast(dict[str, object], document)
-    for key in keys[:-1]:
-        parent = cast(dict[str, object], parent[key])
-    parent[keys[-1]] = value
-    path.write_text(json.dumps(document))
-    with pytest.raises(BriosaStartupError, match="server-distribution-not-found"):
-        resolve(tmp_path)
-    machine = install(tmp_path / "machine")
-    assert resolve(tmp_path) == machine
-
-
-@pytest.mark.parametrize(
-    "name", ["receipt.json", "manifest.json", "Briosa.Server.exe", "Briosa.Worker.exe"]
-)
-@pytest.mark.parametrize("damage", ["missing", "directory"])
-def test_missing_or_directory_file_is_skipped(
-    tmp_path: Path, name: str, damage: str
-) -> None:
-    payload = install(tmp_path / "user").parent
-    path = (payload.parent if name == "receipt.json" else payload) / name
-    path.unlink()
-    if damage == "directory":
-        path.mkdir()
-    with pytest.raises(BriosaStartupError):
-        resolve(tmp_path)
-    machine = install(tmp_path / "machine")
-    assert resolve(tmp_path) == machine
-
-
-@pytest.mark.parametrize("name", ["receipt.json", "manifest.json"])
-@pytest.mark.parametrize("content", ["{", "[]", "null"])
-def test_malformed_document_is_skipped(tmp_path: Path, name: str, content: str) -> None:
-    payload = install(tmp_path / "user").parent
-    path = (payload.parent if name == "receipt.json" else payload) / name
-    path.write_text(content)
-    with pytest.raises(BriosaStartupError):
-        resolve(tmp_path)
-    machine = install(tmp_path / "machine")
-    assert resolve(tmp_path) == machine
-
-
-def test_other_product_directories_transactions_and_unavailable_roots(
-    tmp_path: Path,
-) -> None:
-    product = install(tmp_path / "user").parent.parent
-    other = product.with_name(product.name + "-other")
-    product.rename(other)
-    with pytest.raises(BriosaStartupError):
-        resolve(tmp_path)
-    staging = (
-        tmp_path
-        / "user"
-        / "Briosa"
-        / "Packages"
-        / "transactions"
-        / "pending"
-        / PRODUCT_ID
+def test_contract_compatibility_and_selected_identity_are_separate() -> None:
+    server, capabilities = snapshot()
+    _validate_compatibility(server, capabilities)
+    installation = BriosaInstallation(
+        "id",
+        Path("path"),
+        "0.9.0",
+        "a" * 40,
+        SPATIAL_ANALYZER_TARGET,
+        "win-x64",
+        1,
+        0,
+        "hash",
+        "user",
     )
-    staging.parent.mkdir(parents=True)
-    other.rename(staging)
-    with pytest.raises(BriosaStartupError):
-        resolve(tmp_path)
-    for missing_root in ("", "relative"):
-        with pytest.raises(BriosaStartupError):
-            _resolve(None, tmp_path / "client", missing_root, missing_root)
+    validate_installation(server, installation)
+    server.version.source_revision = "b" * 40
+    _validate_compatibility(server, capabilities)
+    with pytest.raises(BriosaCompatibilityError):
+        validate_installation(server, installation)
+    server.compatibility.major = 2
+    with pytest.raises(BriosaCompatibilityError):
+        _validate_compatibility(server, capabilities)
+
+
+def test_legacy_exception_requires_exact_build() -> None:
+    server, capabilities = snapshot()
+    server.ClearField("compatibility")
+    with pytest.raises(BriosaCompatibilityError):
+        _validate_compatibility(server, capabilities)
+    server.version.briosa_version = LEGACY_VERSION
+    server.version.source_revision = LEGACY_REVISION
+    _validate_compatibility(server, capabilities)
+    server.version.source_revision = "a" * 40
+    with pytest.raises(BriosaCompatibilityError):
+        _validate_compatibility(server, capabilities)

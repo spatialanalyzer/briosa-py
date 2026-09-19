@@ -12,6 +12,13 @@ from briosa.errors import (
     BriosaStartupError,
     BriosaTransportError,
 )
+from briosa.installation_discovery import discover_installations, resolve_installation
+from briosa.installation_models import (
+    BriosaDiscoveryDiagnostic,
+    BriosaDiscoveryReport,
+    BriosaInstallation,
+    BriosaServerSelection,
+)
 from briosa.logging_options import BriosaLoggingOptions, BriosaLogLevel
 from briosa.models import (
     BriosaClientOptions,
@@ -50,6 +57,12 @@ from briosa.wave_b_operation_values import *  # noqa: F403
 from briosa.wave_b_operation_values import __all__ as _wave_b_value_exports
 
 __all__ = [
+    "BriosaServerSelection",
+    "BriosaInstallation",
+    "BriosaDiscoveryDiagnostic",
+    "BriosaDiscoveryReport",
+    "discover_installations",
+    "resolve_installation",
     "BriosaLoggingOptions",
     "BriosaLogLevel",
     "BriosaClient",

@@ -1,6 +1,6 @@
 # Engineering workflows
 
-`import_protocol_artifact.py` verifies one schema-2 Briosa protocol ZIP and its
+`import_protocol_artifact.py` verifies one schema-3 Briosa protocol ZIP and its
 adjacent checksum. `--update` regenerates the direct `src/briosa/*_pb2.py`,
 `.pyi`, and `*_pb2_grpc.py` transport files plus the exact identity and lock.
 Verification mode regenerates in a temporary directory and fails on identity,
@@ -8,7 +8,7 @@ toolchain, file-list, or generated-byte drift.
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.6.1-sa-2024.1.0508.5.zip `
+  C:\path\to\briosa-protocol-0.7.0-sa-2024.1.0508.5.zip `
   --update --source-channel github_release
 ```
 
@@ -32,3 +32,18 @@ package and validates the stable public namespace/import without launching SA.
 
 `tests/test_server_discovery.py` covers the shared Installer discovery contract
 using isolated user and machine stores. These portable tests do not launch SA.
+
+The importer also copies the server-owned installation selection fixtures.
+Runtime compatibility is independent of the generation artifact build.
+`Test-Conformance.ps1 -LockPath <lock> -EvidencePath <new-report.json>` runs
+another exact, hash-verified server fixture and retains portable evidence.
+The default lock retains Server 0.6.1 for backward-compatibility coverage.
+
+`Test-CurrentServerConformance.ps1` builds the exact generation source and writes
+its own conformance lock; the legacy lock remains independently pinned to 0.6.1.
+`Test-PackageCompatibility.ps1` exercises the actual packed client against both
+server generations. `Test-PublishedClientConformance.ps1` is also used by the
+server's retained published-client gate: it verifies the package digest and
+identity, creates an isolated consumer, and runs the public-API fixture without
+referencing client runtime source. JSON evidence identifies local versus public
+package origin and records fake-SDK validation separately from licensed SA work.
