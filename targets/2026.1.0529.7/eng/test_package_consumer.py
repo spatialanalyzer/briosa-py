@@ -39,10 +39,16 @@ from pathlib import Path
 from importlib.metadata import version
 sys.path.insert(0, sys.argv[1])
 import briosa
+import inspect
 from briosa.protocol_identity import SPATIAL_ANALYZER_TARGET
 assert Path(briosa.__file__).is_relative_to(Path(sys.argv[1]))
 assert SPATIAL_ANALYZER_TARGET == sys.argv[2]
 assert version(sys.argv[3]) == sys.argv[4]
+parameters = inspect.signature(
+    briosa.BriosaClient.angle_between_line_and_plane
+).parameters
+assert "angle_tolerance" in parameters
+assert "angle_tolerance_0_0_for_none" not in parameters
 asyncio.run(briosa.BriosaClient().aclose())
 print('Verified import briosa from ' + sys.argv[3])
 """

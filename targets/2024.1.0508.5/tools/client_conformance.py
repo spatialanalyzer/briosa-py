@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import inspect
 import json
 import os
 from collections.abc import Awaitable, Callable
@@ -166,6 +167,10 @@ async def _assert_default_ready(briosa: BriosaClient) -> None:
         "Default startup did not launch an owned application.",
     )
     await briosa.get_working_directory()
+    # Retained packages have the old keyword; test their actual public surface.
+    parameters = inspect.signature(briosa.cloud_display_control).parameters
+    key = "thin" if "thin" in parameters else "thin_draw_increment"
+    await briosa.cloud_display_control(**{key: 3, "point_size": 2})
 
 
 async def _assert_attach_existing(briosa: BriosaClient) -> None:

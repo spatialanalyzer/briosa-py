@@ -508,31 +508,46 @@ class InstrumentTypeName:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class LrFlipTestResult:
-    front_range_inches: float
-    front_azimuth_degrees: float
-    front_elevation_degrees: float
+    # Length in inches.
+    front_range: float
+    # Angle in degrees.
+    front_azimuth: float
+    # Angle in degrees.
+    front_elevation: float
     front_quality: float
-    back_range_inches: float
-    back_azimuth_degrees: float
-    back_elevation_degrees: float
+    # Length in inches.
+    back_range: float
+    # Angle in degrees.
+    back_azimuth: float
+    # Angle in degrees.
+    back_elevation: float
     back_quality: float
-    front_back_difference_range_inches: float
-    front_back_difference_azimuth_degrees: float
-    front_back_difference_elevation_degrees: float
+    # Length in inches.
+    front_back_difference_range: float
+    # Angle in degrees.
+    front_back_difference_azimuth: float
+    # Angle in degrees.
+    front_back_difference_elevation: float
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class LrLoSeparationTestResult:
-    primary_lo_index: int
-    secondary_lo_index: int
+    # Indexing starts at 1.
+    primary_lo: int
+    # Indexing starts at 1.
+    secondary_lo: int
     primary_lo_measurement_count: int
-    primary_lo_range_mean_inches: float
-    primary_lo_range_standard_deviation_inches: float
+    # Length in inches.
+    primary_lo_range_mean: float
+    # Length in inches.
+    primary_lo_range_standard_deviation: float
     primary_lo_quality_mean: float
     primary_lo_quality_standard_deviation: float
     secondary_lo_measurement_count: int
-    secondary_lo_range_mean_inches: float
-    secondary_lo_range_standard_deviation_inches: float
+    # Length in inches.
+    secondary_lo_range_mean: float
+    # Length in inches.
+    secondary_lo_range_standard_deviation: float
     secondary_lo_quality_mean: float
     secondary_lo_quality_standard_deviation: float
 
@@ -542,8 +557,10 @@ class LrSnrInfo:
     snr: float
     size_of_data_array: int
     peak_value_index: int
-    peak_value_db: float
-    measured_range_meters: float
+    # Value in decibels.
+    peak_value: float
+    # Range in meters.
+    measured_range: float
 
 
 @dataclass(frozen=True)
@@ -561,9 +578,12 @@ class ObservationInfo:
     active: bool
     timestamp: str
     rms_error: float
-    temperature_fahrenheit: float
-    pressure_in_hg: float
-    relative_humidity_percent: float
+    # Temperature in degrees Fahrenheit.
+    temperature: float
+    # Pressure in inches of mercury.
+    pressure: float
+    # Relative humidity in percent.
+    relative_humidity: float
     info_data: str
 
 
@@ -705,8 +725,8 @@ class MakeGdtFeatureCheckAnnotationOptions:
     is_slot: bool = False
     per_unit_length_or_area: bool = False
     circular_area: bool = False
-    per_unit_area_length_distance: float = 0.0
-    per_unit_area_length_step_over_percent: float = 50.0
+    per_unit_length_distance: float = 0.0
+    per_unit_length_step_over_percent: float = 50.0
     per_unit_area_width_distance: float = 0.0
     per_unit_area_width_step_over_percent: float = 50.0
     per_unit_area_circle_diameter: float = 0.0
@@ -731,9 +751,9 @@ class RelationshipWatchWindowTemplateOptions:
     text_color: Color = Color(red=0, green=0, blue=255)
     background_color: Color = Color(red=255, green=255, blue=255)
     highlight_color: Color = Color(red=255, green=0, blue=0)
-    show_deviation_x_rx: bool = True
-    show_deviation_y_ry: bool = True
-    show_deviation_z_rz: bool = True
+    show_deviation_x: bool = True
+    show_deviation_y: bool = True
+    show_deviation_z: bool = True
     show_deviation_magnitude: bool = True
     udp_network_transmit_settings: RelationshipWatchWindowUdpSettings = (
         RelationshipWatchWindowUdpSettings()

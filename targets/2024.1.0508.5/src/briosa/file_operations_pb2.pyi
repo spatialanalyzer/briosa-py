@@ -47,7 +47,7 @@ class DeleteGeneralFileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class DirectCadAccessRequest(_message.Message):
-    __slots__ = ("cad_file_name", "import_solids", "import_surfaces", "import_polygonized_surfaces", "import_annotations", "import_vectors", "import_points", "point_group_name", "import_attributes_metadata", "import_cooordinate_frames", "import_planes", "import_3d_curves_lines", "import_3d_curves_circles", "import_3d_curves_general_curves", "import_construction_geometry", "import_hidden_entities", "import_all_surfaces_as_mesh_graphical_entities", "do_not_import_fillets", "do_not_import_dittos", "ditto_threshold", "center_view_on_imported_objects", "import_into_folders_matching_cad_file_hierarchy", "remove_empty_folders", "surface_normals_mode_1_or_2", "prompt_on_missing_components", "selective_import", "surface_compatibility_mode", "explode_surfaces", "cad_file_units_leave_blank_to_use_the_units_specified_in_the_file", "build_callout_views")
+    __slots__ = ("cad_file_name", "import_solids", "import_surfaces", "import_polygonized_surfaces", "import_annotations", "import_vectors", "import_points", "point_group_name", "import_attributes_metadata", "import_cooordinate_frames", "import_planes", "import_3d_curves_lines", "import_3d_curves_circles", "import_3d_curves_general_curves", "import_construction_geometry", "import_hidden_entities", "import_all_surfaces_as_mesh_graphical_entities", "do_not_import_fillets", "do_not_import_dittos", "ditto_threshold", "center_view_on_imported_objects", "import_into_folders_matching_cad_file_hierarchy", "remove_empty_folders", "surface_normals_mode", "prompt_on_missing_components", "selective_import", "surface_compatibility_mode", "explode_surfaces", "cad_file_units", "build_callout_views")
     CAD_FILE_NAME_FIELD_NUMBER: _ClassVar[int]
     IMPORT_SOLIDS_FIELD_NUMBER: _ClassVar[int]
     IMPORT_SURFACES_FIELD_NUMBER: _ClassVar[int]
@@ -71,12 +71,12 @@ class DirectCadAccessRequest(_message.Message):
     CENTER_VIEW_ON_IMPORTED_OBJECTS_FIELD_NUMBER: _ClassVar[int]
     IMPORT_INTO_FOLDERS_MATCHING_CAD_FILE_HIERARCHY_FIELD_NUMBER: _ClassVar[int]
     REMOVE_EMPTY_FOLDERS_FIELD_NUMBER: _ClassVar[int]
-    SURFACE_NORMALS_MODE_1_OR_2_FIELD_NUMBER: _ClassVar[int]
+    SURFACE_NORMALS_MODE_FIELD_NUMBER: _ClassVar[int]
     PROMPT_ON_MISSING_COMPONENTS_FIELD_NUMBER: _ClassVar[int]
     SELECTIVE_IMPORT_FIELD_NUMBER: _ClassVar[int]
     SURFACE_COMPATIBILITY_MODE_FIELD_NUMBER: _ClassVar[int]
     EXPLODE_SURFACES_FIELD_NUMBER: _ClassVar[int]
-    CAD_FILE_UNITS_LEAVE_BLANK_TO_USE_THE_UNITS_SPECIFIED_IN_THE_FILE_FIELD_NUMBER: _ClassVar[int]
+    CAD_FILE_UNITS_FIELD_NUMBER: _ClassVar[int]
     BUILD_CALLOUT_VIEWS_FIELD_NUMBER: _ClassVar[int]
     cad_file_name: _spatial_analyzer_values_pb2.FileReference
     import_solids: bool
@@ -101,14 +101,14 @@ class DirectCadAccessRequest(_message.Message):
     center_view_on_imported_objects: bool
     import_into_folders_matching_cad_file_hierarchy: bool
     remove_empty_folders: bool
-    surface_normals_mode_1_or_2: int
+    surface_normals_mode: int
     prompt_on_missing_components: bool
     selective_import: bool
     surface_compatibility_mode: bool
     explode_surfaces: bool
-    cad_file_units_leave_blank_to_use_the_units_specified_in_the_file: str
+    cad_file_units: str
     build_callout_views: bool
-    def __init__(self, cad_file_name: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., import_solids: bool = ..., import_surfaces: bool = ..., import_polygonized_surfaces: bool = ..., import_annotations: bool = ..., import_vectors: bool = ..., import_points: bool = ..., point_group_name: _Optional[str] = ..., import_attributes_metadata: bool = ..., import_cooordinate_frames: bool = ..., import_planes: bool = ..., import_3d_curves_lines: bool = ..., import_3d_curves_circles: bool = ..., import_3d_curves_general_curves: bool = ..., import_construction_geometry: bool = ..., import_hidden_entities: bool = ..., import_all_surfaces_as_mesh_graphical_entities: bool = ..., do_not_import_fillets: bool = ..., do_not_import_dittos: bool = ..., ditto_threshold: _Optional[int] = ..., center_view_on_imported_objects: bool = ..., import_into_folders_matching_cad_file_hierarchy: bool = ..., remove_empty_folders: bool = ..., surface_normals_mode_1_or_2: _Optional[int] = ..., prompt_on_missing_components: bool = ..., selective_import: bool = ..., surface_compatibility_mode: bool = ..., explode_surfaces: bool = ..., cad_file_units_leave_blank_to_use_the_units_specified_in_the_file: _Optional[str] = ..., build_callout_views: bool = ...) -> None: ...
+    def __init__(self, cad_file_name: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., import_solids: bool = ..., import_surfaces: bool = ..., import_polygonized_surfaces: bool = ..., import_annotations: bool = ..., import_vectors: bool = ..., import_points: bool = ..., point_group_name: _Optional[str] = ..., import_attributes_metadata: bool = ..., import_cooordinate_frames: bool = ..., import_planes: bool = ..., import_3d_curves_lines: bool = ..., import_3d_curves_circles: bool = ..., import_3d_curves_general_curves: bool = ..., import_construction_geometry: bool = ..., import_hidden_entities: bool = ..., import_all_surfaces_as_mesh_graphical_entities: bool = ..., do_not_import_fillets: bool = ..., do_not_import_dittos: bool = ..., ditto_threshold: _Optional[int] = ..., center_view_on_imported_objects: bool = ..., import_into_folders_matching_cad_file_hierarchy: bool = ..., remove_empty_folders: bool = ..., surface_normals_mode: _Optional[int] = ..., prompt_on_missing_components: bool = ..., selective_import: bool = ..., surface_compatibility_mode: bool = ..., explode_surfaces: bool = ..., cad_file_units: _Optional[str] = ..., build_callout_views: bool = ...) -> None: ...
 
 class DirectCadAccessResult(_message.Message):
     __slots__ = ("import_warnings", "import_warning_messages", "extents_min", "extents_max", "execution")
@@ -187,7 +187,7 @@ class ExportAsciiPointCloudsResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ExportAsciiPointSetRequest(_message.Message):
-    __slots__ = ("ascii_file_path", "point_set_container", "data_delimiter", "target_name_format", "desired_coordinate_system", "include_target_offsets", "include_timestamps", "include_sa_version_and_frame_comments", "include_axis_comments", "include_export_format_info", "maximum_precision_scientific_notation", "decimal_precision", "append")
+    __slots__ = ("ascii_file_path", "point_set_container", "data_delimiter", "target_name_format", "desired_coordinate_system", "include_target_offsets", "include_timestamps", "include_sa_version_and_frame_comments", "include_axis_comments", "include_export_format_info", "maximum_precision", "decimal_precision", "append")
     ASCII_FILE_PATH_FIELD_NUMBER: _ClassVar[int]
     POINT_SET_CONTAINER_FIELD_NUMBER: _ClassVar[int]
     DATA_DELIMITER_FIELD_NUMBER: _ClassVar[int]
@@ -198,7 +198,7 @@ class ExportAsciiPointSetRequest(_message.Message):
     INCLUDE_SA_VERSION_AND_FRAME_COMMENTS_FIELD_NUMBER: _ClassVar[int]
     INCLUDE_AXIS_COMMENTS_FIELD_NUMBER: _ClassVar[int]
     INCLUDE_EXPORT_FORMAT_INFO_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_PRECISION_SCIENTIFIC_NOTATION_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_PRECISION_FIELD_NUMBER: _ClassVar[int]
     DECIMAL_PRECISION_FIELD_NUMBER: _ClassVar[int]
     APPEND_FIELD_NUMBER: _ClassVar[int]
     ascii_file_path: _spatial_analyzer_values_pb2.FileReference
@@ -211,10 +211,10 @@ class ExportAsciiPointSetRequest(_message.Message):
     include_sa_version_and_frame_comments: bool
     include_axis_comments: bool
     include_export_format_info: bool
-    maximum_precision_scientific_notation: bool
+    maximum_precision: bool
     decimal_precision: int
     append: bool
-    def __init__(self, ascii_file_path: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., point_set_container: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., data_delimiter: _Optional[_Union[_spatial_analyzer_values_pb2.ExportDataDelimeterType, str]] = ..., target_name_format: _Optional[_Union[_spatial_analyzer_values_pb2.ExportTargetNameFormat, str]] = ..., desired_coordinate_system: _Optional[_Union[_spatial_analyzer_values_pb2.CoordinateSystemType, str]] = ..., include_target_offsets: bool = ..., include_timestamps: bool = ..., include_sa_version_and_frame_comments: bool = ..., include_axis_comments: bool = ..., include_export_format_info: bool = ..., maximum_precision_scientific_notation: bool = ..., decimal_precision: _Optional[int] = ..., append: bool = ...) -> None: ...
+    def __init__(self, ascii_file_path: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., point_set_container: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., data_delimiter: _Optional[_Union[_spatial_analyzer_values_pb2.ExportDataDelimeterType, str]] = ..., target_name_format: _Optional[_Union[_spatial_analyzer_values_pb2.ExportTargetNameFormat, str]] = ..., desired_coordinate_system: _Optional[_Union[_spatial_analyzer_values_pb2.CoordinateSystemType, str]] = ..., include_target_offsets: bool = ..., include_timestamps: bool = ..., include_sa_version_and_frame_comments: bool = ..., include_axis_comments: bool = ..., include_export_format_info: bool = ..., maximum_precision: bool = ..., decimal_precision: _Optional[int] = ..., append: bool = ...) -> None: ...
 
 class ExportAsciiPointSetResult(_message.Message):
     __slots__ = ("execution",)
@@ -223,7 +223,7 @@ class ExportAsciiPointSetResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ExportAsciiPointsRequest(_message.Message):
-    __slots__ = ("ascii_file_path", "group_names_to_export", "data_delimiter", "target_name_format", "desired_coordinate_system", "include_target_offsets", "include_target_comments", "include_timestamps", "include_tolerances", "include_coordinate_uncertainties", "include_sa_version_and_frame_comments", "include_axis_comments", "include_export_format_info", "include_weights", "include_measurement_details", "maximum_precision_scientific_notation", "decimal_precision", "append")
+    __slots__ = ("ascii_file_path", "group_names_to_export", "data_delimiter", "target_name_format", "desired_coordinate_system", "include_target_offsets", "include_target_comments", "include_timestamps", "include_tolerances", "include_coordinate_uncertainties", "include_sa_version_and_frame_comments", "include_axis_comments", "include_export_format_info", "include_weights", "include_measurement_details", "maximum_precision", "decimal_precision", "append")
     ASCII_FILE_PATH_FIELD_NUMBER: _ClassVar[int]
     GROUP_NAMES_TO_EXPORT_FIELD_NUMBER: _ClassVar[int]
     DATA_DELIMITER_FIELD_NUMBER: _ClassVar[int]
@@ -239,7 +239,7 @@ class ExportAsciiPointsRequest(_message.Message):
     INCLUDE_EXPORT_FORMAT_INFO_FIELD_NUMBER: _ClassVar[int]
     INCLUDE_WEIGHTS_FIELD_NUMBER: _ClassVar[int]
     INCLUDE_MEASUREMENT_DETAILS_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_PRECISION_SCIENTIFIC_NOTATION_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_PRECISION_FIELD_NUMBER: _ClassVar[int]
     DECIMAL_PRECISION_FIELD_NUMBER: _ClassVar[int]
     APPEND_FIELD_NUMBER: _ClassVar[int]
     ascii_file_path: _spatial_analyzer_values_pb2.FileReference
@@ -257,10 +257,10 @@ class ExportAsciiPointsRequest(_message.Message):
     include_export_format_info: bool
     include_weights: bool
     include_measurement_details: bool
-    maximum_precision_scientific_notation: bool
+    maximum_precision: bool
     decimal_precision: int
     append: bool
-    def __init__(self, ascii_file_path: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., group_names_to_export: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionGroupName, _Mapping]]] = ..., data_delimiter: _Optional[_Union[_spatial_analyzer_values_pb2.ExportDataDelimeterType, str]] = ..., target_name_format: _Optional[_Union[_spatial_analyzer_values_pb2.ExportTargetNameFormat, str]] = ..., desired_coordinate_system: _Optional[_Union[_spatial_analyzer_values_pb2.CoordinateSystemType, str]] = ..., include_target_offsets: bool = ..., include_target_comments: bool = ..., include_timestamps: bool = ..., include_tolerances: bool = ..., include_coordinate_uncertainties: bool = ..., include_sa_version_and_frame_comments: bool = ..., include_axis_comments: bool = ..., include_export_format_info: bool = ..., include_weights: bool = ..., include_measurement_details: bool = ..., maximum_precision_scientific_notation: bool = ..., decimal_precision: _Optional[int] = ..., append: bool = ...) -> None: ...
+    def __init__(self, ascii_file_path: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., group_names_to_export: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionGroupName, _Mapping]]] = ..., data_delimiter: _Optional[_Union[_spatial_analyzer_values_pb2.ExportDataDelimeterType, str]] = ..., target_name_format: _Optional[_Union[_spatial_analyzer_values_pb2.ExportTargetNameFormat, str]] = ..., desired_coordinate_system: _Optional[_Union[_spatial_analyzer_values_pb2.CoordinateSystemType, str]] = ..., include_target_offsets: bool = ..., include_target_comments: bool = ..., include_timestamps: bool = ..., include_tolerances: bool = ..., include_coordinate_uncertainties: bool = ..., include_sa_version_and_frame_comments: bool = ..., include_axis_comments: bool = ..., include_export_format_info: bool = ..., include_weights: bool = ..., include_measurement_details: bool = ..., maximum_precision: bool = ..., decimal_precision: _Optional[int] = ..., append: bool = ...) -> None: ...
 
 class ExportAsciiPointsResult(_message.Message):
     __slots__ = ("execution",)
@@ -485,20 +485,20 @@ class ExportVdaFsFilePartialModelResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ExportVectorContainerToAsciiFileRequest(_message.Message):
-    __slots__ = ("ascii_file_path", "vector_groups_to_export", "overwrite_existing_file_false_append", "use_full_precision_scientific_notation", "vector_name_format", "include_vector_length")
+    __slots__ = ("ascii_file_path", "vector_groups_to_export", "overwrite_existing_file", "use_full_precision", "vector_name_format", "include_vector_length")
     ASCII_FILE_PATH_FIELD_NUMBER: _ClassVar[int]
     VECTOR_GROUPS_TO_EXPORT_FIELD_NUMBER: _ClassVar[int]
-    OVERWRITE_EXISTING_FILE_FALSE_APPEND_FIELD_NUMBER: _ClassVar[int]
-    USE_FULL_PRECISION_SCIENTIFIC_NOTATION_FIELD_NUMBER: _ClassVar[int]
+    OVERWRITE_EXISTING_FILE_FIELD_NUMBER: _ClassVar[int]
+    USE_FULL_PRECISION_FIELD_NUMBER: _ClassVar[int]
     VECTOR_NAME_FORMAT_FIELD_NUMBER: _ClassVar[int]
     INCLUDE_VECTOR_LENGTH_FIELD_NUMBER: _ClassVar[int]
     ascii_file_path: _spatial_analyzer_values_pb2.FileReference
     vector_groups_to_export: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionVectorGroupName]
-    overwrite_existing_file_false_append: bool
-    use_full_precision_scientific_notation: bool
+    overwrite_existing_file: bool
+    use_full_precision: bool
     vector_name_format: _spatial_analyzer_values_pb2.ExportVectorNameFormat
     include_vector_length: bool
-    def __init__(self, ascii_file_path: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., vector_groups_to_export: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionVectorGroupName, _Mapping]]] = ..., overwrite_existing_file_false_append: bool = ..., use_full_precision_scientific_notation: bool = ..., vector_name_format: _Optional[_Union[_spatial_analyzer_values_pb2.ExportVectorNameFormat, str]] = ..., include_vector_length: bool = ...) -> None: ...
+    def __init__(self, ascii_file_path: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., vector_groups_to_export: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionVectorGroupName, _Mapping]]] = ..., overwrite_existing_file: bool = ..., use_full_precision: bool = ..., vector_name_format: _Optional[_Union[_spatial_analyzer_values_pb2.ExportVectorNameFormat, str]] = ..., include_vector_length: bool = ...) -> None: ...
 
 class ExportVectorContainerToAsciiFileResult(_message.Message):
     __slots__ = ("execution",)
@@ -873,14 +873,14 @@ class ImportQdasCatalogFileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ImportSaFileRequest(_message.Message):
-    __slots__ = ("sa_file_name", "allow_operator_selections", "selected_collections_optional")
+    __slots__ = ("sa_file_name", "allow_operator_selections", "selected_collections")
     SA_FILE_NAME_FIELD_NUMBER: _ClassVar[int]
     ALLOW_OPERATOR_SELECTIONS_FIELD_NUMBER: _ClassVar[int]
-    SELECTED_COLLECTIONS_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    SELECTED_COLLECTIONS_FIELD_NUMBER: _ClassVar[int]
     sa_file_name: _spatial_analyzer_values_pb2.FileReference
     allow_operator_selections: bool
-    selected_collections_optional: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, sa_file_name: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., allow_operator_selections: bool = ..., selected_collections_optional: _Optional[_Iterable[str]] = ...) -> None: ...
+    selected_collections: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, sa_file_name: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., allow_operator_selections: bool = ..., selected_collections: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class ImportSaFileResult(_message.Message):
     __slots__ = ("execution",)

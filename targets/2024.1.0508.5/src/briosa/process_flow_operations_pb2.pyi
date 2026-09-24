@@ -115,18 +115,18 @@ class AskForStringPullDownVersionResult(_message.Message):
     def __init__(self, answer: _Optional[str] = ..., answer_index: _Optional[int] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class AskForUserDecisionFromImageRequest(_message.Message):
-    __slots__ = ("image_file", "image_map_xml_file", "window_caption", "window_width_0_default", "window_height_0_default")
+    __slots__ = ("image_file", "image_map_xml_file", "window_caption", "window_width", "window_height")
     IMAGE_FILE_FIELD_NUMBER: _ClassVar[int]
     IMAGE_MAP_XML_FILE_FIELD_NUMBER: _ClassVar[int]
     WINDOW_CAPTION_FIELD_NUMBER: _ClassVar[int]
-    WINDOW_WIDTH_0_DEFAULT_FIELD_NUMBER: _ClassVar[int]
-    WINDOW_HEIGHT_0_DEFAULT_FIELD_NUMBER: _ClassVar[int]
+    WINDOW_WIDTH_FIELD_NUMBER: _ClassVar[int]
+    WINDOW_HEIGHT_FIELD_NUMBER: _ClassVar[int]
     image_file: _spatial_analyzer_values_pb2.FileReference
     image_map_xml_file: _spatial_analyzer_values_pb2.FileReference
     window_caption: str
-    window_width_0_default: int
-    window_height_0_default: int
-    def __init__(self, image_file: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., image_map_xml_file: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., window_caption: _Optional[str] = ..., window_width_0_default: _Optional[int] = ..., window_height_0_default: _Optional[int] = ...) -> None: ...
+    window_width: int
+    window_height: int
+    def __init__(self, image_file: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., image_map_xml_file: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., window_caption: _Optional[str] = ..., window_width: _Optional[int] = ..., window_height: _Optional[int] = ...) -> None: ...
 
 class AskForUserDecisionFromImageResult(_message.Message):
     __slots__ = ("user_choice", "execution")
@@ -137,18 +137,18 @@ class AskForUserDecisionFromImageResult(_message.Message):
     def __init__(self, user_choice: _Optional[str] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class AskForUserDecisionFromStringsRequest(_message.Message):
-    __slots__ = ("question_or_statement", "font", "button1_text_empty_to_hide_button", "button2_text_empty_to_hide_button", "button3_text_empty_to_hide_button")
+    __slots__ = ("question_or_statement", "font", "button1_text", "button2_text", "button3_text")
     QUESTION_OR_STATEMENT_FIELD_NUMBER: _ClassVar[int]
     FONT_FIELD_NUMBER: _ClassVar[int]
-    BUTTON1_TEXT_EMPTY_TO_HIDE_BUTTON_FIELD_NUMBER: _ClassVar[int]
-    BUTTON2_TEXT_EMPTY_TO_HIDE_BUTTON_FIELD_NUMBER: _ClassVar[int]
-    BUTTON3_TEXT_EMPTY_TO_HIDE_BUTTON_FIELD_NUMBER: _ClassVar[int]
+    BUTTON1_TEXT_FIELD_NUMBER: _ClassVar[int]
+    BUTTON2_TEXT_FIELD_NUMBER: _ClassVar[int]
+    BUTTON3_TEXT_FIELD_NUMBER: _ClassVar[int]
     question_or_statement: _containers.RepeatedScalarFieldContainer[str]
     font: _spatial_analyzer_values_pb2.Font
-    button1_text_empty_to_hide_button: str
-    button2_text_empty_to_hide_button: str
-    button3_text_empty_to_hide_button: str
-    def __init__(self, question_or_statement: _Optional[_Iterable[str]] = ..., font: _Optional[_Union[_spatial_analyzer_values_pb2.Font, _Mapping]] = ..., button1_text_empty_to_hide_button: _Optional[str] = ..., button2_text_empty_to_hide_button: _Optional[str] = ..., button3_text_empty_to_hide_button: _Optional[str] = ...) -> None: ...
+    button1_text: str
+    button2_text: str
+    button3_text: str
+    def __init__(self, question_or_statement: _Optional[_Iterable[str]] = ..., font: _Optional[_Union[_spatial_analyzer_values_pb2.Font, _Mapping]] = ..., button1_text: _Optional[str] = ..., button2_text: _Optional[str] = ..., button3_text: _Optional[str] = ...) -> None: ...
 
 class AskForUserDecisionFromStringsResult(_message.Message):
     __slots__ = ("answer", "execution")

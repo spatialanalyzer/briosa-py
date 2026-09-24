@@ -249,22 +249,22 @@ class CombineSaReportsResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class CreateChartFromVectorGroupRequest(_message.Message):
-    __slots__ = ("new_chart_name", "vector_group_name", "chart_type", "data_set_to_chart", "aux_data_set_to_chart", "template_chart_name_optional", "show_interface")
+    __slots__ = ("new_chart_name", "vector_group_name", "chart_type", "data_set_to_chart", "aux_data_set_to_chart", "template_chart_name", "show_interface")
     NEW_CHART_NAME_FIELD_NUMBER: _ClassVar[int]
     VECTOR_GROUP_NAME_FIELD_NUMBER: _ClassVar[int]
     CHART_TYPE_FIELD_NUMBER: _ClassVar[int]
     DATA_SET_TO_CHART_FIELD_NUMBER: _ClassVar[int]
     AUX_DATA_SET_TO_CHART_FIELD_NUMBER: _ClassVar[int]
-    TEMPLATE_CHART_NAME_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    TEMPLATE_CHART_NAME_FIELD_NUMBER: _ClassVar[int]
     SHOW_INTERFACE_FIELD_NUMBER: _ClassVar[int]
     new_chart_name: _spatial_analyzer_values_pb2.ChartName
     vector_group_name: _spatial_analyzer_values_pb2.CollectionObjectName
     chart_type: _spatial_analyzer_values_pb2.ChartType
     data_set_to_chart: _spatial_analyzer_values_pb2.DatasetType
     aux_data_set_to_chart: _spatial_analyzer_values_pb2.DatasetType
-    template_chart_name_optional: _spatial_analyzer_values_pb2.ChartName
+    template_chart_name: _spatial_analyzer_values_pb2.ChartName
     show_interface: bool
-    def __init__(self, new_chart_name: _Optional[_Union[_spatial_analyzer_values_pb2.ChartName, _Mapping]] = ..., vector_group_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., chart_type: _Optional[_Union[_spatial_analyzer_values_pb2.ChartType, str]] = ..., data_set_to_chart: _Optional[_Union[_spatial_analyzer_values_pb2.DatasetType, str]] = ..., aux_data_set_to_chart: _Optional[_Union[_spatial_analyzer_values_pb2.DatasetType, str]] = ..., template_chart_name_optional: _Optional[_Union[_spatial_analyzer_values_pb2.ChartName, _Mapping]] = ..., show_interface: bool = ...) -> None: ...
+    def __init__(self, new_chart_name: _Optional[_Union[_spatial_analyzer_values_pb2.ChartName, _Mapping]] = ..., vector_group_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., chart_type: _Optional[_Union[_spatial_analyzer_values_pb2.ChartType, str]] = ..., data_set_to_chart: _Optional[_Union[_spatial_analyzer_values_pb2.DatasetType, str]] = ..., aux_data_set_to_chart: _Optional[_Union[_spatial_analyzer_values_pb2.DatasetType, str]] = ..., template_chart_name: _Optional[_Union[_spatial_analyzer_values_pb2.ChartName, _Mapping]] = ..., show_interface: bool = ...) -> None: ...
 
 class CreateChartFromVectorGroupResult(_message.Message):
     __slots__ = ("execution",)
@@ -273,7 +273,7 @@ class CreateChartFromVectorGroupResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class DefineReportTemplateRequest(_message.Message):
-    __slots__ = ("report_template_name", "title", "graphical_view_options", "items_to_report", "relationships_to_report", "events_to_report", "report_output_options", "report_page_settings_sa_report_only", "generate_now", "show_generated_report")
+    __slots__ = ("report_template_name", "title", "graphical_view_options", "items_to_report", "relationships_to_report", "events_to_report", "report_output_options", "report_page_settings", "generate_now", "show_generated_report")
     REPORT_TEMPLATE_NAME_FIELD_NUMBER: _ClassVar[int]
     TITLE_FIELD_NUMBER: _ClassVar[int]
     GRAPHICAL_VIEW_OPTIONS_FIELD_NUMBER: _ClassVar[int]
@@ -281,7 +281,7 @@ class DefineReportTemplateRequest(_message.Message):
     RELATIONSHIPS_TO_REPORT_FIELD_NUMBER: _ClassVar[int]
     EVENTS_TO_REPORT_FIELD_NUMBER: _ClassVar[int]
     REPORT_OUTPUT_OPTIONS_FIELD_NUMBER: _ClassVar[int]
-    REPORT_PAGE_SETTINGS_SA_REPORT_ONLY_FIELD_NUMBER: _ClassVar[int]
+    REPORT_PAGE_SETTINGS_FIELD_NUMBER: _ClassVar[int]
     GENERATE_NOW_FIELD_NUMBER: _ClassVar[int]
     SHOW_GENERATED_REPORT_FIELD_NUMBER: _ClassVar[int]
     report_template_name: _spatial_analyzer_values_pb2.CollectionObjectName
@@ -291,10 +291,10 @@ class DefineReportTemplateRequest(_message.Message):
     relationships_to_report: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionItemName]
     events_to_report: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionItemName]
     report_output_options: _spatial_analyzer_values_pb2.ReportOutputOptions
-    report_page_settings_sa_report_only: _spatial_analyzer_values_pb2.ReportPageSettings
+    report_page_settings: _spatial_analyzer_values_pb2.ReportPageSettings
     generate_now: bool
     show_generated_report: bool
-    def __init__(self, report_template_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., title: _Optional[_Iterable[str]] = ..., graphical_view_options: _Optional[_Union[_spatial_analyzer_values_pb2.ReportViewOptions, _Mapping]] = ..., items_to_report: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., relationships_to_report: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., events_to_report: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., report_output_options: _Optional[_Union[_spatial_analyzer_values_pb2.ReportOutputOptions, _Mapping]] = ..., report_page_settings_sa_report_only: _Optional[_Union[_spatial_analyzer_values_pb2.ReportPageSettings, str]] = ..., generate_now: bool = ..., show_generated_report: bool = ...) -> None: ...
+    def __init__(self, report_template_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., title: _Optional[_Iterable[str]] = ..., graphical_view_options: _Optional[_Union[_spatial_analyzer_values_pb2.ReportViewOptions, _Mapping]] = ..., items_to_report: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., relationships_to_report: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., events_to_report: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., report_output_options: _Optional[_Union[_spatial_analyzer_values_pb2.ReportOutputOptions, _Mapping]] = ..., report_page_settings: _Optional[_Union[_spatial_analyzer_values_pb2.ReportPageSettings, str]] = ..., generate_now: bool = ..., show_generated_report: bool = ...) -> None: ...
 
 class DefineReportTemplateResult(_message.Message):
     __slots__ = ("execution",)
@@ -509,12 +509,12 @@ class MakeCustomTableResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeNewSaReportRequest(_message.Message):
-    __slots__ = ("new_sa_report_name", "sa_report_template_optional")
+    __slots__ = ("new_sa_report_name", "sa_report_template")
     NEW_SA_REPORT_NAME_FIELD_NUMBER: _ClassVar[int]
-    SA_REPORT_TEMPLATE_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    SA_REPORT_TEMPLATE_FIELD_NUMBER: _ClassVar[int]
     new_sa_report_name: _spatial_analyzer_values_pb2.CollectionObjectName
-    sa_report_template_optional: _spatial_analyzer_values_pb2.CollectionObjectName
-    def __init__(self, new_sa_report_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., sa_report_template_optional: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
+    sa_report_template: _spatial_analyzer_values_pb2.CollectionObjectName
+    def __init__(self, new_sa_report_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., sa_report_template: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class MakeNewSaReportResult(_message.Message):
     __slots__ = ("execution",)
@@ -649,14 +649,14 @@ class OutputSaReportToPdfResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class QuickReportRequest(_message.Message):
-    __slots__ = ("item_name", "report_name_optional", "open_report")
+    __slots__ = ("item_name", "report_name", "open_report")
     ITEM_NAME_FIELD_NUMBER: _ClassVar[int]
-    REPORT_NAME_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    REPORT_NAME_FIELD_NUMBER: _ClassVar[int]
     OPEN_REPORT_FIELD_NUMBER: _ClassVar[int]
     item_name: _spatial_analyzer_values_pb2.CollectionObjectName
-    report_name_optional: str
+    report_name: str
     open_report: bool
-    def __init__(self, item_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., report_name_optional: _Optional[str] = ..., open_report: bool = ...) -> None: ...
+    def __init__(self, item_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., report_name: _Optional[str] = ..., open_report: bool = ...) -> None: ...
 
 class QuickReportResult(_message.Message):
     __slots__ = ("execution",)
@@ -729,12 +729,12 @@ class SaveChartToJPegFileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SaveCurrentViewBmpJpgPngGifTiffRequest(_message.Message):
-    __slots__ = ("file_to_save_to", "render_scale_factor_1_0_uses_window_size")
+    __slots__ = ("file_to_save_to", "render_scale_factor")
     FILE_TO_SAVE_TO_FIELD_NUMBER: _ClassVar[int]
-    RENDER_SCALE_FACTOR_1_0_USES_WINDOW_SIZE_FIELD_NUMBER: _ClassVar[int]
+    RENDER_SCALE_FACTOR_FIELD_NUMBER: _ClassVar[int]
     file_to_save_to: _spatial_analyzer_values_pb2.FileReference
-    render_scale_factor_1_0_uses_window_size: float
-    def __init__(self, file_to_save_to: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., render_scale_factor_1_0_uses_window_size: _Optional[float] = ...) -> None: ...
+    render_scale_factor: float
+    def __init__(self, file_to_save_to: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ..., render_scale_factor: _Optional[float] = ...) -> None: ...
 
 class SaveCurrentViewBmpJpgPngGifTiffResult(_message.Message):
     __slots__ = ("execution",)

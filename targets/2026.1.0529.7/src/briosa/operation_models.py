@@ -30,8 +30,11 @@ class BestFitTransformationGroupToGroupResult:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ComputeGroupToGroupOrientationRxRyRzResult:
+    # MP qualifier: Roll.
     rx: float
+    # MP qualifier: Pitch.
     ry: float
+    # MP qualifier: Yaw.
     rz: float
 
 
@@ -55,6 +58,7 @@ class GetBSplinePropertiesResult:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class GetCirclePropertiesResult:
     center_coordinate: Vector
+    # Expressed in working coordinates.
     normal_direction: Vector
     radius: float
     diameter: float
@@ -62,8 +66,10 @@ class GetCirclePropertiesResult:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class GetConePropertiesResult:
-    cone_end_point_in_working_coordinates: Vector
-    cone_axis_in_working_coordinates: Vector
+    # Expressed in working coordinates.
+    cone_end_point: Vector
+    # Expressed in working coordinates.
+    cone_axis: Vector
     cone_length: float
     cone_theta_start: float
     cone_theta_span: float
@@ -95,6 +101,7 @@ class GetCylinderPropertiesResult:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class GetEllipsePropertiesResult:
     center_coordinate: Vector
+    # Expressed in working coordinates.
     normal_direction: Vector
     major_axis_radius: float
     minor_axis_radius: float
@@ -148,13 +155,17 @@ class GetMeasurementAuxiliaryDataResult:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class GetMeasurementWeatherDataResult:
-    temperature_deg_f: float
-    pressure_in_hg: float
-    humidity_rh: float
+    # Temperature in degrees Fahrenheit.
+    temperature: float
+    # Pressure in inches of mercury.
+    pressure: float
+    # Relative humidity in percent.
+    humidity: float
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class GetPlanePropertiesResult:
+    # Expressed in working coordinates.
     normal_direction: Vector
     point_on_plane: Vector
     d_parameter: float
@@ -235,14 +246,19 @@ class GetPointToleranceResult:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class GetSlotPropertiesResult:
-    slot_transform_in_working_coordinates: Transform
-    center_in_working_coordinates: Vector
-    normal_direction_in_working_coordinates: Vector
+    # Expressed in working coordinates.
+    slot_transform: Transform
+    # Expressed in working coordinates.
+    center: Vector
+    # Expressed in working coordinates.
+    normal_direction: Vector
     slot_length: float
     slot_width: float
     round_slot_type: bool
-    centerline_pt_1_in_working_coordinates: Vector
-    centerline_pt_2_in_working_coordinates: Vector
+    # Expressed in working coordinates.
+    centerline_pt_1: Vector
+    # Expressed in working coordinates.
+    centerline_pt_2: Vector
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -261,6 +277,7 @@ class GetSurfacePhysicalStatsResult:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class GetTorusPropertiesResult:
     center_coordinate: Vector
+    # Expressed in working coordinates.
     normal_direction: Vector
     major_radius: float
     minor_radius: float
@@ -296,9 +313,12 @@ class QueryFrameToFrameResult:
     x: float
     y: float
     z: float
-    rx_roll: float
-    ry_pitch: float
-    rz_yaw: float
+    # MP qualifier: Roll.
+    rx: float
+    # MP qualifier: Pitch.
+    ry: float
+    # MP qualifier: Yaw.
+    rz: float
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -364,10 +384,14 @@ class AskForStringPullDownVersionResult:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class GetGeomRelationshipAutoVectorsResult:
-    auto_vectors_nominal_avn_enabled: bool
-    auto_vectors_nominal_avn_name: CollectionObjectName
-    auto_vectors_fit_avf_enabled: bool
-    auto_vectors_fit_avf_name: CollectionObjectName
+    # MP qualifier: AVN.
+    auto_vectors_nominal_enabled: bool
+    # MP qualifier: AVN.
+    auto_vectors_nominal_name: CollectionObjectName
+    # MP qualifier: AVF.
+    auto_vectors_fit_enabled: bool
+    # MP qualifier: AVF.
+    auto_vectors_fit_name: CollectionObjectName
     points_type: str
 
 
@@ -514,6 +538,7 @@ class GetActiveLanguageResult:
 class ActiveUnits:
     length: str
     angular: str
+    # Temperature in degrees Fahrenheit.
     temperature: str
 
 

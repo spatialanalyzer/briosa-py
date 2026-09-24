@@ -25,12 +25,12 @@ class AddAVectorToVectorNameRefListResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class AutoRangeAndSetVectorGroupColorizationAllRequest(_message.Message):
-    __slots__ = ("treat_individually", "colorization_options_uses_mode_only")
+    __slots__ = ("treat_individually", "colorization_options")
     TREAT_INDIVIDUALLY_FIELD_NUMBER: _ClassVar[int]
-    COLORIZATION_OPTIONS_USES_MODE_ONLY_FIELD_NUMBER: _ClassVar[int]
+    COLORIZATION_OPTIONS_FIELD_NUMBER: _ClassVar[int]
     treat_individually: bool
-    colorization_options_uses_mode_only: _spatial_analyzer_values_pb2.ColorizationOptions
-    def __init__(self, treat_individually: bool = ..., colorization_options_uses_mode_only: _Optional[_Union[_spatial_analyzer_values_pb2.ColorizationOptions, _Mapping]] = ...) -> None: ...
+    colorization_options: _spatial_analyzer_values_pb2.ColorizationOptions
+    def __init__(self, treat_individually: bool = ..., colorization_options: _Optional[_Union[_spatial_analyzer_values_pb2.ColorizationOptions, _Mapping]] = ...) -> None: ...
 
 class AutoRangeAndSetVectorGroupColorizationAllResult(_message.Message):
     __slots__ = ("execution",)
@@ -39,14 +39,14 @@ class AutoRangeAndSetVectorGroupColorizationAllResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class AutoRangeAndSetVectorGroupColorizationSelectedRequest(_message.Message):
-    __slots__ = ("vector_groups_to_be_set", "treat_individually", "colorization_options_uses_mode_only")
+    __slots__ = ("vector_groups_to_be_set", "treat_individually", "colorization_options")
     VECTOR_GROUPS_TO_BE_SET_FIELD_NUMBER: _ClassVar[int]
     TREAT_INDIVIDUALLY_FIELD_NUMBER: _ClassVar[int]
-    COLORIZATION_OPTIONS_USES_MODE_ONLY_FIELD_NUMBER: _ClassVar[int]
+    COLORIZATION_OPTIONS_FIELD_NUMBER: _ClassVar[int]
     vector_groups_to_be_set: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionVectorGroupName]
     treat_individually: bool
-    colorization_options_uses_mode_only: _spatial_analyzer_values_pb2.ColorizationOptions
-    def __init__(self, vector_groups_to_be_set: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionVectorGroupName, _Mapping]]] = ..., treat_individually: bool = ..., colorization_options_uses_mode_only: _Optional[_Union[_spatial_analyzer_values_pb2.ColorizationOptions, _Mapping]] = ...) -> None: ...
+    colorization_options: _spatial_analyzer_values_pb2.ColorizationOptions
+    def __init__(self, vector_groups_to_be_set: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionVectorGroupName, _Mapping]]] = ..., treat_individually: bool = ..., colorization_options: _Optional[_Union[_spatial_analyzer_values_pb2.ColorizationOptions, _Mapping]] = ...) -> None: ...
 
 class AutoRangeAndSetVectorGroupColorizationSelectedResult(_message.Message):
     __slots__ = ("execution",)

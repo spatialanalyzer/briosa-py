@@ -56,12 +56,12 @@ RGB_COLOR_CHANNEL_BLUE: RGBColorChannel
 RGB_COLOR_CHANNEL_INTENSITY: RGBColorChannel
 
 class CloudDisplayControlRequest(_message.Message):
-    __slots__ = ("thin_draw_increment", "point_size")
-    THIN_DRAW_INCREMENT_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("thin", "point_size")
+    THIN_FIELD_NUMBER: _ClassVar[int]
     POINT_SIZE_FIELD_NUMBER: _ClassVar[int]
-    thin_draw_increment: int
+    thin: int
     point_size: int
-    def __init__(self, thin_draw_increment: _Optional[int] = ..., point_size: _Optional[int] = ...) -> None: ...
+    def __init__(self, thin: _Optional[int] = ..., point_size: _Optional[int] = ...) -> None: ...
 
 class CloudDisplayControlResult(_message.Message):
     __slots__ = ("execution",)

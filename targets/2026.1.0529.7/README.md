@@ -15,7 +15,7 @@ The distribution is named `briosa-2026-1-0529-7`, while application code keeps
 the stable `briosa` import package. Install the distribution with:
 
 ```powershell
-python -m pip install briosa-2026-1-0529-7==0.2.0
+python -m pip install briosa-2026-1-0529-7==0.3.0
 ```
 
 Each exact SpatialAnalyzer target will have a separate distribution name. Two

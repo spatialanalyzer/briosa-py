@@ -367,8 +367,8 @@ def application_lifecycle_failure() -> FakeRpcError:
 
 
 def test_protocol_identity_matches_reviewed_compatibility_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.7.0-sa-2026.1.0529.7"
-    assert SOURCE_REVISION == "4303a3322074869b35a3f16f9e35484a7bd5c830"
+    assert ARTIFACT_NAME == "briosa-protocol-0.8.0-sa-2026.1.0529.7"
+    assert SOURCE_REVISION == "e986a3ba91cb501416126eb5f3ecaeb7f9d97c05"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2026.1.0529.7"
@@ -419,7 +419,7 @@ async def test_wave_b_defaults_results_groups_and_optional_list_wrappers() -> No
         cloud_and_mesh_operations_pb2.CloudDisplayControlRequest,
         raw_display_request,
     )
-    assert display_request.thin_draw_increment == 1
+    assert display_request.thin == 1
     assert display_request.point_size == 1
 
     transport.operation_responses[
@@ -717,4 +717,32 @@ async def test_relationship_references_use_item_names() -> None:
         transport.operation_requests[-1][1],
     )
     assert request.relationship_name.item_name == "R1"
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_renamed_angle_tolerance_preserves_explicit_zero() -> None:
+    transport = FakeTransport()
+    transport.operation_responses[
+        "/briosa.AnalysisOperations/AngleBetweenLineAndPlane"
+    ] = analysis_operations_pb2.AngleBetweenLineAndPlaneResult(angle=12.5)
+    client = create_client(FakeServerLauncher(), transport)
+    await client.start()
+    angle = await client.angle_between_line_and_plane(
+        CollectionObjectName(
+            collection_name="C", object_name="L", object_type=ObjectType.LINE
+        ),
+        CollectionObjectName(
+            collection_name="C", object_name="P", object_type=ObjectType.PLANE
+        ),
+        angle_tolerance=0.0,
+    )
+    assert angle == 12.5
+    request = cast(
+        analysis_operations_pb2.AngleBetweenLineAndPlaneRequest,
+        transport.operation_requests[-1][1],
+    )
+    assert request.HasField("angle_tolerance")
+    assert request.angle_tolerance == 0.0
+    assert "angle_tolerance_0_0_for_none" not in request.DESCRIPTOR.fields_by_name
     await client.aclose()

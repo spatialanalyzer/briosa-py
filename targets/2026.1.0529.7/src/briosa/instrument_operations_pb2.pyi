@@ -476,14 +476,14 @@ class CombinePointGroupsResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ComputeCteScaleFactorRequest(_message.Message):
-    __slots__ = ("material_cte_per_degree_fahrenheit", "initial_temperature_fahrenheit", "final_temperature_fahrenheit")
-    MATERIAL_CTE_PER_DEGREE_FAHRENHEIT_FIELD_NUMBER: _ClassVar[int]
-    INITIAL_TEMPERATURE_FAHRENHEIT_FIELD_NUMBER: _ClassVar[int]
-    FINAL_TEMPERATURE_FAHRENHEIT_FIELD_NUMBER: _ClassVar[int]
-    material_cte_per_degree_fahrenheit: float
-    initial_temperature_fahrenheit: float
-    final_temperature_fahrenheit: float
-    def __init__(self, material_cte_per_degree_fahrenheit: _Optional[float] = ..., initial_temperature_fahrenheit: _Optional[float] = ..., final_temperature_fahrenheit: _Optional[float] = ...) -> None: ...
+    __slots__ = ("material_cte", "initial_temperature", "final_temperature")
+    MATERIAL_CTE_FIELD_NUMBER: _ClassVar[int]
+    INITIAL_TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
+    FINAL_TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
+    material_cte: float
+    initial_temperature: float
+    final_temperature: float
+    def __init__(self, material_cte: _Optional[float] = ..., initial_temperature: _Optional[float] = ..., final_temperature: _Optional[float] = ...) -> None: ...
 
 class ComputeCteScaleFactorResult(_message.Message):
     __slots__ = ("scale_factor", "execution")
@@ -614,7 +614,7 @@ class CreateNewDynamicReferenceResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class CreateTemplatedInstrumentUsmnRequest(_message.Message):
-    __slots__ = ("instrument_template_name", "instrument", "overall_instrument_weight", "moving", "enable_x", "enable_y", "enable_z", "enable_rx", "enable_ry", "enable_rz", "enable_scale", "enable_component_weights", "azimuth_weight", "elevation_weight", "distance_weight")
+    __slots__ = ("instrument_template_name", "instrument", "overall_instrument_weight", "moving", "enable_x", "enable_y", "enable_z", "enable_rx", "enable_ry", "enable_rz", "enable_scale", "enable_component_weights", "component_1_weight", "component_2_weight", "component_3_weight")
     INSTRUMENT_TEMPLATE_NAME_FIELD_NUMBER: _ClassVar[int]
     INSTRUMENT_FIELD_NUMBER: _ClassVar[int]
     OVERALL_INSTRUMENT_WEIGHT_FIELD_NUMBER: _ClassVar[int]
@@ -627,9 +627,9 @@ class CreateTemplatedInstrumentUsmnRequest(_message.Message):
     ENABLE_RZ_FIELD_NUMBER: _ClassVar[int]
     ENABLE_SCALE_FIELD_NUMBER: _ClassVar[int]
     ENABLE_COMPONENT_WEIGHTS_FIELD_NUMBER: _ClassVar[int]
-    AZIMUTH_WEIGHT_FIELD_NUMBER: _ClassVar[int]
-    ELEVATION_WEIGHT_FIELD_NUMBER: _ClassVar[int]
-    DISTANCE_WEIGHT_FIELD_NUMBER: _ClassVar[int]
+    COMPONENT_1_WEIGHT_FIELD_NUMBER: _ClassVar[int]
+    COMPONENT_2_WEIGHT_FIELD_NUMBER: _ClassVar[int]
+    COMPONENT_3_WEIGHT_FIELD_NUMBER: _ClassVar[int]
     instrument_template_name: _spatial_analyzer_values_pb2.CollectionObjectName
     instrument: _spatial_analyzer_values_pb2.CollectionInstrumentId
     overall_instrument_weight: float
@@ -642,10 +642,10 @@ class CreateTemplatedInstrumentUsmnRequest(_message.Message):
     enable_rz: bool
     enable_scale: bool
     enable_component_weights: bool
-    azimuth_weight: float
-    elevation_weight: float
-    distance_weight: float
-    def __init__(self, instrument_template_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., overall_instrument_weight: _Optional[float] = ..., moving: bool = ..., enable_x: bool = ..., enable_y: bool = ..., enable_z: bool = ..., enable_rx: bool = ..., enable_ry: bool = ..., enable_rz: bool = ..., enable_scale: bool = ..., enable_component_weights: bool = ..., azimuth_weight: _Optional[float] = ..., elevation_weight: _Optional[float] = ..., distance_weight: _Optional[float] = ...) -> None: ...
+    component_1_weight: float
+    component_2_weight: float
+    component_3_weight: float
+    def __init__(self, instrument_template_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., overall_instrument_weight: _Optional[float] = ..., moving: bool = ..., enable_x: bool = ..., enable_y: bool = ..., enable_z: bool = ..., enable_rx: bool = ..., enable_ry: bool = ..., enable_rz: bool = ..., enable_scale: bool = ..., enable_component_weights: bool = ..., component_1_weight: _Optional[float] = ..., component_2_weight: _Optional[float] = ..., component_3_weight: _Optional[float] = ...) -> None: ...
 
 class CreateTemplatedInstrumentUsmnResult(_message.Message):
     __slots__ = ("execution",)
@@ -920,20 +920,20 @@ class GetCurrentInstrumentPositionUpdateRequest(_message.Message):
     def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., reporting_frame: _Optional[_Union[InstrumentPositionReportingFrame, str]] = ..., polar_coordinates: bool = ...) -> None: ...
 
 class GetCurrentInstrumentPositionUpdateResult(_message.Message):
-    __slots__ = ("x_or_r", "y_or_theta_degrees", "z_or_phi_degrees", "time_since_update_seconds", "timestamp_approximate", "execution")
+    __slots__ = ("x_or_r", "y_or_theta", "z_or_phi", "time_since_update", "timestamp", "execution")
     X_OR_R_FIELD_NUMBER: _ClassVar[int]
-    Y_OR_THETA_DEGREES_FIELD_NUMBER: _ClassVar[int]
-    Z_OR_PHI_DEGREES_FIELD_NUMBER: _ClassVar[int]
-    TIME_SINCE_UPDATE_SECONDS_FIELD_NUMBER: _ClassVar[int]
-    TIMESTAMP_APPROXIMATE_FIELD_NUMBER: _ClassVar[int]
+    Y_OR_THETA_FIELD_NUMBER: _ClassVar[int]
+    Z_OR_PHI_FIELD_NUMBER: _ClassVar[int]
+    TIME_SINCE_UPDATE_FIELD_NUMBER: _ClassVar[int]
+    TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
     x_or_r: float
-    y_or_theta_degrees: float
-    z_or_phi_degrees: float
-    time_since_update_seconds: float
-    timestamp_approximate: str
+    y_or_theta: float
+    z_or_phi: float
+    time_since_update: float
+    timestamp: str
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, x_or_r: _Optional[float] = ..., y_or_theta_degrees: _Optional[float] = ..., z_or_phi_degrees: _Optional[float] = ..., time_since_update_seconds: _Optional[float] = ..., timestamp_approximate: _Optional[str] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, x_or_r: _Optional[float] = ..., y_or_theta: _Optional[float] = ..., z_or_phi: _Optional[float] = ..., time_since_update: _Optional[float] = ..., timestamp: _Optional[str] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetCurrentTrappingStatusRequest(_message.Message):
     __slots__ = ()
@@ -1024,12 +1024,12 @@ class GetInstrumentInterfaceResponseTimeoutRequest(_message.Message):
     def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ...) -> None: ...
 
 class GetInstrumentInterfaceResponseTimeoutResult(_message.Message):
-    __slots__ = ("timeout_seconds", "execution")
-    TIMEOUT_SECONDS_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("timeout", "execution")
+    TIMEOUT_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    timeout_seconds: float
+    timeout: float
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, timeout_seconds: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, timeout: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetInstrumentMeasurementModeProfileRequest(_message.Message):
     __slots__ = ("instrument",)
@@ -1068,12 +1068,12 @@ class GetInstrumentPartTemperatureRequest(_message.Message):
     def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ...) -> None: ...
 
 class GetInstrumentPartTemperatureResult(_message.Message):
-    __slots__ = ("part_temperature_fahrenheit", "execution")
-    PART_TEMPERATURE_FAHRENHEIT_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("part_temperature", "execution")
+    PART_TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    part_temperature_fahrenheit: float
+    part_temperature: float
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, part_temperature_fahrenheit: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, part_temperature: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetInstrumentScaleFactorRequest(_message.Message):
     __slots__ = ("instrument",)
@@ -1170,18 +1170,18 @@ class GetInstrumentWeatherSettingRequest(_message.Message):
     def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ...) -> None: ...
 
 class GetInstrumentWeatherSettingResult(_message.Message):
-    __slots__ = ("temperature_fahrenheit", "pressure_mmhg", "relative_humidity_percent", "set_automatically", "execution")
-    TEMPERATURE_FAHRENHEIT_FIELD_NUMBER: _ClassVar[int]
-    PRESSURE_MMHG_FIELD_NUMBER: _ClassVar[int]
-    RELATIVE_HUMIDITY_PERCENT_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("temperature", "pressure", "relative_humidity", "set_automatically", "execution")
+    TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
+    PRESSURE_FIELD_NUMBER: _ClassVar[int]
+    RELATIVE_HUMIDITY_FIELD_NUMBER: _ClassVar[int]
     SET_AUTOMATICALLY_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    temperature_fahrenheit: float
-    pressure_mmhg: float
-    relative_humidity_percent: float
+    temperature: float
+    pressure: float
+    relative_humidity: float
     set_automatically: bool
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, temperature_fahrenheit: _Optional[float] = ..., pressure_mmhg: _Optional[float] = ..., relative_humidity_percent: _Optional[float] = ..., set_automatically: bool = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, temperature: _Optional[float] = ..., pressure: _Optional[float] = ..., relative_humidity: _Optional[float] = ..., set_automatically: bool = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetLastInstrumentIndexRequest(_message.Message):
     __slots__ = ()
@@ -1298,22 +1298,22 @@ class GetTrackerEdmTheodoliteUncertaintiesRequest(_message.Message):
     def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ...) -> None: ...
 
 class GetTrackerEdmTheodoliteUncertaintiesResult(_message.Message):
-    __slots__ = ("theta_dispersion_arcseconds", "theta_threshold", "phi_dispersion_arcseconds", "phi_threshold", "distance_ppm", "distance_threshold", "execution")
-    THETA_DISPERSION_ARCSECONDS_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("theta_dispersion", "theta_threshold", "phi_dispersion", "phi_threshold", "distance", "distance_threshold", "execution")
+    THETA_DISPERSION_FIELD_NUMBER: _ClassVar[int]
     THETA_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
-    PHI_DISPERSION_ARCSECONDS_FIELD_NUMBER: _ClassVar[int]
+    PHI_DISPERSION_FIELD_NUMBER: _ClassVar[int]
     PHI_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
-    DISTANCE_PPM_FIELD_NUMBER: _ClassVar[int]
+    DISTANCE_FIELD_NUMBER: _ClassVar[int]
     DISTANCE_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    theta_dispersion_arcseconds: float
+    theta_dispersion: float
     theta_threshold: float
-    phi_dispersion_arcseconds: float
+    phi_dispersion: float
     phi_threshold: float
-    distance_ppm: float
+    distance: float
     distance_threshold: float
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, theta_dispersion_arcseconds: _Optional[float] = ..., theta_threshold: _Optional[float] = ..., phi_dispersion_arcseconds: _Optional[float] = ..., phi_threshold: _Optional[float] = ..., distance_ppm: _Optional[float] = ..., distance_threshold: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, theta_dispersion: _Optional[float] = ..., theta_threshold: _Optional[float] = ..., phi_dispersion: _Optional[float] = ..., phi_threshold: _Optional[float] = ..., distance: _Optional[float] = ..., distance_threshold: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetWrtlChannelAndStatusRequest(_message.Message):
     __slots__ = ("instrument",)
@@ -1636,7 +1636,7 @@ class LocateInstrumentRefTieInResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class LocateInstrumentsUsmnRequest(_message.Message):
-    __slots__ = ("instruments", "nominals_group", "output_group", "move_in_working_frame", "auto_reject_outliers_and_resolve", "show_usmn_dialog", "maximum_acceptable_rms_error", "maximum_acceptable_error", "excluded_groups", "exclude_single_instrument_points", "run_uncertainty_field_analysis", "analysis_samples", "analysis_time_limit_minutes")
+    __slots__ = ("instruments", "nominals_group", "output_group", "move_in_working_frame", "auto_reject_outliers_and_resolve", "show_usmn_dialog", "maximum_acceptable_rms_error", "maximum_acceptable_error", "excluded_groups", "exclude_single_instrument_points", "run_uncertainty_field_analysis", "analysis_samples", "analysis_time_limit")
     INSTRUMENTS_FIELD_NUMBER: _ClassVar[int]
     NOMINALS_GROUP_FIELD_NUMBER: _ClassVar[int]
     OUTPUT_GROUP_FIELD_NUMBER: _ClassVar[int]
@@ -1649,7 +1649,7 @@ class LocateInstrumentsUsmnRequest(_message.Message):
     EXCLUDE_SINGLE_INSTRUMENT_POINTS_FIELD_NUMBER: _ClassVar[int]
     RUN_UNCERTAINTY_FIELD_ANALYSIS_FIELD_NUMBER: _ClassVar[int]
     ANALYSIS_SAMPLES_FIELD_NUMBER: _ClassVar[int]
-    ANALYSIS_TIME_LIMIT_MINUTES_FIELD_NUMBER: _ClassVar[int]
+    ANALYSIS_TIME_LIMIT_FIELD_NUMBER: _ClassVar[int]
     instruments: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionInstrumentId]
     nominals_group: _spatial_analyzer_values_pb2.CollectionObjectName
     output_group: _spatial_analyzer_values_pb2.CollectionObjectName
@@ -1662,8 +1662,8 @@ class LocateInstrumentsUsmnRequest(_message.Message):
     exclude_single_instrument_points: bool
     run_uncertainty_field_analysis: bool
     analysis_samples: int
-    analysis_time_limit_minutes: float
-    def __init__(self, instruments: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]]] = ..., nominals_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., output_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., move_in_working_frame: bool = ..., auto_reject_outliers_and_resolve: bool = ..., show_usmn_dialog: _Optional[_Union[ShowUsmnDialog, str]] = ..., maximum_acceptable_rms_error: _Optional[float] = ..., maximum_acceptable_error: _Optional[float] = ..., excluded_groups: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., exclude_single_instrument_points: bool = ..., run_uncertainty_field_analysis: bool = ..., analysis_samples: _Optional[int] = ..., analysis_time_limit_minutes: _Optional[float] = ...) -> None: ...
+    analysis_time_limit: float
+    def __init__(self, instruments: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]]] = ..., nominals_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., output_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., move_in_working_frame: bool = ..., auto_reject_outliers_and_resolve: bool = ..., show_usmn_dialog: _Optional[_Union[ShowUsmnDialog, str]] = ..., maximum_acceptable_rms_error: _Optional[float] = ..., maximum_acceptable_error: _Optional[float] = ..., excluded_groups: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., exclude_single_instrument_points: bool = ..., run_uncertainty_field_analysis: bool = ..., analysis_samples: _Optional[int] = ..., analysis_time_limit: _Optional[float] = ...) -> None: ...
 
 class LocateInstrumentsUsmnResult(_message.Message):
     __slots__ = ("rms_error", "maximum_error", "execution")
@@ -1726,30 +1726,30 @@ class LrApdisPerformMcmCalibrationResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class LrFlipTestResult(_message.Message):
-    __slots__ = ("front_range_inches", "front_azimuth_degrees", "front_elevation_degrees", "front_quality", "back_range_inches", "back_azimuth_degrees", "back_elevation_degrees", "back_quality", "front_back_difference_range_inches", "front_back_difference_azimuth_degrees", "front_back_difference_elevation_degrees")
-    FRONT_RANGE_INCHES_FIELD_NUMBER: _ClassVar[int]
-    FRONT_AZIMUTH_DEGREES_FIELD_NUMBER: _ClassVar[int]
-    FRONT_ELEVATION_DEGREES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("front_range", "front_azimuth", "front_elevation", "front_quality", "back_range", "back_azimuth", "back_elevation", "back_quality", "front_back_difference_range", "front_back_difference_azimuth", "front_back_difference_elevation")
+    FRONT_RANGE_FIELD_NUMBER: _ClassVar[int]
+    FRONT_AZIMUTH_FIELD_NUMBER: _ClassVar[int]
+    FRONT_ELEVATION_FIELD_NUMBER: _ClassVar[int]
     FRONT_QUALITY_FIELD_NUMBER: _ClassVar[int]
-    BACK_RANGE_INCHES_FIELD_NUMBER: _ClassVar[int]
-    BACK_AZIMUTH_DEGREES_FIELD_NUMBER: _ClassVar[int]
-    BACK_ELEVATION_DEGREES_FIELD_NUMBER: _ClassVar[int]
+    BACK_RANGE_FIELD_NUMBER: _ClassVar[int]
+    BACK_AZIMUTH_FIELD_NUMBER: _ClassVar[int]
+    BACK_ELEVATION_FIELD_NUMBER: _ClassVar[int]
     BACK_QUALITY_FIELD_NUMBER: _ClassVar[int]
-    FRONT_BACK_DIFFERENCE_RANGE_INCHES_FIELD_NUMBER: _ClassVar[int]
-    FRONT_BACK_DIFFERENCE_AZIMUTH_DEGREES_FIELD_NUMBER: _ClassVar[int]
-    FRONT_BACK_DIFFERENCE_ELEVATION_DEGREES_FIELD_NUMBER: _ClassVar[int]
-    front_range_inches: float
-    front_azimuth_degrees: float
-    front_elevation_degrees: float
+    FRONT_BACK_DIFFERENCE_RANGE_FIELD_NUMBER: _ClassVar[int]
+    FRONT_BACK_DIFFERENCE_AZIMUTH_FIELD_NUMBER: _ClassVar[int]
+    FRONT_BACK_DIFFERENCE_ELEVATION_FIELD_NUMBER: _ClassVar[int]
+    front_range: float
+    front_azimuth: float
+    front_elevation: float
     front_quality: float
-    back_range_inches: float
-    back_azimuth_degrees: float
-    back_elevation_degrees: float
+    back_range: float
+    back_azimuth: float
+    back_elevation: float
     back_quality: float
-    front_back_difference_range_inches: float
-    front_back_difference_azimuth_degrees: float
-    front_back_difference_elevation_degrees: float
-    def __init__(self, front_range_inches: _Optional[float] = ..., front_azimuth_degrees: _Optional[float] = ..., front_elevation_degrees: _Optional[float] = ..., front_quality: _Optional[float] = ..., back_range_inches: _Optional[float] = ..., back_azimuth_degrees: _Optional[float] = ..., back_elevation_degrees: _Optional[float] = ..., back_quality: _Optional[float] = ..., front_back_difference_range_inches: _Optional[float] = ..., front_back_difference_azimuth_degrees: _Optional[float] = ..., front_back_difference_elevation_degrees: _Optional[float] = ...) -> None: ...
+    front_back_difference_range: float
+    front_back_difference_azimuth: float
+    front_back_difference_elevation: float
+    def __init__(self, front_range: _Optional[float] = ..., front_azimuth: _Optional[float] = ..., front_elevation: _Optional[float] = ..., front_quality: _Optional[float] = ..., back_range: _Optional[float] = ..., back_azimuth: _Optional[float] = ..., back_elevation: _Optional[float] = ..., back_quality: _Optional[float] = ..., front_back_difference_range: _Optional[float] = ..., front_back_difference_azimuth: _Optional[float] = ..., front_back_difference_elevation: _Optional[float] = ...) -> None: ...
 
 class LrGetMostRecentSnrInfoRequest(_message.Message):
     __slots__ = ("instrument",)
@@ -1794,32 +1794,32 @@ class LrHardwareDisconnectResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class LrLoSeparationTestResult(_message.Message):
-    __slots__ = ("primary_lo_index", "secondary_lo_index", "primary_lo_measurement_count", "primary_lo_range_mean_inches", "primary_lo_range_standard_deviation_inches", "primary_lo_quality_mean", "primary_lo_quality_standard_deviation", "secondary_lo_measurement_count", "secondary_lo_range_mean_inches", "secondary_lo_range_standard_deviation_inches", "secondary_lo_quality_mean", "secondary_lo_quality_standard_deviation")
-    PRIMARY_LO_INDEX_FIELD_NUMBER: _ClassVar[int]
-    SECONDARY_LO_INDEX_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("primary_lo", "secondary_lo", "primary_lo_measurement_count", "primary_lo_range_mean", "primary_lo_range_standard_deviation", "primary_lo_quality_mean", "primary_lo_quality_standard_deviation", "secondary_lo_measurement_count", "secondary_lo_range_mean", "secondary_lo_range_standard_deviation", "secondary_lo_quality_mean", "secondary_lo_quality_standard_deviation")
+    PRIMARY_LO_FIELD_NUMBER: _ClassVar[int]
+    SECONDARY_LO_FIELD_NUMBER: _ClassVar[int]
     PRIMARY_LO_MEASUREMENT_COUNT_FIELD_NUMBER: _ClassVar[int]
-    PRIMARY_LO_RANGE_MEAN_INCHES_FIELD_NUMBER: _ClassVar[int]
-    PRIMARY_LO_RANGE_STANDARD_DEVIATION_INCHES_FIELD_NUMBER: _ClassVar[int]
+    PRIMARY_LO_RANGE_MEAN_FIELD_NUMBER: _ClassVar[int]
+    PRIMARY_LO_RANGE_STANDARD_DEVIATION_FIELD_NUMBER: _ClassVar[int]
     PRIMARY_LO_QUALITY_MEAN_FIELD_NUMBER: _ClassVar[int]
     PRIMARY_LO_QUALITY_STANDARD_DEVIATION_FIELD_NUMBER: _ClassVar[int]
     SECONDARY_LO_MEASUREMENT_COUNT_FIELD_NUMBER: _ClassVar[int]
-    SECONDARY_LO_RANGE_MEAN_INCHES_FIELD_NUMBER: _ClassVar[int]
-    SECONDARY_LO_RANGE_STANDARD_DEVIATION_INCHES_FIELD_NUMBER: _ClassVar[int]
+    SECONDARY_LO_RANGE_MEAN_FIELD_NUMBER: _ClassVar[int]
+    SECONDARY_LO_RANGE_STANDARD_DEVIATION_FIELD_NUMBER: _ClassVar[int]
     SECONDARY_LO_QUALITY_MEAN_FIELD_NUMBER: _ClassVar[int]
     SECONDARY_LO_QUALITY_STANDARD_DEVIATION_FIELD_NUMBER: _ClassVar[int]
-    primary_lo_index: int
-    secondary_lo_index: int
+    primary_lo: int
+    secondary_lo: int
     primary_lo_measurement_count: int
-    primary_lo_range_mean_inches: float
-    primary_lo_range_standard_deviation_inches: float
+    primary_lo_range_mean: float
+    primary_lo_range_standard_deviation: float
     primary_lo_quality_mean: float
     primary_lo_quality_standard_deviation: float
     secondary_lo_measurement_count: int
-    secondary_lo_range_mean_inches: float
-    secondary_lo_range_standard_deviation_inches: float
+    secondary_lo_range_mean: float
+    secondary_lo_range_standard_deviation: float
     secondary_lo_quality_mean: float
     secondary_lo_quality_standard_deviation: float
-    def __init__(self, primary_lo_index: _Optional[int] = ..., secondary_lo_index: _Optional[int] = ..., primary_lo_measurement_count: _Optional[int] = ..., primary_lo_range_mean_inches: _Optional[float] = ..., primary_lo_range_standard_deviation_inches: _Optional[float] = ..., primary_lo_quality_mean: _Optional[float] = ..., primary_lo_quality_standard_deviation: _Optional[float] = ..., secondary_lo_measurement_count: _Optional[int] = ..., secondary_lo_range_mean_inches: _Optional[float] = ..., secondary_lo_range_standard_deviation_inches: _Optional[float] = ..., secondary_lo_quality_mean: _Optional[float] = ..., secondary_lo_quality_standard_deviation: _Optional[float] = ...) -> None: ...
+    def __init__(self, primary_lo: _Optional[int] = ..., secondary_lo: _Optional[int] = ..., primary_lo_measurement_count: _Optional[int] = ..., primary_lo_range_mean: _Optional[float] = ..., primary_lo_range_standard_deviation: _Optional[float] = ..., primary_lo_quality_mean: _Optional[float] = ..., primary_lo_quality_standard_deviation: _Optional[float] = ..., secondary_lo_measurement_count: _Optional[int] = ..., secondary_lo_range_mean: _Optional[float] = ..., secondary_lo_range_standard_deviation: _Optional[float] = ..., secondary_lo_quality_mean: _Optional[float] = ..., secondary_lo_quality_standard_deviation: _Optional[float] = ...) -> None: ...
 
 class LrSelfTestFlipTestRequest(_message.Message):
     __slots__ = ("instrument",)
@@ -1842,12 +1842,12 @@ class LrSelfTestLinearizationRequest(_message.Message):
     def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ...) -> None: ...
 
 class LrSelfTestLinearizationResult(_message.Message):
-    __slots__ = ("linearity_khz", "execution")
-    LINEARITY_KHZ_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("linearity", "execution")
+    LINEARITY_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    linearity_khz: float
+    linearity: float
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, linearity_khz: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, linearity: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class LrSelfTestLoSepRequest(_message.Message):
     __slots__ = ("instrument", "region", "num_range_measurements")
@@ -1874,12 +1874,12 @@ class LrSelfTestRequest(_message.Message):
     def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ...) -> None: ...
 
 class LrSelfTestResult(_message.Message):
-    __slots__ = ("reference_arm_length_inches", "reference_arm_quality", "mirror_measurement_count", "mirror_measurement_range_mean_inches", "mirror_measurement_range_standard_deviation_inches", "mirror_measurement_quality_mean", "mirror_measurement_quality_standard_deviation", "passed_reference_arm_quality_threshold", "passed_mirror_offset_delta_threshold", "passed_mirror_offset_standard_deviation_threshold", "passed_mirror_mean_quality_threshold", "passed_overall", "execution")
-    REFERENCE_ARM_LENGTH_INCHES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("reference_arm_length", "reference_arm_quality", "mirror_measurement_count", "mirror_measurement_range_mean", "mirror_measurement_range_standard_deviation", "mirror_measurement_quality_mean", "mirror_measurement_quality_standard_deviation", "passed_reference_arm_quality_threshold", "passed_mirror_offset_delta_threshold", "passed_mirror_offset_standard_deviation_threshold", "passed_mirror_mean_quality_threshold", "passed_overall", "execution")
+    REFERENCE_ARM_LENGTH_FIELD_NUMBER: _ClassVar[int]
     REFERENCE_ARM_QUALITY_FIELD_NUMBER: _ClassVar[int]
     MIRROR_MEASUREMENT_COUNT_FIELD_NUMBER: _ClassVar[int]
-    MIRROR_MEASUREMENT_RANGE_MEAN_INCHES_FIELD_NUMBER: _ClassVar[int]
-    MIRROR_MEASUREMENT_RANGE_STANDARD_DEVIATION_INCHES_FIELD_NUMBER: _ClassVar[int]
+    MIRROR_MEASUREMENT_RANGE_MEAN_FIELD_NUMBER: _ClassVar[int]
+    MIRROR_MEASUREMENT_RANGE_STANDARD_DEVIATION_FIELD_NUMBER: _ClassVar[int]
     MIRROR_MEASUREMENT_QUALITY_MEAN_FIELD_NUMBER: _ClassVar[int]
     MIRROR_MEASUREMENT_QUALITY_STANDARD_DEVIATION_FIELD_NUMBER: _ClassVar[int]
     PASSED_REFERENCE_ARM_QUALITY_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
@@ -1888,11 +1888,11 @@ class LrSelfTestResult(_message.Message):
     PASSED_MIRROR_MEAN_QUALITY_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
     PASSED_OVERALL_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    reference_arm_length_inches: float
+    reference_arm_length: float
     reference_arm_quality: float
     mirror_measurement_count: int
-    mirror_measurement_range_mean_inches: float
-    mirror_measurement_range_standard_deviation_inches: float
+    mirror_measurement_range_mean: float
+    mirror_measurement_range_standard_deviation: float
     mirror_measurement_quality_mean: float
     mirror_measurement_quality_standard_deviation: float
     passed_reference_arm_quality_threshold: bool
@@ -1901,7 +1901,7 @@ class LrSelfTestResult(_message.Message):
     passed_mirror_mean_quality_threshold: bool
     passed_overall: bool
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, reference_arm_length_inches: _Optional[float] = ..., reference_arm_quality: _Optional[float] = ..., mirror_measurement_count: _Optional[int] = ..., mirror_measurement_range_mean_inches: _Optional[float] = ..., mirror_measurement_range_standard_deviation_inches: _Optional[float] = ..., mirror_measurement_quality_mean: _Optional[float] = ..., mirror_measurement_quality_standard_deviation: _Optional[float] = ..., passed_reference_arm_quality_threshold: bool = ..., passed_mirror_offset_delta_threshold: bool = ..., passed_mirror_offset_standard_deviation_threshold: bool = ..., passed_mirror_mean_quality_threshold: bool = ..., passed_overall: bool = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, reference_arm_length: _Optional[float] = ..., reference_arm_quality: _Optional[float] = ..., mirror_measurement_count: _Optional[int] = ..., mirror_measurement_range_mean: _Optional[float] = ..., mirror_measurement_range_standard_deviation: _Optional[float] = ..., mirror_measurement_quality_mean: _Optional[float] = ..., mirror_measurement_quality_standard_deviation: _Optional[float] = ..., passed_reference_arm_quality_threshold: bool = ..., passed_mirror_offset_delta_threshold: bool = ..., passed_mirror_offset_standard_deviation_threshold: bool = ..., passed_mirror_mean_quality_threshold: bool = ..., passed_overall: bool = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class LrSetRedLaserIntensityRequest(_message.Message):
     __slots__ = ("instrument", "intensity")
@@ -1918,18 +1918,18 @@ class LrSetRedLaserIntensityResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class LrSnrInfo(_message.Message):
-    __slots__ = ("snr", "size_of_data_array", "peak_value_index", "peak_value_db", "measured_range_meters")
+    __slots__ = ("snr", "size_of_data_array", "peak_value_index", "peak_value", "measured_range")
     SNR_FIELD_NUMBER: _ClassVar[int]
     SIZE_OF_DATA_ARRAY_FIELD_NUMBER: _ClassVar[int]
     PEAK_VALUE_INDEX_FIELD_NUMBER: _ClassVar[int]
-    PEAK_VALUE_DB_FIELD_NUMBER: _ClassVar[int]
-    MEASURED_RANGE_METERS_FIELD_NUMBER: _ClassVar[int]
+    PEAK_VALUE_FIELD_NUMBER: _ClassVar[int]
+    MEASURED_RANGE_FIELD_NUMBER: _ClassVar[int]
     snr: float
     size_of_data_array: int
     peak_value_index: int
-    peak_value_db: float
-    measured_range_meters: float
-    def __init__(self, snr: _Optional[float] = ..., size_of_data_array: _Optional[int] = ..., peak_value_index: _Optional[int] = ..., peak_value_db: _Optional[float] = ..., measured_range_meters: _Optional[float] = ...) -> None: ...
+    peak_value: float
+    measured_range: float
+    def __init__(self, snr: _Optional[float] = ..., size_of_data_array: _Optional[int] = ..., peak_value_index: _Optional[int] = ..., peak_value: _Optional[float] = ..., measured_range: _Optional[float] = ...) -> None: ...
 
 class LrVerifyHardwareConnectionRequest(_message.Message):
     __slots__ = ("instrument",)
@@ -2176,26 +2176,26 @@ class MultiMeasurementStopResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ObservationInfo(_message.Message):
-    __slots__ = ("instrument", "spherical_values", "active", "timestamp", "rms_error", "temperature_fahrenheit", "pressure_in_hg", "relative_humidity_percent", "info_data")
+    __slots__ = ("instrument", "spherical_values", "active", "timestamp", "rms_error", "temperature", "pressure", "relative_humidity", "info_data")
     INSTRUMENT_FIELD_NUMBER: _ClassVar[int]
     SPHERICAL_VALUES_FIELD_NUMBER: _ClassVar[int]
     ACTIVE_FIELD_NUMBER: _ClassVar[int]
     TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
     RMS_ERROR_FIELD_NUMBER: _ClassVar[int]
-    TEMPERATURE_FAHRENHEIT_FIELD_NUMBER: _ClassVar[int]
-    PRESSURE_IN_HG_FIELD_NUMBER: _ClassVar[int]
-    RELATIVE_HUMIDITY_PERCENT_FIELD_NUMBER: _ClassVar[int]
+    TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
+    PRESSURE_FIELD_NUMBER: _ClassVar[int]
+    RELATIVE_HUMIDITY_FIELD_NUMBER: _ClassVar[int]
     INFO_DATA_FIELD_NUMBER: _ClassVar[int]
     instrument: _spatial_analyzer_values_pb2.CollectionInstrumentId
     spherical_values: ObservationSphericalValues
     active: bool
     timestamp: str
     rms_error: float
-    temperature_fahrenheit: float
-    pressure_in_hg: float
-    relative_humidity_percent: float
+    temperature: float
+    pressure: float
+    relative_humidity: float
     info_data: str
-    def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., spherical_values: _Optional[_Union[ObservationSphericalValues, _Mapping]] = ..., active: bool = ..., timestamp: _Optional[str] = ..., rms_error: _Optional[float] = ..., temperature_fahrenheit: _Optional[float] = ..., pressure_in_hg: _Optional[float] = ..., relative_humidity_percent: _Optional[float] = ..., info_data: _Optional[str] = ...) -> None: ...
+    def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., spherical_values: _Optional[_Union[ObservationSphericalValues, _Mapping]] = ..., active: bool = ..., timestamp: _Optional[str] = ..., rms_error: _Optional[float] = ..., temperature: _Optional[float] = ..., pressure: _Optional[float] = ..., relative_humidity: _Optional[float] = ..., info_data: _Optional[str] = ...) -> None: ...
 
 class ObservationSphericalValues(_message.Message):
     __slots__ = ("distance", "azimuth", "elevation")
@@ -2496,12 +2496,12 @@ class SetInstrumentGroupAndTargetResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetInstrumentInterfaceResponseTimeoutRequest(_message.Message):
-    __slots__ = ("instrument", "timeout_seconds")
+    __slots__ = ("instrument", "timeout")
     INSTRUMENT_FIELD_NUMBER: _ClassVar[int]
-    TIMEOUT_SECONDS_FIELD_NUMBER: _ClassVar[int]
+    TIMEOUT_FIELD_NUMBER: _ClassVar[int]
     instrument: _spatial_analyzer_values_pb2.CollectionInstrumentId
-    timeout_seconds: float
-    def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., timeout_seconds: _Optional[float] = ...) -> None: ...
+    timeout: float
+    def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., timeout: _Optional[float] = ...) -> None: ...
 
 class SetInstrumentInterfaceResponseTimeoutResult(_message.Message):
     __slots__ = ("execution",)
@@ -2556,18 +2556,18 @@ class SetInstrumentTransformResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetInstrumentWeatherSettingRequest(_message.Message):
-    __slots__ = ("instrument", "temperature_fahrenheit", "pressure_mmhg", "relative_humidity_percent", "set_automatically")
+    __slots__ = ("instrument", "temperature", "pressure", "relative_humidity", "set_automatically")
     INSTRUMENT_FIELD_NUMBER: _ClassVar[int]
-    TEMPERATURE_FAHRENHEIT_FIELD_NUMBER: _ClassVar[int]
-    PRESSURE_MMHG_FIELD_NUMBER: _ClassVar[int]
-    RELATIVE_HUMIDITY_PERCENT_FIELD_NUMBER: _ClassVar[int]
+    TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
+    PRESSURE_FIELD_NUMBER: _ClassVar[int]
+    RELATIVE_HUMIDITY_FIELD_NUMBER: _ClassVar[int]
     SET_AUTOMATICALLY_FIELD_NUMBER: _ClassVar[int]
     instrument: _spatial_analyzer_values_pb2.CollectionInstrumentId
-    temperature_fahrenheit: float
-    pressure_mmhg: float
-    relative_humidity_percent: float
+    temperature: float
+    pressure: float
+    relative_humidity: float
     set_automatically: bool
-    def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., temperature_fahrenheit: _Optional[float] = ..., pressure_mmhg: _Optional[float] = ..., relative_humidity_percent: _Optional[float] = ..., set_automatically: bool = ...) -> None: ...
+    def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., temperature: _Optional[float] = ..., pressure: _Optional[float] = ..., relative_humidity: _Optional[float] = ..., set_automatically: bool = ...) -> None: ...
 
 class SetInstrumentWeatherSettingResult(_message.Message):
     __slots__ = ("execution",)
@@ -2826,22 +2826,22 @@ class SetTargetComputationOptionsResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetTrackerEdmTheodoliteUncertaintiesRequest(_message.Message):
-    __slots__ = ("instrument", "theta_dispersion_arcseconds", "theta_threshold", "phi_dispersion_arcseconds", "phi_threshold", "distance_ppm", "distance_threshold")
+    __slots__ = ("instrument", "theta_dispersion", "theta_threshold", "phi_dispersion", "phi_threshold", "distance", "distance_threshold")
     INSTRUMENT_FIELD_NUMBER: _ClassVar[int]
-    THETA_DISPERSION_ARCSECONDS_FIELD_NUMBER: _ClassVar[int]
+    THETA_DISPERSION_FIELD_NUMBER: _ClassVar[int]
     THETA_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
-    PHI_DISPERSION_ARCSECONDS_FIELD_NUMBER: _ClassVar[int]
+    PHI_DISPERSION_FIELD_NUMBER: _ClassVar[int]
     PHI_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
-    DISTANCE_PPM_FIELD_NUMBER: _ClassVar[int]
+    DISTANCE_FIELD_NUMBER: _ClassVar[int]
     DISTANCE_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
     instrument: _spatial_analyzer_values_pb2.CollectionInstrumentId
-    theta_dispersion_arcseconds: float
+    theta_dispersion: float
     theta_threshold: float
-    phi_dispersion_arcseconds: float
+    phi_dispersion: float
     phi_threshold: float
-    distance_ppm: float
+    distance: float
     distance_threshold: float
-    def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., theta_dispersion_arcseconds: _Optional[float] = ..., theta_threshold: _Optional[float] = ..., phi_dispersion_arcseconds: _Optional[float] = ..., phi_threshold: _Optional[float] = ..., distance_ppm: _Optional[float] = ..., distance_threshold: _Optional[float] = ...) -> None: ...
+    def __init__(self, instrument: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., theta_dispersion: _Optional[float] = ..., theta_threshold: _Optional[float] = ..., phi_dispersion: _Optional[float] = ..., phi_threshold: _Optional[float] = ..., distance: _Optional[float] = ..., distance_threshold: _Optional[float] = ...) -> None: ...
 
 class SetTrackerEdmTheodoliteUncertaintiesResult(_message.Message):
     __slots__ = ("execution",)

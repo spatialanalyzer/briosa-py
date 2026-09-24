@@ -89,12 +89,12 @@ class GetAngularRepresentationRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class GetAngularRepresentationResult(_message.Message):
-    __slots__ = ("value_0_360_false_180", "execution")
-    VALUE_0_360_FALSE_180_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("value_0_360", "execution")
+    VALUE_0_360_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    value_0_360_false_180: bool
+    value_0_360: bool
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, value_0_360_false_180: bool = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, value_0_360: bool = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetCollectionNotesRequest(_message.Message):
     __slots__ = ("collection",)
@@ -225,10 +225,10 @@ class GetPointNotesResult(_message.Message):
     def __init__(self, notes: _Optional[_Iterable[str]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetScreenResolutionRequest(_message.Message):
-    __slots__ = ("display_1_primary",)
-    DISPLAY_1_PRIMARY_FIELD_NUMBER: _ClassVar[int]
-    display_1_primary: int
-    def __init__(self, display_1_primary: _Optional[int] = ...) -> None: ...
+    __slots__ = ("display",)
+    DISPLAY_FIELD_NUMBER: _ClassVar[int]
+    display: int
+    def __init__(self, display: _Optional[int] = ...) -> None: ...
 
 class GetScreenResolutionResult(_message.Message):
     __slots__ = ("integer_window_top_left_x_position", "integer_window_top_left_y_position", "integer_width", "integer_height", "view_width", "view_height", "execution")
@@ -429,10 +429,10 @@ class SetActiveUnitsResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetAngularRepresentationRequest(_message.Message):
-    __slots__ = ("value_0_360_false_180",)
-    VALUE_0_360_FALSE_180_FIELD_NUMBER: _ClassVar[int]
-    value_0_360_false_180: bool
-    def __init__(self, value_0_360_false_180: bool = ...) -> None: ...
+    __slots__ = ("value_0_360",)
+    VALUE_0_360_FIELD_NUMBER: _ClassVar[int]
+    value_0_360: bool
+    def __init__(self, value_0_360: bool = ...) -> None: ...
 
 class SetAngularRepresentationResult(_message.Message):
     __slots__ = ("execution",)
@@ -479,14 +479,14 @@ class SetAutomaticRelationshipConstructionStateResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetCollectionNotesRequest(_message.Message):
-    __slots__ = ("collection", "notes", "append_false_overwrite")
+    __slots__ = ("collection", "notes", "append")
     COLLECTION_FIELD_NUMBER: _ClassVar[int]
     NOTES_FIELD_NUMBER: _ClassVar[int]
-    APPEND_FALSE_OVERWRITE_FIELD_NUMBER: _ClassVar[int]
+    APPEND_FIELD_NUMBER: _ClassVar[int]
     collection: _spatial_analyzer_values_pb2.CollectionName
     notes: _containers.RepeatedScalarFieldContainer[str]
-    append_false_overwrite: bool
-    def __init__(self, collection: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionName, _Mapping]] = ..., notes: _Optional[_Iterable[str]] = ..., append_false_overwrite: bool = ...) -> None: ...
+    append: bool
+    def __init__(self, collection: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionName, _Mapping]] = ..., notes: _Optional[_Iterable[str]] = ..., append: bool = ...) -> None: ...
 
 class SetCollectionNotesResult(_message.Message):
     __slots__ = ("execution",)
@@ -515,14 +515,14 @@ class SetDecimalDigitsForDisplayResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetFolderNotesRequest(_message.Message):
-    __slots__ = ("folder_path", "notes", "append_false_overwrite")
+    __slots__ = ("folder_path", "notes", "append")
     FOLDER_PATH_FIELD_NUMBER: _ClassVar[int]
     NOTES_FIELD_NUMBER: _ClassVar[int]
-    APPEND_FALSE_OVERWRITE_FIELD_NUMBER: _ClassVar[int]
+    APPEND_FIELD_NUMBER: _ClassVar[int]
     folder_path: str
     notes: _containers.RepeatedScalarFieldContainer[str]
-    append_false_overwrite: bool
-    def __init__(self, folder_path: _Optional[str] = ..., notes: _Optional[_Iterable[str]] = ..., append_false_overwrite: bool = ...) -> None: ...
+    append: bool
+    def __init__(self, folder_path: _Optional[str] = ..., notes: _Optional[_Iterable[str]] = ..., append: bool = ...) -> None: ...
 
 class SetFolderNotesResult(_message.Message):
     __slots__ = ("execution",)
@@ -571,14 +571,14 @@ class SetNotificationCancelOverrideResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetObjectNotesRequest(_message.Message):
-    __slots__ = ("object", "notes", "append_false_overwrite")
+    __slots__ = ("object", "notes", "append")
     OBJECT_FIELD_NUMBER: _ClassVar[int]
     NOTES_FIELD_NUMBER: _ClassVar[int]
-    APPEND_FALSE_OVERWRITE_FIELD_NUMBER: _ClassVar[int]
+    APPEND_FIELD_NUMBER: _ClassVar[int]
     object: _spatial_analyzer_values_pb2.CollectionObjectName
     notes: _containers.RepeatedScalarFieldContainer[str]
-    append_false_overwrite: bool
-    def __init__(self, object: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., notes: _Optional[_Iterable[str]] = ..., append_false_overwrite: bool = ...) -> None: ...
+    append: bool
+    def __init__(self, object: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., notes: _Optional[_Iterable[str]] = ..., append: bool = ...) -> None: ...
 
 class SetObjectNotesResult(_message.Message):
     __slots__ = ("execution",)
@@ -629,14 +629,14 @@ class SetOpcDaTagValueStringResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetPointNotesRequest(_message.Message):
-    __slots__ = ("point", "notes", "append_false_overwrite")
+    __slots__ = ("point", "notes", "append")
     POINT_FIELD_NUMBER: _ClassVar[int]
     NOTES_FIELD_NUMBER: _ClassVar[int]
-    APPEND_FALSE_OVERWRITE_FIELD_NUMBER: _ClassVar[int]
+    APPEND_FIELD_NUMBER: _ClassVar[int]
     point: _spatial_analyzer_values_pb2.PointName
     notes: _containers.RepeatedScalarFieldContainer[str]
-    append_false_overwrite: bool
-    def __init__(self, point: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., notes: _Optional[_Iterable[str]] = ..., append_false_overwrite: bool = ...) -> None: ...
+    append: bool
+    def __init__(self, point: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., notes: _Optional[_Iterable[str]] = ..., append: bool = ...) -> None: ...
 
 class SetPointNotesResult(_message.Message):
     __slots__ = ("execution",)
@@ -645,12 +645,12 @@ class SetPointNotesResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetUserInterfaceProfileRequest(_message.Message):
-    __slots__ = ("profile_name", "profile_file_name_optional")
+    __slots__ = ("profile_name", "profile_file_name")
     PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
-    PROFILE_FILE_NAME_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    PROFILE_FILE_NAME_FIELD_NUMBER: _ClassVar[int]
     profile_name: str
-    profile_file_name_optional: _spatial_analyzer_values_pb2.FileReference
-    def __init__(self, profile_name: _Optional[str] = ..., profile_file_name_optional: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ...) -> None: ...
+    profile_file_name: _spatial_analyzer_values_pb2.FileReference
+    def __init__(self, profile_name: _Optional[str] = ..., profile_file_name: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ...) -> None: ...
 
 class SetUserInterfaceProfileResult(_message.Message):
     __slots__ = ("execution",)

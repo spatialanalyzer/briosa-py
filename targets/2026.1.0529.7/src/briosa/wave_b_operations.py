@@ -27,15 +27,19 @@ class WaveBOperationsMixin(_WaveBClient):
     async def cloud_display_control(
         self,
         *,
-        thin_draw_increment: int = 1,
+        thin: int = 1,
         point_size: int = 1,
     ) -> None:
+        """MP argument notes.
+
+        thin: MP qualifier: Draw Increment.
+        """
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
             "CloudDisplayControl",
             "cloud_and_mesh_operations.cloud_display_control",
             {
-                "thin_draw_increment": thin_draw_increment,
+                "thin": thin,
                 "point_size": point_size,
             },
             None,
@@ -1905,6 +1909,12 @@ class WaveBOperationsMixin(_WaveBClient):
         watch_window_template_name: CollectionObjectName | None = None,
         options: RelationshipWatchWindowTemplateOptions | None = None,
     ) -> None:
+        """MP argument notes.
+
+        show_deviation_x: MP qualifier: Rx.
+        show_deviation_y: MP qualifier: Ry.
+        show_deviation_z: MP qualifier: Rz.
+        """
         options = options or RelationshipWatchWindowTemplateOptions()
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1918,9 +1928,9 @@ class WaveBOperationsMixin(_WaveBClient):
                 "text_color": options.text_color,
                 "background_color": options.background_color,
                 "highlight_color": options.highlight_color,
-                "show_deviation_x_rx": options.show_deviation_x_rx,
-                "show_deviation_y_ry": options.show_deviation_y_ry,
-                "show_deviation_z_rz": options.show_deviation_z_rz,
+                "show_deviation_x": options.show_deviation_x,
+                "show_deviation_y": options.show_deviation_y,
+                "show_deviation_z": options.show_deviation_z,
                 "show_deviation_magnitude": options.show_deviation_magnitude,
                 "udp_network_transmit_settings": options.udp_network_transmit_settings,
                 "transparent_background": options.transparent_background,
@@ -4035,9 +4045,13 @@ class ConstructionOperations:
         group_for_new_points: CollectionObjectName,
         *,
         radial_shift: float = 0.0,
-        theta_shift_degrees: float = 0.0,
+        theta_shift: float = 0.0,
         planar_shift: float = 0.0,
     ) -> None:
+        """MP argument notes.
+
+        theta_shift: Angle in degrees.
+        """
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
             "ConstructPointsCylindricallyShifted",
@@ -4047,7 +4061,7 @@ class ConstructionOperations:
                 "original_points": original_points,
                 "group_for_new_points": group_for_new_points,
                 "radial_shift": radial_shift,
-                "theta_shift_degrees": theta_shift_degrees,
+                "theta_shift": theta_shift,
                 "planar_shift": planar_shift,
             },
             None,
@@ -4315,16 +4329,20 @@ class ConstructionOperations:
     async def construct_sphere(
         self,
         sphere_name: CollectionObjectName,
-        sphere_center_in_working_coordinates: Vector,
+        sphere_center: Vector,
         sphere_radius: float,
     ) -> None:
+        """MP argument notes.
+
+        sphere_center: Expressed in working coordinates.
+        """
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
             "ConstructSphere",
             "construction_operations.construct_sphere",
             {
                 "sphere_name": sphere_name,
-                "sphere_center_in_working_coordinates": sphere_center_in_working_coordinates,
+                "sphere_center": sphere_center,
                 "sphere_radius": sphere_radius,
             },
             None,
@@ -4784,10 +4802,15 @@ class ConstructionOperations:
         self,
         hidden_point_rod_name: str,
         *,
-        target_to_target_distance: float = 0.0,
-        target_to_tip_distance: float = 0.0,
+        a_to_b_distance: float = 0.0,
+        a_to_c_distance: float = 0.0,
         inter_point_tolerance: float = 0.0,
     ) -> int:
+        """MP argument notes.
+
+        a_to_b_distance: MP qualifier: Target to Target.
+        a_to_c_distance: MP qualifier: Target to Tip.
+        """
         return cast(
             int,
             await self._client._invoke_mp_operation(
@@ -4796,8 +4819,8 @@ class ConstructionOperations:
                 "construction_operations.create_hidden_point_rod",
                 {
                     "hidden_point_rod_name": hidden_point_rod_name,
-                    "target_to_target_distance": target_to_target_distance,
-                    "target_to_tip_distance": target_to_tip_distance,
+                    "a_to_b_distance": a_to_b_distance,
+                    "a_to_c_distance": a_to_c_distance,
                     "inter_point_tolerance": inter_point_tolerance,
                 },
                 None,
@@ -4908,6 +4931,15 @@ class ConstructionOperations:
         notes: Iterable[str] | None = None,
         use_default_placement: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        show_x: MP qualifier: R.
+        show_y: MP qualifier: Theta.
+        show_z: MP qualifier: Phi.
+        show_ux: MP qualifier: Ur.
+        show_uy: MP qualifier: Utheta.
+        show_uz: MP qualifier: Uphi.
+        """
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
             "CreatePointCallout",
@@ -4920,13 +4952,13 @@ class ConstructionOperations:
                 "show_point_collection": show_point_collection,
                 "show_point_group": show_point_group,
                 "show_point_target": show_point_target,
-                "show_x_r": show_x,
-                "show_y_theta": show_y,
-                "show_z_phi": show_z,
+                "show_x": show_x,
+                "show_y": show_y,
+                "show_z": show_z,
                 "show_units": show_units,
-                "show_ux_ur": show_ux,
-                "show_uy_utheta": show_uy,
-                "show_uz_uphi": show_uz,
+                "show_ux": show_ux,
+                "show_uy": show_uy,
+                "show_uz": show_uz,
                 "show_umag": show_u_mag,
                 "desired_coordinate_system": desired_coordinate_system,
                 "notes": notes,
@@ -6215,13 +6247,17 @@ class ConstructionOperations:
     async def get_gradient_at_projected_point_on_surface_edge(
         self,
         point_to_project: PointName,
-        surface_edge_b_spline: CollectionObjectName,
+        surface_edge: CollectionObjectName,
         surface_name: CollectionObjectName,
         *,
         edge_offset_direction: Vector | None = None,
         edge_offset_distance: float = 0.01,
         generate_output_vector_lines: bool = False,
     ) -> ProjectedPointGradient:
+        """MP argument notes.
+
+        surface_edge: MP qualifier: B-Spline.
+        """
         return cast(
             ProjectedPointGradient,
             await self._client._invoke_mp_operation(
@@ -6230,7 +6266,7 @@ class ConstructionOperations:
                 "construction_operations.get_gradient_at_projected_point_on_surface_edge",
                 {
                     "point_to_project": point_to_project,
-                    "surface_edge_b_spline": surface_edge_b_spline,
+                    "surface_edge": surface_edge,
                     "surface_name": surface_name,
                     "edge_offset_direction": edge_offset_direction,
                     "edge_offset_distance": edge_offset_distance,
@@ -6827,6 +6863,11 @@ class GdtOperations:
         self,
         options: MakeGdtFeatureCheckAnnotationOptions,
     ) -> None:
+        """MP argument notes.
+
+        per_unit_length_distance: MP qualifier: area.
+        per_unit_length_step_over_percent: MP qualifier: area.
+        """
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
             "MakeGdtFeatureCheckAnnotation",
@@ -6846,8 +6887,8 @@ class GdtOperations:
                 "is_slot": options.is_slot,
                 "per_unit_length_or_area": options.per_unit_length_or_area,
                 "circular_area": options.circular_area,
-                "per_unit_area_length_distance": options.per_unit_area_length_distance,
-                "per_unit_area_length_step_over_percent": options.per_unit_area_length_step_over_percent,
+                "per_unit_length_distance": options.per_unit_length_distance,
+                "per_unit_length_step_over_percent": options.per_unit_length_step_over_percent,
                 "per_unit_area_width_distance": options.per_unit_area_width_distance,
                 "per_unit_area_width_step_over_percent": options.per_unit_area_width_step_over_percent,
                 "per_unit_area_circle_diameter": options.per_unit_area_circle_diameter,
@@ -7623,10 +7664,16 @@ class InstrumentOperations:
     async def compute_cte_scale_factor(
         self,
         *,
-        material_cte_per_degree_fahrenheit: float = 0.0,
-        initial_temperature_fahrenheit: float = 0.0,
-        final_temperature_fahrenheit: float = 0.0,
+        material_cte: float = 0.0,
+        initial_temperature: float = 0.0,
+        final_temperature: float = 0.0,
     ) -> float:
+        """MP argument notes.
+
+        material_cte: Coefficient per degree Fahrenheit.
+        initial_temperature: Temperature in degrees Fahrenheit.
+        final_temperature: Temperature in degrees Fahrenheit.
+        """
         return cast(
             float,
             await self._client._invoke_mp_operation(
@@ -7634,9 +7681,9 @@ class InstrumentOperations:
                 "ComputeCteScaleFactor",
                 "instrument_operations.compute_cte_scale_factor",
                 {
-                    "material_cte_per_degree_fahrenheit": material_cte_per_degree_fahrenheit,
-                    "initial_temperature_fahrenheit": initial_temperature_fahrenheit,
-                    "final_temperature_fahrenheit": final_temperature_fahrenheit,
+                    "material_cte": material_cte,
+                    "initial_temperature": initial_temperature,
+                    "final_temperature": final_temperature,
                 },
                 None,
             ),
@@ -7652,6 +7699,10 @@ class InstrumentOperations:
         wait_for_completion: bool = True,
         timeout_seconds: float = 0.0,
     ) -> None:
+        """MP argument notes.
+
+        timeout: Time in seconds.
+        """
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
             "ConfigureAndMeasure",
@@ -7801,10 +7852,16 @@ class InstrumentOperations:
         enable_rz: bool = True,
         enable_scale: bool = False,
         enable_component_weights: bool = True,
-        azimuth_weight: float = 1.0,
-        elevation_weight: float = 1.0,
-        distance_weight: float = 1.0,
+        component_1_weight: float = 1.0,
+        component_2_weight: float = 1.0,
+        component_3_weight: float = 1.0,
     ) -> None:
+        """MP argument notes.
+
+        component_1_weight: MP qualifier: Azimuth.
+        component_2_weight: MP qualifier: Elevation.
+        component_3_weight: MP qualifier: Distance.
+        """
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
             "CreateTemplatedInstrumentUsmn",
@@ -7822,9 +7879,9 @@ class InstrumentOperations:
                 "enable_rz": enable_rz,
                 "enable_scale": enable_scale,
                 "enable_component_weights": enable_component_weights,
-                "azimuth_weight": azimuth_weight,
-                "elevation_weight": elevation_weight,
-                "distance_weight": distance_weight,
+                "component_1_weight": component_1_weight,
+                "component_2_weight": component_2_weight,
+                "component_3_weight": component_3_weight,
             },
             None,
         )
@@ -8899,8 +8956,12 @@ class InstrumentOperations:
         exclude_single_instrument_points: bool = False,
         run_uncertainty_field_analysis: bool = False,
         analysis_samples: int = 300,
-        analysis_time_limit_minutes: float = 4.0,
+        analysis_time_limit: float = 4.0,
     ) -> FitErrorResult:
+        """MP argument notes.
+
+        analysis_time_limit: Time in minutes; 0 disables the time limit.
+        """
         return cast(
             FitErrorResult,
             await self._client._invoke_mp_operation(
@@ -8920,7 +8981,7 @@ class InstrumentOperations:
                     "exclude_single_instrument_points": exclude_single_instrument_points,
                     "run_uncertainty_field_analysis": run_uncertainty_field_analysis,
                     "analysis_samples": analysis_samples,
-                    "analysis_time_limit_minutes": analysis_time_limit_minutes,
+                    "analysis_time_limit": analysis_time_limit,
                 },
                 FitErrorResult,
             ),
@@ -9723,15 +9784,19 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         *,
-        timeout_seconds: float = 0.0,
+        timeout: float = 0.0,
     ) -> None:
+        """MP argument notes.
+
+        timeout: Time in seconds.
+        """
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
             "SetInstrumentInterfaceResponseTimeout",
             "instrument_operations.set_instrument_interface_response_timeout",
             {
                 "instrument": instrument,
-                "timeout_seconds": timeout_seconds,
+                "timeout": timeout,
             },
             None,
         )
@@ -9797,20 +9862,26 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         *,
-        temperature_fahrenheit: float = 0.0,
-        pressure_mmhg: float = 0.0,
-        relative_humidity_percent: float = 0.0,
+        temperature: float = 0.0,
+        pressure: float = 0.0,
+        relative_humidity: float = 0.0,
         set_automatically: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        temperature: Temperature in degrees Fahrenheit.
+        pressure: Pressure in millimeters of mercury.
+        relative_humidity: Relative humidity in percent.
+        """
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
             "SetInstrumentWeatherSetting",
             "instrument_operations.set_instrument_weather_setting",
             {
                 "instrument": instrument,
-                "temperature_fahrenheit": temperature_fahrenheit,
-                "pressure_mmhg": pressure_mmhg,
-                "relative_humidity_percent": relative_humidity_percent,
+                "temperature": temperature,
+                "pressure": pressure,
+                "relative_humidity": relative_humidity,
                 "set_automatically": set_automatically,
             },
             None,
@@ -10130,24 +10201,30 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         *,
-        theta_dispersion_arcseconds: float = 1.0,
+        theta_dispersion: float = 1.0,
         theta_threshold: float = 0.001,
-        phi_dispersion_arcseconds: float = 1.0,
+        phi_dispersion: float = 1.0,
         phi_threshold: float = 0.001,
-        distance_ppm: float = 2.5,
+        distance: float = 2.5,
         distance_threshold: float = 0.0003,
     ) -> None:
+        """MP argument notes.
+
+        theta_dispersion: Angle in arcseconds.
+        phi_dispersion: Angle in arcseconds.
+        distance: Value in parts per million.
+        """
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
             "SetTrackerEdmTheodoliteUncertainties",
             "instrument_operations.set_tracker_edm_theodolite_uncertainties",
             {
                 "instrument": instrument,
-                "theta_dispersion_arcseconds": theta_dispersion_arcseconds,
+                "theta_dispersion": theta_dispersion,
                 "theta_threshold": theta_threshold,
-                "phi_dispersion_arcseconds": phi_dispersion_arcseconds,
+                "phi_dispersion": phi_dispersion,
                 "phi_threshold": phi_threshold,
-                "distance_ppm": distance_ppm,
+                "distance": distance,
                 "distance_threshold": distance_threshold,
             },
             None,
@@ -10911,15 +10988,19 @@ class RobotCalibrationApplianceNodeOperations:
         self,
         calibration_appliance_node: CollectionObjectName,
         *,
-        measurement_dwell_time_seconds: float = 0.0,
+        measurement_dwell_time: float = 0.0,
     ) -> None:
+        """MP argument notes.
+
+        measurement_dwell_time: Time in seconds.
+        """
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
             "SetCalibrationApplianceNodeInstrumentDwellTime",
             "robot_calibration_appliance_node_operations.set_calibration_appliance_node_instrument_dwell_time",
             {
                 "calibration_appliance_node": calibration_appliance_node,
-                "measurement_dwell_time_seconds": measurement_dwell_time_seconds,
+                "measurement_dwell_time": measurement_dwell_time,
             },
             None,
         )
@@ -11561,8 +11642,12 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         calibration_name: str = "",
-        measurement_frame_relative_to_tool: Transform | None = None,
+        measurement_frame: Transform | None = None,
     ) -> None:
+        """MP argument notes.
+
+        measurement_frame: MP qualifier: relative to tool.
+        """
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
             "SetRobotCalibrationMeasurementOffsetInToolFrame",
@@ -11570,7 +11655,7 @@ class RobotOperations:
             {
                 "machine_id": machine_id,
                 "calibration_name": calibration_name,
-                "measurement_frame_relative_to_tool": measurement_frame_relative_to_tool,
+                "measurement_frame": measurement_frame,
             },
             None,
         )
@@ -11581,8 +11666,12 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         calibration_name: str = "",
-        tool_frame_relative_to_flange: Transform | None = None,
+        tool_frame: Transform | None = None,
     ) -> None:
+        """MP argument notes.
+
+        tool_frame: MP qualifier: relative to flange.
+        """
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
             "SetRobotCalibrationToolFrame",
@@ -11590,7 +11679,7 @@ class RobotOperations:
             {
                 "machine_id": machine_id,
                 "calibration_name": calibration_name,
-                "tool_frame_relative_to_flange": tool_frame_relative_to_flange,
+                "tool_frame": tool_frame,
             },
             None,
         )
