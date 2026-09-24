@@ -367,8 +367,8 @@ def application_lifecycle_failure() -> FakeRpcError:
 
 
 def test_protocol_identity_matches_reviewed_compatibility_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.8.0-dev.1-sa-2024.1.0508.5"
-    assert SOURCE_REVISION == "3306d43253a1e4e41b75b83360ad4f6f2b7f60b7"
+    assert ARTIFACT_NAME == "briosa-protocol-0.8.0-sa-2024.1.0508.5"
+    assert SOURCE_REVISION == "e986a3ba91cb501416126eb5f3ecaeb7f9d97c05"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2024.1.0508.5"
