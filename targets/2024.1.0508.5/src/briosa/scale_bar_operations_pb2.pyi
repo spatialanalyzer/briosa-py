@@ -38,20 +38,20 @@ class GetScaleBarStatsResult(_message.Message):
     def __init__(self, nominal_length: _Optional[float] = ..., actual_length: _Optional[float] = ..., deviation: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ScaleBarCheckRequest(_message.Message):
-    __slots__ = ("scale_bar_point_a", "scale_bar_point_b", "current_temperature_f", "length_of_bar_at_68f", "material_cte_ppm_f", "tolerance")
+    __slots__ = ("scale_bar_point_a", "scale_bar_point_b", "current_temperature", "length_of_bar_at_68f", "material_cte", "tolerance")
     SCALE_BAR_POINT_A_FIELD_NUMBER: _ClassVar[int]
     SCALE_BAR_POINT_B_FIELD_NUMBER: _ClassVar[int]
-    CURRENT_TEMPERATURE_F_FIELD_NUMBER: _ClassVar[int]
+    CURRENT_TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
     LENGTH_OF_BAR_AT_68F_FIELD_NUMBER: _ClassVar[int]
-    MATERIAL_CTE_PPM_F_FIELD_NUMBER: _ClassVar[int]
+    MATERIAL_CTE_FIELD_NUMBER: _ClassVar[int]
     TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     scale_bar_point_a: _spatial_analyzer_values_pb2.PointName
     scale_bar_point_b: _spatial_analyzer_values_pb2.PointName
-    current_temperature_f: float
+    current_temperature: float
     length_of_bar_at_68f: float
-    material_cte_ppm_f: float
+    material_cte: float
     tolerance: float
-    def __init__(self, scale_bar_point_a: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., scale_bar_point_b: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., current_temperature_f: _Optional[float] = ..., length_of_bar_at_68f: _Optional[float] = ..., material_cte_ppm_f: _Optional[float] = ..., tolerance: _Optional[float] = ...) -> None: ...
+    def __init__(self, scale_bar_point_a: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., scale_bar_point_b: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., current_temperature: _Optional[float] = ..., length_of_bar_at_68f: _Optional[float] = ..., material_cte: _Optional[float] = ..., tolerance: _Optional[float] = ...) -> None: ...
 
 class ScaleBarCheckResult(_message.Message):
     __slots__ = ("deviation_at_68f", "execution")

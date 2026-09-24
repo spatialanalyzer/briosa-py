@@ -522,14 +522,14 @@ class SetCalibrationApplianceRealValueResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetRobotCalibrationMeasurementOffsetInToolFrameRequest(_message.Message):
-    __slots__ = ("machine_id", "calibration_name", "measurement_frame_relative_to_tool")
+    __slots__ = ("machine_id", "calibration_name", "measurement_frame")
     MACHINE_ID_FIELD_NUMBER: _ClassVar[int]
     CALIBRATION_NAME_FIELD_NUMBER: _ClassVar[int]
-    MEASUREMENT_FRAME_RELATIVE_TO_TOOL_FIELD_NUMBER: _ClassVar[int]
+    MEASUREMENT_FRAME_FIELD_NUMBER: _ClassVar[int]
     machine_id: _spatial_analyzer_values_pb2.CollectionMachineId
     calibration_name: str
-    measurement_frame_relative_to_tool: _spatial_analyzer_values_pb2.Transform
-    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionMachineId, _Mapping]] = ..., calibration_name: _Optional[str] = ..., measurement_frame_relative_to_tool: _Optional[_Union[_spatial_analyzer_values_pb2.Transform, _Mapping]] = ...) -> None: ...
+    measurement_frame: _spatial_analyzer_values_pb2.Transform
+    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionMachineId, _Mapping]] = ..., calibration_name: _Optional[str] = ..., measurement_frame: _Optional[_Union[_spatial_analyzer_values_pb2.Transform, _Mapping]] = ...) -> None: ...
 
 class SetRobotCalibrationMeasurementOffsetInToolFrameResult(_message.Message):
     __slots__ = ("execution",)
@@ -538,14 +538,14 @@ class SetRobotCalibrationMeasurementOffsetInToolFrameResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetRobotCalibrationToolFrameRequest(_message.Message):
-    __slots__ = ("machine_id", "calibration_name", "tool_frame_relative_to_flange")
+    __slots__ = ("machine_id", "calibration_name", "tool_frame")
     MACHINE_ID_FIELD_NUMBER: _ClassVar[int]
     CALIBRATION_NAME_FIELD_NUMBER: _ClassVar[int]
-    TOOL_FRAME_RELATIVE_TO_FLANGE_FIELD_NUMBER: _ClassVar[int]
+    TOOL_FRAME_FIELD_NUMBER: _ClassVar[int]
     machine_id: _spatial_analyzer_values_pb2.CollectionMachineId
     calibration_name: str
-    tool_frame_relative_to_flange: _spatial_analyzer_values_pb2.Transform
-    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionMachineId, _Mapping]] = ..., calibration_name: _Optional[str] = ..., tool_frame_relative_to_flange: _Optional[_Union[_spatial_analyzer_values_pb2.Transform, _Mapping]] = ...) -> None: ...
+    tool_frame: _spatial_analyzer_values_pb2.Transform
+    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionMachineId, _Mapping]] = ..., calibration_name: _Optional[str] = ..., tool_frame: _Optional[_Union[_spatial_analyzer_values_pb2.Transform, _Mapping]] = ...) -> None: ...
 
 class SetRobotCalibrationToolFrameResult(_message.Message):
     __slots__ = ("execution",)

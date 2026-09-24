@@ -205,10 +205,14 @@ class InstrumentModelResult:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class InstrumentPositionUpdate:
     x_or_r: float
-    y_or_theta_degrees: float
-    z_or_phi_degrees: float
-    time_since_update_seconds: float
-    timestamp_approximate: str
+    # Angle in degrees.
+    y_or_theta: float
+    # Angle in degrees.
+    z_or_phi: float
+    # Time in seconds.
+    time_since_update: float
+    # MP qualifier: Approximate.
+    timestamp: str
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -219,9 +223,12 @@ class InstrumentTargetsAndModeProfiles:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class InstrumentWeatherSetting:
-    temperature_fahrenheit: float
-    pressure_mmhg: float
-    relative_humidity_percent: float
+    # Temperature in degrees Fahrenheit.
+    temperature: float
+    # Pressure in millimeters of mercury.
+    pressure: float
+    # Relative humidity in percent.
+    relative_humidity: float
     set_automatically: bool
 
 
@@ -240,11 +247,14 @@ class LastInstrumentIndexResult:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class LrSelfTestResult:
-    reference_arm_length_inches: float
+    # Length in inches.
+    reference_arm_length: float
     reference_arm_quality: float
     mirror_measurement_count: int
-    mirror_measurement_range_mean_inches: float
-    mirror_measurement_range_standard_deviation_inches: float
+    # Length in inches.
+    mirror_measurement_range_mean: float
+    # Length in inches.
+    mirror_measurement_range_standard_deviation: float
     mirror_measurement_quality_mean: float
     mirror_measurement_quality_standard_deviation: float
     passed_reference_arm_quality_threshold: bool
@@ -323,11 +333,14 @@ class RobotModelLinkParameters:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class TrackerEdmTheodoliteUncertainties:
-    theta_dispersion_arcseconds: float
+    # Angle in arcseconds.
+    theta_dispersion: float
     theta_threshold: float
-    phi_dispersion_arcseconds: float
+    # Angle in arcseconds.
+    phi_dispersion: float
     phi_threshold: float
-    distance_ppm: float
+    # Value in parts per million.
+    distance: float
     distance_threshold: float
 
 

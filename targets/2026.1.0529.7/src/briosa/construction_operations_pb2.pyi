@@ -343,7 +343,7 @@ class CreateMinMaxVectorGroupCalloutResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class CreatePointCalloutRequest(_message.Message):
-    __slots__ = ("destination_callout_view", "point", "view_x_position", "view_y_position", "show_point_collection", "show_point_group", "show_point_target", "show_x_r", "show_y_theta", "show_z_phi", "show_units", "show_ux_ur", "show_uy_utheta", "show_uz_uphi", "show_umag", "desired_coordinate_system", "notes", "use_default_placement")
+    __slots__ = ("destination_callout_view", "point", "view_x_position", "view_y_position", "show_point_collection", "show_point_group", "show_point_target", "show_x", "show_y", "show_z", "show_units", "show_ux", "show_uy", "show_uz", "show_umag", "desired_coordinate_system", "notes", "use_default_placement")
     DESTINATION_CALLOUT_VIEW_FIELD_NUMBER: _ClassVar[int]
     POINT_FIELD_NUMBER: _ClassVar[int]
     VIEW_X_POSITION_FIELD_NUMBER: _ClassVar[int]
@@ -351,13 +351,13 @@ class CreatePointCalloutRequest(_message.Message):
     SHOW_POINT_COLLECTION_FIELD_NUMBER: _ClassVar[int]
     SHOW_POINT_GROUP_FIELD_NUMBER: _ClassVar[int]
     SHOW_POINT_TARGET_FIELD_NUMBER: _ClassVar[int]
-    SHOW_X_R_FIELD_NUMBER: _ClassVar[int]
-    SHOW_Y_THETA_FIELD_NUMBER: _ClassVar[int]
-    SHOW_Z_PHI_FIELD_NUMBER: _ClassVar[int]
+    SHOW_X_FIELD_NUMBER: _ClassVar[int]
+    SHOW_Y_FIELD_NUMBER: _ClassVar[int]
+    SHOW_Z_FIELD_NUMBER: _ClassVar[int]
     SHOW_UNITS_FIELD_NUMBER: _ClassVar[int]
-    SHOW_UX_UR_FIELD_NUMBER: _ClassVar[int]
-    SHOW_UY_UTHETA_FIELD_NUMBER: _ClassVar[int]
-    SHOW_UZ_UPHI_FIELD_NUMBER: _ClassVar[int]
+    SHOW_UX_FIELD_NUMBER: _ClassVar[int]
+    SHOW_UY_FIELD_NUMBER: _ClassVar[int]
+    SHOW_UZ_FIELD_NUMBER: _ClassVar[int]
     SHOW_UMAG_FIELD_NUMBER: _ClassVar[int]
     DESIRED_COORDINATE_SYSTEM_FIELD_NUMBER: _ClassVar[int]
     NOTES_FIELD_NUMBER: _ClassVar[int]
@@ -369,18 +369,18 @@ class CreatePointCalloutRequest(_message.Message):
     show_point_collection: bool
     show_point_group: bool
     show_point_target: bool
-    show_x_r: bool
-    show_y_theta: bool
-    show_z_phi: bool
+    show_x: bool
+    show_y: bool
+    show_z: bool
     show_units: bool
-    show_ux_ur: bool
-    show_uy_utheta: bool
-    show_uz_uphi: bool
+    show_ux: bool
+    show_uy: bool
+    show_uz: bool
     show_umag: bool
     desired_coordinate_system: _spatial_analyzer_values_pb2.CoordinateSystemType
     notes: _containers.RepeatedScalarFieldContainer[str]
     use_default_placement: bool
-    def __init__(self, destination_callout_view: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]] = ..., point: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., view_x_position: _Optional[float] = ..., view_y_position: _Optional[float] = ..., show_point_collection: bool = ..., show_point_group: bool = ..., show_point_target: bool = ..., show_x_r: bool = ..., show_y_theta: bool = ..., show_z_phi: bool = ..., show_units: bool = ..., show_ux_ur: bool = ..., show_uy_utheta: bool = ..., show_uz_uphi: bool = ..., show_umag: bool = ..., desired_coordinate_system: _Optional[_Union[_spatial_analyzer_values_pb2.CoordinateSystemType, str]] = ..., notes: _Optional[_Iterable[str]] = ..., use_default_placement: bool = ...) -> None: ...
+    def __init__(self, destination_callout_view: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]] = ..., point: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., view_x_position: _Optional[float] = ..., view_y_position: _Optional[float] = ..., show_point_collection: bool = ..., show_point_group: bool = ..., show_point_target: bool = ..., show_x: bool = ..., show_y: bool = ..., show_z: bool = ..., show_units: bool = ..., show_ux: bool = ..., show_uy: bool = ..., show_uz: bool = ..., show_umag: bool = ..., desired_coordinate_system: _Optional[_Union[_spatial_analyzer_values_pb2.CoordinateSystemType, str]] = ..., notes: _Optional[_Iterable[str]] = ..., use_default_placement: bool = ...) -> None: ...
 
 class CreatePointCalloutResult(_message.Message):
     __slots__ = ("execution",)
@@ -2909,20 +2909,20 @@ class GetGradientAtProjectedPointOnSurfaceResult(_message.Message):
     def __init__(self, gradient: _Optional[_Union[ProjectedPointGradient, _Mapping]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetGradientAtProjectedPointOnSurfaceEdgeRequest(_message.Message):
-    __slots__ = ("point_to_project", "surface_edge_b_spline", "surface_name", "edge_offset_direction", "edge_offset_distance", "generate_output_vector_lines")
+    __slots__ = ("point_to_project", "surface_edge", "surface_name", "edge_offset_direction", "edge_offset_distance", "generate_output_vector_lines")
     POINT_TO_PROJECT_FIELD_NUMBER: _ClassVar[int]
-    SURFACE_EDGE_B_SPLINE_FIELD_NUMBER: _ClassVar[int]
+    SURFACE_EDGE_FIELD_NUMBER: _ClassVar[int]
     SURFACE_NAME_FIELD_NUMBER: _ClassVar[int]
     EDGE_OFFSET_DIRECTION_FIELD_NUMBER: _ClassVar[int]
     EDGE_OFFSET_DISTANCE_FIELD_NUMBER: _ClassVar[int]
     GENERATE_OUTPUT_VECTOR_LINES_FIELD_NUMBER: _ClassVar[int]
     point_to_project: _spatial_analyzer_values_pb2.PointName
-    surface_edge_b_spline: _spatial_analyzer_values_pb2.CollectionObjectName
+    surface_edge: _spatial_analyzer_values_pb2.CollectionObjectName
     surface_name: _spatial_analyzer_values_pb2.CollectionObjectName
     edge_offset_direction: _spatial_analyzer_values_pb2.Vector
     edge_offset_distance: float
     generate_output_vector_lines: bool
-    def __init__(self, point_to_project: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., surface_edge_b_spline: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., surface_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., edge_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., edge_offset_distance: _Optional[float] = ..., generate_output_vector_lines: bool = ...) -> None: ...
+    def __init__(self, point_to_project: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., surface_edge: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., surface_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., edge_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., edge_offset_distance: _Optional[float] = ..., generate_output_vector_lines: bool = ...) -> None: ...
 
 class GetGradientAtProjectedPointOnSurfaceEdgeResult(_message.Message):
     __slots__ = ("gradient", "execution")
@@ -3105,20 +3105,20 @@ class ConstructPointsShiftedInWorkingFrameResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ConstructPointsCylindricallyShiftedRequest(_message.Message):
-    __slots__ = ("reference_object_name", "original_points", "group_for_new_points", "radial_shift", "theta_shift_degrees", "planar_shift")
+    __slots__ = ("reference_object_name", "original_points", "group_for_new_points", "radial_shift", "theta_shift", "planar_shift")
     REFERENCE_OBJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     ORIGINAL_POINTS_FIELD_NUMBER: _ClassVar[int]
     GROUP_FOR_NEW_POINTS_FIELD_NUMBER: _ClassVar[int]
     RADIAL_SHIFT_FIELD_NUMBER: _ClassVar[int]
-    THETA_SHIFT_DEGREES_FIELD_NUMBER: _ClassVar[int]
+    THETA_SHIFT_FIELD_NUMBER: _ClassVar[int]
     PLANAR_SHIFT_FIELD_NUMBER: _ClassVar[int]
     reference_object_name: _spatial_analyzer_values_pb2.CollectionObjectName
     original_points: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.PointName]
     group_for_new_points: _spatial_analyzer_values_pb2.CollectionObjectName
     radial_shift: float
-    theta_shift_degrees: float
+    theta_shift: float
     planar_shift: float
-    def __init__(self, reference_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., original_points: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]]] = ..., group_for_new_points: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., radial_shift: _Optional[float] = ..., theta_shift_degrees: _Optional[float] = ..., planar_shift: _Optional[float] = ...) -> None: ...
+    def __init__(self, reference_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., original_points: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]]] = ..., group_for_new_points: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., radial_shift: _Optional[float] = ..., theta_shift: _Optional[float] = ..., planar_shift: _Optional[float] = ...) -> None: ...
 
 class ConstructPointsCylindricallyShiftedResult(_message.Message):
     __slots__ = ("execution",)
@@ -3353,16 +3353,16 @@ class ClearHiddenPointBarDatabaseResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class CreateHiddenPointRodRequest(_message.Message):
-    __slots__ = ("hidden_point_rod_name", "target_to_target_distance", "target_to_tip_distance", "inter_point_tolerance")
+    __slots__ = ("hidden_point_rod_name", "a_to_b_distance", "a_to_c_distance", "inter_point_tolerance")
     HIDDEN_POINT_ROD_NAME_FIELD_NUMBER: _ClassVar[int]
-    TARGET_TO_TARGET_DISTANCE_FIELD_NUMBER: _ClassVar[int]
-    TARGET_TO_TIP_DISTANCE_FIELD_NUMBER: _ClassVar[int]
+    A_TO_B_DISTANCE_FIELD_NUMBER: _ClassVar[int]
+    A_TO_C_DISTANCE_FIELD_NUMBER: _ClassVar[int]
     INTER_POINT_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     hidden_point_rod_name: str
-    target_to_target_distance: float
-    target_to_tip_distance: float
+    a_to_b_distance: float
+    a_to_c_distance: float
     inter_point_tolerance: float
-    def __init__(self, hidden_point_rod_name: _Optional[str] = ..., target_to_target_distance: _Optional[float] = ..., target_to_tip_distance: _Optional[float] = ..., inter_point_tolerance: _Optional[float] = ...) -> None: ...
+    def __init__(self, hidden_point_rod_name: _Optional[str] = ..., a_to_b_distance: _Optional[float] = ..., a_to_c_distance: _Optional[float] = ..., inter_point_tolerance: _Optional[float] = ...) -> None: ...
 
 class CreateHiddenPointRodResult(_message.Message):
     __slots__ = ("hidden_point_rod_index", "execution")
@@ -3467,14 +3467,14 @@ class ConstructScaleBarResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ConstructSphereRequest(_message.Message):
-    __slots__ = ("sphere_name", "sphere_center_in_working_coordinates", "sphere_radius")
+    __slots__ = ("sphere_name", "sphere_center", "sphere_radius")
     SPHERE_NAME_FIELD_NUMBER: _ClassVar[int]
-    SPHERE_CENTER_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
+    SPHERE_CENTER_FIELD_NUMBER: _ClassVar[int]
     SPHERE_RADIUS_FIELD_NUMBER: _ClassVar[int]
     sphere_name: _spatial_analyzer_values_pb2.CollectionObjectName
-    sphere_center_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
+    sphere_center: _spatial_analyzer_values_pb2.Vector
     sphere_radius: float
-    def __init__(self, sphere_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., sphere_center_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., sphere_radius: _Optional[float] = ...) -> None: ...
+    def __init__(self, sphere_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., sphere_center: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., sphere_radius: _Optional[float] = ...) -> None: ...
 
 class ConstructSphereResult(_message.Message):
     __slots__ = ("execution",)

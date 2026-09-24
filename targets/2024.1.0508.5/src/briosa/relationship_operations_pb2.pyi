@@ -157,20 +157,20 @@ class GetGeomRelationshipAutoVectorsRequest(_message.Message):
     def __init__(self, relationship_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class GetGeomRelationshipAutoVectorsResult(_message.Message):
-    __slots__ = ("auto_vectors_nominal_avn_enabled", "auto_vectors_nominal_avn_name", "auto_vectors_fit_avf_enabled", "auto_vectors_fit_avf_name", "points_type", "execution")
-    AUTO_VECTORS_NOMINAL_AVN_ENABLED_FIELD_NUMBER: _ClassVar[int]
-    AUTO_VECTORS_NOMINAL_AVN_NAME_FIELD_NUMBER: _ClassVar[int]
-    AUTO_VECTORS_FIT_AVF_ENABLED_FIELD_NUMBER: _ClassVar[int]
-    AUTO_VECTORS_FIT_AVF_NAME_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("auto_vectors_nominal_enabled", "auto_vectors_nominal_name", "auto_vectors_fit_enabled", "auto_vectors_fit_name", "points_type", "execution")
+    AUTO_VECTORS_NOMINAL_ENABLED_FIELD_NUMBER: _ClassVar[int]
+    AUTO_VECTORS_NOMINAL_NAME_FIELD_NUMBER: _ClassVar[int]
+    AUTO_VECTORS_FIT_ENABLED_FIELD_NUMBER: _ClassVar[int]
+    AUTO_VECTORS_FIT_NAME_FIELD_NUMBER: _ClassVar[int]
     POINTS_TYPE_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    auto_vectors_nominal_avn_enabled: bool
-    auto_vectors_nominal_avn_name: _spatial_analyzer_values_pb2.CollectionObjectName
-    auto_vectors_fit_avf_enabled: bool
-    auto_vectors_fit_avf_name: _spatial_analyzer_values_pb2.CollectionObjectName
+    auto_vectors_nominal_enabled: bool
+    auto_vectors_nominal_name: _spatial_analyzer_values_pb2.CollectionObjectName
+    auto_vectors_fit_enabled: bool
+    auto_vectors_fit_name: _spatial_analyzer_values_pb2.CollectionObjectName
     points_type: str
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, auto_vectors_nominal_avn_enabled: bool = ..., auto_vectors_nominal_avn_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., auto_vectors_fit_avf_enabled: bool = ..., auto_vectors_fit_avf_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., points_type: _Optional[str] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, auto_vectors_nominal_enabled: bool = ..., auto_vectors_nominal_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., auto_vectors_fit_enabled: bool = ..., auto_vectors_fit_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., points_type: _Optional[str] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetGeomRelationshipCardinalPointsRequest(_message.Message):
     __slots__ = ("relationship_name",)
@@ -1005,24 +1005,24 @@ class SetRelationshipToleranceVectorTypeResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetRelationshipVoxelCloudDisplayRequest(_message.Message):
-    __slots__ = ("relationship_name", "enable_voxel_cloud_display", "voxel_size_1_0_autodetect", "min_pts_count_per_voxel", "voxel_rendering_diameter_1_0_fast", "surface_analysis_mode", "colorization_options", "show_color_bar_in_view")
+    __slots__ = ("relationship_name", "enable_voxel_cloud_display", "voxel_size", "min_pts_count_per_voxel", "voxel_rendering_diameter", "surface_analysis_mode", "colorization_options", "show_color_bar_in_view")
     RELATIONSHIP_NAME_FIELD_NUMBER: _ClassVar[int]
     ENABLE_VOXEL_CLOUD_DISPLAY_FIELD_NUMBER: _ClassVar[int]
-    VOXEL_SIZE_1_0_AUTODETECT_FIELD_NUMBER: _ClassVar[int]
+    VOXEL_SIZE_FIELD_NUMBER: _ClassVar[int]
     MIN_PTS_COUNT_PER_VOXEL_FIELD_NUMBER: _ClassVar[int]
-    VOXEL_RENDERING_DIAMETER_1_0_FAST_FIELD_NUMBER: _ClassVar[int]
+    VOXEL_RENDERING_DIAMETER_FIELD_NUMBER: _ClassVar[int]
     SURFACE_ANALYSIS_MODE_FIELD_NUMBER: _ClassVar[int]
     COLORIZATION_OPTIONS_FIELD_NUMBER: _ClassVar[int]
     SHOW_COLOR_BAR_IN_VIEW_FIELD_NUMBER: _ClassVar[int]
     relationship_name: _spatial_analyzer_values_pb2.CollectionObjectName
     enable_voxel_cloud_display: bool
-    voxel_size_1_0_autodetect: float
+    voxel_size: float
     min_pts_count_per_voxel: int
-    voxel_rendering_diameter_1_0_fast: float
+    voxel_rendering_diameter: float
     surface_analysis_mode: _spatial_analyzer_values_pb2.SurfaceAnalysisMode
     colorization_options: _spatial_analyzer_values_pb2.ColorizationOptions
     show_color_bar_in_view: bool
-    def __init__(self, relationship_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., enable_voxel_cloud_display: bool = ..., voxel_size_1_0_autodetect: _Optional[float] = ..., min_pts_count_per_voxel: _Optional[int] = ..., voxel_rendering_diameter_1_0_fast: _Optional[float] = ..., surface_analysis_mode: _Optional[_Union[_spatial_analyzer_values_pb2.SurfaceAnalysisMode, str]] = ..., colorization_options: _Optional[_Union[_spatial_analyzer_values_pb2.ColorizationOptions, _Mapping]] = ..., show_color_bar_in_view: bool = ...) -> None: ...
+    def __init__(self, relationship_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., enable_voxel_cloud_display: bool = ..., voxel_size: _Optional[float] = ..., min_pts_count_per_voxel: _Optional[int] = ..., voxel_rendering_diameter: _Optional[float] = ..., surface_analysis_mode: _Optional[_Union[_spatial_analyzer_values_pb2.SurfaceAnalysisMode, str]] = ..., colorization_options: _Optional[_Union[_spatial_analyzer_values_pb2.ColorizationOptions, _Mapping]] = ..., show_color_bar_in_view: bool = ...) -> None: ...
 
 class SetRelationshipVoxelCloudDisplayResult(_message.Message):
     __slots__ = ("execution",)
@@ -1937,7 +1937,7 @@ class RelationshipStatusFlags(_message.Message):
     def __init__(self, dormant: bool = ..., success: bool = ..., measured: bool = ..., failed: bool = ..., unmeasured: bool = ...) -> None: ...
 
 class RelationshipWatchWindowTemplateRequest(_message.Message):
-    __slots__ = ("watch_window_template_name", "linear_precision", "angular_precision", "font", "text_color", "background_color", "highlight_color", "show_deviation_x_rx", "show_deviation_y_ry", "show_deviation_z_rz", "show_deviation_magnitude", "udp_network_transmit_settings", "transparent_background", "hide_units")
+    __slots__ = ("watch_window_template_name", "linear_precision", "angular_precision", "font", "text_color", "background_color", "highlight_color", "show_deviation_x", "show_deviation_y", "show_deviation_z", "show_deviation_magnitude", "udp_network_transmit_settings", "transparent_background", "hide_units")
     WATCH_WINDOW_TEMPLATE_NAME_FIELD_NUMBER: _ClassVar[int]
     LINEAR_PRECISION_FIELD_NUMBER: _ClassVar[int]
     ANGULAR_PRECISION_FIELD_NUMBER: _ClassVar[int]
@@ -1945,9 +1945,9 @@ class RelationshipWatchWindowTemplateRequest(_message.Message):
     TEXT_COLOR_FIELD_NUMBER: _ClassVar[int]
     BACKGROUND_COLOR_FIELD_NUMBER: _ClassVar[int]
     HIGHLIGHT_COLOR_FIELD_NUMBER: _ClassVar[int]
-    SHOW_DEVIATION_X_RX_FIELD_NUMBER: _ClassVar[int]
-    SHOW_DEVIATION_Y_RY_FIELD_NUMBER: _ClassVar[int]
-    SHOW_DEVIATION_Z_RZ_FIELD_NUMBER: _ClassVar[int]
+    SHOW_DEVIATION_X_FIELD_NUMBER: _ClassVar[int]
+    SHOW_DEVIATION_Y_FIELD_NUMBER: _ClassVar[int]
+    SHOW_DEVIATION_Z_FIELD_NUMBER: _ClassVar[int]
     SHOW_DEVIATION_MAGNITUDE_FIELD_NUMBER: _ClassVar[int]
     UDP_NETWORK_TRANSMIT_SETTINGS_FIELD_NUMBER: _ClassVar[int]
     TRANSPARENT_BACKGROUND_FIELD_NUMBER: _ClassVar[int]
@@ -1959,14 +1959,14 @@ class RelationshipWatchWindowTemplateRequest(_message.Message):
     text_color: _spatial_analyzer_values_pb2.Color
     background_color: _spatial_analyzer_values_pb2.Color
     highlight_color: _spatial_analyzer_values_pb2.Color
-    show_deviation_x_rx: bool
-    show_deviation_y_ry: bool
-    show_deviation_z_rz: bool
+    show_deviation_x: bool
+    show_deviation_y: bool
+    show_deviation_z: bool
     show_deviation_magnitude: bool
     udp_network_transmit_settings: RelationshipWatchWindowUdpSettings
     transparent_background: bool
     hide_units: bool
-    def __init__(self, watch_window_template_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., linear_precision: _Optional[int] = ..., angular_precision: _Optional[int] = ..., font: _Optional[_Union[_spatial_analyzer_values_pb2.Font, _Mapping]] = ..., text_color: _Optional[_Union[_spatial_analyzer_values_pb2.Color, _Mapping]] = ..., background_color: _Optional[_Union[_spatial_analyzer_values_pb2.Color, _Mapping]] = ..., highlight_color: _Optional[_Union[_spatial_analyzer_values_pb2.Color, _Mapping]] = ..., show_deviation_x_rx: bool = ..., show_deviation_y_ry: bool = ..., show_deviation_z_rz: bool = ..., show_deviation_magnitude: bool = ..., udp_network_transmit_settings: _Optional[_Union[RelationshipWatchWindowUdpSettings, _Mapping]] = ..., transparent_background: bool = ..., hide_units: bool = ...) -> None: ...
+    def __init__(self, watch_window_template_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., linear_precision: _Optional[int] = ..., angular_precision: _Optional[int] = ..., font: _Optional[_Union[_spatial_analyzer_values_pb2.Font, _Mapping]] = ..., text_color: _Optional[_Union[_spatial_analyzer_values_pb2.Color, _Mapping]] = ..., background_color: _Optional[_Union[_spatial_analyzer_values_pb2.Color, _Mapping]] = ..., highlight_color: _Optional[_Union[_spatial_analyzer_values_pb2.Color, _Mapping]] = ..., show_deviation_x: bool = ..., show_deviation_y: bool = ..., show_deviation_z: bool = ..., show_deviation_magnitude: bool = ..., udp_network_transmit_settings: _Optional[_Union[RelationshipWatchWindowUdpSettings, _Mapping]] = ..., transparent_background: bool = ..., hide_units: bool = ...) -> None: ...
 
 class RelationshipWatchWindowTemplateResult(_message.Message):
     __slots__ = ("execution",)

@@ -9,16 +9,16 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class AngleBetweenLineAndPlaneRequest(_message.Message):
-    __slots__ = ("selected_line", "selected_plane", "nominal_angle", "angle_tolerance_0_0_for_none")
+    __slots__ = ("selected_line", "selected_plane", "nominal_angle", "angle_tolerance")
     SELECTED_LINE_FIELD_NUMBER: _ClassVar[int]
     SELECTED_PLANE_FIELD_NUMBER: _ClassVar[int]
     NOMINAL_ANGLE_FIELD_NUMBER: _ClassVar[int]
-    ANGLE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    ANGLE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     selected_line: _spatial_analyzer_values_pb2.CollectionObjectName
     selected_plane: _spatial_analyzer_values_pb2.CollectionObjectName
     nominal_angle: float
-    angle_tolerance_0_0_for_none: float
-    def __init__(self, selected_line: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., selected_plane: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., nominal_angle: _Optional[float] = ..., angle_tolerance_0_0_for_none: _Optional[float] = ...) -> None: ...
+    angle_tolerance: float
+    def __init__(self, selected_line: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., selected_plane: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., nominal_angle: _Optional[float] = ..., angle_tolerance: _Optional[float] = ...) -> None: ...
 
 class AngleBetweenLineAndPlaneResult(_message.Message):
     __slots__ = ("angle", "execution")
@@ -29,16 +29,16 @@ class AngleBetweenLineAndPlaneResult(_message.Message):
     def __init__(self, angle: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class AngleBetweenTwoLinesRequest(_message.Message):
-    __slots__ = ("line_1", "line_2", "nominal_angle", "angle_tolerance_0_0_for_none")
+    __slots__ = ("line_1", "line_2", "nominal_angle", "angle_tolerance")
     LINE_1_FIELD_NUMBER: _ClassVar[int]
     LINE_2_FIELD_NUMBER: _ClassVar[int]
     NOMINAL_ANGLE_FIELD_NUMBER: _ClassVar[int]
-    ANGLE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    ANGLE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     line_1: _spatial_analyzer_values_pb2.CollectionObjectName
     line_2: _spatial_analyzer_values_pb2.CollectionObjectName
     nominal_angle: float
-    angle_tolerance_0_0_for_none: float
-    def __init__(self, line_1: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., line_2: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., nominal_angle: _Optional[float] = ..., angle_tolerance_0_0_for_none: _Optional[float] = ...) -> None: ...
+    angle_tolerance: float
+    def __init__(self, line_1: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., line_2: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., nominal_angle: _Optional[float] = ..., angle_tolerance: _Optional[float] = ...) -> None: ...
 
 class AngleBetweenTwoLinesResult(_message.Message):
     __slots__ = ("angle", "execution")
@@ -49,16 +49,16 @@ class AngleBetweenTwoLinesResult(_message.Message):
     def __init__(self, angle: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class AngleBetweenTwoPlanesNormalsRequest(_message.Message):
-    __slots__ = ("plane_a", "plane_b", "nominal_angle", "angle_tolerance_0_0_for_none")
+    __slots__ = ("plane_a", "plane_b", "nominal_angle", "angle_tolerance")
     PLANE_A_FIELD_NUMBER: _ClassVar[int]
     PLANE_B_FIELD_NUMBER: _ClassVar[int]
     NOMINAL_ANGLE_FIELD_NUMBER: _ClassVar[int]
-    ANGLE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    ANGLE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     plane_a: _spatial_analyzer_values_pb2.CollectionObjectName
     plane_b: _spatial_analyzer_values_pb2.CollectionObjectName
     nominal_angle: float
-    angle_tolerance_0_0_for_none: float
-    def __init__(self, plane_a: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., plane_b: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., nominal_angle: _Optional[float] = ..., angle_tolerance_0_0_for_none: _Optional[float] = ...) -> None: ...
+    angle_tolerance: float
+    def __init__(self, plane_a: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., plane_b: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., nominal_angle: _Optional[float] = ..., angle_tolerance: _Optional[float] = ...) -> None: ...
 
 class AngleBetweenTwoPlanesNormalsResult(_message.Message):
     __slots__ = ("angle", "execution")
@@ -69,12 +69,12 @@ class AngleBetweenTwoPlanesNormalsResult(_message.Message):
     def __init__(self, angle: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class BestFitTransformationGroupToGroupRequest(_message.Message):
-    __slots__ = ("reference_group", "corresponding_group", "show_interface", "rms_tolerance_0_0_for_none", "maximum_absolute_tolerance_0_0_for_none", "allow_scale", "allow_x", "allow_y", "allow_z", "allow_rx", "allow_ry", "allow_rz", "lock_degrees_of_freedom", "generate_event", "file_path_for_csv_text_report_requires_show_interface_true")
+    __slots__ = ("reference_group", "corresponding_group", "show_interface", "rms_tolerance", "maximum_absolute_tolerance", "allow_scale", "allow_x", "allow_y", "allow_z", "allow_rx", "allow_ry", "allow_rz", "lock_degrees_of_freedom", "generate_event", "file_path_for_csv_text_report")
     REFERENCE_GROUP_FIELD_NUMBER: _ClassVar[int]
     CORRESPONDING_GROUP_FIELD_NUMBER: _ClassVar[int]
     SHOW_INTERFACE_FIELD_NUMBER: _ClassVar[int]
-    RMS_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_ABSOLUTE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    RMS_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_ABSOLUTE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     ALLOW_SCALE_FIELD_NUMBER: _ClassVar[int]
     ALLOW_X_FIELD_NUMBER: _ClassVar[int]
     ALLOW_Y_FIELD_NUMBER: _ClassVar[int]
@@ -84,12 +84,12 @@ class BestFitTransformationGroupToGroupRequest(_message.Message):
     ALLOW_RZ_FIELD_NUMBER: _ClassVar[int]
     LOCK_DEGREES_OF_FREEDOM_FIELD_NUMBER: _ClassVar[int]
     GENERATE_EVENT_FIELD_NUMBER: _ClassVar[int]
-    FILE_PATH_FOR_CSV_TEXT_REPORT_REQUIRES_SHOW_INTERFACE_TRUE_FIELD_NUMBER: _ClassVar[int]
+    FILE_PATH_FOR_CSV_TEXT_REPORT_FIELD_NUMBER: _ClassVar[int]
     reference_group: _spatial_analyzer_values_pb2.CollectionObjectName
     corresponding_group: _spatial_analyzer_values_pb2.CollectionObjectName
     show_interface: bool
-    rms_tolerance_0_0_for_none: float
-    maximum_absolute_tolerance_0_0_for_none: float
+    rms_tolerance: float
+    maximum_absolute_tolerance: float
     allow_scale: bool
     allow_x: bool
     allow_y: bool
@@ -99,8 +99,8 @@ class BestFitTransformationGroupToGroupRequest(_message.Message):
     allow_rz: bool
     lock_degrees_of_freedom: bool
     generate_event: bool
-    file_path_for_csv_text_report_requires_show_interface_true: _spatial_analyzer_values_pb2.FileReference
-    def __init__(self, reference_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., corresponding_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., show_interface: bool = ..., rms_tolerance_0_0_for_none: _Optional[float] = ..., maximum_absolute_tolerance_0_0_for_none: _Optional[float] = ..., allow_scale: bool = ..., allow_x: bool = ..., allow_y: bool = ..., allow_z: bool = ..., allow_rx: bool = ..., allow_ry: bool = ..., allow_rz: bool = ..., lock_degrees_of_freedom: bool = ..., generate_event: bool = ..., file_path_for_csv_text_report_requires_show_interface_true: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ...) -> None: ...
+    file_path_for_csv_text_report: _spatial_analyzer_values_pb2.FileReference
+    def __init__(self, reference_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., corresponding_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., show_interface: bool = ..., rms_tolerance: _Optional[float] = ..., maximum_absolute_tolerance: _Optional[float] = ..., allow_scale: bool = ..., allow_x: bool = ..., allow_y: bool = ..., allow_z: bool = ..., allow_rx: bool = ..., allow_ry: bool = ..., allow_rz: bool = ..., lock_degrees_of_freedom: bool = ..., generate_event: bool = ..., file_path_for_csv_text_report: _Optional[_Union[_spatial_analyzer_values_pb2.FileReference, _Mapping]] = ...) -> None: ...
 
 class BestFitTransformationGroupToGroupResult(_message.Message):
     __slots__ = ("transform_in_working", "optimum_transform", "rms_deviation", "maximum_absolute_deviation", "number_of_unknowns", "number_of_equations", "robustness", "execution")
@@ -183,24 +183,24 @@ class CreatePointUncertaintyFieldsResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class FitGeometryToPointGroupRequest(_message.Message):
-    __slots__ = ("geometry_type", "group_to_fit", "resulting_object_name", "fit_profile_name", "report_deviations", "fit_interface_tolerance_1_0_use_profile", "ignore_out_of_tolerance_points", "starting_condition_geometry_optional")
+    __slots__ = ("geometry_type", "group_to_fit", "resulting_object_name", "fit_profile_name", "report_deviations", "fit_interface_tolerance", "ignore_out_of_tolerance_points", "starting_condition_geometry")
     GEOMETRY_TYPE_FIELD_NUMBER: _ClassVar[int]
     GROUP_TO_FIT_FIELD_NUMBER: _ClassVar[int]
     RESULTING_OBJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     REPORT_DEVIATIONS_FIELD_NUMBER: _ClassVar[int]
-    FIT_INTERFACE_TOLERANCE_1_0_USE_PROFILE_FIELD_NUMBER: _ClassVar[int]
+    FIT_INTERFACE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     IGNORE_OUT_OF_TOLERANCE_POINTS_FIELD_NUMBER: _ClassVar[int]
-    STARTING_CONDITION_GEOMETRY_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    STARTING_CONDITION_GEOMETRY_FIELD_NUMBER: _ClassVar[int]
     geometry_type: _spatial_analyzer_values_pb2.GeometryType
     group_to_fit: _spatial_analyzer_values_pb2.CollectionObjectName
     resulting_object_name: _spatial_analyzer_values_pb2.CollectionObjectName
     fit_profile_name: str
     report_deviations: bool
-    fit_interface_tolerance_1_0_use_profile: float
+    fit_interface_tolerance: float
     ignore_out_of_tolerance_points: bool
-    starting_condition_geometry_optional: _spatial_analyzer_values_pb2.CollectionObjectName
-    def __init__(self, geometry_type: _Optional[_Union[_spatial_analyzer_values_pb2.GeometryType, str]] = ..., group_to_fit: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., fit_profile_name: _Optional[str] = ..., report_deviations: bool = ..., fit_interface_tolerance_1_0_use_profile: _Optional[float] = ..., ignore_out_of_tolerance_points: bool = ..., starting_condition_geometry_optional: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
+    starting_condition_geometry: _spatial_analyzer_values_pb2.CollectionObjectName
+    def __init__(self, geometry_type: _Optional[_Union[_spatial_analyzer_values_pb2.GeometryType, str]] = ..., group_to_fit: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., fit_profile_name: _Optional[str] = ..., report_deviations: bool = ..., fit_interface_tolerance: _Optional[float] = ..., ignore_out_of_tolerance_points: bool = ..., starting_condition_geometry: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class FitGeometryToPointGroupResult(_message.Message):
     __slots__ = ("execution",)
@@ -209,26 +209,26 @@ class FitGeometryToPointGroupResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class FitGeometryToPointGroupProjectedToPlaneRequest(_message.Message):
-    __slots__ = ("geometry_type", "group_to_fit", "plane_name", "resulting_object_name", "fit_profile_name", "report_deviations", "fit_interface_tolerance_1_0_use_profile", "ignore_out_of_tolerance_points", "starting_condition_geometry_optional")
+    __slots__ = ("geometry_type", "group_to_fit", "plane_name", "resulting_object_name", "fit_profile_name", "report_deviations", "fit_interface_tolerance", "ignore_out_of_tolerance_points", "starting_condition_geometry")
     GEOMETRY_TYPE_FIELD_NUMBER: _ClassVar[int]
     GROUP_TO_FIT_FIELD_NUMBER: _ClassVar[int]
     PLANE_NAME_FIELD_NUMBER: _ClassVar[int]
     RESULTING_OBJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     REPORT_DEVIATIONS_FIELD_NUMBER: _ClassVar[int]
-    FIT_INTERFACE_TOLERANCE_1_0_USE_PROFILE_FIELD_NUMBER: _ClassVar[int]
+    FIT_INTERFACE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     IGNORE_OUT_OF_TOLERANCE_POINTS_FIELD_NUMBER: _ClassVar[int]
-    STARTING_CONDITION_GEOMETRY_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    STARTING_CONDITION_GEOMETRY_FIELD_NUMBER: _ClassVar[int]
     geometry_type: _spatial_analyzer_values_pb2.GeometryType
     group_to_fit: _spatial_analyzer_values_pb2.CollectionObjectName
     plane_name: _spatial_analyzer_values_pb2.CollectionObjectName
     resulting_object_name: _spatial_analyzer_values_pb2.CollectionObjectName
     fit_profile_name: str
     report_deviations: bool
-    fit_interface_tolerance_1_0_use_profile: float
+    fit_interface_tolerance: float
     ignore_out_of_tolerance_points: bool
-    starting_condition_geometry_optional: _spatial_analyzer_values_pb2.CollectionObjectName
-    def __init__(self, geometry_type: _Optional[_Union[_spatial_analyzer_values_pb2.GeometryType, str]] = ..., group_to_fit: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., plane_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., fit_profile_name: _Optional[str] = ..., report_deviations: bool = ..., fit_interface_tolerance_1_0_use_profile: _Optional[float] = ..., ignore_out_of_tolerance_points: bool = ..., starting_condition_geometry_optional: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
+    starting_condition_geometry: _spatial_analyzer_values_pb2.CollectionObjectName
+    def __init__(self, geometry_type: _Optional[_Union[_spatial_analyzer_values_pb2.GeometryType, str]] = ..., group_to_fit: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., plane_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., fit_profile_name: _Optional[str] = ..., report_deviations: bool = ..., fit_interface_tolerance: _Optional[float] = ..., ignore_out_of_tolerance_points: bool = ..., starting_condition_geometry: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class FitGeometryToPointGroupProjectedToPlaneResult(_message.Message):
     __slots__ = ("execution",)
@@ -237,24 +237,24 @@ class FitGeometryToPointGroupProjectedToPlaneResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class FitGeometryToPointsRequest(_message.Message):
-    __slots__ = ("geometry_type", "points_to_fit", "resulting_object_name", "fit_profile_name", "report_deviations", "fit_interface_tolerance_1_0_use_profile", "ignore_out_of_tolerance_points", "starting_condition_geometry_optional")
+    __slots__ = ("geometry_type", "points_to_fit", "resulting_object_name", "fit_profile_name", "report_deviations", "fit_interface_tolerance", "ignore_out_of_tolerance_points", "starting_condition_geometry")
     GEOMETRY_TYPE_FIELD_NUMBER: _ClassVar[int]
     POINTS_TO_FIT_FIELD_NUMBER: _ClassVar[int]
     RESULTING_OBJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     REPORT_DEVIATIONS_FIELD_NUMBER: _ClassVar[int]
-    FIT_INTERFACE_TOLERANCE_1_0_USE_PROFILE_FIELD_NUMBER: _ClassVar[int]
+    FIT_INTERFACE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     IGNORE_OUT_OF_TOLERANCE_POINTS_FIELD_NUMBER: _ClassVar[int]
-    STARTING_CONDITION_GEOMETRY_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    STARTING_CONDITION_GEOMETRY_FIELD_NUMBER: _ClassVar[int]
     geometry_type: _spatial_analyzer_values_pb2.GeometryType
     points_to_fit: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.PointName]
     resulting_object_name: _spatial_analyzer_values_pb2.CollectionObjectName
     fit_profile_name: str
     report_deviations: bool
-    fit_interface_tolerance_1_0_use_profile: float
+    fit_interface_tolerance: float
     ignore_out_of_tolerance_points: bool
-    starting_condition_geometry_optional: _spatial_analyzer_values_pb2.CollectionObjectName
-    def __init__(self, geometry_type: _Optional[_Union[_spatial_analyzer_values_pb2.GeometryType, str]] = ..., points_to_fit: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., fit_profile_name: _Optional[str] = ..., report_deviations: bool = ..., fit_interface_tolerance_1_0_use_profile: _Optional[float] = ..., ignore_out_of_tolerance_points: bool = ..., starting_condition_geometry_optional: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
+    starting_condition_geometry: _spatial_analyzer_values_pb2.CollectionObjectName
+    def __init__(self, geometry_type: _Optional[_Union[_spatial_analyzer_values_pb2.GeometryType, str]] = ..., points_to_fit: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., fit_profile_name: _Optional[str] = ..., report_deviations: bool = ..., fit_interface_tolerance: _Optional[float] = ..., ignore_out_of_tolerance_points: bool = ..., starting_condition_geometry: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class FitGeometryToPointsResult(_message.Message):
     __slots__ = ("execution",)
@@ -313,24 +313,24 @@ class GetConePropertiesRequest(_message.Message):
     def __init__(self, cone_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class GetConePropertiesResult(_message.Message):
-    __slots__ = ("cone_end_point_in_working_coordinates", "cone_axis_in_working_coordinates", "cone_length", "cone_theta_start", "cone_theta_span", "cone_included_angle", "cut_length_from_apex", "execution")
-    CONE_END_POINT_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
-    CONE_AXIS_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("cone_end_point", "cone_axis", "cone_length", "cone_theta_start", "cone_theta_span", "cone_included_angle", "cut_length_from_apex", "execution")
+    CONE_END_POINT_FIELD_NUMBER: _ClassVar[int]
+    CONE_AXIS_FIELD_NUMBER: _ClassVar[int]
     CONE_LENGTH_FIELD_NUMBER: _ClassVar[int]
     CONE_THETA_START_FIELD_NUMBER: _ClassVar[int]
     CONE_THETA_SPAN_FIELD_NUMBER: _ClassVar[int]
     CONE_INCLUDED_ANGLE_FIELD_NUMBER: _ClassVar[int]
     CUT_LENGTH_FROM_APEX_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    cone_end_point_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
-    cone_axis_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
+    cone_end_point: _spatial_analyzer_values_pb2.Vector
+    cone_axis: _spatial_analyzer_values_pb2.Vector
     cone_length: float
     cone_theta_start: float
     cone_theta_span: float
     cone_included_angle: float
     cut_length_from_apex: float
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, cone_end_point_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., cone_axis_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., cone_length: _Optional[float] = ..., cone_theta_start: _Optional[float] = ..., cone_theta_span: _Optional[float] = ..., cone_included_angle: _Optional[float] = ..., cut_length_from_apex: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, cone_end_point: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., cone_axis: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., cone_length: _Optional[float] = ..., cone_theta_start: _Optional[float] = ..., cone_theta_span: _Optional[float] = ..., cone_included_angle: _Optional[float] = ..., cut_length_from_apex: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetCoordinateForIthPointInPointSetRequest(_message.Message):
     __slots__ = ("point_set", "point_set_index")
@@ -557,16 +557,16 @@ class GetMeasurementWeatherDataRequest(_message.Message):
     def __init__(self, point_name: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ...) -> None: ...
 
 class GetMeasurementWeatherDataResult(_message.Message):
-    __slots__ = ("temperature_deg_f", "pressure_in_hg", "humidity_rh", "execution")
-    TEMPERATURE_DEG_F_FIELD_NUMBER: _ClassVar[int]
-    PRESSURE_IN_HG_FIELD_NUMBER: _ClassVar[int]
-    HUMIDITY_RH_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("temperature", "pressure", "humidity", "execution")
+    TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
+    PRESSURE_FIELD_NUMBER: _ClassVar[int]
+    HUMIDITY_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    temperature_deg_f: float
-    pressure_in_hg: float
-    humidity_rh: float
+    temperature: float
+    pressure: float
+    humidity: float
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, temperature_deg_f: _Optional[float] = ..., pressure_in_hg: _Optional[float] = ..., humidity_rh: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, temperature: _Optional[float] = ..., pressure: _Optional[float] = ..., humidity: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetNumberOfCollectionsRequest(_message.Message):
     __slots__ = ()
@@ -839,26 +839,26 @@ class GetSlotPropertiesRequest(_message.Message):
     def __init__(self, slot_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class GetSlotPropertiesResult(_message.Message):
-    __slots__ = ("slot_transform_in_working_coordinates", "center_in_working_coordinates", "normal_direction_in_working_coordinates", "slot_length", "slot_width", "round_slot_type", "centerline_pt_1_in_working_coordinates", "centerline_pt_2_in_working_coordinates", "execution")
-    SLOT_TRANSFORM_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
-    CENTER_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
-    NORMAL_DIRECTION_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("slot_transform", "center", "normal_direction", "slot_length", "slot_width", "round_slot_type", "centerline_pt_1", "centerline_pt_2", "execution")
+    SLOT_TRANSFORM_FIELD_NUMBER: _ClassVar[int]
+    CENTER_FIELD_NUMBER: _ClassVar[int]
+    NORMAL_DIRECTION_FIELD_NUMBER: _ClassVar[int]
     SLOT_LENGTH_FIELD_NUMBER: _ClassVar[int]
     SLOT_WIDTH_FIELD_NUMBER: _ClassVar[int]
     ROUND_SLOT_TYPE_FIELD_NUMBER: _ClassVar[int]
-    CENTERLINE_PT_1_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
-    CENTERLINE_PT_2_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
+    CENTERLINE_PT_1_FIELD_NUMBER: _ClassVar[int]
+    CENTERLINE_PT_2_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    slot_transform_in_working_coordinates: _spatial_analyzer_values_pb2.Transform
-    center_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
-    normal_direction_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
+    slot_transform: _spatial_analyzer_values_pb2.Transform
+    center: _spatial_analyzer_values_pb2.Vector
+    normal_direction: _spatial_analyzer_values_pb2.Vector
     slot_length: float
     slot_width: float
     round_slot_type: bool
-    centerline_pt_1_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
-    centerline_pt_2_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
+    centerline_pt_1: _spatial_analyzer_values_pb2.Vector
+    centerline_pt_2: _spatial_analyzer_values_pb2.Vector
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, slot_transform_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Transform, _Mapping]] = ..., center_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., normal_direction_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., slot_length: _Optional[float] = ..., slot_width: _Optional[float] = ..., round_slot_type: bool = ..., centerline_pt_1_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., centerline_pt_2_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, slot_transform: _Optional[_Union[_spatial_analyzer_values_pb2.Transform, _Mapping]] = ..., center: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., normal_direction: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., slot_length: _Optional[float] = ..., slot_width: _Optional[float] = ..., round_slot_type: bool = ..., centerline_pt_1: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., centerline_pt_2: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GetSpherePropertiesRequest(_message.Message):
     __slots__ = ("sphere_name",)
@@ -963,18 +963,18 @@ class GetTransformForIthFrameInFrameSetResult(_message.Message):
     def __init__(self, transform_in_working: _Optional[_Union[_spatial_analyzer_values_pb2.Transform, _Mapping]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class GroupToSurfaceFitRequest(_message.Message):
-    __slots__ = ("group_to_fit", "surface", "do_conventional_fit", "rms_tolerance_0_0_for_none", "maximum_absolute_tolerance_0_0_for_none")
+    __slots__ = ("group_to_fit", "surface", "do_conventional_fit", "rms_tolerance", "maximum_absolute_tolerance")
     GROUP_TO_FIT_FIELD_NUMBER: _ClassVar[int]
     SURFACE_FIELD_NUMBER: _ClassVar[int]
     DO_CONVENTIONAL_FIT_FIELD_NUMBER: _ClassVar[int]
-    RMS_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_ABSOLUTE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    RMS_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_ABSOLUTE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     group_to_fit: _spatial_analyzer_values_pb2.CollectionObjectName
     surface: _spatial_analyzer_values_pb2.CollectionObjectName
     do_conventional_fit: bool
-    rms_tolerance_0_0_for_none: float
-    maximum_absolute_tolerance_0_0_for_none: float
-    def __init__(self, group_to_fit: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., surface: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., do_conventional_fit: bool = ..., rms_tolerance_0_0_for_none: _Optional[float] = ..., maximum_absolute_tolerance_0_0_for_none: _Optional[float] = ...) -> None: ...
+    rms_tolerance: float
+    maximum_absolute_tolerance: float
+    def __init__(self, group_to_fit: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., surface: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., do_conventional_fit: bool = ..., rms_tolerance: _Optional[float] = ..., maximum_absolute_tolerance: _Optional[float] = ...) -> None: ...
 
 class GroupToSurfaceFitResult(_message.Message):
     __slots__ = ("optimum_transform", "rms_deviation", "maximum_absolute_deviation", "execution")
@@ -1019,14 +1019,14 @@ class IsObjectOfTypeResult(_message.Message):
     def __init__(self, resultant: bool = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeCircleFitProfileRequest(_message.Message):
-    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset_1_0_use_current", "measured_side_for_planar_offset", "override_planar_offset_1_0_use_current", "planar_offset_direction", "lock_radius_1_0_do_not_lock", "circle_computation_technique", "reverse_normal_vector_after_fit", "make_cardinal_points", "cardinal_pt_1_center", "cardinal_pt_2_point_on_normal")
+    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset", "measured_side_for_planar_offset", "override_planar_offset", "planar_offset_direction", "lock_radius", "circle_computation_technique", "reverse_normal_vector_after_fit", "make_cardinal_points", "cardinal_pt_1_center", "cardinal_pt_2_point_on_normal")
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_RADIAL_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_PLANAR_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_PLANAR_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_PLANAR_OFFSET_FIELD_NUMBER: _ClassVar[int]
     PLANAR_OFFSET_DIRECTION_FIELD_NUMBER: _ClassVar[int]
-    LOCK_RADIUS_1_0_DO_NOT_LOCK_FIELD_NUMBER: _ClassVar[int]
+    LOCK_RADIUS_FIELD_NUMBER: _ClassVar[int]
     CIRCLE_COMPUTATION_TECHNIQUE_FIELD_NUMBER: _ClassVar[int]
     REVERSE_NORMAL_VECTOR_AFTER_FIT_FIELD_NUMBER: _ClassVar[int]
     MAKE_CARDINAL_POINTS_FIELD_NUMBER: _ClassVar[int]
@@ -1034,17 +1034,17 @@ class MakeCircleFitProfileRequest(_message.Message):
     CARDINAL_PT_2_POINT_ON_NORMAL_FIELD_NUMBER: _ClassVar[int]
     fit_profile_name: str
     measured_side_for_radial_offset: _spatial_analyzer_values_pb2.MeasuredSideForRadialOffset
-    override_radial_offset_1_0_use_current: float
+    override_radial_offset: float
     measured_side_for_planar_offset: _spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset
-    override_planar_offset_1_0_use_current: float
+    override_planar_offset: float
     planar_offset_direction: _spatial_analyzer_values_pb2.NormalDirection
-    lock_radius_1_0_do_not_lock: float
+    lock_radius: float
     circle_computation_technique: _spatial_analyzer_values_pb2.CompTechnique
     reverse_normal_vector_after_fit: bool
     make_cardinal_points: bool
     cardinal_pt_1_center: bool
     cardinal_pt_2_point_on_normal: bool
-    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset_1_0_use_current: _Optional[float] = ..., measured_side_for_planar_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset, str]] = ..., override_planar_offset_1_0_use_current: _Optional[float] = ..., planar_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.NormalDirection, str]] = ..., lock_radius_1_0_do_not_lock: _Optional[float] = ..., circle_computation_technique: _Optional[_Union[_spatial_analyzer_values_pb2.CompTechnique, str]] = ..., reverse_normal_vector_after_fit: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_center: bool = ..., cardinal_pt_2_point_on_normal: bool = ...) -> None: ...
+    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset: _Optional[float] = ..., measured_side_for_planar_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset, str]] = ..., override_planar_offset: _Optional[float] = ..., planar_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.NormalDirection, str]] = ..., lock_radius: _Optional[float] = ..., circle_computation_technique: _Optional[_Union[_spatial_analyzer_values_pb2.CompTechnique, str]] = ..., reverse_normal_vector_after_fit: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_center: bool = ..., cardinal_pt_2_point_on_normal: bool = ...) -> None: ...
 
 class MakeCircleFitProfileResult(_message.Message):
     __slots__ = ("execution",)
@@ -1053,11 +1053,11 @@ class MakeCircleFitProfileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeConeFitProfileRequest(_message.Message):
-    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset_1_0_use_current", "lock_angle_in_degrees_1_0_do_not_lock", "use_exhaustive_search", "make_cardinal_points", "cardinal_pt_1_vertex", "cardinal_pt_2_point_on_axis", "cardinal_pt_3_cut_point_on_axis")
+    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset", "lock_angle_in_degrees", "use_exhaustive_search", "make_cardinal_points", "cardinal_pt_1_vertex", "cardinal_pt_2_point_on_axis", "cardinal_pt_3_cut_point_on_axis")
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_RADIAL_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
-    LOCK_ANGLE_IN_DEGREES_1_0_DO_NOT_LOCK_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
+    LOCK_ANGLE_IN_DEGREES_FIELD_NUMBER: _ClassVar[int]
     USE_EXHAUSTIVE_SEARCH_FIELD_NUMBER: _ClassVar[int]
     MAKE_CARDINAL_POINTS_FIELD_NUMBER: _ClassVar[int]
     CARDINAL_PT_1_VERTEX_FIELD_NUMBER: _ClassVar[int]
@@ -1065,14 +1065,14 @@ class MakeConeFitProfileRequest(_message.Message):
     CARDINAL_PT_3_CUT_POINT_ON_AXIS_FIELD_NUMBER: _ClassVar[int]
     fit_profile_name: str
     measured_side_for_radial_offset: _spatial_analyzer_values_pb2.MeasuredSideForRadialOffset
-    override_radial_offset_1_0_use_current: float
-    lock_angle_in_degrees_1_0_do_not_lock: float
+    override_radial_offset: float
+    lock_angle_in_degrees: float
     use_exhaustive_search: bool
     make_cardinal_points: bool
     cardinal_pt_1_vertex: bool
     cardinal_pt_2_point_on_axis: bool
     cardinal_pt_3_cut_point_on_axis: bool
-    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset_1_0_use_current: _Optional[float] = ..., lock_angle_in_degrees_1_0_do_not_lock: _Optional[float] = ..., use_exhaustive_search: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_vertex: bool = ..., cardinal_pt_2_point_on_axis: bool = ..., cardinal_pt_3_cut_point_on_axis: bool = ...) -> None: ...
+    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset: _Optional[float] = ..., lock_angle_in_degrees: _Optional[float] = ..., use_exhaustive_search: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_vertex: bool = ..., cardinal_pt_2_point_on_axis: bool = ..., cardinal_pt_3_cut_point_on_axis: bool = ...) -> None: ...
 
 class MakeConeFitProfileResult(_message.Message):
     __slots__ = ("execution",)
@@ -1081,11 +1081,11 @@ class MakeConeFitProfileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeCylinderFitProfileRequest(_message.Message):
-    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset_1_0_use_current", "lock_radius_1_0_do_not_lock", "locked_radius_fit_method", "constrain_to_nominal_axis", "constrain_to_nominal_orientation", "align_with_nominal", "reverse_axis", "set_axis_first_to_last_point", "cylinder_computation_technique", "use_exhaustive_search", "make_cardinal_points", "cardinal_pt_1_begin_pt", "cardinal_pt_2_end_pt", "cardinal_pt_3_center")
+    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset", "lock_radius", "locked_radius_fit_method", "constrain_to_nominal_axis", "constrain_to_nominal_orientation", "align_with_nominal", "reverse_axis", "set_axis_first_to_last_point", "cylinder_computation_technique", "use_exhaustive_search", "make_cardinal_points", "cardinal_pt_1_begin_pt", "cardinal_pt_2_end_pt", "cardinal_pt_3_center")
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_RADIAL_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
-    LOCK_RADIUS_1_0_DO_NOT_LOCK_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
+    LOCK_RADIUS_FIELD_NUMBER: _ClassVar[int]
     LOCKED_RADIUS_FIT_METHOD_FIELD_NUMBER: _ClassVar[int]
     CONSTRAIN_TO_NOMINAL_AXIS_FIELD_NUMBER: _ClassVar[int]
     CONSTRAIN_TO_NOMINAL_ORIENTATION_FIELD_NUMBER: _ClassVar[int]
@@ -1100,8 +1100,8 @@ class MakeCylinderFitProfileRequest(_message.Message):
     CARDINAL_PT_3_CENTER_FIELD_NUMBER: _ClassVar[int]
     fit_profile_name: str
     measured_side_for_radial_offset: _spatial_analyzer_values_pb2.MeasuredSideForRadialOffset
-    override_radial_offset_1_0_use_current: float
-    lock_radius_1_0_do_not_lock: float
+    override_radial_offset: float
+    lock_radius: float
     locked_radius_fit_method: _spatial_analyzer_values_pb2.FitMethod
     constrain_to_nominal_axis: bool
     constrain_to_nominal_orientation: bool
@@ -1114,7 +1114,7 @@ class MakeCylinderFitProfileRequest(_message.Message):
     cardinal_pt_1_begin_pt: bool
     cardinal_pt_2_end_pt: bool
     cardinal_pt_3_center: bool
-    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset_1_0_use_current: _Optional[float] = ..., lock_radius_1_0_do_not_lock: _Optional[float] = ..., locked_radius_fit_method: _Optional[_Union[_spatial_analyzer_values_pb2.FitMethod, str]] = ..., constrain_to_nominal_axis: bool = ..., constrain_to_nominal_orientation: bool = ..., align_with_nominal: bool = ..., reverse_axis: bool = ..., set_axis_first_to_last_point: bool = ..., cylinder_computation_technique: _Optional[_Union[_spatial_analyzer_values_pb2.CompTechnique, str]] = ..., use_exhaustive_search: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_begin_pt: bool = ..., cardinal_pt_2_end_pt: bool = ..., cardinal_pt_3_center: bool = ...) -> None: ...
+    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset: _Optional[float] = ..., lock_radius: _Optional[float] = ..., locked_radius_fit_method: _Optional[_Union[_spatial_analyzer_values_pb2.FitMethod, str]] = ..., constrain_to_nominal_axis: bool = ..., constrain_to_nominal_orientation: bool = ..., align_with_nominal: bool = ..., reverse_axis: bool = ..., set_axis_first_to_last_point: bool = ..., cylinder_computation_technique: _Optional[_Union[_spatial_analyzer_values_pb2.CompTechnique, str]] = ..., use_exhaustive_search: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_begin_pt: bool = ..., cardinal_pt_2_end_pt: bool = ..., cardinal_pt_3_center: bool = ...) -> None: ...
 
 class MakeCylinderFitProfileResult(_message.Message):
     __slots__ = ("execution",)
@@ -1123,12 +1123,12 @@ class MakeCylinderFitProfileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeEllipseFitProfileRequest(_message.Message):
-    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset_1_0_use_current", "measured_side_for_planar_offset", "override_planar_offset_1_0_use_current", "planar_offset_direction", "reverse_normal_vector_after_fit", "make_cardinal_points", "cardinal_pt_1_center", "cardinal_pt_2_point_on_normal", "cardinal_pt_3_focal_pt_1", "cardinal_pt_4_focal_pt_2")
+    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset", "measured_side_for_planar_offset", "override_planar_offset", "planar_offset_direction", "reverse_normal_vector_after_fit", "make_cardinal_points", "cardinal_pt_1_center", "cardinal_pt_2_point_on_normal", "cardinal_pt_3_focal_pt_1", "cardinal_pt_4_focal_pt_2")
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_RADIAL_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_PLANAR_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_PLANAR_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_PLANAR_OFFSET_FIELD_NUMBER: _ClassVar[int]
     PLANAR_OFFSET_DIRECTION_FIELD_NUMBER: _ClassVar[int]
     REVERSE_NORMAL_VECTOR_AFTER_FIT_FIELD_NUMBER: _ClassVar[int]
     MAKE_CARDINAL_POINTS_FIELD_NUMBER: _ClassVar[int]
@@ -1138,9 +1138,9 @@ class MakeEllipseFitProfileRequest(_message.Message):
     CARDINAL_PT_4_FOCAL_PT_2_FIELD_NUMBER: _ClassVar[int]
     fit_profile_name: str
     measured_side_for_radial_offset: _spatial_analyzer_values_pb2.MeasuredSideForRadialOffset
-    override_radial_offset_1_0_use_current: float
+    override_radial_offset: float
     measured_side_for_planar_offset: _spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset
-    override_planar_offset_1_0_use_current: float
+    override_planar_offset: float
     planar_offset_direction: _spatial_analyzer_values_pb2.NormalDirection
     reverse_normal_vector_after_fit: bool
     make_cardinal_points: bool
@@ -1148,7 +1148,7 @@ class MakeEllipseFitProfileRequest(_message.Message):
     cardinal_pt_2_point_on_normal: bool
     cardinal_pt_3_focal_pt_1: bool
     cardinal_pt_4_focal_pt_2: bool
-    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset_1_0_use_current: _Optional[float] = ..., measured_side_for_planar_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset, str]] = ..., override_planar_offset_1_0_use_current: _Optional[float] = ..., planar_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.NormalDirection, str]] = ..., reverse_normal_vector_after_fit: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_center: bool = ..., cardinal_pt_2_point_on_normal: bool = ..., cardinal_pt_3_focal_pt_1: bool = ..., cardinal_pt_4_focal_pt_2: bool = ...) -> None: ...
+    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset: _Optional[float] = ..., measured_side_for_planar_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset, str]] = ..., override_planar_offset: _Optional[float] = ..., planar_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.NormalDirection, str]] = ..., reverse_normal_vector_after_fit: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_center: bool = ..., cardinal_pt_2_point_on_normal: bool = ..., cardinal_pt_3_focal_pt_1: bool = ..., cardinal_pt_4_focal_pt_2: bool = ...) -> None: ...
 
 class MakeEllipseFitProfileResult(_message.Message):
     __slots__ = ("execution",)
@@ -1179,24 +1179,24 @@ class MakeLineFitProfileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeParaboloidFitProfileRequest(_message.Message):
-    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset_1_0_use_current", "lock_focal_length_1_0_do_not_lock", "degree_of_freedom", "make_cardinal_points", "cardinal_pt_1_vertex", "cardinal_pt_2_focal_point")
+    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset", "lock_focal_length", "degree_of_freedom", "make_cardinal_points", "cardinal_pt_1_vertex", "cardinal_pt_2_focal_point")
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_RADIAL_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
-    LOCK_FOCAL_LENGTH_1_0_DO_NOT_LOCK_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
+    LOCK_FOCAL_LENGTH_FIELD_NUMBER: _ClassVar[int]
     DEGREE_OF_FREEDOM_FIELD_NUMBER: _ClassVar[int]
     MAKE_CARDINAL_POINTS_FIELD_NUMBER: _ClassVar[int]
     CARDINAL_PT_1_VERTEX_FIELD_NUMBER: _ClassVar[int]
     CARDINAL_PT_2_FOCAL_POINT_FIELD_NUMBER: _ClassVar[int]
     fit_profile_name: str
     measured_side_for_radial_offset: _spatial_analyzer_values_pb2.MeasuredSideForRadialOffset
-    override_radial_offset_1_0_use_current: float
-    lock_focal_length_1_0_do_not_lock: float
+    override_radial_offset: float
+    lock_focal_length: float
     degree_of_freedom: _spatial_analyzer_values_pb2.DegreeOfFreedom
     make_cardinal_points: bool
     cardinal_pt_1_vertex: bool
     cardinal_pt_2_focal_point: bool
-    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset_1_0_use_current: _Optional[float] = ..., lock_focal_length_1_0_do_not_lock: _Optional[float] = ..., degree_of_freedom: _Optional[_Union[_spatial_analyzer_values_pb2.DegreeOfFreedom, str]] = ..., make_cardinal_points: bool = ..., cardinal_pt_1_vertex: bool = ..., cardinal_pt_2_focal_point: bool = ...) -> None: ...
+    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset: _Optional[float] = ..., lock_focal_length: _Optional[float] = ..., degree_of_freedom: _Optional[_Union[_spatial_analyzer_values_pb2.DegreeOfFreedom, str]] = ..., make_cardinal_points: bool = ..., cardinal_pt_1_vertex: bool = ..., cardinal_pt_2_focal_point: bool = ...) -> None: ...
 
 class MakeParaboloidFitProfileResult(_message.Message):
     __slots__ = ("execution",)
@@ -1205,10 +1205,10 @@ class MakeParaboloidFitProfileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakePlaneFitProfileRequest(_message.Message):
-    __slots__ = ("fit_profile_name", "measured_side_for_planar_offset", "override_planar_offset_1_0_use_current", "planar_offset_direction", "reverse_normal_vector_after_fit", "make_cardinal_points", "cardinal_pt_1_centroid", "cardinal_pt_2_point_on_normal")
+    __slots__ = ("fit_profile_name", "measured_side_for_planar_offset", "override_planar_offset", "planar_offset_direction", "reverse_normal_vector_after_fit", "make_cardinal_points", "cardinal_pt_1_centroid", "cardinal_pt_2_point_on_normal")
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_PLANAR_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_PLANAR_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_PLANAR_OFFSET_FIELD_NUMBER: _ClassVar[int]
     PLANAR_OFFSET_DIRECTION_FIELD_NUMBER: _ClassVar[int]
     REVERSE_NORMAL_VECTOR_AFTER_FIT_FIELD_NUMBER: _ClassVar[int]
     MAKE_CARDINAL_POINTS_FIELD_NUMBER: _ClassVar[int]
@@ -1216,13 +1216,13 @@ class MakePlaneFitProfileRequest(_message.Message):
     CARDINAL_PT_2_POINT_ON_NORMAL_FIELD_NUMBER: _ClassVar[int]
     fit_profile_name: str
     measured_side_for_planar_offset: _spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset
-    override_planar_offset_1_0_use_current: float
+    override_planar_offset: float
     planar_offset_direction: _spatial_analyzer_values_pb2.NormalDirection
     reverse_normal_vector_after_fit: bool
     make_cardinal_points: bool
     cardinal_pt_1_centroid: bool
     cardinal_pt_2_point_on_normal: bool
-    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_planar_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset, str]] = ..., override_planar_offset_1_0_use_current: _Optional[float] = ..., planar_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.NormalDirection, str]] = ..., reverse_normal_vector_after_fit: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_centroid: bool = ..., cardinal_pt_2_point_on_normal: bool = ...) -> None: ...
+    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_planar_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset, str]] = ..., override_planar_offset: _Optional[float] = ..., planar_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.NormalDirection, str]] = ..., reverse_normal_vector_after_fit: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_centroid: bool = ..., cardinal_pt_2_point_on_normal: bool = ...) -> None: ...
 
 class MakePlaneFitProfileResult(_message.Message):
     __slots__ = ("execution",)
@@ -1231,12 +1231,12 @@ class MakePlaneFitProfileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeSlotFitProfileRequest(_message.Message):
-    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset_1_0_use_current", "measured_side_for_planar_offset", "override_planar_offset_1_0_use_current", "planar_offset_direction", "slot_type", "slot_computation_technique", "reverse_normal_vector_after_fit", "make_cardinal_points", "cardinal_pt_1_center", "cardinal_pt_2_point_on_normal", "cardinal_pt_3_centerline_pt_1", "cardinal_pt_4_centerline_pt_2")
+    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset", "measured_side_for_planar_offset", "override_planar_offset", "planar_offset_direction", "slot_type", "slot_computation_technique", "reverse_normal_vector_after_fit", "make_cardinal_points", "cardinal_pt_1_center", "cardinal_pt_2_point_on_normal", "cardinal_pt_3_centerline_pt_1", "cardinal_pt_4_centerline_pt_2")
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_RADIAL_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_PLANAR_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_PLANAR_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_PLANAR_OFFSET_FIELD_NUMBER: _ClassVar[int]
     PLANAR_OFFSET_DIRECTION_FIELD_NUMBER: _ClassVar[int]
     SLOT_TYPE_FIELD_NUMBER: _ClassVar[int]
     SLOT_COMPUTATION_TECHNIQUE_FIELD_NUMBER: _ClassVar[int]
@@ -1248,9 +1248,9 @@ class MakeSlotFitProfileRequest(_message.Message):
     CARDINAL_PT_4_CENTERLINE_PT_2_FIELD_NUMBER: _ClassVar[int]
     fit_profile_name: str
     measured_side_for_radial_offset: _spatial_analyzer_values_pb2.MeasuredSideForRadialOffset
-    override_radial_offset_1_0_use_current: float
+    override_radial_offset: float
     measured_side_for_planar_offset: _spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset
-    override_planar_offset_1_0_use_current: float
+    override_planar_offset: float
     planar_offset_direction: _spatial_analyzer_values_pb2.NormalDirection
     slot_type: _spatial_analyzer_values_pb2.SlotType
     slot_computation_technique: _spatial_analyzer_values_pb2.CompTechnique
@@ -1260,7 +1260,7 @@ class MakeSlotFitProfileRequest(_message.Message):
     cardinal_pt_2_point_on_normal: bool
     cardinal_pt_3_centerline_pt_1: bool
     cardinal_pt_4_centerline_pt_2: bool
-    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset_1_0_use_current: _Optional[float] = ..., measured_side_for_planar_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset, str]] = ..., override_planar_offset_1_0_use_current: _Optional[float] = ..., planar_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.NormalDirection, str]] = ..., slot_type: _Optional[_Union[_spatial_analyzer_values_pb2.SlotType, str]] = ..., slot_computation_technique: _Optional[_Union[_spatial_analyzer_values_pb2.CompTechnique, str]] = ..., reverse_normal_vector_after_fit: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_center: bool = ..., cardinal_pt_2_point_on_normal: bool = ..., cardinal_pt_3_centerline_pt_1: bool = ..., cardinal_pt_4_centerline_pt_2: bool = ...) -> None: ...
+    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset: _Optional[float] = ..., measured_side_for_planar_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForPlanarOffset, str]] = ..., override_planar_offset: _Optional[float] = ..., planar_offset_direction: _Optional[_Union[_spatial_analyzer_values_pb2.NormalDirection, str]] = ..., slot_type: _Optional[_Union[_spatial_analyzer_values_pb2.SlotType, str]] = ..., slot_computation_technique: _Optional[_Union[_spatial_analyzer_values_pb2.CompTechnique, str]] = ..., reverse_normal_vector_after_fit: bool = ..., make_cardinal_points: bool = ..., cardinal_pt_1_center: bool = ..., cardinal_pt_2_point_on_normal: bool = ..., cardinal_pt_3_centerline_pt_1: bool = ..., cardinal_pt_4_centerline_pt_2: bool = ...) -> None: ...
 
 class MakeSlotFitProfileResult(_message.Message):
     __slots__ = ("execution",)
@@ -1269,22 +1269,22 @@ class MakeSlotFitProfileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeSphereFitProfileRequest(_message.Message):
-    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset_1_0_use_current", "lock_radius_1_0_do_not_lock", "make_cardinal_points", "cardinal_pt_1_center", "computation_method")
+    __slots__ = ("fit_profile_name", "measured_side_for_radial_offset", "override_radial_offset", "lock_radius", "make_cardinal_points", "cardinal_pt_1_center", "computation_method")
     FIT_PROFILE_NAME_FIELD_NUMBER: _ClassVar[int]
     MEASURED_SIDE_FOR_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
-    OVERRIDE_RADIAL_OFFSET_1_0_USE_CURRENT_FIELD_NUMBER: _ClassVar[int]
-    LOCK_RADIUS_1_0_DO_NOT_LOCK_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDE_RADIAL_OFFSET_FIELD_NUMBER: _ClassVar[int]
+    LOCK_RADIUS_FIELD_NUMBER: _ClassVar[int]
     MAKE_CARDINAL_POINTS_FIELD_NUMBER: _ClassVar[int]
     CARDINAL_PT_1_CENTER_FIELD_NUMBER: _ClassVar[int]
     COMPUTATION_METHOD_FIELD_NUMBER: _ClassVar[int]
     fit_profile_name: str
     measured_side_for_radial_offset: _spatial_analyzer_values_pb2.MeasuredSideForRadialOffset
-    override_radial_offset_1_0_use_current: float
-    lock_radius_1_0_do_not_lock: float
+    override_radial_offset: float
+    lock_radius: float
     make_cardinal_points: bool
     cardinal_pt_1_center: bool
     computation_method: _spatial_analyzer_values_pb2.SphereFitComputationMode
-    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset_1_0_use_current: _Optional[float] = ..., lock_radius_1_0_do_not_lock: _Optional[float] = ..., make_cardinal_points: bool = ..., cardinal_pt_1_center: bool = ..., computation_method: _Optional[_Union[_spatial_analyzer_values_pb2.SphereFitComputationMode, str]] = ...) -> None: ...
+    def __init__(self, fit_profile_name: _Optional[str] = ..., measured_side_for_radial_offset: _Optional[_Union[_spatial_analyzer_values_pb2.MeasuredSideForRadialOffset, str]] = ..., override_radial_offset: _Optional[float] = ..., lock_radius: _Optional[float] = ..., make_cardinal_points: bool = ..., cardinal_pt_1_center: bool = ..., computation_method: _Optional[_Union[_spatial_analyzer_values_pb2.SphereFitComputationMode, str]] = ...) -> None: ...
 
 class MakeSphereFitProfileResult(_message.Message):
     __slots__ = ("execution",)
@@ -1353,24 +1353,24 @@ class PatchNormalShiftPointResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class QueryCloudsToObjectsRequest(_message.Message):
-    __slots__ = ("cloud_names", "object_names", "resulting_object_name", "projection_options", "proximity", "skip_factor", "rms_tolerance_0_0_for_none", "maximum_absolute_tolerance_0_0_for_none")
+    __slots__ = ("cloud_names", "object_names", "resulting_object_name", "projection_options", "proximity", "skip_factor", "rms_tolerance", "maximum_absolute_tolerance")
     CLOUD_NAMES_FIELD_NUMBER: _ClassVar[int]
     OBJECT_NAMES_FIELD_NUMBER: _ClassVar[int]
     RESULTING_OBJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     PROJECTION_OPTIONS_FIELD_NUMBER: _ClassVar[int]
     PROXIMITY_FIELD_NUMBER: _ClassVar[int]
     SKIP_FACTOR_FIELD_NUMBER: _ClassVar[int]
-    RMS_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_ABSOLUTE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    RMS_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_ABSOLUTE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     cloud_names: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
     object_names: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
     resulting_object_name: _spatial_analyzer_values_pb2.CollectionObjectName
     projection_options: _spatial_analyzer_values_pb2.ProjectionOptions
     proximity: float
     skip_factor: int
-    rms_tolerance_0_0_for_none: float
-    maximum_absolute_tolerance_0_0_for_none: float
-    def __init__(self, cloud_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., object_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., projection_options: _Optional[_Union[_spatial_analyzer_values_pb2.ProjectionOptions, _Mapping]] = ..., proximity: _Optional[float] = ..., skip_factor: _Optional[int] = ..., rms_tolerance_0_0_for_none: _Optional[float] = ..., maximum_absolute_tolerance_0_0_for_none: _Optional[float] = ...) -> None: ...
+    rms_tolerance: float
+    maximum_absolute_tolerance: float
+    def __init__(self, cloud_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., object_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., projection_options: _Optional[_Union[_spatial_analyzer_values_pb2.ProjectionOptions, _Mapping]] = ..., proximity: _Optional[float] = ..., skip_factor: _Optional[int] = ..., rms_tolerance: _Optional[float] = ..., maximum_absolute_tolerance: _Optional[float] = ...) -> None: ...
 
 class QueryCloudsToObjectsResult(_message.Message):
     __slots__ = ("rms_deviation", "maximum_absolute_deviation", "execution")
@@ -1383,24 +1383,24 @@ class QueryCloudsToObjectsResult(_message.Message):
     def __init__(self, rms_deviation: _Optional[float] = ..., maximum_absolute_deviation: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class QueryCloudsToSurfaceRequest(_message.Message):
-    __slots__ = ("cloud_names", "filter_surface_name", "resulting_object_name", "projection_options", "proximity", "skip_factor", "rms_tolerance_0_0_for_none", "maximum_absolute_tolerance_0_0_for_none")
+    __slots__ = ("cloud_names", "filter_surface_name", "resulting_object_name", "projection_options", "proximity", "skip_factor", "rms_tolerance", "maximum_absolute_tolerance")
     CLOUD_NAMES_FIELD_NUMBER: _ClassVar[int]
     FILTER_SURFACE_NAME_FIELD_NUMBER: _ClassVar[int]
     RESULTING_OBJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     PROJECTION_OPTIONS_FIELD_NUMBER: _ClassVar[int]
     PROXIMITY_FIELD_NUMBER: _ClassVar[int]
     SKIP_FACTOR_FIELD_NUMBER: _ClassVar[int]
-    RMS_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_ABSOLUTE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    RMS_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_ABSOLUTE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     cloud_names: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
     filter_surface_name: _spatial_analyzer_values_pb2.CollectionObjectName
     resulting_object_name: _spatial_analyzer_values_pb2.CollectionObjectName
     projection_options: _spatial_analyzer_values_pb2.ProjectionOptions
     proximity: float
     skip_factor: int
-    rms_tolerance_0_0_for_none: float
-    maximum_absolute_tolerance_0_0_for_none: float
-    def __init__(self, cloud_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., filter_surface_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., projection_options: _Optional[_Union[_spatial_analyzer_values_pb2.ProjectionOptions, _Mapping]] = ..., proximity: _Optional[float] = ..., skip_factor: _Optional[int] = ..., rms_tolerance_0_0_for_none: _Optional[float] = ..., maximum_absolute_tolerance_0_0_for_none: _Optional[float] = ...) -> None: ...
+    rms_tolerance: float
+    maximum_absolute_tolerance: float
+    def __init__(self, cloud_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., filter_surface_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., projection_options: _Optional[_Union[_spatial_analyzer_values_pb2.ProjectionOptions, _Mapping]] = ..., proximity: _Optional[float] = ..., skip_factor: _Optional[int] = ..., rms_tolerance: _Optional[float] = ..., maximum_absolute_tolerance: _Optional[float] = ...) -> None: ...
 
 class QueryCloudsToSurfaceResult(_message.Message):
     __slots__ = ("rms_deviation", "maximum_absolute_deviation", "execution")
@@ -1421,40 +1421,40 @@ class QueryFrameToFrameRequest(_message.Message):
     def __init__(self, reference_frame_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., corresponding_frame_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class QueryFrameToFrameResult(_message.Message):
-    __slots__ = ("x", "y", "z", "rx_roll", "ry_pitch", "rz_yaw", "execution")
+    __slots__ = ("x", "y", "z", "rx", "ry", "rz", "execution")
     X_FIELD_NUMBER: _ClassVar[int]
     Y_FIELD_NUMBER: _ClassVar[int]
     Z_FIELD_NUMBER: _ClassVar[int]
-    RX_ROLL_FIELD_NUMBER: _ClassVar[int]
-    RY_PITCH_FIELD_NUMBER: _ClassVar[int]
-    RZ_YAW_FIELD_NUMBER: _ClassVar[int]
+    RX_FIELD_NUMBER: _ClassVar[int]
+    RY_FIELD_NUMBER: _ClassVar[int]
+    RZ_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
     x: float
     y: float
     z: float
-    rx_roll: float
-    ry_pitch: float
-    rz_yaw: float
+    rx: float
+    ry: float
+    rz: float
     execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, x: _Optional[float] = ..., y: _Optional[float] = ..., z: _Optional[float] = ..., rx_roll: _Optional[float] = ..., ry_pitch: _Optional[float] = ..., rz_yaw: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
+    def __init__(self, x: _Optional[float] = ..., y: _Optional[float] = ..., z: _Optional[float] = ..., rx: _Optional[float] = ..., ry: _Optional[float] = ..., rz: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class QueryGroupsToObjectsRequest(_message.Message):
-    __slots__ = ("group_name_list_groups_to_project", "object_name_list_objects_to_project_to", "resulting_object_name", "projection_options", "rms_tolerance_0_0_for_none", "maximum_absolute_tolerance_0_0_for_none", "show_results_dialog")
-    GROUP_NAME_LIST_GROUPS_TO_PROJECT_FIELD_NUMBER: _ClassVar[int]
-    OBJECT_NAME_LIST_OBJECTS_TO_PROJECT_TO_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("group_name_list", "object_name_list", "resulting_object_name", "projection_options", "rms_tolerance", "maximum_absolute_tolerance", "show_results_dialog")
+    GROUP_NAME_LIST_FIELD_NUMBER: _ClassVar[int]
+    OBJECT_NAME_LIST_FIELD_NUMBER: _ClassVar[int]
     RESULTING_OBJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     PROJECTION_OPTIONS_FIELD_NUMBER: _ClassVar[int]
-    RMS_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_ABSOLUTE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    RMS_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_ABSOLUTE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     SHOW_RESULTS_DIALOG_FIELD_NUMBER: _ClassVar[int]
-    group_name_list_groups_to_project: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
-    object_name_list_objects_to_project_to: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
+    group_name_list: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
+    object_name_list: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
     resulting_object_name: _spatial_analyzer_values_pb2.CollectionObjectName
     projection_options: _spatial_analyzer_values_pb2.ProjectionOptions
-    rms_tolerance_0_0_for_none: float
-    maximum_absolute_tolerance_0_0_for_none: float
+    rms_tolerance: float
+    maximum_absolute_tolerance: float
     show_results_dialog: bool
-    def __init__(self, group_name_list_groups_to_project: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., object_name_list_objects_to_project_to: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., projection_options: _Optional[_Union[_spatial_analyzer_values_pb2.ProjectionOptions, _Mapping]] = ..., rms_tolerance_0_0_for_none: _Optional[float] = ..., maximum_absolute_tolerance_0_0_for_none: _Optional[float] = ..., show_results_dialog: bool = ...) -> None: ...
+    def __init__(self, group_name_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., object_name_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., projection_options: _Optional[_Union[_spatial_analyzer_values_pb2.ProjectionOptions, _Mapping]] = ..., rms_tolerance: _Optional[float] = ..., maximum_absolute_tolerance: _Optional[float] = ..., show_results_dialog: bool = ...) -> None: ...
 
 class QueryGroupsToObjectsResult(_message.Message):
     __slots__ = ("rms_deviation", "max_absolute_deviation", "average_deviation", "standard_deviation", "execution")
@@ -1539,22 +1539,22 @@ class QueryPointsToCircleResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class QueryPointsToObjectsRequest(_message.Message):
-    __slots__ = ("point_names", "object_name_list_objects_to_project_to", "resulting_object_name", "projection_options", "rms_tolerance_0_0_for_none", "maximum_absolute_tolerance_0_0_for_none", "show_results_dialog")
+    __slots__ = ("point_names", "object_name_list", "resulting_object_name", "projection_options", "rms_tolerance", "maximum_absolute_tolerance", "show_results_dialog")
     POINT_NAMES_FIELD_NUMBER: _ClassVar[int]
-    OBJECT_NAME_LIST_OBJECTS_TO_PROJECT_TO_FIELD_NUMBER: _ClassVar[int]
+    OBJECT_NAME_LIST_FIELD_NUMBER: _ClassVar[int]
     RESULTING_OBJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     PROJECTION_OPTIONS_FIELD_NUMBER: _ClassVar[int]
-    RMS_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_ABSOLUTE_TOLERANCE_0_0_FOR_NONE_FIELD_NUMBER: _ClassVar[int]
+    RMS_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
+    MAXIMUM_ABSOLUTE_TOLERANCE_FIELD_NUMBER: _ClassVar[int]
     SHOW_RESULTS_DIALOG_FIELD_NUMBER: _ClassVar[int]
     point_names: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.PointName]
-    object_name_list_objects_to_project_to: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
+    object_name_list: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
     resulting_object_name: _spatial_analyzer_values_pb2.CollectionObjectName
     projection_options: _spatial_analyzer_values_pb2.ProjectionOptions
-    rms_tolerance_0_0_for_none: float
-    maximum_absolute_tolerance_0_0_for_none: float
+    rms_tolerance: float
+    maximum_absolute_tolerance: float
     show_results_dialog: bool
-    def __init__(self, point_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]]] = ..., object_name_list_objects_to_project_to: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., projection_options: _Optional[_Union[_spatial_analyzer_values_pb2.ProjectionOptions, _Mapping]] = ..., rms_tolerance_0_0_for_none: _Optional[float] = ..., maximum_absolute_tolerance_0_0_for_none: _Optional[float] = ..., show_results_dialog: bool = ...) -> None: ...
+    def __init__(self, point_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]]] = ..., object_name_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., resulting_object_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., projection_options: _Optional[_Union[_spatial_analyzer_values_pb2.ProjectionOptions, _Mapping]] = ..., rms_tolerance: _Optional[float] = ..., maximum_absolute_tolerance: _Optional[float] = ..., show_results_dialog: bool = ...) -> None: ...
 
 class QueryPointsToObjectsResult(_message.Message):
     __slots__ = ("rms_deviation", "max_absolute_deviation", "average_deviation", "standard_deviation", "execution")
@@ -1697,24 +1697,24 @@ class SetCirclePropertiesResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetConePropertiesRequest(_message.Message):
-    __slots__ = ("cone_name", "cone_end_point_in_working_coordinates", "cone_axis_in_working_coordinates", "cone_length", "cone_theta_start", "cone_theta_span", "cone_included_angle", "cut_length_from_apex")
+    __slots__ = ("cone_name", "cone_end_point", "cone_axis", "cone_length", "cone_theta_start", "cone_theta_span", "cone_included_angle", "cut_length_from_apex")
     CONE_NAME_FIELD_NUMBER: _ClassVar[int]
-    CONE_END_POINT_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
-    CONE_AXIS_IN_WORKING_COORDINATES_FIELD_NUMBER: _ClassVar[int]
+    CONE_END_POINT_FIELD_NUMBER: _ClassVar[int]
+    CONE_AXIS_FIELD_NUMBER: _ClassVar[int]
     CONE_LENGTH_FIELD_NUMBER: _ClassVar[int]
     CONE_THETA_START_FIELD_NUMBER: _ClassVar[int]
     CONE_THETA_SPAN_FIELD_NUMBER: _ClassVar[int]
     CONE_INCLUDED_ANGLE_FIELD_NUMBER: _ClassVar[int]
     CUT_LENGTH_FROM_APEX_FIELD_NUMBER: _ClassVar[int]
     cone_name: _spatial_analyzer_values_pb2.CollectionObjectName
-    cone_end_point_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
-    cone_axis_in_working_coordinates: _spatial_analyzer_values_pb2.Vector
+    cone_end_point: _spatial_analyzer_values_pb2.Vector
+    cone_axis: _spatial_analyzer_values_pb2.Vector
     cone_length: float
     cone_theta_start: float
     cone_theta_span: float
     cone_included_angle: float
     cut_length_from_apex: float
-    def __init__(self, cone_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., cone_end_point_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., cone_axis_in_working_coordinates: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., cone_length: _Optional[float] = ..., cone_theta_start: _Optional[float] = ..., cone_theta_span: _Optional[float] = ..., cone_included_angle: _Optional[float] = ..., cut_length_from_apex: _Optional[float] = ...) -> None: ...
+    def __init__(self, cone_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., cone_end_point: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., cone_axis: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., cone_length: _Optional[float] = ..., cone_theta_start: _Optional[float] = ..., cone_theta_span: _Optional[float] = ..., cone_included_angle: _Optional[float] = ..., cut_length_from_apex: _Optional[float] = ...) -> None: ...
 
 class SetConePropertiesResult(_message.Message):
     __slots__ = ("execution",)
@@ -1803,16 +1803,16 @@ class SetGeometryRelationshipFitProfileResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetLinePropertiesRequest(_message.Message):
-    __slots__ = ("line_name", "begin_coordinate", "end_coordinate", "length_optional")
+    __slots__ = ("line_name", "begin_coordinate", "end_coordinate", "length")
     LINE_NAME_FIELD_NUMBER: _ClassVar[int]
     BEGIN_COORDINATE_FIELD_NUMBER: _ClassVar[int]
     END_COORDINATE_FIELD_NUMBER: _ClassVar[int]
-    LENGTH_OPTIONAL_FIELD_NUMBER: _ClassVar[int]
+    LENGTH_FIELD_NUMBER: _ClassVar[int]
     line_name: _spatial_analyzer_values_pb2.CollectionObjectName
     begin_coordinate: _spatial_analyzer_values_pb2.Vector
     end_coordinate: _spatial_analyzer_values_pb2.Vector
-    length_optional: float
-    def __init__(self, line_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., begin_coordinate: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., end_coordinate: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., length_optional: _Optional[float] = ...) -> None: ...
+    length: float
+    def __init__(self, line_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., begin_coordinate: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., end_coordinate: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., length: _Optional[float] = ...) -> None: ...
 
 class SetLinePropertiesResult(_message.Message):
     __slots__ = ("execution",)
@@ -1945,20 +1945,20 @@ class SphereAxisCheckResult(_message.Message):
     def __init__(self, sphere_fit_rms_error: _Optional[float] = ..., sphere_fit_max_error: _Optional[float] = ..., vector_representation: _Optional[_Union[_spatial_analyzer_values_pb2.Vector, _Mapping]] = ..., x_value: _Optional[float] = ..., y_value: _Optional[float] = ..., z_value: _Optional[float] = ..., magnitude: _Optional[float] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class TemperatureCompensateAGroupRequest(_message.Message):
-    __slots__ = ("original_group", "scaling_origin_coordinate_frame", "material_cte_1_deg_f", "initial_temperature_f", "final_temperature_f", "scaled_group_name")
+    __slots__ = ("original_group", "scaling_origin", "material_cte", "initial_temperature", "final_temperature", "scaled_group_name")
     ORIGINAL_GROUP_FIELD_NUMBER: _ClassVar[int]
-    SCALING_ORIGIN_COORDINATE_FRAME_FIELD_NUMBER: _ClassVar[int]
-    MATERIAL_CTE_1_DEG_F_FIELD_NUMBER: _ClassVar[int]
-    INITIAL_TEMPERATURE_F_FIELD_NUMBER: _ClassVar[int]
-    FINAL_TEMPERATURE_F_FIELD_NUMBER: _ClassVar[int]
+    SCALING_ORIGIN_FIELD_NUMBER: _ClassVar[int]
+    MATERIAL_CTE_FIELD_NUMBER: _ClassVar[int]
+    INITIAL_TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
+    FINAL_TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
     SCALED_GROUP_NAME_FIELD_NUMBER: _ClassVar[int]
     original_group: _spatial_analyzer_values_pb2.CollectionObjectName
-    scaling_origin_coordinate_frame: _spatial_analyzer_values_pb2.FrameName
-    material_cte_1_deg_f: float
-    initial_temperature_f: float
-    final_temperature_f: float
+    scaling_origin: _spatial_analyzer_values_pb2.FrameName
+    material_cte: float
+    initial_temperature: float
+    final_temperature: float
     scaled_group_name: _spatial_analyzer_values_pb2.CollectionObjectName
-    def __init__(self, original_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., scaling_origin_coordinate_frame: _Optional[_Union[_spatial_analyzer_values_pb2.FrameName, _Mapping]] = ..., material_cte_1_deg_f: _Optional[float] = ..., initial_temperature_f: _Optional[float] = ..., final_temperature_f: _Optional[float] = ..., scaled_group_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
+    def __init__(self, original_group: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., scaling_origin: _Optional[_Union[_spatial_analyzer_values_pb2.FrameName, _Mapping]] = ..., material_cte: _Optional[float] = ..., initial_temperature: _Optional[float] = ..., final_temperature: _Optional[float] = ..., scaled_group_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class TemperatureCompensateAGroupResult(_message.Message):
     __slots__ = ("execution",)

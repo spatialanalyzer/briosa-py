@@ -193,12 +193,12 @@ class SetCalibrationApplianceNodeDisplayRobotResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetCalibrationApplianceNodeInstrumentDwellTimeRequest(_message.Message):
-    __slots__ = ("calibration_appliance_node", "measurement_dwell_time_seconds")
+    __slots__ = ("calibration_appliance_node", "measurement_dwell_time")
     CALIBRATION_APPLIANCE_NODE_FIELD_NUMBER: _ClassVar[int]
-    MEASUREMENT_DWELL_TIME_SECONDS_FIELD_NUMBER: _ClassVar[int]
+    MEASUREMENT_DWELL_TIME_FIELD_NUMBER: _ClassVar[int]
     calibration_appliance_node: _spatial_analyzer_values_pb2.CollectionObjectName
-    measurement_dwell_time_seconds: float
-    def __init__(self, calibration_appliance_node: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., measurement_dwell_time_seconds: _Optional[float] = ...) -> None: ...
+    measurement_dwell_time: float
+    def __init__(self, calibration_appliance_node: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., measurement_dwell_time: _Optional[float] = ...) -> None: ...
 
 class SetCalibrationApplianceNodeInstrumentDwellTimeResult(_message.Message):
     __slots__ = ("execution",)

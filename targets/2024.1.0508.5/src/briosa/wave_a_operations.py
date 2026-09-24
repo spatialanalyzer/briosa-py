@@ -147,8 +147,12 @@ class WaveAOperationsMixin:
         selected_plane: CollectionObjectName,
         *,
         nominal_angle: float = 0.000000,
-        angle_tolerance_0_0_for_none: float = 0.000000,
+        angle_tolerance: float = 0.000000,
     ) -> float:
+        """MP argument notes.
+
+        angle_tolerance: 0.0 disables this tolerance.
+        """
         return cast(
             float,
             await self._invoke_mp_operation(
@@ -159,7 +163,7 @@ class WaveAOperationsMixin:
                     "selected_line": selected_line,
                     "selected_plane": selected_plane,
                     "nominal_angle": nominal_angle,
-                    "angle_tolerance_0_0_for_none": angle_tolerance_0_0_for_none,
+                    "angle_tolerance": angle_tolerance,
                 },
                 None,
             ),
@@ -171,8 +175,12 @@ class WaveAOperationsMixin:
         line_2: CollectionObjectName,
         *,
         nominal_angle: float = 0.000000,
-        angle_tolerance_0_0_for_none: float = 0.000000,
+        angle_tolerance: float = 0.000000,
     ) -> float:
+        """MP argument notes.
+
+        angle_tolerance: 0.0 disables this tolerance.
+        """
         return cast(
             float,
             await self._invoke_mp_operation(
@@ -183,7 +191,7 @@ class WaveAOperationsMixin:
                     "line_1": line_1,
                     "line_2": line_2,
                     "nominal_angle": nominal_angle,
-                    "angle_tolerance_0_0_for_none": angle_tolerance_0_0_for_none,
+                    "angle_tolerance": angle_tolerance,
                 },
                 None,
             ),
@@ -195,8 +203,12 @@ class WaveAOperationsMixin:
         plane_b: CollectionObjectName,
         *,
         nominal_angle: float = 0.000000,
-        angle_tolerance_0_0_for_none: float = 0.000000,
+        angle_tolerance: float = 0.000000,
     ) -> float:
+        """MP argument notes.
+
+        angle_tolerance: 0.0 disables this tolerance.
+        """
         return cast(
             float,
             await self._invoke_mp_operation(
@@ -207,7 +219,7 @@ class WaveAOperationsMixin:
                     "plane_a": plane_a,
                     "plane_b": plane_b,
                     "nominal_angle": nominal_angle,
-                    "angle_tolerance_0_0_for_none": angle_tolerance_0_0_for_none,
+                    "angle_tolerance": angle_tolerance,
                 },
                 None,
             ),
@@ -219,8 +231,8 @@ class WaveAOperationsMixin:
         corresponding_group: CollectionObjectName,
         *,
         show_interface: bool = False,
-        rms_tolerance_0_0_for_none: float = 0.000000,
-        maximum_absolute_tolerance_0_0_for_none: float = 0.000000,
+        rms_tolerance: float = 0.000000,
+        maximum_absolute_tolerance: float = 0.000000,
         allow_scale: bool = False,
         allow_x: bool = True,
         allow_y: bool = True,
@@ -230,8 +242,14 @@ class WaveAOperationsMixin:
         allow_rz: bool = True,
         lock_degrees_of_freedom: bool = False,
         generate_event: bool = False,
-        file_path_for_csv_text_report_requires_show_interface_true: FileReference,
+        file_path_for_csv_text_report: FileReference,
     ) -> BestFitTransformationGroupToGroupResult:
+        """MP argument notes.
+
+        rms_tolerance: 0.0 disables this tolerance.
+        maximum_absolute_tolerance: 0.0 disables this tolerance.
+        file_path_for_csv_text_report: Requires Show Interface to be true.
+        """
         return cast(
             BestFitTransformationGroupToGroupResult,
             await self._invoke_mp_operation(
@@ -242,8 +260,8 @@ class WaveAOperationsMixin:
                     "reference_group": reference_group,
                     "corresponding_group": corresponding_group,
                     "show_interface": show_interface,
-                    "rms_tolerance_0_0_for_none": rms_tolerance_0_0_for_none,
-                    "maximum_absolute_tolerance_0_0_for_none": maximum_absolute_tolerance_0_0_for_none,
+                    "rms_tolerance": rms_tolerance,
+                    "maximum_absolute_tolerance": maximum_absolute_tolerance,
                     "allow_scale": allow_scale,
                     "allow_x": allow_x,
                     "allow_y": allow_y,
@@ -253,7 +271,7 @@ class WaveAOperationsMixin:
                     "allow_rz": allow_rz,
                     "lock_degrees_of_freedom": lock_degrees_of_freedom,
                     "generate_event": generate_event,
-                    "file_path_for_csv_text_report_requires_show_interface_true": file_path_for_csv_text_report_requires_show_interface_true,
+                    "file_path_for_csv_text_report": file_path_for_csv_text_report,
                 },
                 BestFitTransformationGroupToGroupResult,
             ),
@@ -330,10 +348,15 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         report_deviations: bool = False,
-        fit_interface_tolerance_1_0_use_profile: float = -1.000000,
+        fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
-        starting_condition_geometry_optional: CollectionObjectName,
+        starting_condition_geometry: CollectionObjectName,
     ) -> None:
+        """MP argument notes.
+
+        fit_interface_tolerance: -1.0 uses the profile tolerance.
+        starting_condition_geometry: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "FitGeometryToPointGroup",
@@ -344,9 +367,9 @@ class WaveAOperationsMixin:
                 "resulting_object_name": resulting_object_name,
                 "fit_profile_name": fit_profile_name,
                 "report_deviations": report_deviations,
-                "fit_interface_tolerance_1_0_use_profile": fit_interface_tolerance_1_0_use_profile,
+                "fit_interface_tolerance": fit_interface_tolerance,
                 "ignore_out_of_tolerance_points": ignore_out_of_tolerance_points,
-                "starting_condition_geometry_optional": starting_condition_geometry_optional,
+                "starting_condition_geometry": starting_condition_geometry,
             },
             None,
         )
@@ -361,10 +384,15 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         report_deviations: bool = False,
-        fit_interface_tolerance_1_0_use_profile: float = -1.000000,
+        fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
-        starting_condition_geometry_optional: CollectionObjectName,
+        starting_condition_geometry: CollectionObjectName,
     ) -> None:
+        """MP argument notes.
+
+        fit_interface_tolerance: -1.0 uses the profile tolerance.
+        starting_condition_geometry: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "FitGeometryToPointGroupProjectedToPlane",
@@ -376,9 +404,9 @@ class WaveAOperationsMixin:
                 "resulting_object_name": resulting_object_name,
                 "fit_profile_name": fit_profile_name,
                 "report_deviations": report_deviations,
-                "fit_interface_tolerance_1_0_use_profile": fit_interface_tolerance_1_0_use_profile,
+                "fit_interface_tolerance": fit_interface_tolerance,
                 "ignore_out_of_tolerance_points": ignore_out_of_tolerance_points,
-                "starting_condition_geometry_optional": starting_condition_geometry_optional,
+                "starting_condition_geometry": starting_condition_geometry,
             },
             None,
         )
@@ -392,10 +420,15 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         report_deviations: bool = False,
-        fit_interface_tolerance_1_0_use_profile: float = -1.000000,
+        fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
-        starting_condition_geometry_optional: CollectionObjectName,
+        starting_condition_geometry: CollectionObjectName,
     ) -> None:
+        """MP argument notes.
+
+        fit_interface_tolerance: -1.0 uses the profile tolerance.
+        starting_condition_geometry: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "FitGeometryToPoints",
@@ -406,9 +439,9 @@ class WaveAOperationsMixin:
                 "resulting_object_name": resulting_object_name,
                 "fit_profile_name": fit_profile_name,
                 "report_deviations": report_deviations,
-                "fit_interface_tolerance_1_0_use_profile": fit_interface_tolerance_1_0_use_profile,
+                "fit_interface_tolerance": fit_interface_tolerance,
                 "ignore_out_of_tolerance_points": ignore_out_of_tolerance_points,
-                "starting_condition_geometry_optional": starting_condition_geometry_optional,
+                "starting_condition_geometry": starting_condition_geometry,
             },
             None,
         )
@@ -1019,9 +1052,14 @@ class WaveAOperationsMixin:
         surface: CollectionObjectName,
         *,
         do_conventional_fit: bool = False,
-        rms_tolerance_0_0_for_none: float = 0.000000,
-        maximum_absolute_tolerance_0_0_for_none: float = 0.000000,
+        rms_tolerance: float = 0.000000,
+        maximum_absolute_tolerance: float = 0.000000,
     ) -> GroupToSurfaceFitResult:
+        """MP argument notes.
+
+        rms_tolerance: 0.0 disables this tolerance.
+        maximum_absolute_tolerance: 0.0 disables this tolerance.
+        """
         return cast(
             GroupToSurfaceFitResult,
             await self._invoke_mp_operation(
@@ -1032,8 +1070,8 @@ class WaveAOperationsMixin:
                     "group_to_fit": group_to_fit,
                     "surface": surface,
                     "do_conventional_fit": do_conventional_fit,
-                    "rms_tolerance_0_0_for_none": rms_tolerance_0_0_for_none,
-                    "maximum_absolute_tolerance_0_0_for_none": maximum_absolute_tolerance_0_0_for_none,
+                    "rms_tolerance": rms_tolerance,
+                    "maximum_absolute_tolerance": maximum_absolute_tolerance,
                 },
                 GroupToSurfaceFitResult,
             ),
@@ -1082,17 +1120,23 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         measured_side_for_radial_offset: MeasuredSideForRadialOffset = MeasuredSideForRadialOffset.OUTSIDE,
-        override_radial_offset_1_0_use_current: float = -1.000000,
+        override_radial_offset: float = -1.000000,
         measured_side_for_planar_offset: MeasuredSideForPlanarOffset = MeasuredSideForPlanarOffset.ABOVE_PLANE,
-        override_planar_offset_1_0_use_current: float = -1.000000,
+        override_planar_offset: float = -1.000000,
         planar_offset_direction: NormalDirection = NormalDirection.PROBING_DIRECTION,
-        lock_radius_1_0_do_not_lock: float = -1.000000,
+        lock_radius: float = -1.000000,
         circle_computation_technique: CompTechnique = CompTechnique.STANDARD,
         reverse_normal_vector_after_fit: bool = False,
         make_cardinal_points: bool = True,
         cardinal_pt_1_center: bool = True,
         cardinal_pt_2_point_on_normal: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        override_radial_offset: -1.0 uses the current offset.
+        override_planar_offset: -1.0 uses the current offset.
+        lock_radius: -1.0 leaves this dimension unlocked.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "MakeCircleFitProfile",
@@ -1100,11 +1144,11 @@ class WaveAOperationsMixin:
             {
                 "fit_profile_name": fit_profile_name,
                 "measured_side_for_radial_offset": measured_side_for_radial_offset,
-                "override_radial_offset_1_0_use_current": override_radial_offset_1_0_use_current,
+                "override_radial_offset": override_radial_offset,
                 "measured_side_for_planar_offset": measured_side_for_planar_offset,
-                "override_planar_offset_1_0_use_current": override_planar_offset_1_0_use_current,
+                "override_planar_offset": override_planar_offset,
                 "planar_offset_direction": planar_offset_direction,
-                "lock_radius_1_0_do_not_lock": lock_radius_1_0_do_not_lock,
+                "lock_radius": lock_radius,
                 "circle_computation_technique": circle_computation_technique,
                 "reverse_normal_vector_after_fit": reverse_normal_vector_after_fit,
                 "make_cardinal_points": make_cardinal_points,
@@ -1120,14 +1164,19 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         measured_side_for_radial_offset: MeasuredSideForRadialOffset = MeasuredSideForRadialOffset.OUTSIDE,
-        override_radial_offset_1_0_use_current: float = -1.000000,
-        lock_angle_in_degrees_1_0_do_not_lock: float = -1.000000,
+        override_radial_offset: float = -1.000000,
+        lock_angle_in_degrees: float = -1.000000,
         use_exhaustive_search: bool = True,
         make_cardinal_points: bool = True,
         cardinal_pt_1_vertex: bool = True,
         cardinal_pt_2_point_on_axis: bool = True,
         cardinal_pt_3_cut_point_on_axis: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        override_radial_offset: -1.0 uses the current offset.
+        lock_angle_in_degrees: -1.0 leaves this dimension unlocked.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "MakeConeFitProfile",
@@ -1135,8 +1184,8 @@ class WaveAOperationsMixin:
             {
                 "fit_profile_name": fit_profile_name,
                 "measured_side_for_radial_offset": measured_side_for_radial_offset,
-                "override_radial_offset_1_0_use_current": override_radial_offset_1_0_use_current,
-                "lock_angle_in_degrees_1_0_do_not_lock": lock_angle_in_degrees_1_0_do_not_lock,
+                "override_radial_offset": override_radial_offset,
+                "lock_angle_in_degrees": lock_angle_in_degrees,
                 "use_exhaustive_search": use_exhaustive_search,
                 "make_cardinal_points": make_cardinal_points,
                 "cardinal_pt_1_vertex": cardinal_pt_1_vertex,
@@ -1152,8 +1201,8 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         measured_side_for_radial_offset: MeasuredSideForRadialOffset = MeasuredSideForRadialOffset.OUTSIDE,
-        override_radial_offset_1_0_use_current: float = -1.000000,
-        lock_radius_1_0_do_not_lock: float = -1.000000,
+        override_radial_offset: float = -1.000000,
+        lock_radius: float = -1.000000,
         locked_radius_fit_method: FitMethod = FitMethod.MINIMUM_RMS,
         cylinder_computation_technique: CompTechnique = CompTechnique.STANDARD,
         use_exhaustive_search: bool = False,
@@ -1162,6 +1211,11 @@ class WaveAOperationsMixin:
         cardinal_pt_2_end_pt: bool = True,
         cardinal_pt_3_center: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        override_radial_offset: -1.0 uses the current offset.
+        lock_radius: -1.0 leaves this dimension unlocked.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "MakeCylinderFitProfile",
@@ -1169,8 +1223,8 @@ class WaveAOperationsMixin:
             {
                 "fit_profile_name": fit_profile_name,
                 "measured_side_for_radial_offset": measured_side_for_radial_offset,
-                "override_radial_offset_1_0_use_current": override_radial_offset_1_0_use_current,
-                "lock_radius_1_0_do_not_lock": lock_radius_1_0_do_not_lock,
+                "override_radial_offset": override_radial_offset,
+                "lock_radius": lock_radius,
                 "locked_radius_fit_method": locked_radius_fit_method,
                 "cylinder_computation_technique": cylinder_computation_technique,
                 "use_exhaustive_search": use_exhaustive_search,
@@ -1188,9 +1242,9 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         measured_side_for_radial_offset: MeasuredSideForRadialOffset = MeasuredSideForRadialOffset.OUTSIDE,
-        override_radial_offset_1_0_use_current: float = -1.000000,
+        override_radial_offset: float = -1.000000,
         measured_side_for_planar_offset: MeasuredSideForPlanarOffset = MeasuredSideForPlanarOffset.ABOVE_PLANE,
-        override_planar_offset_1_0_use_current: float = -1.000000,
+        override_planar_offset: float = -1.000000,
         planar_offset_direction: NormalDirection = NormalDirection.PROBING_DIRECTION,
         reverse_normal_vector_after_fit: bool = False,
         make_cardinal_points: bool = True,
@@ -1199,6 +1253,11 @@ class WaveAOperationsMixin:
         cardinal_pt_3_focal_pt_1: bool = True,
         cardinal_pt_4_focal_pt_2: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        override_radial_offset: -1.0 uses the current offset.
+        override_planar_offset: -1.0 uses the current offset.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "MakeEllipseFitProfile",
@@ -1206,9 +1265,9 @@ class WaveAOperationsMixin:
             {
                 "fit_profile_name": fit_profile_name,
                 "measured_side_for_radial_offset": measured_side_for_radial_offset,
-                "override_radial_offset_1_0_use_current": override_radial_offset_1_0_use_current,
+                "override_radial_offset": override_radial_offset,
                 "measured_side_for_planar_offset": measured_side_for_planar_offset,
-                "override_planar_offset_1_0_use_current": override_planar_offset_1_0_use_current,
+                "override_planar_offset": override_planar_offset,
                 "planar_offset_direction": planar_offset_direction,
                 "reverse_normal_vector_after_fit": reverse_normal_vector_after_fit,
                 "make_cardinal_points": make_cardinal_points,
@@ -1252,13 +1311,18 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         measured_side_for_radial_offset: MeasuredSideForRadialOffset = MeasuredSideForRadialOffset.OUTSIDE,
-        override_radial_offset_1_0_use_current: float = -1.000000,
-        lock_focal_length_1_0_do_not_lock: float = -1.000000,
+        override_radial_offset: float = -1.000000,
+        lock_focal_length: float = -1.000000,
         degree_of_freedom: DegreeOfFreedom = DegreeOfFreedom.ANY,
         make_cardinal_points: bool = True,
         cardinal_pt_1_vertex: bool = True,
         cardinal_pt_2_focal_point: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        override_radial_offset: -1.0 uses the current offset.
+        lock_focal_length: -1.0 leaves this dimension unlocked.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "MakeParaboloidFitProfile",
@@ -1266,8 +1330,8 @@ class WaveAOperationsMixin:
             {
                 "fit_profile_name": fit_profile_name,
                 "measured_side_for_radial_offset": measured_side_for_radial_offset,
-                "override_radial_offset_1_0_use_current": override_radial_offset_1_0_use_current,
-                "lock_focal_length_1_0_do_not_lock": lock_focal_length_1_0_do_not_lock,
+                "override_radial_offset": override_radial_offset,
+                "lock_focal_length": lock_focal_length,
                 "degree_of_freedom": degree_of_freedom,
                 "make_cardinal_points": make_cardinal_points,
                 "cardinal_pt_1_vertex": cardinal_pt_1_vertex,
@@ -1282,13 +1346,17 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         measured_side_for_planar_offset: MeasuredSideForPlanarOffset = MeasuredSideForPlanarOffset.ABOVE_PLANE,
-        override_planar_offset_1_0_use_current: float = -1.000000,
+        override_planar_offset: float = -1.000000,
         planar_offset_direction: NormalDirection = NormalDirection.PROBING_DIRECTION,
         reverse_normal_vector_after_fit: bool = False,
         make_cardinal_points: bool = True,
         cardinal_pt_1_centroid: bool = True,
         cardinal_pt_2_point_on_normal: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        override_planar_offset: -1.0 uses the current offset.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "MakePlaneFitProfile",
@@ -1296,7 +1364,7 @@ class WaveAOperationsMixin:
             {
                 "fit_profile_name": fit_profile_name,
                 "measured_side_for_planar_offset": measured_side_for_planar_offset,
-                "override_planar_offset_1_0_use_current": override_planar_offset_1_0_use_current,
+                "override_planar_offset": override_planar_offset,
                 "planar_offset_direction": planar_offset_direction,
                 "reverse_normal_vector_after_fit": reverse_normal_vector_after_fit,
                 "make_cardinal_points": make_cardinal_points,
@@ -1312,9 +1380,9 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         measured_side_for_radial_offset: MeasuredSideForRadialOffset = MeasuredSideForRadialOffset.OUTSIDE,
-        override_radial_offset_1_0_use_current: float = -1.000000,
+        override_radial_offset: float = -1.000000,
         measured_side_for_planar_offset: MeasuredSideForPlanarOffset = MeasuredSideForPlanarOffset.ABOVE_PLANE,
-        override_planar_offset_1_0_use_current: float = -1.000000,
+        override_planar_offset: float = -1.000000,
         planar_offset_direction: NormalDirection = NormalDirection.PROBING_DIRECTION,
         slot_type: SlotType = SlotType.ROUND,
         slot_computation_technique: CompTechnique = CompTechnique.STANDARD,
@@ -1325,6 +1393,11 @@ class WaveAOperationsMixin:
         cardinal_pt_3_centerline_pt_1: bool = True,
         cardinal_pt_4_centerline_pt_2: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        override_radial_offset: -1.0 uses the current offset.
+        override_planar_offset: -1.0 uses the current offset.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "MakeSlotFitProfile",
@@ -1332,9 +1405,9 @@ class WaveAOperationsMixin:
             {
                 "fit_profile_name": fit_profile_name,
                 "measured_side_for_radial_offset": measured_side_for_radial_offset,
-                "override_radial_offset_1_0_use_current": override_radial_offset_1_0_use_current,
+                "override_radial_offset": override_radial_offset,
                 "measured_side_for_planar_offset": measured_side_for_planar_offset,
-                "override_planar_offset_1_0_use_current": override_planar_offset_1_0_use_current,
+                "override_planar_offset": override_planar_offset,
                 "planar_offset_direction": planar_offset_direction,
                 "slot_type": slot_type,
                 "slot_computation_technique": slot_computation_technique,
@@ -1354,12 +1427,17 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         measured_side_for_radial_offset: MeasuredSideForRadialOffset = MeasuredSideForRadialOffset.OUTSIDE,
-        override_radial_offset_1_0_use_current: float = -1.000000,
-        lock_radius_1_0_do_not_lock: float = -1.000000,
+        override_radial_offset: float = -1.000000,
+        lock_radius: float = -1.000000,
         make_cardinal_points: bool = True,
         cardinal_pt_1_center: bool = True,
         computation_method: SphereFitComputationMode = SphereFitComputationMode.STANDARD,
     ) -> None:
+        """MP argument notes.
+
+        override_radial_offset: -1.0 uses the current offset.
+        lock_radius: -1.0 leaves this dimension unlocked.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "MakeSphereFitProfile",
@@ -1367,8 +1445,8 @@ class WaveAOperationsMixin:
             {
                 "fit_profile_name": fit_profile_name,
                 "measured_side_for_radial_offset": measured_side_for_radial_offset,
-                "override_radial_offset_1_0_use_current": override_radial_offset_1_0_use_current,
-                "lock_radius_1_0_do_not_lock": lock_radius_1_0_do_not_lock,
+                "override_radial_offset": override_radial_offset,
+                "lock_radius": lock_radius,
                 "make_cardinal_points": make_cardinal_points,
                 "cardinal_pt_1_center": cardinal_pt_1_center,
                 "computation_method": computation_method,
@@ -1456,9 +1534,14 @@ class WaveAOperationsMixin:
         projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
         proximity: float = 0.000000,
         skip_factor: int = 0,
-        rms_tolerance_0_0_for_none: float = 0.000000,
-        maximum_absolute_tolerance_0_0_for_none: float = 0.000000,
+        rms_tolerance: float = 0.000000,
+        maximum_absolute_tolerance: float = 0.000000,
     ) -> QueryCloudsToObjectsResult:
+        """MP argument notes.
+
+        rms_tolerance: 0.0 disables this tolerance.
+        maximum_absolute_tolerance: 0.0 disables this tolerance.
+        """
         return cast(
             QueryCloudsToObjectsResult,
             await self._invoke_mp_operation(
@@ -1472,8 +1555,8 @@ class WaveAOperationsMixin:
                     "projection_options": projection_options,
                     "proximity": proximity,
                     "skip_factor": skip_factor,
-                    "rms_tolerance_0_0_for_none": rms_tolerance_0_0_for_none,
-                    "maximum_absolute_tolerance_0_0_for_none": maximum_absolute_tolerance_0_0_for_none,
+                    "rms_tolerance": rms_tolerance,
+                    "maximum_absolute_tolerance": maximum_absolute_tolerance,
                 },
                 QueryCloudsToObjectsResult,
             ),
@@ -1488,9 +1571,14 @@ class WaveAOperationsMixin:
         projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
         proximity: float = 0.000000,
         skip_factor: int = 0,
-        rms_tolerance_0_0_for_none: float = 0.000000,
-        maximum_absolute_tolerance_0_0_for_none: float = 0.000000,
+        rms_tolerance: float = 0.000000,
+        maximum_absolute_tolerance: float = 0.000000,
     ) -> QueryCloudsToSurfaceResult:
+        """MP argument notes.
+
+        rms_tolerance: 0.0 disables this tolerance.
+        maximum_absolute_tolerance: 0.0 disables this tolerance.
+        """
         return cast(
             QueryCloudsToSurfaceResult,
             await self._invoke_mp_operation(
@@ -1504,8 +1592,8 @@ class WaveAOperationsMixin:
                     "projection_options": projection_options,
                     "proximity": proximity,
                     "skip_factor": skip_factor,
-                    "rms_tolerance_0_0_for_none": rms_tolerance_0_0_for_none,
-                    "maximum_absolute_tolerance_0_0_for_none": maximum_absolute_tolerance_0_0_for_none,
+                    "rms_tolerance": rms_tolerance,
+                    "maximum_absolute_tolerance": maximum_absolute_tolerance,
                 },
                 QueryCloudsToSurfaceResult,
             ),
@@ -1532,15 +1620,22 @@ class WaveAOperationsMixin:
 
     async def query_groups_to_objects(
         self,
-        group_name_list_groups_to_project: Iterable[CollectionObjectName],
-        object_name_list_objects_to_project_to: Iterable[CollectionObjectName],
+        group_name_list: Iterable[CollectionObjectName],
+        object_name_list: Iterable[CollectionObjectName],
         resulting_object_name: CollectionObjectName,
         *,
         projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
-        rms_tolerance_0_0_for_none: float = 0.000000,
-        maximum_absolute_tolerance_0_0_for_none: float = 0.000000,
+        rms_tolerance: float = 0.000000,
+        maximum_absolute_tolerance: float = 0.000000,
         show_results_dialog: bool = False,
     ) -> QueryGroupsToObjectsResult:
+        """MP argument notes.
+
+        group_name_list: MP qualifier: Groups to Project.
+        object_name_list: MP qualifier: Objects to Project to.
+        rms_tolerance: 0.0 disables this tolerance.
+        maximum_absolute_tolerance: 0.0 disables this tolerance.
+        """
         return cast(
             QueryGroupsToObjectsResult,
             await self._invoke_mp_operation(
@@ -1548,12 +1643,12 @@ class WaveAOperationsMixin:
                 "QueryGroupsToObjects",
                 "analysis_operations.query_groups_to_objects",
                 {
-                    "group_name_list_groups_to_project": group_name_list_groups_to_project,
-                    "object_name_list_objects_to_project_to": object_name_list_objects_to_project_to,
+                    "group_name_list": group_name_list,
+                    "object_name_list": object_name_list,
                     "resulting_object_name": resulting_object_name,
                     "projection_options": projection_options,
-                    "rms_tolerance_0_0_for_none": rms_tolerance_0_0_for_none,
-                    "maximum_absolute_tolerance_0_0_for_none": maximum_absolute_tolerance_0_0_for_none,
+                    "rms_tolerance": rms_tolerance,
+                    "maximum_absolute_tolerance": maximum_absolute_tolerance,
                     "show_results_dialog": show_results_dialog,
                 },
                 QueryGroupsToObjectsResult,
@@ -1634,14 +1729,20 @@ class WaveAOperationsMixin:
     async def query_points_to_objects(
         self,
         point_names: Iterable[PointName],
-        object_name_list_objects_to_project_to: Iterable[CollectionObjectName],
+        object_name_list: Iterable[CollectionObjectName],
         resulting_object_name: CollectionObjectName,
         *,
         projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
-        rms_tolerance_0_0_for_none: float = 0.000000,
-        maximum_absolute_tolerance_0_0_for_none: float = 0.000000,
+        rms_tolerance: float = 0.000000,
+        maximum_absolute_tolerance: float = 0.000000,
         show_results_dialog: bool = False,
     ) -> QueryPointsToObjectsResult:
+        """MP argument notes.
+
+        object_name_list: MP qualifier: Objects to Project to.
+        rms_tolerance: 0.0 disables this tolerance.
+        maximum_absolute_tolerance: 0.0 disables this tolerance.
+        """
         return cast(
             QueryPointsToObjectsResult,
             await self._invoke_mp_operation(
@@ -1650,11 +1751,11 @@ class WaveAOperationsMixin:
                 "analysis_operations.query_points_to_objects",
                 {
                     "point_names": point_names,
-                    "object_name_list_objects_to_project_to": object_name_list_objects_to_project_to,
+                    "object_name_list": object_name_list,
                     "resulting_object_name": resulting_object_name,
                     "projection_options": projection_options,
-                    "rms_tolerance_0_0_for_none": rms_tolerance_0_0_for_none,
-                    "maximum_absolute_tolerance_0_0_for_none": maximum_absolute_tolerance_0_0_for_none,
+                    "rms_tolerance": rms_tolerance,
+                    "maximum_absolute_tolerance": maximum_absolute_tolerance,
                     "show_results_dialog": show_results_dialog,
                 },
                 QueryPointsToObjectsResult,
@@ -2024,23 +2125,30 @@ class WaveAOperationsMixin:
     async def temperature_compensate_a_group(
         self,
         original_group: CollectionObjectName,
-        scaling_origin_coordinate_frame: FrameName,
+        scaling_origin: FrameName,
         *,
-        material_cte_1_deg_f: float = 0.000000,
-        initial_temperature_f: float = 0.000000,
-        final_temperature_f: float = 0.000000,
+        material_cte: float = 0.000000,
+        initial_temperature: float = 0.000000,
+        final_temperature: float = 0.000000,
         scaled_group_name: CollectionObjectName,
     ) -> None:
+        """MP argument notes.
+
+        scaling_origin: MP qualifier: coordinate frame.
+        material_cte: Coefficient per degree Fahrenheit.
+        initial_temperature: Temperature in degrees Fahrenheit.
+        final_temperature: Temperature in degrees Fahrenheit.
+        """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
             "TemperatureCompensateAGroup",
             "analysis_operations.temperature_compensate_a_group",
             {
                 "original_group": original_group,
-                "scaling_origin_coordinate_frame": scaling_origin_coordinate_frame,
-                "material_cte_1_deg_f": material_cte_1_deg_f,
-                "initial_temperature_f": initial_temperature_f,
-                "final_temperature_f": final_temperature_f,
+                "scaling_origin": scaling_origin,
+                "material_cte": material_cte,
+                "initial_temperature": initial_temperature,
+                "final_temperature": final_temperature,
                 "scaled_group_name": scaled_group_name,
             },
             None,
@@ -2345,14 +2453,19 @@ class WaveAOperationsMixin:
         center_view_on_imported_objects: bool = True,
         import_into_folders_matching_cad_file_hierarchy: bool = False,
         remove_empty_folders: bool = True,
-        surface_normals_mode_1_or_2: int = 1,
+        surface_normals_mode: int = 1,
         prompt_on_missing_components: bool = True,
         selective_import: bool = False,
         surface_compatibility_mode: bool,
         explode_surfaces: bool = False,
-        cad_file_units_leave_blank_to_use_the_units_specified_in_the_file: str = "",
+        cad_file_units: str = "",
         build_callout_views: bool = True,
     ) -> DirectCadAccessResult:
+        """MP argument notes.
+
+        surface_normals_mode: MP qualifier: 1 or 2.
+        cad_file_units: An empty value uses the units specified in the file.
+        """
         return cast(
             DirectCadAccessResult,
             await self._invoke_mp_operation(
@@ -2383,12 +2496,12 @@ class WaveAOperationsMixin:
                     "center_view_on_imported_objects": center_view_on_imported_objects,
                     "import_into_folders_matching_cad_file_hierarchy": import_into_folders_matching_cad_file_hierarchy,
                     "remove_empty_folders": remove_empty_folders,
-                    "surface_normals_mode_1_or_2": surface_normals_mode_1_or_2,
+                    "surface_normals_mode": surface_normals_mode,
                     "prompt_on_missing_components": prompt_on_missing_components,
                     "selective_import": selective_import,
                     "surface_compatibility_mode": surface_compatibility_mode,
                     "explode_surfaces": explode_surfaces,
-                    "cad_file_units_leave_blank_to_use_the_units_specified_in_the_file": cad_file_units_leave_blank_to_use_the_units_specified_in_the_file,
+                    "cad_file_units": cad_file_units,
                     "build_callout_views": build_callout_views,
                 },
                 DirectCadAccessResult,
@@ -2482,10 +2595,14 @@ class WaveAOperationsMixin:
         include_sa_version_and_frame_comments: bool = False,
         include_axis_comments: bool = False,
         include_export_format_info: bool = False,
-        maximum_precision_scientific_notation: bool = False,
+        maximum_precision: bool = False,
         decimal_precision: int = 6,
         append: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        maximum_precision: MP qualifier: Scientific Notation.
+        """
         await self._invoke_mp_operation(
             "briosa.FileOperations",
             "ExportAsciiPointSet",
@@ -2501,7 +2618,7 @@ class WaveAOperationsMixin:
                 "include_sa_version_and_frame_comments": include_sa_version_and_frame_comments,
                 "include_axis_comments": include_axis_comments,
                 "include_export_format_info": include_export_format_info,
-                "maximum_precision_scientific_notation": maximum_precision_scientific_notation,
+                "maximum_precision": maximum_precision,
                 "decimal_precision": decimal_precision,
                 "append": append,
             },
@@ -2527,10 +2644,14 @@ class WaveAOperationsMixin:
         include_export_format_info: bool = False,
         include_weights: bool = False,
         include_measurement_details: bool = False,
-        maximum_precision_scientific_notation: bool = False,
+        maximum_precision: bool = False,
         decimal_precision: int = 6,
         append: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        maximum_precision: MP qualifier: Scientific Notation.
+        """
         await self._invoke_mp_operation(
             "briosa.FileOperations",
             "ExportAsciiPoints",
@@ -2551,7 +2672,7 @@ class WaveAOperationsMixin:
                 "include_export_format_info": include_export_format_info,
                 "include_weights": include_weights,
                 "include_measurement_details": include_measurement_details,
-                "maximum_precision_scientific_notation": maximum_precision_scientific_notation,
+                "maximum_precision": maximum_precision,
                 "decimal_precision": decimal_precision,
                 "append": append,
             },
@@ -2823,11 +2944,16 @@ class WaveAOperationsMixin:
         ascii_file_path: FileReference,
         vector_groups_to_export: Iterable[CollectionVectorGroupName],
         *,
-        overwrite_existing_file_false_append: bool = True,
-        use_full_precision_scientific_notation: bool = False,
+        overwrite_existing_file: bool = True,
+        use_full_precision: bool = False,
         vector_name_format: ExportVectorNameFormat,
         include_vector_length: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        overwrite_existing_file: False appends to the existing file.
+        use_full_precision: MP qualifier: Scientific Notation.
+        """
         await self._invoke_mp_operation(
             "briosa.FileOperations",
             "ExportVectorContainerToAsciiFile",
@@ -2835,8 +2961,8 @@ class WaveAOperationsMixin:
             {
                 "ascii_file_path": ascii_file_path,
                 "vector_groups_to_export": vector_groups_to_export,
-                "overwrite_existing_file_false_append": overwrite_existing_file_false_append,
-                "use_full_precision_scientific_notation": use_full_precision_scientific_notation,
+                "overwrite_existing_file": overwrite_existing_file,
+                "use_full_precision": use_full_precision,
                 "vector_name_format": vector_name_format,
                 "include_vector_length": include_vector_length,
             },
@@ -3285,8 +3411,12 @@ class WaveAOperationsMixin:
         sa_file_name: FileReference,
         *,
         allow_operator_selections: bool = False,
-        selected_collections_optional: Iterable[str],
+        selected_collections: Iterable[str],
     ) -> None:
+        """MP argument notes.
+
+        selected_collections: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        """
         await self._invoke_mp_operation(
             "briosa.FileOperations",
             "ImportSaFile",
@@ -3294,7 +3424,7 @@ class WaveAOperationsMixin:
             {
                 "sa_file_name": sa_file_name,
                 "allow_operator_selections": allow_operator_selections,
-                "selected_collections_optional": selected_collections_optional,
+                "selected_collections": selected_collections,
             },
             None,
         )
@@ -4166,9 +4296,14 @@ class WaveAOperationsMixin:
         image_map_xml_file: FileReference,
         *,
         window_caption: str = "",
-        window_width_0_default: int = 0,
-        window_height_0_default: int = 0,
+        window_width: int = 0,
+        window_height: int = 0,
     ) -> str:
+        """MP argument notes.
+
+        window_width: 0 uses the default window dimension.
+        window_height: 0 uses the default window dimension.
+        """
         return cast(
             str,
             await self._invoke_mp_operation(
@@ -4179,8 +4314,8 @@ class WaveAOperationsMixin:
                     "image_file": image_file,
                     "image_map_xml_file": image_map_xml_file,
                     "window_caption": window_caption,
-                    "window_width_0_default": window_width_0_default,
-                    "window_height_0_default": window_height_0_default,
+                    "window_width": window_width,
+                    "window_height": window_height,
                 },
                 None,
             ),
@@ -4191,10 +4326,16 @@ class WaveAOperationsMixin:
         question_or_statement: Iterable[str],
         *,
         font: Font = Font.DEFAULT,
-        button1_text_empty_to_hide_button: str = "",
-        button2_text_empty_to_hide_button: str = "",
-        button3_text_empty_to_hide_button: str = "",
+        button1_text: str = "",
+        button2_text: str = "",
+        button3_text: str = "",
     ) -> str:
+        """MP argument notes.
+
+        button1_text: An empty string hides the button.
+        button2_text: An empty string hides the button.
+        button3_text: An empty string hides the button.
+        """
         return cast(
             str,
             await self._invoke_mp_operation(
@@ -4204,9 +4345,9 @@ class WaveAOperationsMixin:
                 {
                     "question_or_statement": question_or_statement,
                     "font": font,
-                    "button1_text_empty_to_hide_button": button1_text_empty_to_hide_button,
-                    "button2_text_empty_to_hide_button": button2_text_empty_to_hide_button,
-                    "button3_text_empty_to_hide_button": button3_text_empty_to_hide_button,
+                    "button1_text": button1_text,
+                    "button2_text": button2_text,
+                    "button3_text": button3_text,
                 },
                 None,
             ),
@@ -5157,13 +5298,18 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         enable_voxel_cloud_display: bool = True,
-        voxel_size_1_0_autodetect: float = -1.000000,
+        voxel_size: float = -1.000000,
         min_pts_count_per_voxel: int = 3,
-        voxel_rendering_diameter_1_0_fast: float = 125.000000,
+        voxel_rendering_diameter: float = 125.000000,
         surface_analysis_mode: SurfaceAnalysisMode = SurfaceAnalysisMode.RELATIONSHIP,
         colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
         show_color_bar_in_view: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        voxel_size: -1.0 selects automatic detection.
+        voxel_rendering_diameter: -1.0 selects fast rendering.
+        """
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
             "SetRelationshipVoxelCloudDisplay",
@@ -5171,9 +5317,9 @@ class WaveAOperationsMixin:
             {
                 "relationship_name": relationship_name,
                 "enable_voxel_cloud_display": enable_voxel_cloud_display,
-                "voxel_size_1_0_autodetect": voxel_size_1_0_autodetect,
+                "voxel_size": voxel_size,
                 "min_pts_count_per_voxel": min_pts_count_per_voxel,
-                "voxel_rendering_diameter_1_0_fast": voxel_rendering_diameter_1_0_fast,
+                "voxel_rendering_diameter": voxel_rendering_diameter,
                 "surface_analysis_mode": surface_analysis_mode,
                 "colorization_options": colorization_options,
                 "show_color_bar_in_view": show_color_bar_in_view,
@@ -5522,10 +5668,14 @@ class WaveAOperationsMixin:
         chart_type: ChartType,
         data_set_to_chart: DatasetType,
         aux_data_set_to_chart: DatasetType,
-        template_chart_name_optional: ChartName,
+        template_chart_name: ChartName,
         *,
         show_interface: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        template_chart_name: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        """
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
             "CreateChartFromVectorGroup",
@@ -5536,7 +5686,7 @@ class WaveAOperationsMixin:
                 "chart_type": chart_type,
                 "data_set_to_chart": data_set_to_chart,
                 "aux_data_set_to_chart": aux_data_set_to_chart,
-                "template_chart_name_optional": template_chart_name_optional,
+                "template_chart_name": template_chart_name,
                 "show_interface": show_interface,
             },
             None,
@@ -5553,10 +5703,14 @@ class WaveAOperationsMixin:
         events_to_report: Iterable[CollectionItemName],
         *,
         report_output_options: ReportOutputOptions = ReportOutputOptions.DEFAULT,
-        report_page_settings_sa_report_only: ReportPageSettings = ReportPageSettings.PORTRAIT,
+        report_page_settings: ReportPageSettings = ReportPageSettings.PORTRAIT,
         generate_now: bool = False,
         show_generated_report: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        report_page_settings: MP qualifier: SA Report only.
+        """
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
             "DefineReportTemplate",
@@ -5569,7 +5723,7 @@ class WaveAOperationsMixin:
                 "relationships_to_report": relationships_to_report,
                 "events_to_report": events_to_report,
                 "report_output_options": report_output_options,
-                "report_page_settings_sa_report_only": report_page_settings_sa_report_only,
+                "report_page_settings": report_page_settings,
                 "generate_now": generate_now,
                 "show_generated_report": show_generated_report,
             },
@@ -5831,15 +5985,19 @@ class WaveAOperationsMixin:
     async def make_new_sa_report(
         self,
         new_sa_report_name: CollectionObjectName,
-        sa_report_template_optional: CollectionObjectName,
+        sa_report_template: CollectionObjectName,
     ) -> None:
+        """MP argument notes.
+
+        sa_report_template: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        """
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
             "MakeNewSaReport",
             "reporting_operations.make_new_sa_report",
             {
                 "new_sa_report_name": new_sa_report_name,
-                "sa_report_template_optional": sa_report_template_optional,
+                "sa_report_template": sa_report_template,
             },
             None,
         )
@@ -6002,16 +6160,20 @@ class WaveAOperationsMixin:
         self,
         item_name: CollectionObjectName,
         *,
-        report_name_optional: str = "",
+        report_name: str = "",
         open_report: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        report_name: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        """
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
             "QuickReport",
             "reporting_operations.quick_report",
             {
                 "item_name": item_name,
-                "report_name_optional": report_name_optional,
+                "report_name": report_name,
                 "open_report": open_report,
             },
             None,
@@ -6100,15 +6262,19 @@ class WaveAOperationsMixin:
         self,
         file_to_save_to: FileReference,
         *,
-        render_scale_factor_1_0_uses_window_size: float = 1.000000,
+        render_scale_factor: float = 1.000000,
     ) -> None:
+        """MP argument notes.
+
+        render_scale_factor: 1.0 uses the window size.
+        """
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
             "SaveCurrentViewBmpJpgPngGifTiff",
             "reporting_operations.save_current_view_bmp_jpg_png_gif_tiff",
             {
                 "file_to_save_to": file_to_save_to,
-                "render_scale_factor_1_0_uses_window_size": render_scale_factor_1_0_uses_window_size,
+                "render_scale_factor": render_scale_factor,
             },
             None,
         )
@@ -6492,11 +6658,16 @@ class WaveAOperationsMixin:
         scale_bar_point_a: PointName,
         scale_bar_point_b: PointName,
         *,
-        current_temperature_f: float = 0.000000,
+        current_temperature: float = 0.000000,
         length_of_bar_at_68f: float = 0.000000,
-        material_cte_ppm_f: float = 0.000000,
+        material_cte: float = 0.000000,
         tolerance: float = 0.000000,
     ) -> float:
+        """MP argument notes.
+
+        current_temperature: Temperature in degrees Fahrenheit.
+        material_cte: Coefficient in parts per million per degree Fahrenheit.
+        """
         return cast(
             float,
             await self._invoke_mp_operation(
@@ -6506,9 +6677,9 @@ class WaveAOperationsMixin:
                 {
                     "scale_bar_point_a": scale_bar_point_a,
                     "scale_bar_point_b": scale_bar_point_b,
-                    "current_temperature_f": current_temperature_f,
+                    "current_temperature": current_temperature,
                     "length_of_bar_at_68f": length_of_bar_at_68f,
-                    "material_cte_ppm_f": material_cte_ppm_f,
+                    "material_cte": material_cte,
                     "tolerance": tolerance,
                 },
                 None,
@@ -6789,8 +6960,12 @@ class WaveAOperationsMixin:
     async def get_screen_resolution(
         self,
         *,
-        display_1_primary: int = -1,
+        display: int = -1,
     ) -> GetScreenResolutionResult:
+        """MP argument notes.
+
+        display: -1 selects the primary display.
+        """
         return cast(
             GetScreenResolutionResult,
             await self._invoke_mp_operation(
@@ -6798,7 +6973,7 @@ class WaveAOperationsMixin:
                 "GetScreenResolution",
                 "utility_operations.get_screen_resolution",
                 {
-                    "display_1_primary": display_1_primary,
+                    "display": display,
                 },
                 GetScreenResolutionResult,
             ),
@@ -7025,14 +7200,19 @@ class WaveAOperationsMixin:
     async def set_angular_representation(
         self,
         *,
-        value_0_360_false_180: bool = False,
+        value_0_360: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        value_0_360: False selects the +/-180 angular representation.
+        value_0_360: False selects the +/-180 angular representation.
+        """
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
             "SetAngularRepresentation",
             "utility_operations.set_angular_representation",
             {
-                "value_0_360_false_180": value_0_360_false_180,
+                "value_0_360": value_0_360,
             },
             None,
         )
@@ -7093,8 +7273,12 @@ class WaveAOperationsMixin:
         collection: CollectionName,
         notes: Iterable[str],
         *,
-        append_false_overwrite: bool = True,
+        append: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        append: False overwrites existing notes.
+        """
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
             "SetCollectionNotes",
@@ -7102,7 +7286,7 @@ class WaveAOperationsMixin:
             {
                 "collection": collection,
                 "notes": notes,
-                "append_false_overwrite": append_false_overwrite,
+                "append": append,
             },
             None,
         )
@@ -7137,8 +7321,12 @@ class WaveAOperationsMixin:
         *,
         folder_path: str = "",
         notes: Iterable[str],
-        append_false_overwrite: bool = True,
+        append: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        append: False overwrites existing notes.
+        """
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
             "SetFolderNotes",
@@ -7146,7 +7334,7 @@ class WaveAOperationsMixin:
             {
                 "folder_path": folder_path,
                 "notes": notes,
-                "append_false_overwrite": append_false_overwrite,
+                "append": append,
             },
             None,
         )
@@ -7208,8 +7396,12 @@ class WaveAOperationsMixin:
         object: CollectionObjectName,
         notes: Iterable[str],
         *,
-        append_false_overwrite: bool = True,
+        append: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        append: False overwrites existing notes.
+        """
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
             "SetObjectNotes",
@@ -7217,7 +7409,7 @@ class WaveAOperationsMixin:
             {
                 "object": object,
                 "notes": notes,
-                "append_false_overwrite": append_false_overwrite,
+                "append": append,
             },
             None,
         )
@@ -7282,8 +7474,12 @@ class WaveAOperationsMixin:
         point: PointName,
         notes: Iterable[str],
         *,
-        append_false_overwrite: bool = True,
+        append: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        append: False overwrites existing notes.
+        """
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
             "SetPointNotes",
@@ -7291,7 +7487,7 @@ class WaveAOperationsMixin:
             {
                 "point": point,
                 "notes": notes,
-                "append_false_overwrite": append_false_overwrite,
+                "append": append,
             },
             None,
         )
@@ -7301,15 +7497,19 @@ class WaveAOperationsMixin:
         self,
         *,
         profile_name: str = "Default",
-        profile_file_name_optional: FileReference,
+        profile_file_name: FileReference,
     ) -> None:
+        """MP argument notes.
+
+        profile_file_name: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        """
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
             "SetUserInterfaceProfile",
             "utility_operations.set_user_interface_profile",
             {
                 "profile_name": profile_name,
-                "profile_file_name_optional": profile_file_name_optional,
+                "profile_file_name": profile_file_name,
             },
             None,
         )
@@ -8086,15 +8286,19 @@ class WaveAOperationsMixin:
         self,
         *,
         treat_individually: bool = False,
-        colorization_options_uses_mode_only: ColorizationOptions = ColorizationOptions.DEFAULT,
+        colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
     ) -> None:
+        """MP argument notes.
+
+        colorization_options: MP qualifier: Uses Mode Only.
+        """
         await self._invoke_mp_operation(
             "briosa.VectorOperations",
             "AutoRangeAndSetVectorGroupColorizationAll",
             "vector_operations.auto_range_and_set_vector_group_colorization_all",
             {
                 "treat_individually": treat_individually,
-                "colorization_options_uses_mode_only": colorization_options_uses_mode_only,
+                "colorization_options": colorization_options,
             },
             None,
         )
@@ -8105,8 +8309,12 @@ class WaveAOperationsMixin:
         vector_groups_to_be_set: Iterable[CollectionVectorGroupName],
         *,
         treat_individually: bool = False,
-        colorization_options_uses_mode_only: ColorizationOptions = ColorizationOptions.DEFAULT,
+        colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
     ) -> None:
+        """MP argument notes.
+
+        colorization_options: MP qualifier: Uses Mode Only.
+        """
         await self._invoke_mp_operation(
             "briosa.VectorOperations",
             "AutoRangeAndSetVectorGroupColorizationSelected",
@@ -8114,7 +8322,7 @@ class WaveAOperationsMixin:
             {
                 "vector_groups_to_be_set": vector_groups_to_be_set,
                 "treat_individually": treat_individually,
-                "colorization_options_uses_mode_only": colorization_options_uses_mode_only,
+                "colorization_options": colorization_options,
             },
             None,
         )
@@ -8487,16 +8695,20 @@ class WaveAOperationsMixin:
 
     async def highlight_objects(
         self,
-        object_names_empty_to_clear_all: Iterable[CollectionObjectName],
+        object_names: Iterable[CollectionObjectName],
         *,
         high_light_objects: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        object_names: An empty selection clears all highlights.
+        """
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "HighlightObjects",
             "view_control.highlight_objects",
             {
-                "object_names_empty_to_clear_all": object_names_empty_to_clear_all,
+                "object_names": object_names,
                 "high_light_objects": high_light_objects,
             },
             None,
@@ -8505,16 +8717,20 @@ class WaveAOperationsMixin:
 
     async def highlight_point(
         self,
-        point_name_empty_to_clear_all: PointName,
+        point_name: PointName,
         *,
         show_point: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        point_name: An empty selection clears all highlights.
+        """
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "HighlightPoint",
             "view_control.highlight_point",
             {
-                "point_name_empty_to_clear_all": point_name_empty_to_clear_all,
+                "point_name": point_name,
                 "show_point": show_point,
             },
             None,
@@ -8523,16 +8739,20 @@ class WaveAOperationsMixin:
 
     async def highlight_relationships(
         self,
-        relationships_empty_to_clear_all: Iterable[CollectionItemName],
+        relationships: Iterable[CollectionItemName],
         *,
         high_light_relationships: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        relationships: An empty selection clears all highlights.
+        """
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "HighlightRelationships",
             "view_control.highlight_relationships",
             {
-                "relationships_empty_to_clear_all": relationships_empty_to_clear_all,
+                "relationships": relationships,
                 "high_light_relationships": high_light_relationships,
             },
             None,
@@ -8889,8 +9109,12 @@ class WaveAOperationsMixin:
         all_collections: bool = False,
         specific_collection: CollectionName,
         object_type_to_show_hide: ObjectType = ObjectType.ANY,
-        hide_show_false: bool = True,
+        hide: bool = True,
     ) -> None:
+        """MP argument notes.
+
+        hide: False shows the objects.
+        """
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "ShowHideByObjectType",
@@ -8899,7 +9123,7 @@ class WaveAOperationsMixin:
                 "all_collections": all_collections,
                 "specific_collection": specific_collection,
                 "object_type_to_show_hide": object_type_to_show_hide,
-                "hide_show_false": hide_show_false,
+                "hide": hide,
             },
             None,
         )
@@ -8945,15 +9169,19 @@ class WaveAOperationsMixin:
         self,
         point_names: Iterable[PointName],
         *,
-        show_hide_false: bool = False,
+        show: bool = False,
     ) -> None:
+        """MP argument notes.
+
+        show: False hides the points.
+        """
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "ShowHidePoints",
             "view_control.show_hide_points",
             {
                 "point_names": point_names,
-                "show_hide_false": show_hide_false,
+                "show": show,
             },
             None,
         )

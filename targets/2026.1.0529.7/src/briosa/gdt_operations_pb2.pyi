@@ -605,7 +605,7 @@ class MakeGdtDatumAnnotationResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeGdtFeatureCheckAnnotationRequest(_message.Message):
-    __slots__ = ("feature_annotation_name", "feature_type", "objects", "geometry_relationships", "surface_faces", "decompose_multiple_features", "auto_create_diameter_checks", "auto_create_slot_width_checks", "auto_create_slot_length_checks", "datum_references", "tolerance", "is_slot", "per_unit_length_or_area", "circular_area", "per_unit_area_length_distance", "per_unit_area_length_step_over_percent", "per_unit_area_width_distance", "per_unit_area_width_step_over_percent", "per_unit_area_circle_diameter", "per_unit_area_diameter_step_over", "auxiliary_object", "auxiliary_geometry_relationship", "use_nominal_for_dimension_tolerance", "use_reference_object_for_nominal", "nominal_dimension_tolerance", "low_dimension_tolerance", "high_dimension_tolerance", "tolerance_zone_type", "use_projected_tolerance_zone", "projected_tolerance_zone")
+    __slots__ = ("feature_annotation_name", "feature_type", "objects", "geometry_relationships", "surface_faces", "decompose_multiple_features", "auto_create_diameter_checks", "auto_create_slot_width_checks", "auto_create_slot_length_checks", "datum_references", "tolerance", "is_slot", "per_unit_length_or_area", "circular_area", "per_unit_length_distance", "per_unit_length_step_over_percent", "per_unit_area_width_distance", "per_unit_area_width_step_over_percent", "per_unit_area_circle_diameter", "per_unit_area_diameter_step_over", "auxiliary_object", "auxiliary_geometry_relationship", "use_nominal_for_dimension_tolerance", "use_reference_object_for_nominal", "nominal_dimension_tolerance", "low_dimension_tolerance", "high_dimension_tolerance", "tolerance_zone_type", "use_projected_tolerance_zone", "projected_tolerance_zone")
     FEATURE_ANNOTATION_NAME_FIELD_NUMBER: _ClassVar[int]
     FEATURE_TYPE_FIELD_NUMBER: _ClassVar[int]
     OBJECTS_FIELD_NUMBER: _ClassVar[int]
@@ -620,8 +620,8 @@ class MakeGdtFeatureCheckAnnotationRequest(_message.Message):
     IS_SLOT_FIELD_NUMBER: _ClassVar[int]
     PER_UNIT_LENGTH_OR_AREA_FIELD_NUMBER: _ClassVar[int]
     CIRCULAR_AREA_FIELD_NUMBER: _ClassVar[int]
-    PER_UNIT_AREA_LENGTH_DISTANCE_FIELD_NUMBER: _ClassVar[int]
-    PER_UNIT_AREA_LENGTH_STEP_OVER_PERCENT_FIELD_NUMBER: _ClassVar[int]
+    PER_UNIT_LENGTH_DISTANCE_FIELD_NUMBER: _ClassVar[int]
+    PER_UNIT_LENGTH_STEP_OVER_PERCENT_FIELD_NUMBER: _ClassVar[int]
     PER_UNIT_AREA_WIDTH_DISTANCE_FIELD_NUMBER: _ClassVar[int]
     PER_UNIT_AREA_WIDTH_STEP_OVER_PERCENT_FIELD_NUMBER: _ClassVar[int]
     PER_UNIT_AREA_CIRCLE_DIAMETER_FIELD_NUMBER: _ClassVar[int]
@@ -650,8 +650,8 @@ class MakeGdtFeatureCheckAnnotationRequest(_message.Message):
     is_slot: bool
     per_unit_length_or_area: bool
     circular_area: bool
-    per_unit_area_length_distance: float
-    per_unit_area_length_step_over_percent: float
+    per_unit_length_distance: float
+    per_unit_length_step_over_percent: float
     per_unit_area_width_distance: float
     per_unit_area_width_step_over_percent: float
     per_unit_area_circle_diameter: float
@@ -666,7 +666,7 @@ class MakeGdtFeatureCheckAnnotationRequest(_message.Message):
     tolerance_zone_type: GdtToleranceZoneType
     use_projected_tolerance_zone: bool
     projected_tolerance_zone: float
-    def __init__(self, feature_annotation_name: _Optional[str] = ..., feature_type: _Optional[_Union[GdtFeatureType, str]] = ..., objects: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., geometry_relationships: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., surface_faces: _Optional[_Union[_spatial_analyzer_values_pb2.SurfaceFaceList, _Mapping]] = ..., decompose_multiple_features: bool = ..., auto_create_diameter_checks: bool = ..., auto_create_slot_width_checks: bool = ..., auto_create_slot_length_checks: bool = ..., datum_references: _Optional[str] = ..., tolerance: _Optional[str] = ..., is_slot: bool = ..., per_unit_length_or_area: bool = ..., circular_area: bool = ..., per_unit_area_length_distance: _Optional[float] = ..., per_unit_area_length_step_over_percent: _Optional[float] = ..., per_unit_area_width_distance: _Optional[float] = ..., per_unit_area_width_step_over_percent: _Optional[float] = ..., per_unit_area_circle_diameter: _Optional[float] = ..., per_unit_area_diameter_step_over: _Optional[float] = ..., auxiliary_object: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., auxiliary_geometry_relationship: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]] = ..., use_nominal_for_dimension_tolerance: bool = ..., use_reference_object_for_nominal: bool = ..., nominal_dimension_tolerance: _Optional[float] = ..., low_dimension_tolerance: _Optional[float] = ..., high_dimension_tolerance: _Optional[float] = ..., tolerance_zone_type: _Optional[_Union[GdtToleranceZoneType, str]] = ..., use_projected_tolerance_zone: bool = ..., projected_tolerance_zone: _Optional[float] = ...) -> None: ...
+    def __init__(self, feature_annotation_name: _Optional[str] = ..., feature_type: _Optional[_Union[GdtFeatureType, str]] = ..., objects: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., geometry_relationships: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., surface_faces: _Optional[_Union[_spatial_analyzer_values_pb2.SurfaceFaceList, _Mapping]] = ..., decompose_multiple_features: bool = ..., auto_create_diameter_checks: bool = ..., auto_create_slot_width_checks: bool = ..., auto_create_slot_length_checks: bool = ..., datum_references: _Optional[str] = ..., tolerance: _Optional[str] = ..., is_slot: bool = ..., per_unit_length_or_area: bool = ..., circular_area: bool = ..., per_unit_length_distance: _Optional[float] = ..., per_unit_length_step_over_percent: _Optional[float] = ..., per_unit_area_width_distance: _Optional[float] = ..., per_unit_area_width_step_over_percent: _Optional[float] = ..., per_unit_area_circle_diameter: _Optional[float] = ..., per_unit_area_diameter_step_over: _Optional[float] = ..., auxiliary_object: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., auxiliary_geometry_relationship: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]] = ..., use_nominal_for_dimension_tolerance: bool = ..., use_reference_object_for_nominal: bool = ..., nominal_dimension_tolerance: _Optional[float] = ..., low_dimension_tolerance: _Optional[float] = ..., high_dimension_tolerance: _Optional[float] = ..., tolerance_zone_type: _Optional[_Union[GdtToleranceZoneType, str]] = ..., use_projected_tolerance_zone: bool = ..., projected_tolerance_zone: _Optional[float] = ...) -> None: ...
 
 class MakeGdtFeatureCheckAnnotationResult(_message.Message):
     __slots__ = ("execution",)

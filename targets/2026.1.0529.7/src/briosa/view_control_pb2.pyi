@@ -139,12 +139,12 @@ class HideObjectsResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class HighlightObjectsRequest(_message.Message):
-    __slots__ = ("object_names_empty_to_clear_all", "high_light_objects")
-    OBJECT_NAMES_EMPTY_TO_CLEAR_ALL_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_names", "high_light_objects")
+    OBJECT_NAMES_FIELD_NUMBER: _ClassVar[int]
     HIGH_LIGHT_OBJECTS_FIELD_NUMBER: _ClassVar[int]
-    object_names_empty_to_clear_all: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
+    object_names: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
     high_light_objects: bool
-    def __init__(self, object_names_empty_to_clear_all: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., high_light_objects: bool = ...) -> None: ...
+    def __init__(self, object_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., high_light_objects: bool = ...) -> None: ...
 
 class HighlightObjectsResult(_message.Message):
     __slots__ = ("execution",)
@@ -153,12 +153,12 @@ class HighlightObjectsResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class HighlightPointRequest(_message.Message):
-    __slots__ = ("point_name_empty_to_clear_all", "show_point")
-    POINT_NAME_EMPTY_TO_CLEAR_ALL_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("point_name", "show_point")
+    POINT_NAME_FIELD_NUMBER: _ClassVar[int]
     SHOW_POINT_FIELD_NUMBER: _ClassVar[int]
-    point_name_empty_to_clear_all: _spatial_analyzer_values_pb2.PointName
+    point_name: _spatial_analyzer_values_pb2.PointName
     show_point: bool
-    def __init__(self, point_name_empty_to_clear_all: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., show_point: bool = ...) -> None: ...
+    def __init__(self, point_name: _Optional[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]] = ..., show_point: bool = ...) -> None: ...
 
 class HighlightPointResult(_message.Message):
     __slots__ = ("execution",)
@@ -167,12 +167,12 @@ class HighlightPointResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class HighlightRelationshipsRequest(_message.Message):
-    __slots__ = ("relationships_empty_to_clear_all", "high_light_relationships")
-    RELATIONSHIPS_EMPTY_TO_CLEAR_ALL_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("relationships", "high_light_relationships")
+    RELATIONSHIPS_FIELD_NUMBER: _ClassVar[int]
     HIGH_LIGHT_RELATIONSHIPS_FIELD_NUMBER: _ClassVar[int]
-    relationships_empty_to_clear_all: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionItemName]
+    relationships: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionItemName]
     high_light_relationships: bool
-    def __init__(self, relationships_empty_to_clear_all: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., high_light_relationships: bool = ...) -> None: ...
+    def __init__(self, relationships: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., high_light_relationships: bool = ...) -> None: ...
 
 class HighlightRelationshipsResult(_message.Message):
     __slots__ = ("execution",)
@@ -461,16 +461,16 @@ class SetWorkingColorAutoIncrementResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ShowHideByObjectTypeRequest(_message.Message):
-    __slots__ = ("all_collections", "specific_collection", "object_type_to_show_hide", "hide_show_false")
+    __slots__ = ("all_collections", "specific_collection", "object_type_to_show_hide", "hide")
     ALL_COLLECTIONS_FIELD_NUMBER: _ClassVar[int]
     SPECIFIC_COLLECTION_FIELD_NUMBER: _ClassVar[int]
     OBJECT_TYPE_TO_SHOW_HIDE_FIELD_NUMBER: _ClassVar[int]
-    HIDE_SHOW_FALSE_FIELD_NUMBER: _ClassVar[int]
+    HIDE_FIELD_NUMBER: _ClassVar[int]
     all_collections: bool
     specific_collection: _spatial_analyzer_values_pb2.CollectionName
     object_type_to_show_hide: _spatial_analyzer_values_pb2.ObjectType
-    hide_show_false: bool
-    def __init__(self, all_collections: bool = ..., specific_collection: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionName, _Mapping]] = ..., object_type_to_show_hide: _Optional[_Union[_spatial_analyzer_values_pb2.ObjectType, str]] = ..., hide_show_false: bool = ...) -> None: ...
+    hide: bool
+    def __init__(self, all_collections: bool = ..., specific_collection: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionName, _Mapping]] = ..., object_type_to_show_hide: _Optional[_Union[_spatial_analyzer_values_pb2.ObjectType, str]] = ..., hide: bool = ...) -> None: ...
 
 class ShowHideByObjectTypeResult(_message.Message):
     __slots__ = ("execution",)
@@ -507,12 +507,12 @@ class ShowHideDimensionResult(_message.Message):
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class ShowHidePointsRequest(_message.Message):
-    __slots__ = ("point_names", "show_hide_false")
+    __slots__ = ("point_names", "show")
     POINT_NAMES_FIELD_NUMBER: _ClassVar[int]
-    SHOW_HIDE_FALSE_FIELD_NUMBER: _ClassVar[int]
+    SHOW_FIELD_NUMBER: _ClassVar[int]
     point_names: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.PointName]
-    show_hide_false: bool
-    def __init__(self, point_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]]] = ..., show_hide_false: bool = ...) -> None: ...
+    show: bool
+    def __init__(self, point_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.PointName, _Mapping]]] = ..., show: bool = ...) -> None: ...
 
 class ShowHidePointsResult(_message.Message):
     __slots__ = ("execution",)
