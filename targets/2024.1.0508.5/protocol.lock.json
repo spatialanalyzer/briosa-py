@@ -1,18 +1,18 @@
 {
   "schema_version": 2,
   "artifact": {
-    "name": "briosa-protocol-0.8.0-sa-2024.1.0508.5",
-    "file_name": "briosa-protocol-0.8.0-sa-2024.1.0508.5.zip",
-    "sha256": "5606a3eda4ba04704371620672e5b8db10b616ed00c2731185f1c3a453defb22",
-    "briosa_version": "0.8.0",
-    "source_revision": "e986a3ba91cb501416126eb5f3ecaeb7f9d97c05",
+    "name": "briosa-protocol-0.9.0-dev.1-sa-2024.1.0508.5",
+    "file_name": "briosa-protocol-0.9.0-dev.1-sa-2024.1.0508.5.zip",
+    "sha256": "2c0c5ebc6c2b6b5f11a3dbaf3f7cd8796a572befb45a8ff6999a2d7d1c39a2e7",
+    "briosa_version": "0.9.0-dev.1",
+    "source_revision": "d0613d6120f4f6d738a729e47c0eb775577bd8c0",
     "source_repository": "https://github.com/spatialanalyzer/briosa",
-    "source_channel": "github_release"
+    "source_channel": "source_commit_bootstrap"
   },
   "protocol": {
     "generation_contract": "standard-protobuf-grpc",
-    "schema_sha256": "27cef6f91a70e5cd3fc5513b09a9bb190d00f6c541fb0e6b1a2813c5b015a0c1",
-    "descriptor_sha256": "e09358d4fae8ce29e271de3b604b9af482f39e579a86e5c180799df7c74f6a25",
+    "schema_sha256": "8477fcb3885dc81711c0332c69a71e12191431dbbc50c8febdabd8bc54287fd9",
+    "descriptor_sha256": "6d079cc7b1ca47bdadd8450b1aa7f4b16a178141fddc953f4600da1830a19c8b",
     "package": "briosa"
   },
   "target": {
@@ -72,11 +72,11 @@
       },
       {
         "path": "discovery_pb2.py",
-        "sha256": "3305c3b0421c1f20eaf18fa52c689b4cd7dfd8c39113448b68a28623c3b6aea7"
+        "sha256": "165b46171acfb3815e24eab5cb6abc6fb419a325aaa183755c71d528fa743d02"
       },
       {
         "path": "discovery_pb2.pyi",
-        "sha256": "788d3703f7d31d008f47bb62e069872994e7a970d4f8f6194d38db6452e71927"
+        "sha256": "616f352ffc029f3ddea90bbe5cb165a1f3645a257f72bf1051aa8b88ebc0237f"
       },
       {
         "path": "discovery_pb2_grpc.py",
@@ -168,11 +168,11 @@
       },
       {
         "path": "operation_outcomes_pb2.py",
-        "sha256": "8fa6935fa8353ebb4ab639c2e41ba4baafccf56d39d84a96eb20877d3f074218"
+        "sha256": "414c2e9fe5692df862535c1cb4a65c9cab553c7898dea680275695c8c0f8d411"
       },
       {
         "path": "operation_outcomes_pb2.pyi",
-        "sha256": "7c064ebea8f3775ea2ec6a8182e6dc52b10e3564012d0881ed33d82faec1a7e5"
+        "sha256": "1f2eb4355da0de4fed378700fa419c90328e65c043b87bc84ea51d25ed7b9129"
       },
       {
         "path": "operation_outcomes_pb2_grpc.py",
@@ -192,7 +192,7 @@
       },
       {
         "path": "protocol_identity.py",
-        "sha256": "1c57e35293de1abfa6b3f666c3e541d4fe3b9aafd6d0a126e5fd7cd158df5163"
+        "sha256": "0fb69d56ead76168e9e23dd00163c69d7a61866cc31f8b3308ecbfbbfd1cb469"
       },
       {
         "path": "relationship_operations_pb2.py",
@@ -232,11 +232,11 @@
       },
       {
         "path": "robot_operations_pb2.py",
-        "sha256": "e053225967184705c6605fd03712cae5a446a74807bb1136ecde7212a07b51b5"
+        "sha256": "975e7c1eb3f255a0271f58f78f6cfbfa4ddbfef3bfec867a27a773afbcaf0d32"
       },
       {
         "path": "robot_operations_pb2.pyi",
-        "sha256": "758e813e9fc6a197edd829d539b963864ebcd444b07b6dd62ae34d9cf1ac9df1"
+        "sha256": "1321821bd36c5802f57d956df866d5265e2d59ff93365e575d9e635b9acb1aa5"
       },
       {
         "path": "robot_operations_pb2_grpc.py",

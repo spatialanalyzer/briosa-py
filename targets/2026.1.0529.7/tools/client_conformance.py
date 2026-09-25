@@ -19,6 +19,7 @@ from briosa import (
     BriosaOperationError,
     BriosaServerSelection,
     BriosaStartOptions,
+    BriosaStartupError,
     BriosaTransportError,
     ExecutionDisposition,
     OperationFailureKind,
@@ -32,6 +33,7 @@ from briosa import (
     SpatialAnalyzerSdkRecoveryMode,
     SpatialAnalyzerSdkState,
     SpatialAnalyzerSdkTerminationKind,
+    discover_installations,
 )
 
 CONTRACT_ID = "briosa.first-party-client.v1"
@@ -62,6 +64,42 @@ async def _expect_raises(
 
 
 async def _run_scenario(scenario: str) -> None:
+    if os.environ.get("BRIOSA_CONFORMANCE_EXPECT_INCOMPATIBLE") == "1":
+        _require(
+            scenario == "control-plane-only",
+            "Rejection must run without SDK or application startup.",
+        )
+        selection = BriosaServerSelection(
+            executable_path=Path(os.environ["BRIOSA_SERVER_PATH"]),
+            allow_prerelease=True,
+        )
+        report = discover_installations(selection)
+        _require(
+            report.selected is None
+            and report.diagnostic_code == "server-installation-incompatible",
+            "The packaged server was not rejected for contract incompatibility.",
+        )
+        rejected = BriosaClient()
+        try:
+            error = await _expect_raises(
+                BriosaStartupError,
+                lambda: rejected.start(
+                    BriosaStartOptions(
+                        server_selection=selection,
+                        start_spatial_analyzer_sdk=False,
+                        launch_spatial_analyzer=False,
+                        connect_to_spatial_analyzer=False,
+                    )
+                ),
+            )
+            _require(
+                error.diagnostic_code == "server-installation-incompatible",
+                "Startup failed for a reason other than contract incompatibility.",
+            )
+        finally:
+            await rejected.aclose()
+        return
+
     command_timeout = 0.25 if scenario == "deadline" else None
     briosa = BriosaClient(BriosaClientOptions(command_timeout=command_timeout))
     startup_succeeded = False
