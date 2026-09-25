@@ -241,9 +241,9 @@ class GetRobotMachineParameterRequest(_message.Message):
     __slots__ = ("machine_id", "parameter_name")
     MACHINE_ID_FIELD_NUMBER: _ClassVar[int]
     PARAMETER_NAME_FIELD_NUMBER: _ClassVar[int]
-    machine_id: _spatial_analyzer_values_pb2.CollectionMachineId
+    machine_id: _spatial_analyzer_values_pb2.CollectionInstrumentId
     parameter_name: str
-    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionMachineId, _Mapping]] = ..., parameter_name: _Optional[str] = ...) -> None: ...
+    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., parameter_name: _Optional[str] = ...) -> None: ...
 
 class GetRobotMachineParameterResult(_message.Message):
     __slots__ = ("parameter_value", "execution")
@@ -672,10 +672,10 @@ class StartRobotMachineInterfaceRequest(_message.Message):
     MACHINE_ID_FIELD_NUMBER: _ClassVar[int]
     INTERFACE_TYPE_FIELD_NUMBER: _ClassVar[int]
     RUN_IN_SIMULATION_FIELD_NUMBER: _ClassVar[int]
-    machine_id: _spatial_analyzer_values_pb2.CollectionMachineId
+    machine_id: _spatial_analyzer_values_pb2.CollectionInstrumentId
     interface_type: int
     run_in_simulation: bool
-    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionMachineId, _Mapping]] = ..., interface_type: _Optional[int] = ..., run_in_simulation: bool = ...) -> None: ...
+    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ..., interface_type: _Optional[int] = ..., run_in_simulation: bool = ...) -> None: ...
 
 class StartRobotMachineInterfaceResult(_message.Message):
     __slots__ = ("execution",)
@@ -704,8 +704,8 @@ class StartStopRobotCalibrationTrappingResult(_message.Message):
 class StopRobotMachineInterfaceRequest(_message.Message):
     __slots__ = ("machine_id",)
     MACHINE_ID_FIELD_NUMBER: _ClassVar[int]
-    machine_id: _spatial_analyzer_values_pb2.CollectionMachineId
-    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionMachineId, _Mapping]] = ...) -> None: ...
+    machine_id: _spatial_analyzer_values_pb2.CollectionInstrumentId
+    def __init__(self, machine_id: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]] = ...) -> None: ...
 
 class StopRobotMachineInterfaceResult(_message.Message):
     __slots__ = ("execution",)

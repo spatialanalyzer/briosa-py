@@ -19,9 +19,11 @@ from briosa import (
     BriosaSpatialAnalyzerError,
     BriosaStartOptions,
     BriosaTransportError,
+    CollectionInstrumentId,
     CollectionItemName,
     CollectionObjectName,
     Color,
+    ExecutionDisposition,
     ObjectType,
     OperationFailureKind,
     PointName,
@@ -39,6 +41,7 @@ from briosa import (
     lifecycle_pb2,
     operation_outcomes_pb2,
     relationship_operations_pb2,
+    robot_operations_pb2,
     view_control_pb2,
 )
 from briosa.client import OwnedServer
@@ -334,7 +337,7 @@ def matching_snapshot(
         ),
         ready_for_mp=ready,
         target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
-        compatibility=discovery_pb2.CompatibilityContract(major=1),
+        compatibility=discovery_pb2.CompatibilityContract(major=2),
     )
     capabilities = discovery_pb2.ListCapabilitiesResponse(
         protocol_package=PROTOCOL_PACKAGE,
@@ -367,8 +370,8 @@ def application_lifecycle_failure() -> FakeRpcError:
 
 
 def test_protocol_identity_matches_reviewed_compatibility_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.8.0-sa-2026.1.0529.7"
-    assert SOURCE_REVISION == "e986a3ba91cb501416126eb5f3ecaeb7f9d97c05"
+    assert ARTIFACT_NAME == "briosa-protocol-0.9.0-dev.1-sa-2026.1.0529.7"
+    assert SOURCE_REVISION == "d0613d6120f4f6d738a729e47c0eb775577bd8c0"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2026.1.0529.7"
@@ -690,6 +693,71 @@ def test_operation_error_is_detached_and_preserves_unknown_completion() -> None:
     assert mapped.failure.replay_safety is ReplaySafety.UNKNOWN
     assert mapped.completion_unknown is True
     assert mapped.reconciliation_required is True
+
+
+def test_overload_preserves_not_started_and_independent_replay_guidance() -> None:
+    detail = operation_outcomes_pb2.OperationError(
+        operation_id="variables.set_double_variable",
+        kind=operation_outcomes_pb2.OPERATION_FAILURE_KIND_OVERLOADED,
+        diagnostic_code="worker-admission-full",
+        execution_disposition=operation_outcomes_pb2.EXECUTION_DISPOSITION_NOT_STARTED,
+        recovery_guidance=operation_outcomes_pb2.RECOVERY_GUIDANCE_NONE,
+        replay_guidance=operation_outcomes_pb2.REPLAY_GUIDANCE_MAY_REPLAY,
+        replay_safety=operation_outcomes_pb2.REPLAY_SAFETY_UNKNOWN,
+    )
+    mapped = map_rpc_error(
+        FakeRpcError(
+            grpc.StatusCode.RESOURCE_EXHAUSTED,
+            (("briosa-operation-error-bin", detail.SerializeToString()),),
+        )
+    )
+    assert isinstance(mapped, BriosaOperationError)
+    assert mapped.status_code is RpcStatusCode.RESOURCE_EXHAUSTED
+    assert mapped.failure.kind is OperationFailureKind.OVERLOADED
+    assert mapped.failure.execution_disposition is ExecutionDisposition.NOT_STARTED
+    assert mapped.failure.recovery_guidance is RecoveryGuidance.NONE
+    assert mapped.failure.replay_guidance is ReplayGuidance.MAY_REPLAY
+    assert mapped.failure.replay_safety is ReplaySafety.UNKNOWN
+    assert mapped.completion_unknown is False
+    assert mapped.reconciliation_required is False
+
+
+async def test_robot_interface_methods_preserve_instrument_identity() -> None:
+    transport = FakeTransport()
+    client = create_client(FakeServerLauncher(), transport)
+    await client.start()
+    machine = CollectionInstrumentId(collection_name="Inspection", instrument_id=7)
+    transport.operation_responses[
+        "/briosa.RobotOperations/GetRobotMachineParameter"
+    ] = robot_operations_pb2.GetRobotMachineParameterResult(parameter_value=1.5)
+    assert (
+        await client.robot_operations.get_robot_machine_parameter(
+            machine, parameter_name="Speed"
+        )
+        == 1.5
+    )
+    get = cast(
+        robot_operations_pb2.GetRobotMachineParameterRequest,
+        transport.operation_requests[-1][1],
+    )
+    assert get.machine_id.instrument_id == 7
+    assert get.machine_id.collection_name == "Inspection"
+    await client.robot_operations.start_robot_machine_interface(
+        machine, run_in_simulation=True
+    )
+    start = cast(
+        robot_operations_pb2.StartRobotMachineInterfaceRequest,
+        transport.operation_requests[-1][1],
+    )
+    assert start.machine_id == get.machine_id
+    assert start.run_in_simulation is True
+    await client.robot_operations.stop_robot_machine_interface(machine)
+    stop = cast(
+        robot_operations_pb2.StopRobotMachineInterfaceRequest,
+        transport.operation_requests[-1][1],
+    )
+    assert stop.machine_id == get.machine_id
+    await client.aclose()
 
 
 def test_transport_error_uses_handwritten_status() -> None:

@@ -111,6 +111,7 @@ class OperationFailureKind(_StrEnum):
     POLICY_DENIED = "policy_denied"
     MP_RESULT_RETRIEVAL_FAILURE = "mp_result_retrieval_failure"
     SDK_ARGUMENT_REJECTED = "sdk_argument_rejected"
+    OVERLOADED = "overloaded"
 
 
 class RecoveryGuidance(_StrEnum):

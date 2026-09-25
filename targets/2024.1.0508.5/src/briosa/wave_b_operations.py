@@ -10849,7 +10849,7 @@ class RobotOperations:
 
     async def get_robot_machine_parameter(
         self,
-        machine_id: CollectionMachineId,
+        machine_id: CollectionInstrumentId,
         *,
         parameter_name: str = "",
     ) -> float:
@@ -11255,7 +11255,7 @@ class RobotOperations:
 
     async def start_robot_machine_interface(
         self,
-        machine_id: CollectionMachineId,
+        machine_id: CollectionInstrumentId,
         *,
         interface_type: int = 0,
         run_in_simulation: bool = False,
@@ -11297,7 +11297,7 @@ class RobotOperations:
 
     async def stop_robot_machine_interface(
         self,
-        machine_id: CollectionMachineId,
+        machine_id: CollectionInstrumentId,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",

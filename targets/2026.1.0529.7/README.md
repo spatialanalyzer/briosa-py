@@ -11,11 +11,14 @@ complete protocol identity is pinned in [`protocol.lock.json`](protocol.lock.jso
 
 ## Package Identity
 
+The next version is not published yet. Build the candidate locally and use its
+package path or feed in the installation command below.
+
 The distribution is named `briosa-2026-1-0529-7`, while application code keeps
 the stable `briosa` import package. Install the distribution with:
 
 ```powershell
-python -m pip install briosa-2026-1-0529-7==0.3.0
+python -m pip install C:\path\to\dist\briosa_2026_1_0529_7-0.4.0-py3-none-any.whl
 ```
 
 Each exact SpatialAnalyzer target will have a separate distribution name. Two
@@ -61,11 +64,22 @@ canonical stores, explicit search roots, and supported local layouts. It validat
 receipts and manifests, filters the exact SA target and compatibility contract,
 and selects the highest compatible stable release. No internet access is needed.
 
-This client requires behavioral contract **1.0** (major 1, revision at least 0).
-The exact published Server 0.6.1 identity is also supported through a tested
-legacy exception. Other servers without contract metadata are rejected. Protocol
-and source pins remain exact build inputs; startup verifies the running server
-against its selected installation instead of requiring the generation build.
+This development checkout prepares client 0.4.0 for behavioral contract **2.0**
+(major 2, revision at least 0). It is not a published compatibility claim.
+Major-1 servers and servers without contract metadata, including Server 0.6.1,
+are rejected before launch. Protocol and source pins remain exact build inputs;
+startup verifies the running server against its selected installation.
+
+The three robot methods Get Robot Machine Parameter, Start Robot Machine
+Interface, and Stop Robot Machine Interface now take a collection/instrument
+identity for the MP argument named Machine ID. Supply an instrument ID rather
+than a machine ID; other robot methods retain their existing types.
+
+A full server queue returns an overload error with NotStarted, no recovery
+action, and MayReplay guidance. The client preserves these separate facts and
+never retries automatically. The 64 KiB inbound limit may also produce a
+transport size error without typed detail. See the
+[authoritative migration guide](https://github.com/spatialanalyzer/briosa/blob/main/docs/development/runtime-redesign-migration.md).
 
 A missing or incompatible explicit choice fails without selecting another
 installation. The choice is fixed for the session, including worker recovery.
@@ -100,7 +114,7 @@ distinguishes tested pairs from declared forward compatibility.
 ```python
 from briosa import BriosaServerSelection, BriosaStartOptions, discover_installations
 
-selection = BriosaServerSelection(version="0.6.1")
+selection = BriosaServerSelection(version="0.9.0-dev.1", allow_prerelease=True)
 report = discover_installations(selection)  # no process launch
 await briosa.start(BriosaStartOptions(server_selection=selection))
 
@@ -125,6 +139,7 @@ python -m venv .venv
 ./.venv/Scripts/python -m pytest
 ./eng/Test-Conformance.ps1 `
   -ArtifactPath C:\path\to\briosa-client-conformance-0.6.1-sa-2026.1.0529.7-win-x64.zip `
+  -ExpectIncompatible `
   -PythonExecutable ./.venv/Scripts/python.exe
 ./.venv/Scripts/python -m build
 ./.venv/Scripts/python eng/test_package_identity.py
@@ -139,11 +154,11 @@ Neither path requires SpatialAnalyzer nor a license.
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.7.0-sa-2026.1.0529.7.zip `
-  --update --source-channel github_release
+  C:\path\to\briosa-protocol-0.9.0-dev.1-sa-2026.1.0529.7.zip `
+  --update --source-channel source_commit_bootstrap
 
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.7.0-sa-2026.1.0529.7.zip
+  C:\path\to\briosa-protocol-0.9.0-dev.1-sa-2026.1.0529.7.zip
 ```
 
 Never edit generated `*_pb2.py`, `*_pb2.pyi`, `*_pb2_grpc.py`,
@@ -174,7 +189,7 @@ and [server observability guide](https://github.com/spatialanalyzer/briosa/blob/
 ## Compatibility and validation
 
 This package pins its generation artifact and tests the declared compatibility
-contract against packaged servers, including the retained 0.6.1 baseline.
+contract against packaged servers. The retained 0.6.1 baseline must be rejected.
 Exact SA target, runtime identity, capabilities, and readiness still gate MP calls.
 
 Portable conformance covers lifecycle, identity mismatch, denied capabilities,
