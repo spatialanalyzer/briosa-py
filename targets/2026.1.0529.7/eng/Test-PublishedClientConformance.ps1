@@ -7,6 +7,9 @@ param(
     [Parameter(Mandatory)][string]$LockPath,
     [Parameter(Mandatory)][string]$EvidencePath,
     [string]$PublishedPackageUrl,
+    [ValidatePattern('^[0-9a-f]{40}$')][string]$ClientSourceRevision,
+    [switch]$ExpectIncompatible,
+    [ValidateRange(1, 1000)][int]$RequiredContractMajor = 2,
     [string]$FixtureExecutable = 'python'
 )
 Set-StrictMode -Version Latest
@@ -35,11 +38,14 @@ try {
     $fixture = Join-Path $consumer 'client_conformance.py'
     Copy-Item -LiteralPath (Join-Path $targetRoot 'tools/client_conformance.py') -Destination $fixture
     $arguments = @{
+        ExpectIncompatible = $ExpectIncompatible
+        RequiredContractMajor = $RequiredContractMajor
         ArtifactPath = $ArtifactPath; LockPath = $LockPath; EvidencePath = $EvidencePath
         FixturePath = $fixture
         ClientPackage = @{
             name = $expectedName; version = $ClientVersion; sha256 = $ClientPackageSha256
             publishedUrl = $PublishedPackageUrl
+            sourceRevision = $ClientSourceRevision
         }
     }
     $arguments.PythonExecutable = $python
@@ -53,4 +59,3 @@ finally {
     }
     if (Test-Path -LiteralPath $resolved) { Remove-Item -LiteralPath $resolved -Recurse -Force }
 }
-

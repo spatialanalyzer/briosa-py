@@ -36,6 +36,7 @@ class WorkerRuntimeState(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     WORKER_RUNTIME_STATE_STARTING: _ClassVar[WorkerRuntimeState]
     WORKER_RUNTIME_STATE_READY: _ClassVar[WorkerRuntimeState]
     WORKER_RUNTIME_STATE_DEGRADED: _ClassVar[WorkerRuntimeState]
+    WORKER_RUNTIME_STATE_STOPPING: _ClassVar[WorkerRuntimeState]
 
 class SpatialAnalyzerConnectionState(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -95,6 +96,7 @@ WORKER_RUNTIME_STATE_STOPPED: WorkerRuntimeState
 WORKER_RUNTIME_STATE_STARTING: WorkerRuntimeState
 WORKER_RUNTIME_STATE_READY: WorkerRuntimeState
 WORKER_RUNTIME_STATE_DEGRADED: WorkerRuntimeState
+WORKER_RUNTIME_STATE_STOPPING: WorkerRuntimeState
 SPATIAL_ANALYZER_CONNECTION_STATE_UNSPECIFIED: SpatialAnalyzerConnectionState
 SPATIAL_ANALYZER_CONNECTION_STATE_DISCONNECTED: SpatialAnalyzerConnectionState
 SPATIAL_ANALYZER_CONNECTION_STATE_CONNECTING: SpatialAnalyzerConnectionState

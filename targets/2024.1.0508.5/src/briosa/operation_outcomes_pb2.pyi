@@ -70,6 +70,7 @@ class OperationFailureKind(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     OPERATION_FAILURE_KIND_POLICY_DENIED: _ClassVar[OperationFailureKind]
     OPERATION_FAILURE_KIND_MP_RESULT_RETRIEVAL_FAILURE: _ClassVar[OperationFailureKind]
     OPERATION_FAILURE_KIND_SDK_ARGUMENT_REJECTED: _ClassVar[OperationFailureKind]
+    OPERATION_FAILURE_KIND_OVERLOADED: _ClassVar[OperationFailureKind]
 MP_EXECUTION_STATE_UNSPECIFIED: MpExecutionState
 MP_EXECUTION_STATE_SUCCEEDED: MpExecutionState
 MP_EXECUTION_STATE_EXECUTE_STEP_REJECTED: MpExecutionState
@@ -113,6 +114,7 @@ OPERATION_FAILURE_KIND_INTERNAL: OperationFailureKind
 OPERATION_FAILURE_KIND_POLICY_DENIED: OperationFailureKind
 OPERATION_FAILURE_KIND_MP_RESULT_RETRIEVAL_FAILURE: OperationFailureKind
 OPERATION_FAILURE_KIND_SDK_ARGUMENT_REJECTED: OperationFailureKind
+OPERATION_FAILURE_KIND_OVERLOADED: OperationFailureKind
 
 class OutputRetrievalDetails(_message.Message):
     __slots__ = ("field_name", "state", "diagnostic_code")

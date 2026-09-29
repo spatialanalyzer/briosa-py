@@ -152,7 +152,7 @@ def snapshot() -> tuple[Any, Any]:
                 protocol_package="briosa",
                 spatial_analyzer_target=SPATIAL_ANALYZER_TARGET,
             ),
-            compatibility=discovery_pb2.CompatibilityContract(major=1),
+            compatibility=discovery_pb2.CompatibilityContract(major=2),
             target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
         ),
         discovery_pb2.ListCapabilitiesResponse(
@@ -172,7 +172,7 @@ def test_contract_compatibility_and_selected_identity_are_separate() -> None:
         "a" * 40,
         SPATIAL_ANALYZER_TARGET,
         "win-x64",
-        1,
+        2,
         0,
         "hash",
         "user",
@@ -182,19 +182,20 @@ def test_contract_compatibility_and_selected_identity_are_separate() -> None:
     _validate_compatibility(server, capabilities)
     with pytest.raises(BriosaCompatibilityError):
         validate_installation(server, installation)
-    server.compatibility.major = 2
+    server.compatibility.major = 1
     with pytest.raises(BriosaCompatibilityError):
         _validate_compatibility(server, capabilities)
 
 
-def test_legacy_exception_requires_exact_build() -> None:
+def test_missing_contract_is_rejected_including_legacy_build() -> None:
     server, capabilities = snapshot()
     server.ClearField("compatibility")
     with pytest.raises(BriosaCompatibilityError):
         _validate_compatibility(server, capabilities)
     server.version.briosa_version = LEGACY_VERSION
     server.version.source_revision = LEGACY_REVISION
-    _validate_compatibility(server, capabilities)
+    with pytest.raises(BriosaCompatibilityError, match="server-contract-incompatible"):
+        _validate_compatibility(server, capabilities)
     server.version.source_revision = "a" * 40
     with pytest.raises(BriosaCompatibilityError):
         _validate_compatibility(server, capabilities)
