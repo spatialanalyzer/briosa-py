@@ -47,6 +47,16 @@ Application and SDK state, launch, connect, stop, and recovery methods remain
 available for diagnosis and explicit control. `stop()`, `aclose()`, and async
 context exit stop the owned server and SDK but never close SpatialAnalyzer.
 
+`BriosaStartOptions.startup_timeout` bounds the whole `start()` and defaults to
+`120.0` seconds. That covers the server's default worst case of about 100 seconds
+for a start that launches SpatialAnalyzer, with a 20-second margin. If you raise
+the server's `Briosa:Worker:StartupTimeout`, `Briosa:Worker:ReadinessProbeTimeout`,
+or `Briosa:SpatialAnalyzer:ApplicationStartupTimeout`, raise the client budget
+too; the [public API contract](docs/public-api-contract.md#startup-and-lifecycle-time-budgets)
+shows how to size it. Lifecycle methods send no deadline unless you pass
+`timeout`. If the budget expires while the server is starting or connecting the
+SDK, the server finishes that step, so read the SDK state before retrying.
+
 The client retains lifecycle generations and supplies guards automatically.
 Typed lifecycle failures, compatibility failures, task cancellation, ambiguous
 MP completion, and replay guidance remain distinct. MP operations are never

@@ -25,3 +25,7 @@ runtime CI and enterprise Artifactory verification remain outstanding before v1.
 promotion.
 
 The 0.3.0 API naming changes are described in the [MP argument migration guide](docs/mp-argument-name-migration.md).
+
+Unreleased: the default `BriosaStartOptions.startup_timeout` is `120.0` seconds
+instead of `30.0` in both products. It is sized from the server's default
+lifecycle bounds; see [startup and lifecycle time budgets](docs/public-api-contract.md#startup-and-lifecycle-time-budgets).

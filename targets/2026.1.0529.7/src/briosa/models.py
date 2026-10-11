@@ -248,6 +248,19 @@ class SpatialAnalyzerLaunchOptions:
 
 @dataclass(frozen=True, slots=True)
 class BriosaStartOptions:
+    """Selects the phases of one client-owned server startup.
+
+    ``startup_timeout`` is one overall budget, in seconds, for the whole
+    ``start()``, whichever phases are selected. Expiry raises
+    ``BriosaStartupError`` with ``startup-timeout``. The default of two minutes
+    covers the server's default worst case of 100 seconds (SDK start 10 s,
+    SpatialAnalyzer launch 30 s, Connect with readiness probe and application
+    association 60 s) plus 20 seconds for server host startup, process
+    observation, and round trips. Raise it when the server's lifecycle bounds are
+    raised. A server that has accepted an SDK start or connection finishes it
+    after the client stops waiting.
+    """
+
     server_selection: BriosaServerSelection = field(
         default_factory=BriosaServerSelection
     )
@@ -257,7 +270,7 @@ class BriosaStartOptions:
     launch_options: SpatialAnalyzerLaunchOptions = field(
         default_factory=SpatialAnalyzerLaunchOptions
     )
-    startup_timeout: float = 30.0
+    startup_timeout: float = 120.0
     logging: BriosaLoggingOptions | None = None
 
     def __post_init__(self) -> None:
