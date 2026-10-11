@@ -1,14 +1,17 @@
 """Startup budget and lifecycle deadline tests.
 
 Pins the client startup budget against the server's default lifecycle bounds
-(spatialanalyzer/briosa main 0c7ff7a; #298 and #315), and pins that lifecycle
-calls carry no client-imposed per-call deadline.
+(spatialanalyzer/briosa main 0c7ff7a; #298 and #315), pins that budget expiry is
+reported as startup-timeout whichever phase it interrupts, and pins that
+lifecycle calls carry no client-imposed per-call deadline.
 """
 
 from __future__ import annotations
 
+import asyncio
 import inspect
 
+import pytest
 from google.protobuf.message import Message
 
 from briosa import (
@@ -17,6 +20,7 @@ from briosa import (
     BriosaLoggingOptions,
     BriosaServerSelection,
     BriosaStartOptions,
+    BriosaStartupError,
     SpatialAnalyzerLaunchOptions,
     SpatialAnalyzerSdkRecoveryMode,
     discovery_pb2,
@@ -103,6 +107,36 @@ async def test_startup_phases_run_inside_one_overall_budget() -> None:
         await client.stop()
 
 
+@pytest.mark.parametrize("phase", ["snapshot", "start-sdk", "launch-sa", "connect-sdk"])
+async def test_budget_expiry_during_any_startup_rpc_is_a_startup_timeout(
+    phase: str,
+) -> None:
+    transport = RecordingTransport(hang_at=phase)
+    client = create_client(transport)
+    try:
+        with pytest.raises(BriosaStartupError) as raised:
+            await client.start(BriosaStartOptions(startup_timeout=0.1))
+        assert raised.value.diagnostic_code == "startup-timeout"
+        assert transport.calls[-1][0] == phase
+    finally:
+        await client.stop()
+
+
+async def test_caller_cancellation_during_startup_stays_cancellation() -> None:
+    transport = RecordingTransport(hang_at="connect-sdk")
+    client = create_client(transport)
+    try:
+        caller = asyncio.create_task(
+            client.start(BriosaStartOptions(startup_timeout=1.0))
+        )
+        await asyncio.sleep(0.05)
+        caller.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await caller
+    finally:
+        await client.stop()
+
+
 async def test_lifecycle_calls_carry_no_client_deadline() -> None:
     transport = RecordingTransport()
     client = create_client(transport, BriosaClientOptions(command_timeout=1.0))
@@ -168,15 +202,20 @@ def create_client(
 
 
 class RecordingTransport:
-    def __init__(self) -> None:
+    def __init__(self, hang_at: str | None = None) -> None:
         self.calls: list[tuple[str, float | None]] = []
+        # The RPC that never answers until its task is cancelled, as a grpc.aio
+        # call is when the startup budget expires.
+        self._hang_at = hang_at
         self._sdk_generation = 0
         self._connected = False
         self._recording = True
 
-    def _record(self, name: str, timeout: float | None) -> None:
+    async def _record(self, name: str, timeout: float | None) -> None:
         if self._recording:
             self.calls.append((name, timeout))
+        if name == self._hang_at:
+            await asyncio.Event().wait()
 
     async def get_server_snapshot(
         self, timeout: float | None = None
@@ -184,13 +223,13 @@ class RecordingTransport:
         discovery_pb2.GetServerInfoResponse,
         discovery_pb2.ListCapabilitiesResponse,
     ]:
-        self._record("snapshot", timeout)
+        await self._record("snapshot", timeout)
         return snapshot(self._connected)
 
     async def get_application_state(
         self, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
-        self._record("get-sa-state", timeout)
+        await self._record("get-sa-state", timeout)
         return application(running=True)
 
     async def launch_application(
@@ -198,25 +237,25 @@ class RecordingTransport:
         options: SpatialAnalyzerLaunchOptions,
         timeout: float | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
-        self._record("launch-sa", timeout)
+        await self._record("launch-sa", timeout)
         return application(running=True)
 
     async def close_application(
         self, expected_generation: int, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
-        self._record("close-sa", timeout)
+        await self._record("close-sa", timeout)
         return application(running=False)
 
     async def get_sdk_state(
         self, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
-        self._record("get-sdk-state", timeout)
+        await self._record("get-sdk-state", timeout)
         return self._sdk_state()
 
     async def start_sdk(
         self, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
-        self._record("start-sdk", timeout)
+        await self._record("start-sdk", timeout)
         self._sdk_generation += 1
         self._connected = False
         return self._sdk_state()
@@ -228,14 +267,14 @@ class RecordingTransport:
         reconnect: bool,
         timeout: float | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
-        self._record("reconnect-sdk" if reconnect else "connect-sdk", timeout)
+        await self._record("reconnect-sdk" if reconnect else "connect-sdk", timeout)
         self._connected = True
         return self._sdk_state()
 
     async def stop_sdk(
         self, expected_generation: int, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
-        self._record("stop-sdk", timeout)
+        await self._record("stop-sdk", timeout)
         self._sdk_generation = 0
         self._connected = False
         return self._sdk_state()
@@ -243,7 +282,7 @@ class RecordingTransport:
     async def recover_sdk(
         self, expected_generation: int, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
-        self._record("recover-sdk", timeout)
+        await self._record("recover-sdk", timeout)
         self._sdk_generation += 1
         self._connected = False
         return self._sdk_state()
