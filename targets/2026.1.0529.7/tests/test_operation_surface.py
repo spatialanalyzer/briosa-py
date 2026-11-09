@@ -122,3 +122,48 @@ def test_operations_retired_at_major_3_are_gone_from_the_public_surface() -> Non
     for name in RETIRED_VALUE_TYPES:
         assert not hasattr(briosa, name)
         assert name not in briosa.__all__
+
+
+def facade_calls() -> list[tuple[str, ast.AsyncFunctionDef, ast.Call]]:
+    found = []
+    for module in (client_module, wave_a_operations, wave_b_operations):
+        tree = ast.parse(Path(str(module.__file__)).read_text(encoding="utf-8"))
+        for function in ast.walk(tree):
+            if not isinstance(function, ast.AsyncFunctionDef):
+                continue
+            for node in ast.walk(function):
+                if (
+                    isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "_invoke_mp_operation"
+                ):
+                    found.append((function.name, function, node))
+    return found
+
+
+def test_every_facade_sends_each_argument_once() -> None:
+    problems = []
+    for name, function, call in facade_calls():
+        parameters = {
+            argument.arg
+            for argument in (*function.args.args, *function.args.kwonlyargs)
+            if argument.arg not in {"self", "on_mp_completion"}
+        }
+        values = call.args[3]
+        assert isinstance(values, ast.Dict), name
+        bare = [value.id for value in values.values if isinstance(value, ast.Name)]
+        used = {
+            node.id
+            for value in values.values
+            for node in ast.walk(value)
+            if isinstance(node, ast.Name)
+        }
+        problems.extend(
+            f"{name}: {item} sent {bare.count(item)} times"
+            for item in sorted(set(bare))
+            if bare.count(item) > 1
+        )
+        problems.extend(
+            f"{name}: {item} never sent" for item in sorted(parameters - used)
+        )
+    assert problems == []

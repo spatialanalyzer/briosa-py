@@ -2,8 +2,14 @@
 
 from __future__ import annotations
 
+import collections.abc
+import dataclasses
+import enum
+import inspect
+import types
+import typing
 from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 
 import grpc
 from google.protobuf.message import Message
@@ -13,6 +19,7 @@ from briosa import (
     BriosaLoggingOptions,
     BriosaServerSelection,
     SpatialAnalyzerLaunchOptions,
+    Transform,
     discovery_pb2,
     lifecycle_pb2,
     operation_outcomes_pb2,
@@ -290,3 +297,97 @@ def bound_facades(client: BriosaClient) -> dict[str, Callable[..., Any]]:
         target = client if attribute is None else getattr(client, attribute)
         bound[operation_id] = getattr(target, function.__name__)
     return bound
+
+
+def populated(message_type: type[Message], depth: int = 0) -> Message:
+    """Build a message with every field set to a valid, non-default value."""
+    message = message_type()
+    descriptor = message.DESCRIPTOR
+    if descriptor.full_name == "briosa.MpExecutionDetails":
+        message.CopyFrom(succeeded())
+        return message
+    for field in descriptor.fields:
+        if field.containing_oneof is not None and field.index != min(
+            item.index for item in field.containing_oneof.fields
+        ):
+            continue
+        if field.type == field.TYPE_MESSAGE:
+            if depth > 8:
+                continue
+            if field.is_repeated:
+                getattr(message, field.name).add().CopyFrom(
+                    populated(_repeated_message_type(message, field), depth + 1)
+                )
+            else:
+                child_type = type(getattr(message_type(), field.name))
+                getattr(message, field.name).CopyFrom(populated(child_type, depth + 1))
+            continue
+        value = _scalar(field)
+        if field.is_repeated:
+            count = 16 if descriptor.name == "Transform" else 1
+            getattr(message, field.name).extend([value] * count)
+        else:
+            setattr(message, field.name, value)
+    return message
+
+
+def _repeated_message_type(message: Message, field: Any) -> type[Message]:
+    container = getattr(type(message)(), field.name)
+    return cast(type[Message], type(container.add()))
+
+
+def _scalar(field: Any) -> object:
+    if field.type == field.TYPE_ENUM:
+        return next(item.number for item in field.enum_type.values if item.number)
+    if field.type == field.TYPE_BOOL:
+        return True
+    if field.type == field.TYPE_STRING:
+        return "x"
+    if field.type == field.TYPE_BYTES:
+        return b"x"
+    if field.type in (field.TYPE_FLOAT, field.TYPE_DOUBLE):
+        return 1.5
+    return 1
+
+
+def argument(annotation: Any) -> object:
+    """Build a valid public value for one facade parameter annotation."""
+    origin = typing.get_origin(annotation)
+    arguments = typing.get_args(annotation)
+    if origin in (types.UnionType, typing.Union):
+        return argument(next(item for item in arguments if item is not type(None)))
+    if origin in (list, tuple, collections.abc.Iterable, collections.abc.Sequence):
+        return [argument(arguments[0])]
+    if annotation is bool:
+        return True
+    if annotation is int:
+        return 1
+    if annotation is float:
+        return 1.5
+    if annotation is str:
+        return "x"
+    if isinstance(annotation, type) and issubclass(annotation, enum.Enum):
+        return next(iter(annotation))
+    if annotation is Transform:
+        return Transform(values=(1.0,) * 16)
+    if isinstance(annotation, type) and dataclasses.is_dataclass(annotation):
+        hints = typing.get_type_hints(annotation)
+        values = {
+            item.name: argument(hints[item.name])
+            for item in dataclasses.fields(annotation)
+            if item.init
+            and item.default is dataclasses.MISSING
+            and item.default_factory is dataclasses.MISSING
+        }
+        return annotation(**values)
+    raise AssertionError(f"no test value for {annotation!r}")
+
+
+def required_arguments(function: Callable[..., Any]) -> dict[str, object]:
+    """Build every required argument of a facade from its annotations."""
+    hints = typing.get_type_hints(function)
+    return {
+        name: argument(hints[name])
+        for name, parameter in inspect.signature(function).parameters.items()
+        if name != "self" and parameter.default is inspect.Parameter.empty
+    }
