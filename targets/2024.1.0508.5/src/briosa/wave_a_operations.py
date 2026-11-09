@@ -8745,9 +8745,9 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
-    ) -> list[CollectionObjectName]:
+    ) -> list[CollectionItemName]:
         return cast(
-            list[CollectionObjectName],
+            list[CollectionItemName],
             await self._invoke_mp_operation(
                 "briosa.Variables",
                 "GetRelationshipRefListVariable",
@@ -8765,9 +8765,9 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
-    ) -> list[CollectionObjectName]:
+    ) -> list[CollectionItemName]:
         return cast(
-            list[CollectionObjectName],
+            list[CollectionItemName],
             await self._invoke_mp_operation(
                 "briosa.Variables",
                 "GetReportItemsReferenceListVariable",
