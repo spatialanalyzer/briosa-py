@@ -5176,7 +5176,7 @@ class ConstructionOperations:
                 "show_uz": show_uz,
                 "show_umag": show_u_mag,
                 "desired_coordinate_system": desired_coordinate_system,
-                "notes": notes,
+                "notes": () if notes is None else notes,
                 "use_default_placement": use_default_placement,
             },
             None,
@@ -5236,7 +5236,9 @@ class ConstructionOperations:
                 "additional_x_comments": additional_x_comments,
                 "additional_y_comments": additional_y_comments,
                 "additional_z_comments": additional_z_comments,
-                "additional_notes": additional_notes,
+                "additional_notes": ()
+                if additional_notes is None
+                else additional_notes,
                 "use_default_placement": use_default_placement,
             },
             None,
@@ -5263,7 +5265,9 @@ class ConstructionOperations:
                 "relationship_name": relationship_name,
                 "view_x_position": view_x_position,
                 "view_y_position": view_y_position,
-                "additional_notes": additional_notes,
+                "additional_notes": ()
+                if additional_notes is None
+                else additional_notes,
             },
             None,
             on_mp_completion=on_mp_completion,
@@ -5347,7 +5351,9 @@ class ConstructionOperations:
                 "show_start_point": show_start_point,
                 "show_end_point": show_end_point,
                 "show_units": show_units,
-                "additional_notes": additional_notes,
+                "additional_notes": ()
+                if additional_notes is None
+                else additional_notes,
                 "attach_callout_to_end_point": attach_callout_to_end_point,
                 "use_default_placement": use_default_placement,
             },
@@ -6847,17 +6853,17 @@ class GdtOperations:
 
     async def feature_inspection_auto_filter(
         self,
+        point_names: Iterable[PointName],
+        group_names: Iterable[CollectionObjectName],
+        cloud_names: Iterable[CollectionObjectName],
         *,
-        point_names: Iterable[PointName] | None = None,
-        group_names: Iterable[CollectionObjectName] | None = None,
-        cloud_names: Iterable[CollectionObjectName] | None = None,
         surface_offset: float = 0.1,
         edge_offset: float = 0.1,
         offset_direction: OffsetDirectionType = OffsetDirectionType.BOTH,
         include_points_within_cylinder_axis_proximity: bool = False,
         enforce_max_points_per_face_in_output: bool = False,
         max_points_per_face: int = 0,
-        feature_check_name_list: Iterable[CollectionItemName] | None = None,
+        feature_check_name_list: Iterable[CollectionItemName],
         include_datums: bool = True,
         create_cloud_for_each_datum_or_check: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -9281,8 +9287,8 @@ class InstrumentOperations:
         measured_group: CollectionObjectName,
         surface_points_group: CollectionObjectName,
         surface_to_fit: CollectionObjectName,
+        other_objects_to_transform: Iterable[CollectionObjectName],
         *,
-        other_objects_to_transform: Sequence[CollectionObjectName] = (),
         rms_tolerance: float = 0.0,
         maximum_absolute_tolerance: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -9970,8 +9976,10 @@ class InstrumentOperations:
             {
                 "instruments": instruments,
                 "objects": objects,
-                "nominal_points": nominal_points,
-                "nominal_point_of_view_names": nominal_point_of_view_names,
+                "nominal_points": () if nominal_points is None else nominal_points,
+                "nominal_point_of_view_names": ()
+                if nominal_point_of_view_names is None
+                else nominal_point_of_view_names,
                 "align_to_individual_faces_only": align_to_individual_faces_only,
             },
             None,
