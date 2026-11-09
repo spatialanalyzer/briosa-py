@@ -132,29 +132,34 @@ def map_response(
         raise BriosaProtocolError("operation-result-invalid") from error
 
 
-# Wire numbers of MpExecutionState that a successful MP result may carry.
+# The states a successful MP result may carry, by wire number, with the only MP
+# code each may report: SUCCEEDED with 2 (SUCCESS), PARTIAL_SUCCESS with 4.
 _COMPLETION_STATES = {
-    1: MpExecutionState.SUCCEEDED,
-    6: MpExecutionState.PARTIAL_SUCCESS,
+    1: (MpExecutionState.SUCCEEDED, 2),
+    6: (MpExecutionState.PARTIAL_SUCCESS, 4),
 }
 
 
 def map_mp_completion(response: Message) -> MpCompletion:
-    """Read how a successful MP result completed from its execution details."""
+    """Check and read how a successful MP result completed (C1).
+
+    Every MP success carries execution details whose state is SUCCEEDED with MP
+    code 2 or PARTIAL_SUCCESS with code 4. Anything else, including a missing
+    code, is a protocol failure.
+    """
     if "execution" not in response.DESCRIPTOR.fields_by_name or not response.HasField(
         "execution"
     ):
         raise BriosaProtocolError("mp-completion-invalid")
     execution = cast(Any, response).execution
-    state = _COMPLETION_STATES.get(execution.state)
-    if state is None:
+    completion = _COMPLETION_STATES.get(execution.state)
+    if (
+        completion is None
+        or not execution.HasField("mp_result_code")
+        or execution.mp_result_code != completion[1]
+    ):
         raise BriosaProtocolError("mp-completion-invalid")
-    return MpCompletion(
-        state=state,
-        mp_result_code=(
-            execution.mp_result_code if execution.HasField("mp_result_code") else None
-        ),
-    )
+    return MpCompletion(state=completion[0], mp_result_code=execution.mp_result_code)
 
 
 def _assign_field(message: Message, field: FieldDescriptor, value: object) -> None:

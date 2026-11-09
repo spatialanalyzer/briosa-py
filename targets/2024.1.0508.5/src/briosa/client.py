@@ -435,10 +435,12 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                 response_type(method),
                 self._options.command_timeout,
             )
-            result = map_response(method, response, result_type)
+            # C1: every success is checked, observed or not, and the observer
+            # hears of it before the outputs are mapped.
+            completion = map_mp_completion(response)
             if on_mp_completion is not None:
-                on_mp_completion(map_mp_completion(response))
-            return result
+                on_mp_completion(completion)
+            return map_response(method, response, result_type)
         except grpc.RpcError as error:
             raise map_rpc_error(error, session.application_state) from error
         finally:

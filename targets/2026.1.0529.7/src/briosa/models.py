@@ -397,11 +397,12 @@ class MpExecutionDetails:
 class MpCompletion:
     """How one successful MP call completed.
 
-    ``state`` is ``SUCCEEDED`` or ``PARTIAL_SUCCESS``. A partial success (MP
-    code 4) did its work and returned its outputs, but did not have its full
-    intended effect; it is still a success, so the call neither raises nor
-    retries. ``mp_result_code`` is the raw MP code when SpatialAnalyzer
-    returned one.
+    ``state`` is ``SUCCEEDED`` with ``mp_result_code`` 2, or ``PARTIAL_SUCCESS``
+    with code 4. A partial success did its work and returned its outputs, but did
+    not have its full intended effect; it is still a success, so the call neither
+    raises nor retries. The client checks every MP success this way, observed or
+    not: a success without valid execution details is ``BriosaProtocolError``
+    (``mp-completion-invalid``).
     """
 
     state: MpExecutionState
@@ -409,7 +410,11 @@ class MpCompletion:
 
 
 MpCompletionObserver = Callable[[MpCompletion], object]
-"""A per-call callback that receives the call's ``MpCompletion``."""
+"""A per-call callback that receives the call's ``MpCompletion``.
+
+The client calls it once, after checking the completion and before mapping the
+outputs, so it hears of a success even when the outputs then fail to map.
+"""
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
