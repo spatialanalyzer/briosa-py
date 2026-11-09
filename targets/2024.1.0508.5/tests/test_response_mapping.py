@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import collections.abc
 import dataclasses
+import types
 import typing
 
 import pytest
@@ -13,18 +15,23 @@ from facade_support import (
     populated,
     required_arguments,
     started_client,
+    succeeded,
 )
 from test_operation_surface import protocol_methods
 
 from briosa import (
     BriosaProtocolError,
     CollectionInstrumentId,
+    CollectionItemName,
     CollectionObjectName,
     FitErrorResult,
+    ItemType,
     MpCompletion,
     MpExecutionState,
     ObjectType,
     instrument_operations_pb2,
+    spatial_analyzer_values_pb2,
+    variables_pb2,
 )
 from briosa.operation_protocol import map_response, operation_method
 
@@ -108,3 +115,104 @@ def test_a_result_type_that_drifts_from_the_wire_is_a_protocol_failure() -> None
 
     with pytest.raises(BriosaProtocolError, match="operation-result-field-drift"):
         map_response(method, response, DriftedFitResult)
+
+
+def mismatches(value: object, annotation: object, path: str = "value") -> list[str]:
+    """Return where a mapped value differs from its public annotation."""
+    origin = typing.get_origin(annotation)
+    arguments = typing.get_args(annotation)
+    if annotation is typing.Any:
+        return []
+    if annotation is None or annotation is type(None):
+        return [] if value is None else [f"{path}: {value!r} is not None"]
+    if origin in (types.UnionType, typing.Union):
+        if any(not mismatches(value, option, path) for option in arguments):
+            return []
+        return [f"{path}: {type(value).__name__} matches no part of {annotation}"]
+    if origin in (list, tuple, collections.abc.Sequence):
+        if not isinstance(value, list | tuple):
+            return [f"{path}: {type(value).__name__} is not a sequence"]
+        return [
+            problem
+            for index, item in enumerate(value)
+            for problem in mismatches(item, arguments[0], f"{path}[{index}]")
+        ]
+    if annotation in (int, float):
+        number = isinstance(value, int | float) and not isinstance(value, bool)
+        if number and (annotation is float or isinstance(value, int)):
+            return []
+        return [f"{path}: {type(value).__name__} is not {annotation}"]
+    if not isinstance(annotation, type):
+        return [f"{path}: unsupported annotation {annotation!r}"]
+    if not isinstance(value, annotation):
+        return [f"{path}: {type(value).__name__} is not {annotation.__name__}"]
+    if not dataclasses.is_dataclass(annotation):
+        return []
+    hints = typing.get_type_hints(annotation)
+    return [
+        problem
+        for item in dataclasses.fields(annotation)
+        for problem in mismatches(
+            getattr(value, item.name), hints[item.name], f"{path}.{item.name}"
+        )
+    ]
+
+
+async def test_every_facade_returns_what_its_annotation_says() -> None:
+    transport = RecordingTransport()
+    transport.default_response = lambda _path, response_type: populated(response_type)
+    client = await started_client(transport)
+    functions = facade_functions()
+    problems: dict[str, list[str]] = {}
+
+    for operation_id, facade in bound_facades(client).items():
+        function = functions[operation_id]
+        result = await facade(**required_arguments(function))
+        found = mismatches(result, typing.get_type_hints(function)["return"])
+        if found:
+            problems[operation_id] = found
+
+    assert problems == {}
+    await client.aclose()
+
+
+@pytest.mark.parametrize(
+    ("rpc", "operation_id"),
+    [
+        (
+            "GetRelationshipRefListVariable",
+            "variables.get_relationship_ref_list_variable",
+        ),
+        (
+            "GetReportItemsReferenceListVariable",
+            "variables.get_report_items_reference_list_variable",
+        ),
+    ],
+)
+async def test_the_ref_list_getters_return_collection_item_names(
+    rpc: str, operation_id: str
+) -> None:
+    function = facade_functions()[operation_id]
+    assert typing.get_type_hints(function)["return"] == list[CollectionItemName]
+    reply = typing.cast(
+        typing.Any, getattr(variables_pb2, f"{rpc}Result")(execution=succeeded())
+    )
+    reply.value.add(
+        collection_name="Inspection",
+        item_name="Hole Fit",
+        item_type=spatial_analyzer_values_pb2.ITEM_TYPE_RELATIONSHIP,
+    )
+    transport = RecordingTransport()
+    transport.queue(f"/briosa.Variables/{rpc}", reply)
+    client = await started_client(transport)
+
+    values = await bound_facades(client)[operation_id](name="Relationships")
+
+    assert values == [
+        CollectionItemName(
+            collection_name="Inspection",
+            item_name="Hole Fit",
+            item_type=ItemType.RELATIONSHIP,
+        )
+    ]
+    await client.aclose()
