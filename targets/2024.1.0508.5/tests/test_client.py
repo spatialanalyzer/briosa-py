@@ -384,9 +384,9 @@ def test_wave_a_surface_matches_the_published_capability_set() -> None:
 
 
 def test_wave_b_surface_matches_the_published_capability_set() -> None:
-    assert len(WAVE_B_OPERATIONS) == 533
-    assert len(set(WAVE_B_OPERATIONS)) == 533
-    assert len(WAVE_A_OPERATIONS) + len(WAVE_B_OPERATIONS) + 1 == 996
+    assert len(WAVE_B_OPERATIONS) == 524
+    assert len(set(WAVE_B_OPERATIONS)) == 524
+    assert len(WAVE_A_OPERATIONS) + len(WAVE_B_OPERATIONS) + 1 == 987
     client = create_client(FakeServerLauncher(), FakeTransport())
     grouped_surfaces = (
         client.construction_operations,
@@ -397,8 +397,6 @@ def test_wave_b_surface_matches_the_published_capability_set() -> None:
     )
     for operation_id in WAVE_B_OPERATIONS:
         method_name = operation_id.split(".", maxsplit=1)[1]
-        if method_name == "delete_cloud_points_by_xyz_range":
-            method_name = "delete_cloud_points_by_x_y_z_range"
         assert hasattr(BriosaClient, method_name) or any(
             hasattr(surface, method_name) for surface in grouped_surfaces
         )
