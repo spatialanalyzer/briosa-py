@@ -6,9 +6,8 @@ import ast
 from pathlib import Path
 
 import briosa
-from briosa import BriosaClient
+from briosa import BriosaClient, wave_a_operations, wave_b_operations
 from briosa import client as client_module
-from briosa import wave_a_operations, wave_b_operations
 from briosa.operation_protocol import _REGISTERED_MODULES
 from briosa.wave_a_operations import WAVE_A_OPERATIONS
 from briosa.wave_b_operations import (

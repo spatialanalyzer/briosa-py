@@ -25,11 +25,6 @@ class BSplinePointSortMode(str, Enum):
     CLOSEST_NEIGHBORS_IN_CURVE_DIRECTION = "closest_neighbors_in_curve_direction"
 
 
-class CircleLineMode(str, Enum):
-    CIRCLE = "circle"
-    LINE = "line"
-
-
 class CloudBoxType(str, Enum):
     WORLD_AXIS_ALIGNED_BOX = "worldAxisAlignedBox"
     WORK_AXIS_ALIGNED_BOX = "workAxisAlignedBox"
@@ -228,17 +223,6 @@ class InstrumentPositionReportingFrame(str, Enum):
     INSTRUMENT_BASE = "Instrument Base"
     WORLD = "World"
     WORKING = "Working"
-
-
-class MeshOrientationType(str, Enum):
-    USE_CURRENT_POINT_OF_VIEW = "Use Current Point of View"
-    USE_CURRENT_WORKING_FRAME = "Use Current Working Frame"
-
-
-class MirrorFramePlane(str, Enum):
-    XY = "xy"
-    XZ = "xz"
-    YZ = "yz"
 
 
 class OffsetDirectionType(str, Enum):
@@ -800,7 +784,6 @@ __all__ = [
     "BSplineFitOptions",
     "BSplinePointSortMode",
     "CalloutViewProperties",
-    "CircleLineMode",
     "CloudBoxType",
     "CloudThinningMode",
     "CloudThinningOptions",
@@ -843,8 +826,6 @@ __all__ = [
     "LrSnrInfo",
     "MakeGdtDatumAnnotationOptions",
     "MakeGdtFeatureCheckAnnotationOptions",
-    "MeshOrientationType",
-    "MirrorFramePlane",
     "ObjectOriginResult",
     "ObservationInfo",
     "ObservationSphericalValues",

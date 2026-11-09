@@ -534,36 +534,6 @@ class WaveBOperationsMixin(_WaveBClient):
         )
         return None
 
-    async def delete_cloud_points_by_x_y_z_range(
-        self,
-        cloud_names: Iterable[CollectionObjectName],
-        *,
-        x_min: float | None = None,
-        x_max: float | None = None,
-        y_min: float | None = None,
-        y_max: float | None = None,
-        z_min: float | None = None,
-        z_max: float | None = None,
-        delete_inside: bool = False,
-    ) -> None:
-        await self._invoke_mp_operation(
-            "briosa.CloudAndMeshOperations",
-            "DeleteCloudPointsByXYZRange",
-            "cloud_and_mesh_operations.delete_cloud_points_by_xyz_range",
-            {
-                "cloud_names": cloud_names,
-                "x_min": x_min,
-                "x_max": x_max,
-                "y_min": y_min,
-                "y_max": y_max,
-                "z_min": z_min,
-                "z_max": z_max,
-                "delete_inside": delete_inside,
-            },
-            None,
-        )
-        return None
-
     async def generate_general_mesh(
         self,
         output_mesh_name: CollectionObjectName,
@@ -697,28 +667,6 @@ class WaveBOperationsMixin(_WaveBClient):
             {
                 "groups_to_delete_from": groups_to_delete_from,
                 "wildcard_selection_names": wildcard_selection_names,
-            },
-            None,
-        )
-        return None
-
-    async def mirror_objects(
-        self,
-        objects: Iterable[CollectionObjectName],
-        frame_name: CollectionObjectName,
-        frame_plane_to_mirror_around: MirrorFramePlane,
-        *,
-        copy: bool = True,
-    ) -> None:
-        await self._invoke_mp_operation(
-            "briosa.ConstructionOperations",
-            "MirrorObjects",
-            "construction_operations.mirror_objects",
-            {
-                "objects": objects,
-                "frame_name": frame_name,
-                "frame_plane_to_mirror_around": frame_plane_to_mirror_around,
-                "copy": copy,
             },
             None,
         )
@@ -2310,38 +2258,6 @@ class ConstructionOperations:
             None,
         )
         return None
-
-    async def construct_circles_lines_from_surfaces(
-        self,
-        surfaces: Iterable[CollectionObjectName],
-        circle_line_mode: CircleLineMode,
-        *,
-        minimum_diameter: float = 0.0,
-        maximum_diameter: float = 0.0,
-        tolerance: float = 0.02,
-        single_surface: bool = False,
-        destination_collection_name: CollectionName | None = None,
-        base_name: str = "Geometry Object",
-    ) -> list[CollectionObjectName]:
-        return cast(
-            list[CollectionObjectName],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "ConstructCirclesLinesFromSurfaces",
-                "construction_operations.construct_circles_lines_from_surfaces",
-                {
-                    "surfaces": surfaces,
-                    "minimum_diameter": minimum_diameter,
-                    "maximum_diameter": maximum_diameter,
-                    "tolerance": tolerance,
-                    "single_surface": single_surface,
-                    "circle_line_mode": circle_line_mode,
-                    "destination_collection_name": destination_collection_name,
-                    "base_name": base_name,
-                },
-                None,
-            ),
-        )
 
     async def construct_collection(
         self,
@@ -5499,24 +5415,6 @@ class ConstructionOperations:
             ),
         )
 
-    async def make_collection_vector_group_name_ref_list_runtime_select(
-        self,
-        *,
-        user_prompt: str = "",
-    ) -> list[CollectionVectorGroupName]:
-        return cast(
-            list[CollectionVectorGroupName],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "MakeCollectionVectorGroupNameRefListRuntimeSelect",
-                "construction_operations.make_collection_vector_group_name_ref_list_runtime_select",
-                {
-                    "user_prompt": user_prompt,
-                },
-                None,
-            ),
-        )
-
     async def make_event_ref_list_wildcard_selection(
         self,
         *,
@@ -5760,24 +5658,6 @@ class ConstructionOperations:
             ),
         )
 
-    async def make_vector_name_ref_list_runtime_select(
-        self,
-        *,
-        user_prompt: str = " Select Vectors (ENTER when done) ",
-    ) -> list[VectorName]:
-        return cast(
-            list[VectorName],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "MakeVectorNameRefListRuntimeSelect",
-                "construction_operations.make_vector_name_ref_list_runtime_select",
-                {
-                    "user_prompt": user_prompt,
-                },
-                None,
-            ),
-        )
-
     async def make_vector_names_unique_in_vector_group(
         self,
         vector_group_name: CollectionObjectName,
@@ -5920,28 +5800,6 @@ class ConstructionOperations:
         )
         return None
 
-    async def add_collection_instruments_to_ref_list_wildcard_selection(
-        self,
-        collection_instrument_ref_list: Iterable[CollectionInstrumentId],
-        *,
-        collection_wildcard_criteria: str = "*",
-        instrument_wildcard_criteria: str = "*",
-    ) -> list[CollectionInstrumentId]:
-        return cast(
-            list[CollectionInstrumentId],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "AddCollectionInstrumentsToRefListWildcardSelection",
-                "construction_operations.add_collection_instruments_to_ref_list_wildcard_selection",
-                {
-                    "collection_instrument_ref_list": collection_instrument_ref_list,
-                    "collection_wildcard_criteria": collection_wildcard_criteria,
-                    "instrument_wildcard_criteria": instrument_wildcard_criteria,
-                },
-                None,
-            ),
-        )
-
     async def average_set_of_groups(
         self,
         group_names: Iterable[CollectionObjectName],
@@ -6069,26 +5927,6 @@ class ConstructionOperations:
             ),
         )
 
-    async def make_callout_view_ref_list_wildcard_selection(
-        self,
-        *,
-        collection_wildcard_criteria: str = "*",
-        callout_view_wildcard_criteria: str = "*",
-    ) -> list[CollectionItemName]:
-        return cast(
-            list[CollectionItemName],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "MakeCalloutViewRefListWildcardSelection",
-                "construction_operations.make_callout_view_ref_list_wildcard_selection",
-                {
-                    "collection_wildcard_criteria": collection_wildcard_criteria,
-                    "callout_view_wildcard_criteria": callout_view_wildcard_criteria,
-                },
-                None,
-            ),
-        )
-
     async def make_collection_object_name_ensure_unique(
         self,
         collection_object_name: CollectionObjectName,
@@ -6180,46 +6018,6 @@ class ConstructionOperations:
             {
                 "default_callout_view_name": default_callout_view_name,
                 "properties": properties,
-            },
-            None,
-        )
-        return None
-
-    async def set_callout_view_properties(
-        self,
-        callout_views: Iterable[CollectionItemName],
-        *,
-        properties: CalloutViewProperties | None = None,
-    ) -> None:
-        await self._client._invoke_mp_operation(
-            "briosa.ConstructionOperations",
-            "SetCalloutViewProperties",
-            "construction_operations.set_callout_view_properties",
-            {
-                "callout_views": callout_views,
-                "properties": properties,
-            },
-            None,
-        )
-        return None
-
-    async def construct_polygonized_surface_from_point_clouds(
-        self,
-        point_cloud_list: Iterable[CollectionObjectName],
-        mesh_orientation: MeshOrientationType,
-        polygonized_surface_name: CollectionObjectName,
-        *,
-        grid_resolution: float = 0.0,
-    ) -> None:
-        await self._client._invoke_mp_operation(
-            "briosa.ConstructionOperations",
-            "ConstructPolygonizedSurfaceFromPointClouds",
-            "construction_operations.construct_polygonized_surface_from_point_clouds",
-            {
-                "point_cloud_list": point_cloud_list,
-                "mesh_orientation": mesh_orientation,
-                "grid_resolution": grid_resolution,
-                "polygonized_surface_name": polygonized_surface_name,
             },
             None,
         )
@@ -11403,7 +11201,6 @@ WAVE_B_OPERATIONS = (
     "cloud_and_mesh_operations.filter_clouds_to_vector_groups_resolve_points",
     "cloud_and_mesh_operations.rgb_cloud_point_filter",
     "cloud_and_mesh_operations.delete_cloud_points_by_radial_distance_from_points",
-    "cloud_and_mesh_operations.delete_cloud_points_by_xyz_range",
     "cloud_and_mesh_operations.generate_general_mesh",
     "cloud_and_mesh_operations.mesh_volume",
     "construction_operations.add_surface_to_mesh_offset_along_reference_direction",
@@ -11420,7 +11217,6 @@ WAVE_B_OPERATIONS = (
     "construction_operations.construct_boundary_points_from_cloud",
     "construction_operations.construct_circle",
     "construction_operations.construct_circles_from_surface_faces_runtime_select",
-    "construction_operations.construct_circles_lines_from_surfaces",
     "construction_operations.construct_collection",
     "construction_operations.construct_cone",
     "construction_operations.construct_cones_from_surface_faces_runtime_select",
@@ -11573,7 +11369,6 @@ WAVE_B_OPERATIONS = (
     "construction_operations.make_collection_object_name_ref_list_runtime_select",
     "construction_operations.make_collection_object_name_ref_list_wildcard_selection",
     "construction_operations.make_collection_object_name_runtime_select",
-    "construction_operations.make_collection_vector_group_name_ref_list_runtime_select",
     "construction_operations.make_event_ref_list_wildcard_selection",
     "construction_operations.make_picture_name_ref_list_runtime_select",
     "construction_operations.make_point_name_ref_list_from_group",
@@ -11586,9 +11381,7 @@ WAVE_B_OPERATIONS = (
     "construction_operations.make_transform_from_doubles_euler_parameters",
     "construction_operations.make_transform_from_doubles_fixed_xyz",
     "construction_operations.make_vector_name_ref_list_from_vector_group",
-    "construction_operations.make_vector_name_ref_list_runtime_select",
     "construction_operations.make_vector_names_unique_in_vector_group",
-    "construction_operations.mirror_objects",
     "construction_operations.move_objects_point_to_point_delta",
     "construction_operations.move_objects_to_a_collection",
     "construction_operations.rename_callout_view",
@@ -11603,21 +11396,17 @@ WAVE_B_OPERATIONS = (
     "construction_operations.set_point_position_in_working_coordinates",
     "construction_operations.shift_plane",
     "construction_operations.transform_points_by_delta_about_working_frame",
-    "construction_operations.add_collection_instruments_to_ref_list_wildcard_selection",
     "construction_operations.average_set_of_groups",
     "construction_operations.construct_geometry_from_surfaces",
     "construction_operations.construct_objects_from_surface_faces_runtime_select",
     "construction_operations.construct_point_at_object_origin",
     "construction_operations.get_gradient_at_projected_point_on_surface",
     "construction_operations.get_gradient_at_projected_point_on_surface_edge",
-    "construction_operations.make_callout_view_ref_list_wildcard_selection",
     "construction_operations.make_collection_object_name_ensure_unique",
     "construction_operations.make_point_name_ensure_unique",
     "construction_operations.make_relationship_ref_list_runtime_select",
     "construction_operations.make_relationship_ref_list_wildcard_selection",
     "construction_operations.set_default_callout_view_properties",
-    "construction_operations.set_callout_view_properties",
-    "construction_operations.construct_polygonized_surface_from_point_clouds",
     "construction_operations.construct_scale_bar",
     "gdt_operations.datum_alignment",
     "gdt_operations.delete_feature_checks",
