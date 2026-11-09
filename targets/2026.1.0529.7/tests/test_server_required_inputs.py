@@ -225,11 +225,28 @@ TARGET_ONLY = {
     "relationship_operations.extract_geometry_from_point_clouds": "2026.1.0529.7",
 }
 
-# C3: option members the server requires whenever their value is sent.
+# The maintainer's decision of 2026-11-09: every FilterProximitySettings member
+# is required. The server reads the six distances and two Booleans without
+# checking presence, so an absent one would reach SA as 0 or false, and a
+# default distance would mean a different length in each job's units.
+PROXIMITY_MEMBERS = (
+    "surface_inclusion_proximity",
+    "edge_exclusion_proximity",
+    "planar_inclusion_proximity",
+    "planar_exclusion_proximity",
+    "radial_inclusion_proximity",
+    "geometry_extraction_tolerance",
+    "project_to_plane",
+    "assert_plane_boundaries",
+)
+
+# C3: option members the server requires whenever their value is sent, and the
+# proximity members above.
 SERVER_REQUIRED_MEMBERS = [
     (FilterProximitySettings, "surface_proximity_mode"),
     (FilterProximitySettings, "planar_proximity_mode"),
     (FilterProximitySettings, "radial_proximity_mode"),
+    *((FilterProximitySettings, name) for name in PROXIMITY_MEMBERS),
     (RelationshipWatchWindowTemplateOptions, "udp_network_transmit_settings"),
     *(
         (options, name)
@@ -315,6 +332,17 @@ def test_a_server_required_member_has_no_default(
     with pytest.raises(TypeError):
         value_type(**{key: value for key, value in arguments.items() if key != name})
     value_type(**arguments)
+
+
+def test_every_proximity_member_is_required() -> None:
+    fields = {item.name for item in dataclasses.fields(FilterProximitySettings)}
+    required = {
+        name
+        for value_type, name in SERVER_REQUIRED_MEMBERS
+        if value_type is FilterProximitySettings
+    }
+    assert required == fields
+    assert len(fields) == 11
 
 
 def test_report_output_options_need_exactly_one_destination() -> None:
