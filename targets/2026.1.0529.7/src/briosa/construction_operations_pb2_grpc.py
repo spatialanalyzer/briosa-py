@@ -39,11 +39,6 @@ class ConstructionOperationsStub(object):
                 request_serializer=briosa_dot_construction__operations__pb2.GetActiveCollectionNameRequest.SerializeToString,
                 response_deserializer=briosa_dot_construction__operations__pb2.GetActiveCollectionNameResult.FromString,
                 _registered_method=True)
-        self.AddCollectionInstrumentsToRefListWildcardSelection = channel.unary_unary(
-                '/briosa.ConstructionOperations/AddCollectionInstrumentsToRefListWildcardSelection',
-                request_serializer=briosa_dot_construction__operations__pb2.AddCollectionInstrumentsToRefListWildcardSelectionRequest.SerializeToString,
-                response_deserializer=briosa_dot_construction__operations__pb2.AddCollectionInstrumentsToRefListWildcardSelectionResult.FromString,
-                _registered_method=True)
         self.AddSurfaceToMeshOffsetAlongReferenceDirection = channel.unary_unary(
                 '/briosa.ConstructionOperations/AddSurfaceToMeshOffsetAlongReferenceDirection',
                 request_serializer=briosa_dot_construction__operations__pb2.AddSurfaceToMeshOffsetAlongReferenceDirectionRequest.SerializeToString,
@@ -118,11 +113,6 @@ class ConstructionOperationsStub(object):
                 '/briosa.ConstructionOperations/ConstructCirclesFromSurfaceFacesRuntimeSelect',
                 request_serializer=briosa_dot_construction__operations__pb2.ConstructCirclesFromSurfaceFacesRuntimeSelectRequest.SerializeToString,
                 response_deserializer=briosa_dot_construction__operations__pb2.ConstructCirclesFromSurfaceFacesRuntimeSelectResult.FromString,
-                _registered_method=True)
-        self.ConstructCirclesLinesFromSurfaces = channel.unary_unary(
-                '/briosa.ConstructionOperations/ConstructCirclesLinesFromSurfaces',
-                request_serializer=briosa_dot_construction__operations__pb2.ConstructCirclesLinesFromSurfacesRequest.SerializeToString,
-                response_deserializer=briosa_dot_construction__operations__pb2.ConstructCirclesLinesFromSurfacesResult.FromString,
                 _registered_method=True)
         self.ConstructCollection = channel.unary_unary(
                 '/briosa.ConstructionOperations/ConstructCollection',
@@ -564,11 +554,6 @@ class ConstructionOperationsStub(object):
                 request_serializer=briosa_dot_construction__operations__pb2.ConstructPointsWildcardSelectionRequest.SerializeToString,
                 response_deserializer=briosa_dot_construction__operations__pb2.ConstructPointsWildcardSelectionResult.FromString,
                 _registered_method=True)
-        self.ConstructPolygonizedSurfaceFromPointClouds = channel.unary_unary(
-                '/briosa.ConstructionOperations/ConstructPolygonizedSurfaceFromPointClouds',
-                request_serializer=briosa_dot_construction__operations__pb2.ConstructPolygonizedSurfaceFromPointCloudsRequest.SerializeToString,
-                response_deserializer=briosa_dot_construction__operations__pb2.ConstructPolygonizedSurfaceFromPointCloudsResult.FromString,
-                _registered_method=True)
         self.ConstructScaleBar = channel.unary_unary(
                 '/briosa.ConstructionOperations/ConstructScaleBar',
                 request_serializer=briosa_dot_construction__operations__pb2.ConstructScaleBarRequest.SerializeToString,
@@ -874,11 +859,6 @@ class ConstructionOperationsStub(object):
                 request_serializer=briosa_dot_construction__operations__pb2.InvertTransformRequest.SerializeToString,
                 response_deserializer=briosa_dot_construction__operations__pb2.InvertTransformResult.FromString,
                 _registered_method=True)
-        self.MakeCalloutViewRefListWildcardSelection = channel.unary_unary(
-                '/briosa.ConstructionOperations/MakeCalloutViewRefListWildcardSelection',
-                request_serializer=briosa_dot_construction__operations__pb2.MakeCalloutViewRefListWildcardSelectionRequest.SerializeToString,
-                response_deserializer=briosa_dot_construction__operations__pb2.MakeCalloutViewRefListWildcardSelectionResult.FromString,
-                _registered_method=True)
         self.MakeCollectionInstrumentIdRuntimeSelect = channel.unary_unary(
                 '/briosa.ConstructionOperations/MakeCollectionInstrumentIdRuntimeSelect',
                 request_serializer=briosa_dot_construction__operations__pb2.MakeCollectionInstrumentIdRuntimeSelectRequest.SerializeToString,
@@ -933,11 +913,6 @@ class ConstructionOperationsStub(object):
                 '/briosa.ConstructionOperations/MakeCollectionObjectNameRuntimeSelect',
                 request_serializer=briosa_dot_construction__operations__pb2.MakeCollectionObjectNameRuntimeSelectRequest.SerializeToString,
                 response_deserializer=briosa_dot_construction__operations__pb2.MakeCollectionObjectNameRuntimeSelectResult.FromString,
-                _registered_method=True)
-        self.MakeCollectionVectorGroupNameRefListRuntimeSelect = channel.unary_unary(
-                '/briosa.ConstructionOperations/MakeCollectionVectorGroupNameRefListRuntimeSelect',
-                request_serializer=briosa_dot_construction__operations__pb2.MakeCollectionVectorGroupNameRefListRuntimeSelectRequest.SerializeToString,
-                response_deserializer=briosa_dot_construction__operations__pb2.MakeCollectionVectorGroupNameRefListRuntimeSelectResult.FromString,
                 _registered_method=True)
         self.MakeEventRefListWildcardSelection = channel.unary_unary(
                 '/briosa.ConstructionOperations/MakeEventRefListWildcardSelection',
@@ -1014,20 +989,10 @@ class ConstructionOperationsStub(object):
                 request_serializer=briosa_dot_construction__operations__pb2.MakeVectorNameRefListFromVectorGroupRequest.SerializeToString,
                 response_deserializer=briosa_dot_construction__operations__pb2.MakeVectorNameRefListFromVectorGroupResult.FromString,
                 _registered_method=True)
-        self.MakeVectorNameRefListRuntimeSelect = channel.unary_unary(
-                '/briosa.ConstructionOperations/MakeVectorNameRefListRuntimeSelect',
-                request_serializer=briosa_dot_construction__operations__pb2.MakeVectorNameRefListRuntimeSelectRequest.SerializeToString,
-                response_deserializer=briosa_dot_construction__operations__pb2.MakeVectorNameRefListRuntimeSelectResult.FromString,
-                _registered_method=True)
         self.MakeVectorNamesUniqueInVectorGroup = channel.unary_unary(
                 '/briosa.ConstructionOperations/MakeVectorNamesUniqueInVectorGroup',
                 request_serializer=briosa_dot_construction__operations__pb2.MakeVectorNamesUniqueInVectorGroupRequest.SerializeToString,
                 response_deserializer=briosa_dot_construction__operations__pb2.MakeVectorNamesUniqueInVectorGroupResult.FromString,
-                _registered_method=True)
-        self.MirrorObjects = channel.unary_unary(
-                '/briosa.ConstructionOperations/MirrorObjects',
-                request_serializer=briosa_dot_construction__operations__pb2.MirrorObjectsRequest.SerializeToString,
-                response_deserializer=briosa_dot_construction__operations__pb2.MirrorObjectsResult.FromString,
                 _registered_method=True)
         self.MoveObjectsPointToPointDelta = channel.unary_unary(
                 '/briosa.ConstructionOperations/MoveObjectsPointToPointDelta',
@@ -1068,11 +1033,6 @@ class ConstructionOperationsStub(object):
                 '/briosa.ConstructionOperations/RenamePointsWithNamePattern',
                 request_serializer=briosa_dot_construction__operations__pb2.RenamePointsWithNamePatternRequest.SerializeToString,
                 response_deserializer=briosa_dot_construction__operations__pb2.RenamePointsWithNamePatternResult.FromString,
-                _registered_method=True)
-        self.SetCalloutViewProperties = channel.unary_unary(
-                '/briosa.ConstructionOperations/SetCalloutViewProperties',
-                request_serializer=briosa_dot_construction__operations__pb2.SetCalloutViewPropertiesRequest.SerializeToString,
-                response_deserializer=briosa_dot_construction__operations__pb2.SetCalloutViewPropertiesResult.FromString,
                 _registered_method=True)
         self.SetCollectionInstrumentRefListVariable = channel.unary_unary(
                 '/briosa.ConstructionOperations/SetCollectionInstrumentRefListVariable',
@@ -1117,12 +1077,6 @@ class ConstructionOperationsServicer(object):
     def GetActiveCollectionName(self, request, context):
         """Executes the "Get Active Collection Name" MP command.
         """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def AddCollectionInstrumentsToRefListWildcardSelection(self, request, context):
-        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -1212,12 +1166,6 @@ class ConstructionOperationsServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ConstructCirclesFromSurfaceFacesRuntimeSelect(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def ConstructCirclesLinesFromSurfaces(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -1751,12 +1699,6 @@ class ConstructionOperationsServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ConstructPolygonizedSurfaceFromPointClouds(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def ConstructScaleBar(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -2123,12 +2065,6 @@ class ConstructionOperationsServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def MakeCalloutViewRefListWildcardSelection(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def MakeCollectionInstrumentIdRuntimeSelect(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -2190,12 +2126,6 @@ class ConstructionOperationsServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def MakeCollectionObjectNameRuntimeSelect(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def MakeCollectionVectorGroupNameRefListRuntimeSelect(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -2291,19 +2221,7 @@ class ConstructionOperationsServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def MakeVectorNameRefListRuntimeSelect(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def MakeVectorNamesUniqueInVectorGroup(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def MirrorObjects(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -2352,12 +2270,6 @@ class ConstructionOperationsServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def RenamePointsWithNamePattern(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def SetCalloutViewProperties(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -2412,11 +2324,6 @@ def add_ConstructionOperationsServicer_to_server(servicer, server):
                     servicer.GetActiveCollectionName,
                     request_deserializer=briosa_dot_construction__operations__pb2.GetActiveCollectionNameRequest.FromString,
                     response_serializer=briosa_dot_construction__operations__pb2.GetActiveCollectionNameResult.SerializeToString,
-            ),
-            'AddCollectionInstrumentsToRefListWildcardSelection': grpc.unary_unary_rpc_method_handler(
-                    servicer.AddCollectionInstrumentsToRefListWildcardSelection,
-                    request_deserializer=briosa_dot_construction__operations__pb2.AddCollectionInstrumentsToRefListWildcardSelectionRequest.FromString,
-                    response_serializer=briosa_dot_construction__operations__pb2.AddCollectionInstrumentsToRefListWildcardSelectionResult.SerializeToString,
             ),
             'AddSurfaceToMeshOffsetAlongReferenceDirection': grpc.unary_unary_rpc_method_handler(
                     servicer.AddSurfaceToMeshOffsetAlongReferenceDirection,
@@ -2492,11 +2399,6 @@ def add_ConstructionOperationsServicer_to_server(servicer, server):
                     servicer.ConstructCirclesFromSurfaceFacesRuntimeSelect,
                     request_deserializer=briosa_dot_construction__operations__pb2.ConstructCirclesFromSurfaceFacesRuntimeSelectRequest.FromString,
                     response_serializer=briosa_dot_construction__operations__pb2.ConstructCirclesFromSurfaceFacesRuntimeSelectResult.SerializeToString,
-            ),
-            'ConstructCirclesLinesFromSurfaces': grpc.unary_unary_rpc_method_handler(
-                    servicer.ConstructCirclesLinesFromSurfaces,
-                    request_deserializer=briosa_dot_construction__operations__pb2.ConstructCirclesLinesFromSurfacesRequest.FromString,
-                    response_serializer=briosa_dot_construction__operations__pb2.ConstructCirclesLinesFromSurfacesResult.SerializeToString,
             ),
             'ConstructCollection': grpc.unary_unary_rpc_method_handler(
                     servicer.ConstructCollection,
@@ -2938,11 +2840,6 @@ def add_ConstructionOperationsServicer_to_server(servicer, server):
                     request_deserializer=briosa_dot_construction__operations__pb2.ConstructPointsWildcardSelectionRequest.FromString,
                     response_serializer=briosa_dot_construction__operations__pb2.ConstructPointsWildcardSelectionResult.SerializeToString,
             ),
-            'ConstructPolygonizedSurfaceFromPointClouds': grpc.unary_unary_rpc_method_handler(
-                    servicer.ConstructPolygonizedSurfaceFromPointClouds,
-                    request_deserializer=briosa_dot_construction__operations__pb2.ConstructPolygonizedSurfaceFromPointCloudsRequest.FromString,
-                    response_serializer=briosa_dot_construction__operations__pb2.ConstructPolygonizedSurfaceFromPointCloudsResult.SerializeToString,
-            ),
             'ConstructScaleBar': grpc.unary_unary_rpc_method_handler(
                     servicer.ConstructScaleBar,
                     request_deserializer=briosa_dot_construction__operations__pb2.ConstructScaleBarRequest.FromString,
@@ -3248,11 +3145,6 @@ def add_ConstructionOperationsServicer_to_server(servicer, server):
                     request_deserializer=briosa_dot_construction__operations__pb2.InvertTransformRequest.FromString,
                     response_serializer=briosa_dot_construction__operations__pb2.InvertTransformResult.SerializeToString,
             ),
-            'MakeCalloutViewRefListWildcardSelection': grpc.unary_unary_rpc_method_handler(
-                    servicer.MakeCalloutViewRefListWildcardSelection,
-                    request_deserializer=briosa_dot_construction__operations__pb2.MakeCalloutViewRefListWildcardSelectionRequest.FromString,
-                    response_serializer=briosa_dot_construction__operations__pb2.MakeCalloutViewRefListWildcardSelectionResult.SerializeToString,
-            ),
             'MakeCollectionInstrumentIdRuntimeSelect': grpc.unary_unary_rpc_method_handler(
                     servicer.MakeCollectionInstrumentIdRuntimeSelect,
                     request_deserializer=briosa_dot_construction__operations__pb2.MakeCollectionInstrumentIdRuntimeSelectRequest.FromString,
@@ -3307,11 +3199,6 @@ def add_ConstructionOperationsServicer_to_server(servicer, server):
                     servicer.MakeCollectionObjectNameRuntimeSelect,
                     request_deserializer=briosa_dot_construction__operations__pb2.MakeCollectionObjectNameRuntimeSelectRequest.FromString,
                     response_serializer=briosa_dot_construction__operations__pb2.MakeCollectionObjectNameRuntimeSelectResult.SerializeToString,
-            ),
-            'MakeCollectionVectorGroupNameRefListRuntimeSelect': grpc.unary_unary_rpc_method_handler(
-                    servicer.MakeCollectionVectorGroupNameRefListRuntimeSelect,
-                    request_deserializer=briosa_dot_construction__operations__pb2.MakeCollectionVectorGroupNameRefListRuntimeSelectRequest.FromString,
-                    response_serializer=briosa_dot_construction__operations__pb2.MakeCollectionVectorGroupNameRefListRuntimeSelectResult.SerializeToString,
             ),
             'MakeEventRefListWildcardSelection': grpc.unary_unary_rpc_method_handler(
                     servicer.MakeEventRefListWildcardSelection,
@@ -3388,20 +3275,10 @@ def add_ConstructionOperationsServicer_to_server(servicer, server):
                     request_deserializer=briosa_dot_construction__operations__pb2.MakeVectorNameRefListFromVectorGroupRequest.FromString,
                     response_serializer=briosa_dot_construction__operations__pb2.MakeVectorNameRefListFromVectorGroupResult.SerializeToString,
             ),
-            'MakeVectorNameRefListRuntimeSelect': grpc.unary_unary_rpc_method_handler(
-                    servicer.MakeVectorNameRefListRuntimeSelect,
-                    request_deserializer=briosa_dot_construction__operations__pb2.MakeVectorNameRefListRuntimeSelectRequest.FromString,
-                    response_serializer=briosa_dot_construction__operations__pb2.MakeVectorNameRefListRuntimeSelectResult.SerializeToString,
-            ),
             'MakeVectorNamesUniqueInVectorGroup': grpc.unary_unary_rpc_method_handler(
                     servicer.MakeVectorNamesUniqueInVectorGroup,
                     request_deserializer=briosa_dot_construction__operations__pb2.MakeVectorNamesUniqueInVectorGroupRequest.FromString,
                     response_serializer=briosa_dot_construction__operations__pb2.MakeVectorNamesUniqueInVectorGroupResult.SerializeToString,
-            ),
-            'MirrorObjects': grpc.unary_unary_rpc_method_handler(
-                    servicer.MirrorObjects,
-                    request_deserializer=briosa_dot_construction__operations__pb2.MirrorObjectsRequest.FromString,
-                    response_serializer=briosa_dot_construction__operations__pb2.MirrorObjectsResult.SerializeToString,
             ),
             'MoveObjectsPointToPointDelta': grpc.unary_unary_rpc_method_handler(
                     servicer.MoveObjectsPointToPointDelta,
@@ -3442,11 +3319,6 @@ def add_ConstructionOperationsServicer_to_server(servicer, server):
                     servicer.RenamePointsWithNamePattern,
                     request_deserializer=briosa_dot_construction__operations__pb2.RenamePointsWithNamePatternRequest.FromString,
                     response_serializer=briosa_dot_construction__operations__pb2.RenamePointsWithNamePatternResult.SerializeToString,
-            ),
-            'SetCalloutViewProperties': grpc.unary_unary_rpc_method_handler(
-                    servicer.SetCalloutViewProperties,
-                    request_deserializer=briosa_dot_construction__operations__pb2.SetCalloutViewPropertiesRequest.FromString,
-                    response_serializer=briosa_dot_construction__operations__pb2.SetCalloutViewPropertiesResult.SerializeToString,
             ),
             'SetCollectionInstrumentRefListVariable': grpc.unary_unary_rpc_method_handler(
                     servicer.SetCollectionInstrumentRefListVariable,
@@ -3511,33 +3383,6 @@ class ConstructionOperations(object):
             '/briosa.ConstructionOperations/GetActiveCollectionName',
             briosa_dot_construction__operations__pb2.GetActiveCollectionNameRequest.SerializeToString,
             briosa_dot_construction__operations__pb2.GetActiveCollectionNameResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def AddCollectionInstrumentsToRefListWildcardSelection(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.ConstructionOperations/AddCollectionInstrumentsToRefListWildcardSelection',
-            briosa_dot_construction__operations__pb2.AddCollectionInstrumentsToRefListWildcardSelectionRequest.SerializeToString,
-            briosa_dot_construction__operations__pb2.AddCollectionInstrumentsToRefListWildcardSelectionResult.FromString,
             options,
             channel_credentials,
             insecure,
@@ -3943,33 +3788,6 @@ class ConstructionOperations(object):
             '/briosa.ConstructionOperations/ConstructCirclesFromSurfaceFacesRuntimeSelect',
             briosa_dot_construction__operations__pb2.ConstructCirclesFromSurfaceFacesRuntimeSelectRequest.SerializeToString,
             briosa_dot_construction__operations__pb2.ConstructCirclesFromSurfaceFacesRuntimeSelectResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def ConstructCirclesLinesFromSurfaces(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.ConstructionOperations/ConstructCirclesLinesFromSurfaces',
-            briosa_dot_construction__operations__pb2.ConstructCirclesLinesFromSurfacesRequest.SerializeToString,
-            briosa_dot_construction__operations__pb2.ConstructCirclesLinesFromSurfacesResult.FromString,
             options,
             channel_credentials,
             insecure,
@@ -6357,33 +6175,6 @@ class ConstructionOperations(object):
             _registered_method=True)
 
     @staticmethod
-    def ConstructPolygonizedSurfaceFromPointClouds(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.ConstructionOperations/ConstructPolygonizedSurfaceFromPointClouds',
-            briosa_dot_construction__operations__pb2.ConstructPolygonizedSurfaceFromPointCloudsRequest.SerializeToString,
-            briosa_dot_construction__operations__pb2.ConstructPolygonizedSurfaceFromPointCloudsResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
     def ConstructScaleBar(request,
             target,
             options=(),
@@ -8031,33 +7822,6 @@ class ConstructionOperations(object):
             _registered_method=True)
 
     @staticmethod
-    def MakeCalloutViewRefListWildcardSelection(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.ConstructionOperations/MakeCalloutViewRefListWildcardSelection',
-            briosa_dot_construction__operations__pb2.MakeCalloutViewRefListWildcardSelectionRequest.SerializeToString,
-            briosa_dot_construction__operations__pb2.MakeCalloutViewRefListWildcardSelectionResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
     def MakeCollectionInstrumentIdRuntimeSelect(request,
             target,
             options=(),
@@ -8344,33 +8108,6 @@ class ConstructionOperations(object):
             '/briosa.ConstructionOperations/MakeCollectionObjectNameRuntimeSelect',
             briosa_dot_construction__operations__pb2.MakeCollectionObjectNameRuntimeSelectRequest.SerializeToString,
             briosa_dot_construction__operations__pb2.MakeCollectionObjectNameRuntimeSelectResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def MakeCollectionVectorGroupNameRefListRuntimeSelect(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.ConstructionOperations/MakeCollectionVectorGroupNameRefListRuntimeSelect',
-            briosa_dot_construction__operations__pb2.MakeCollectionVectorGroupNameRefListRuntimeSelectRequest.SerializeToString,
-            briosa_dot_construction__operations__pb2.MakeCollectionVectorGroupNameRefListRuntimeSelectResult.FromString,
             options,
             channel_credentials,
             insecure,
@@ -8787,33 +8524,6 @@ class ConstructionOperations(object):
             _registered_method=True)
 
     @staticmethod
-    def MakeVectorNameRefListRuntimeSelect(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.ConstructionOperations/MakeVectorNameRefListRuntimeSelect',
-            briosa_dot_construction__operations__pb2.MakeVectorNameRefListRuntimeSelectRequest.SerializeToString,
-            briosa_dot_construction__operations__pb2.MakeVectorNameRefListRuntimeSelectResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
     def MakeVectorNamesUniqueInVectorGroup(request,
             target,
             options=(),
@@ -8830,33 +8540,6 @@ class ConstructionOperations(object):
             '/briosa.ConstructionOperations/MakeVectorNamesUniqueInVectorGroup',
             briosa_dot_construction__operations__pb2.MakeVectorNamesUniqueInVectorGroupRequest.SerializeToString,
             briosa_dot_construction__operations__pb2.MakeVectorNamesUniqueInVectorGroupResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def MirrorObjects(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.ConstructionOperations/MirrorObjects',
-            briosa_dot_construction__operations__pb2.MirrorObjectsRequest.SerializeToString,
-            briosa_dot_construction__operations__pb2.MirrorObjectsResult.FromString,
             options,
             channel_credentials,
             insecure,
@@ -9073,33 +8756,6 @@ class ConstructionOperations(object):
             '/briosa.ConstructionOperations/RenamePointsWithNamePattern',
             briosa_dot_construction__operations__pb2.RenamePointsWithNamePatternRequest.SerializeToString,
             briosa_dot_construction__operations__pb2.RenamePointsWithNamePatternResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def SetCalloutViewProperties(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.ConstructionOperations/SetCalloutViewProperties',
-            briosa_dot_construction__operations__pb2.SetCalloutViewPropertiesRequest.SerializeToString,
-            briosa_dot_construction__operations__pb2.SetCalloutViewPropertiesResult.FromString,
             options,
             channel_credentials,
             insecure,

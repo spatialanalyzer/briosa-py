@@ -149,11 +149,6 @@ class CloudAndMeshOperationsStub(object):
                 request_serializer=briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByRadialDistanceFromPointsRequest.SerializeToString,
                 response_deserializer=briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByRadialDistanceFromPointsResult.FromString,
                 _registered_method=True)
-        self.DeleteCloudPointsByXYZRange = channel.unary_unary(
-                '/briosa.CloudAndMeshOperations/DeleteCloudPointsByXYZRange',
-                request_serializer=briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByXYZRangeRequest.SerializeToString,
-                response_deserializer=briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByXYZRangeResult.FromString,
-                _registered_method=True)
         self.GenerateGeneralMesh = channel.unary_unary(
                 '/briosa.CloudAndMeshOperations/GenerateGeneralMesh',
                 request_serializer=briosa_dot_cloud__and__mesh__operations__pb2.GenerateGeneralMeshRequest.SerializeToString,
@@ -317,12 +312,6 @@ class CloudAndMeshOperationsServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def DeleteCloudPointsByXYZRange(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def GenerateGeneralMesh(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -464,11 +453,6 @@ def add_CloudAndMeshOperationsServicer_to_server(servicer, server):
                     servicer.DeleteCloudPointsByRadialDistanceFromPoints,
                     request_deserializer=briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByRadialDistanceFromPointsRequest.FromString,
                     response_serializer=briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByRadialDistanceFromPointsResult.SerializeToString,
-            ),
-            'DeleteCloudPointsByXYZRange': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeleteCloudPointsByXYZRange,
-                    request_deserializer=briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByXYZRangeRequest.FromString,
-                    response_serializer=briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByXYZRangeResult.SerializeToString,
             ),
             'GenerateGeneralMesh': grpc.unary_unary_rpc_method_handler(
                     servicer.GenerateGeneralMesh,
@@ -1112,33 +1096,6 @@ class CloudAndMeshOperations(object):
             '/briosa.CloudAndMeshOperations/DeleteCloudPointsByRadialDistanceFromPoints',
             briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByRadialDistanceFromPointsRequest.SerializeToString,
             briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByRadialDistanceFromPointsResult.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def DeleteCloudPointsByXYZRange(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/briosa.CloudAndMeshOperations/DeleteCloudPointsByXYZRange',
-            briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByXYZRangeRequest.SerializeToString,
-            briosa_dot_cloud__and__mesh__operations__pb2.DeleteCloudPointsByXYZRangeResult.FromString,
             options,
             channel_credentials,
             insecure,

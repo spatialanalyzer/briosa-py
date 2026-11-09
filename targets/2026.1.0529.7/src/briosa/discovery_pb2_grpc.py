@@ -59,7 +59,8 @@ class DiscoveryServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ListCapabilities(self, request, context):
-        """Lists only implemented operations enabled by the active runtime policy.
+        """Lists implemented operations enabled by the active runtime policy, with
+        their reviewed classification. include_denied also lists denied operations.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

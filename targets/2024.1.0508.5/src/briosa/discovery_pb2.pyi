@@ -65,6 +65,45 @@ class ConnectedSpatialAnalyzerVersionState(int, metaclass=_enum_type_wrapper.Enu
     CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MATCH: _ClassVar[ConnectedSpatialAnalyzerVersionState]
     CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MISMATCH: _ClassVar[ConnectedSpatialAnalyzerVersionState]
 
+class OperationRiskFlag(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    OPERATION_RISK_FLAG_UNSPECIFIED: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_FILESYSTEM_METADATA: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_FILESYSTEM_READ: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_FILESYSTEM_WRITE: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_FILESYSTEM_DELETE: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_DESTRUCTIVE: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_CODE_EXECUTION: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_PHYSICAL_MOTION: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_DEVICE_SESSION: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_DEVICE_CONFIG: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_INTERACTIVE_UI: _ClassVar[OperationRiskFlag]
+    OPERATION_RISK_FLAG_EXTERNAL_IO: _ClassVar[OperationRiskFlag]
+
+class OperationDurationClass(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    OPERATION_DURATION_CLASS_UNSPECIFIED: _ClassVar[OperationDurationClass]
+    OPERATION_DURATION_CLASS_QUICK: _ClassVar[OperationDurationClass]
+    OPERATION_DURATION_CLASS_LONG_RUNNING: _ClassVar[OperationDurationClass]
+    OPERATION_DURATION_CLASS_INTERACTIVE: _ClassVar[OperationDurationClass]
+
+class OperationValidationStatus(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    OPERATION_VALIDATION_STATUS_UNSPECIFIED: _ClassVar[OperationValidationStatus]
+    OPERATION_VALIDATION_STATUS_NO_RECORDED_GAP: _ClassVar[OperationValidationStatus]
+    OPERATION_VALIDATION_STATUS_FIXTURE_PENDING: _ClassVar[OperationValidationStatus]
+    OPERATION_VALIDATION_STATUS_AT_RISK_UNVALIDATED: _ClassVar[OperationValidationStatus]
+
+class OperationAdmission(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    OPERATION_ADMISSION_UNSPECIFIED: _ClassVar[OperationAdmission]
+    OPERATION_ADMISSION_ADMITTED: _ClassVar[OperationAdmission]
+    OPERATION_ADMISSION_DENIED_PROFILE: _ClassVar[OperationAdmission]
+    OPERATION_ADMISSION_DENIED_FLAG: _ClassVar[OperationAdmission]
+    OPERATION_ADMISSION_DENIED_OVERRIDE: _ClassVar[OperationAdmission]
+    OPERATION_ADMISSION_DENIED_EXCLUSIVE: _ClassVar[OperationAdmission]
+    OPERATION_ADMISSION_DENIED_UNREVIEWED: _ClassVar[OperationAdmission]
+
 class OperationExecutionScope(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     OPERATION_EXECUTION_SCOPE_UNSPECIFIED: _ClassVar[OperationExecutionScope]
@@ -115,6 +154,33 @@ CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_VERIFIED_MATCH: ConnectedSpatialAnalyze
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_VERIFIED_MISMATCH: ConnectedSpatialAnalyzerVersionState
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MATCH: ConnectedSpatialAnalyzerVersionState
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MISMATCH: ConnectedSpatialAnalyzerVersionState
+OPERATION_RISK_FLAG_UNSPECIFIED: OperationRiskFlag
+OPERATION_RISK_FLAG_FILESYSTEM_METADATA: OperationRiskFlag
+OPERATION_RISK_FLAG_FILESYSTEM_READ: OperationRiskFlag
+OPERATION_RISK_FLAG_FILESYSTEM_WRITE: OperationRiskFlag
+OPERATION_RISK_FLAG_FILESYSTEM_DELETE: OperationRiskFlag
+OPERATION_RISK_FLAG_DESTRUCTIVE: OperationRiskFlag
+OPERATION_RISK_FLAG_CODE_EXECUTION: OperationRiskFlag
+OPERATION_RISK_FLAG_PHYSICAL_MOTION: OperationRiskFlag
+OPERATION_RISK_FLAG_DEVICE_SESSION: OperationRiskFlag
+OPERATION_RISK_FLAG_DEVICE_CONFIG: OperationRiskFlag
+OPERATION_RISK_FLAG_INTERACTIVE_UI: OperationRiskFlag
+OPERATION_RISK_FLAG_EXTERNAL_IO: OperationRiskFlag
+OPERATION_DURATION_CLASS_UNSPECIFIED: OperationDurationClass
+OPERATION_DURATION_CLASS_QUICK: OperationDurationClass
+OPERATION_DURATION_CLASS_LONG_RUNNING: OperationDurationClass
+OPERATION_DURATION_CLASS_INTERACTIVE: OperationDurationClass
+OPERATION_VALIDATION_STATUS_UNSPECIFIED: OperationValidationStatus
+OPERATION_VALIDATION_STATUS_NO_RECORDED_GAP: OperationValidationStatus
+OPERATION_VALIDATION_STATUS_FIXTURE_PENDING: OperationValidationStatus
+OPERATION_VALIDATION_STATUS_AT_RISK_UNVALIDATED: OperationValidationStatus
+OPERATION_ADMISSION_UNSPECIFIED: OperationAdmission
+OPERATION_ADMISSION_ADMITTED: OperationAdmission
+OPERATION_ADMISSION_DENIED_PROFILE: OperationAdmission
+OPERATION_ADMISSION_DENIED_FLAG: OperationAdmission
+OPERATION_ADMISSION_DENIED_OVERRIDE: OperationAdmission
+OPERATION_ADMISSION_DENIED_EXCLUSIVE: OperationAdmission
+OPERATION_ADMISSION_DENIED_UNREVIEWED: OperationAdmission
 OPERATION_EXECUTION_SCOPE_UNSPECIFIED: OperationExecutionScope
 OPERATION_EXECUTION_SCOPE_SELF_CONTAINED: OperationExecutionScope
 OPERATION_EXECUTION_SCOPE_GLOBAL_STATE_READ: OperationExecutionScope
@@ -175,21 +241,27 @@ class RuntimeIdentityEvidence(_message.Message):
     def __init__(self, version: _Optional[str] = ..., source: _Optional[_Union[RuntimeIdentityEvidenceSource, str]] = ..., match_state: _Optional[_Union[RuntimeIdentityMatchState, str]] = ...) -> None: ...
 
 class ListCapabilitiesRequest(_message.Message):
-    __slots__ = ()
-    def __init__(self) -> None: ...
+    __slots__ = ("include_denied",)
+    INCLUDE_DENIED_FIELD_NUMBER: _ClassVar[int]
+    include_denied: bool
+    def __init__(self, include_denied: bool = ...) -> None: ...
 
 class ListCapabilitiesResponse(_message.Message):
-    __slots__ = ("spatial_analyzer_target", "protocol_package", "operations")
+    __slots__ = ("spatial_analyzer_target", "protocol_package", "operations", "admission_profile", "policy_fingerprint")
     SPATIAL_ANALYZER_TARGET_FIELD_NUMBER: _ClassVar[int]
     PROTOCOL_PACKAGE_FIELD_NUMBER: _ClassVar[int]
     OPERATIONS_FIELD_NUMBER: _ClassVar[int]
+    ADMISSION_PROFILE_FIELD_NUMBER: _ClassVar[int]
+    POLICY_FINGERPRINT_FIELD_NUMBER: _ClassVar[int]
     spatial_analyzer_target: str
     protocol_package: str
     operations: _containers.RepeatedCompositeFieldContainer[OperationCapability]
-    def __init__(self, spatial_analyzer_target: _Optional[str] = ..., protocol_package: _Optional[str] = ..., operations: _Optional[_Iterable[_Union[OperationCapability, _Mapping]]] = ...) -> None: ...
+    admission_profile: str
+    policy_fingerprint: str
+    def __init__(self, spatial_analyzer_target: _Optional[str] = ..., protocol_package: _Optional[str] = ..., operations: _Optional[_Iterable[_Union[OperationCapability, _Mapping]]] = ..., admission_profile: _Optional[str] = ..., policy_fingerprint: _Optional[str] = ...) -> None: ...
 
 class OperationCapability(_message.Message):
-    __slots__ = ("operation_id", "grpc_service", "rpc", "fully_qualified_method", "effect", "replay_safety", "execution_scope")
+    __slots__ = ("operation_id", "grpc_service", "rpc", "fully_qualified_method", "effect", "replay_safety", "execution_scope", "risk_flags", "duration_class", "validation_status", "admission")
     OPERATION_ID_FIELD_NUMBER: _ClassVar[int]
     GRPC_SERVICE_FIELD_NUMBER: _ClassVar[int]
     RPC_FIELD_NUMBER: _ClassVar[int]
@@ -197,6 +269,10 @@ class OperationCapability(_message.Message):
     EFFECT_FIELD_NUMBER: _ClassVar[int]
     REPLAY_SAFETY_FIELD_NUMBER: _ClassVar[int]
     EXECUTION_SCOPE_FIELD_NUMBER: _ClassVar[int]
+    RISK_FLAGS_FIELD_NUMBER: _ClassVar[int]
+    DURATION_CLASS_FIELD_NUMBER: _ClassVar[int]
+    VALIDATION_STATUS_FIELD_NUMBER: _ClassVar[int]
+    ADMISSION_FIELD_NUMBER: _ClassVar[int]
     operation_id: str
     grpc_service: str
     rpc: str
@@ -204,4 +280,8 @@ class OperationCapability(_message.Message):
     effect: OperationEffect
     replay_safety: _operation_outcomes_pb2.ReplaySafety
     execution_scope: OperationExecutionScope
-    def __init__(self, operation_id: _Optional[str] = ..., grpc_service: _Optional[str] = ..., rpc: _Optional[str] = ..., fully_qualified_method: _Optional[str] = ..., effect: _Optional[_Union[OperationEffect, str]] = ..., replay_safety: _Optional[_Union[_operation_outcomes_pb2.ReplaySafety, str]] = ..., execution_scope: _Optional[_Union[OperationExecutionScope, str]] = ...) -> None: ...
+    risk_flags: _containers.RepeatedScalarFieldContainer[OperationRiskFlag]
+    duration_class: OperationDurationClass
+    validation_status: OperationValidationStatus
+    admission: OperationAdmission
+    def __init__(self, operation_id: _Optional[str] = ..., grpc_service: _Optional[str] = ..., rpc: _Optional[str] = ..., fully_qualified_method: _Optional[str] = ..., effect: _Optional[_Union[OperationEffect, str]] = ..., replay_safety: _Optional[_Union[_operation_outcomes_pb2.ReplaySafety, str]] = ..., execution_scope: _Optional[_Union[OperationExecutionScope, str]] = ..., risk_flags: _Optional[_Iterable[_Union[OperationRiskFlag, str]]] = ..., duration_class: _Optional[_Union[OperationDurationClass, str]] = ..., validation_status: _Optional[_Union[OperationValidationStatus, str]] = ..., admission: _Optional[_Union[OperationAdmission, str]] = ...) -> None: ...

@@ -8,7 +8,7 @@ toolchain, file-list, or generated-byte drift.
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.9.0-dev.1-sa-2026.1.0529.7.zip `
+  C:\path\to\briosa-protocol-0.10.0-dev.1-sa-2026.1.0529.7.zip `
   --update --source-channel source_commit_bootstrap
 ```
 

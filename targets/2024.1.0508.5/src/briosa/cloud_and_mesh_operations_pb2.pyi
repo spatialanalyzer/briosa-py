@@ -473,32 +473,6 @@ class DeleteCloudPointsByRadialDistanceFromPointsResult(_message.Message):
     execution: _operation_outcomes_pb2.MpExecutionDetails
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
-class DeleteCloudPointsByXYZRangeRequest(_message.Message):
-    __slots__ = ("cloud_names", "x_min", "x_max", "y_min", "y_max", "z_min", "z_max", "delete_inside")
-    CLOUD_NAMES_FIELD_NUMBER: _ClassVar[int]
-    X_MIN_FIELD_NUMBER: _ClassVar[int]
-    X_MAX_FIELD_NUMBER: _ClassVar[int]
-    Y_MIN_FIELD_NUMBER: _ClassVar[int]
-    Y_MAX_FIELD_NUMBER: _ClassVar[int]
-    Z_MIN_FIELD_NUMBER: _ClassVar[int]
-    Z_MAX_FIELD_NUMBER: _ClassVar[int]
-    DELETE_INSIDE_FIELD_NUMBER: _ClassVar[int]
-    cloud_names: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
-    x_min: float
-    x_max: float
-    y_min: float
-    y_max: float
-    z_min: float
-    z_max: float
-    delete_inside: bool
-    def __init__(self, cloud_names: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., x_min: _Optional[float] = ..., x_max: _Optional[float] = ..., y_min: _Optional[float] = ..., y_max: _Optional[float] = ..., z_min: _Optional[float] = ..., z_max: _Optional[float] = ..., delete_inside: bool = ...) -> None: ...
-
-class DeleteCloudPointsByXYZRangeResult(_message.Message):
-    __slots__ = ("execution",)
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
 class GenerateGeneralMeshRequest(_message.Message):
     __slots__ = ("output_mesh_name", "clouds_to_mesh", "maximum_triangle_size", "smallest_hole_diameter", "finalize", "use_scan_direction_for_point_normal", "json_file")
     OUTPUT_MESH_NAME_FIELD_NUMBER: _ClassVar[int]

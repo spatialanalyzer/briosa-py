@@ -18,7 +18,7 @@ The distribution is named `briosa-2026-1-0529-7`, while application code keeps
 the stable `briosa` import package. Install the distribution with:
 
 ```powershell
-python -m pip install C:\path\to\dist\briosa_2026_1_0529_7-0.4.0-py3-none-any.whl
+python -m pip install C:\path\to\dist\briosa_2026_1_0529_7-0.5.0-py3-none-any.whl
 ```
 
 Each exact SpatialAnalyzer target will have a separate distribution name. Two
@@ -77,10 +77,12 @@ canonical stores, explicit search roots, and supported local layouts. It validat
 receipts and manifests, filters the exact SA target and compatibility contract,
 and selects the highest compatible stable release. No internet access is needed.
 
-This development checkout prepares client 0.4.0 for behavioral contract **2.0**
-(major 2, revision at least 0). It is not a published compatibility claim.
-Major-1 servers and servers without contract metadata, including Server 0.6.1,
-are rejected before launch. Protocol and source pins remain exact build inputs;
+This development checkout prepares client 0.5.0 for behavioral contract **3.0**
+(major 3, revision at least 0), built against the frozen protocol checkpoint
+`0.10.0-dev.1` (spatialanalyzer/briosa `2960705e`). It is not a published
+compatibility claim. The planned server release is 0.10.0. Major-2 servers,
+including every released 0.9 server, major-1 servers, and servers without
+contract metadata, including Server 0.6.1, are rejected before launch. Protocol and source pins remain exact build inputs;
 startup verifies the running server against its selected installation.
 
 The three robot methods Get Robot Machine Parameter, Start Robot Machine
@@ -127,7 +129,7 @@ distinguishes tested pairs from declared forward compatibility.
 ```python
 from briosa import BriosaServerSelection, BriosaStartOptions, discover_installations
 
-selection = BriosaServerSelection(version="0.9.0-dev.1", allow_prerelease=True)
+selection = BriosaServerSelection(version="0.10.0", allow_prerelease=True)
 report = discover_installations(selection)  # no process launch
 await briosa.start(BriosaStartOptions(server_selection=selection))
 
@@ -167,11 +169,11 @@ Neither path requires SpatialAnalyzer nor a license.
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.9.0-dev.1-sa-2026.1.0529.7.zip `
+  C:\path\to\briosa-protocol-0.10.0-dev.1-sa-2026.1.0529.7.zip `
   --update --source-channel source_commit_bootstrap
 
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.9.0-dev.1-sa-2026.1.0529.7.zip
+  C:\path\to\briosa-protocol-0.10.0-dev.1-sa-2026.1.0529.7.zip
 ```
 
 Never edit generated `*_pb2.py`, `*_pb2.pyi`, `*_pb2_grpc.py`,
