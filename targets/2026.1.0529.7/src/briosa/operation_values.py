@@ -588,8 +588,8 @@ class ReportOutputOptions:
     DEFAULT: ClassVar[ReportOutputOptions]
 
     def __post_init__(self) -> None:
-        if self.external_path is not None and self.embedded_file is not None:
-            raise ValueError("Only one report-output destination may be supplied")
+        if (self.external_path is None) == (self.embedded_file is None):
+            raise ValueError("Exactly one report-output destination must be supplied")
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

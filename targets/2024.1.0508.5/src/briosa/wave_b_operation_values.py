@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
 from briosa.operation_values import *  # noqa: F403
@@ -419,9 +419,9 @@ class FilterProximitySettings:
     planar_exclusion_proximity: float = 0.1
     radial_inclusion_proximity: float = 0.1
     geometry_extraction_tolerance: float = 0.01
-    surface_proximity_mode: OffsetDirectionType = OffsetDirectionType.BOTH
-    planar_proximity_mode: OffsetDirectionType = OffsetDirectionType.BOTH
-    radial_proximity_mode: OffsetDirectionType = OffsetDirectionType.BOTH
+    surface_proximity_mode: OffsetDirectionType
+    planar_proximity_mode: OffsetDirectionType
+    radial_proximity_mode: OffsetDirectionType
     project_to_plane: bool = True
     assert_plane_boundaries: bool = False
 
@@ -681,24 +681,24 @@ class WrtlChannelStatus:
     active_channel: int
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class MakeGdtDatumAnnotationOptions:
     datum_name: str
-    objects: Sequence[CollectionObjectName] = field(default_factory=tuple)
-    geometry_relationships: Sequence[CollectionItemName] = field(default_factory=tuple)
+    objects: Sequence[CollectionObjectName]
+    geometry_relationships: Sequence[CollectionItemName]
     surface_faces: SurfaceFaceList | None = None
-    auxiliary_object: CollectionObjectName | None = None
-    auxiliary_geometry_relationship: CollectionItemName | None = None
+    auxiliary_object: CollectionObjectName
+    auxiliary_geometry_relationship: CollectionItemName
     is_slot: bool = False
     force_surface_feature: bool = False
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class MakeGdtFeatureCheckAnnotationOptions:
     feature_annotation_name: str
     feature_type: GdtFeatureType = GdtFeatureType.TRUE_POSITION
-    objects: Sequence[CollectionObjectName] = field(default_factory=tuple)
-    geometry_relationships: Sequence[CollectionItemName] = field(default_factory=tuple)
+    objects: Sequence[CollectionObjectName]
+    geometry_relationships: Sequence[CollectionItemName]
     surface_faces: SurfaceFaceList | None = None
     decompose_multiple_features: bool = False
     auto_create_diameter_checks: bool = False
@@ -715,8 +715,8 @@ class MakeGdtFeatureCheckAnnotationOptions:
     per_unit_area_width_step_over_percent: float = 50.0
     per_unit_area_circle_diameter: float = 0.0
     per_unit_area_diameter_step_over: float = 50.0
-    auxiliary_object: CollectionObjectName | None = None
-    auxiliary_geometry_relationship: CollectionItemName | None = None
+    auxiliary_object: CollectionObjectName
+    auxiliary_geometry_relationship: CollectionItemName
     use_nominal_for_dimension_tolerance: bool = True
     use_reference_object_for_nominal: bool = True
     nominal_dimension_tolerance: float = 0.0
@@ -739,9 +739,7 @@ class RelationshipWatchWindowTemplateOptions:
     show_deviation_y: bool = True
     show_deviation_z: bool = True
     show_deviation_magnitude: bool = True
-    udp_network_transmit_settings: RelationshipWatchWindowUdpSettings = (
-        RelationshipWatchWindowUdpSettings()
-    )
+    udp_network_transmit_settings: RelationshipWatchWindowUdpSettings
     transparent_background: bool = False
     hide_units: bool = False
 

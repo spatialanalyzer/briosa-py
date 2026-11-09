@@ -944,7 +944,7 @@ class WaveBOperationsMixin(_WaveBClient):
         clouds: Iterable[CollectionObjectName],
         *,
         cloud_thinning_settings: CloudThinningOptions | None = None,
-        filter_proximity_settings_2d: FilterProximitySettings | None = None,
+        filter_proximity_settings_2d: FilterProximitySettings,
         geometry_extraction_tolerance: float = 0.01,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -970,7 +970,7 @@ class WaveBOperationsMixin(_WaveBClient):
         clouds: Iterable[CollectionObjectName],
         *,
         cloud_thinning_settings: CloudThinningOptions | None = None,
-        filter_proximity_settings_3d: FilterProximitySettings | None = None,
+        filter_proximity_settings_3d: FilterProximitySettings,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -992,12 +992,12 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         surfaces: Iterable[CollectionObjectName],
         *,
-        points: Iterable[PointName] | None = None,
-        groups: Iterable[CollectionObjectName] | None = None,
-        clouds: Iterable[CollectionObjectName] | None = None,
+        points: Iterable[PointName],
+        groups: Iterable[CollectionObjectName],
+        clouds: Iterable[CollectionObjectName],
         surface_offset: float = 0.1,
         edge_offset: float = 0.1,
-        offset_direction: OffsetDirectionType = OffsetDirectionType.BOTH,
+        offset_direction: OffsetDirectionType,
         enforce_max_points_per_face_in_output: bool = False,
         max_points_per_face: int = 0,
         cloud_thinning_settings: CloudThinningOptions | None = None,
@@ -1032,8 +1032,8 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         auto_filter_target_relationships: Iterable[CollectionItemName],
         points: Iterable[PointName],
+        filter_proximity_settings_3d: FilterProximitySettings,
         *,
-        filter_proximity_settings_3d: FilterProximitySettings | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -1075,8 +1075,8 @@ class WaveBOperationsMixin(_WaveBClient):
         points_to_objects_map_name: str,
         objects: Iterable[CollectionObjectName],
         *,
-        points: Iterable[PointName] | None = None,
-        groups: Iterable[CollectionObjectName] | None = None,
+        points: Iterable[PointName],
+        groups: Iterable[CollectionObjectName],
         proximity_tolerance: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -1121,7 +1121,7 @@ class WaveBOperationsMixin(_WaveBClient):
         instruments_to_move: Iterable[CollectionInstrumentId],
         *,
         solver_mode: SolverMode = SolverMode.GAUSS_NEWTON,
-        motion_to_allow: FitDofOptions | None = None,
+        motion_to_allow: FitDofOptions,
         use_fit_dialog: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> RelationshipFitResult:
@@ -1382,7 +1382,7 @@ class WaveBOperationsMixin(_WaveBClient):
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicCircleMode = DynamicCircleMode.CYLINDER_AND_PLANE_HOLD_PLANE_NORMAL,
+        construction_mode: DynamicCircleMode,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -1406,7 +1406,7 @@ class WaveBOperationsMixin(_WaveBClient):
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicEllipseMode = DynamicEllipseMode.CYLINDER_AND_PLANE_INTERSECTION,
+        construction_mode: DynamicEllipseMode,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -1430,7 +1430,7 @@ class WaveBOperationsMixin(_WaveBClient):
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicLineMode = DynamicLineMode.INTERSECTION_OF_TWO_PLANES,
+        construction_mode: DynamicLineMode,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -1454,7 +1454,7 @@ class WaveBOperationsMixin(_WaveBClient):
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicPlaneMode = DynamicPlaneMode.BISECT_TWO_PLANES,
+        construction_mode: DynamicPlaneMode,
         offset_plane_offset: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -1479,9 +1479,9 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
+        third_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicPointMode = DynamicPointMode.INTERSECTION_LINE_AND_PLANE,
-        third_reference_geometry: CollectionObjectName | None = None,
+        construction_mode: DynamicPointMode,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -1505,9 +1505,9 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         first_frame_name: CollectionObjectName,
         second_frame_name: CollectionObjectName,
+        orientation_tolerance: ToleranceScalarOptions,
+        position_tolerance: ToleranceVectorOptions,
         *,
-        orientation_tolerance: ToleranceScalarOptions | None = None,
-        position_tolerance: ToleranceVectorOptions | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -1673,8 +1673,8 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         point_groups_in_relationship: Iterable[CollectionObjectName],
         objects_in_relationship: Iterable[CollectionObjectName],
+        projection_options: ProjectionOptions,
         *,
-        projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
         auto_update_a_vector_group: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -1723,8 +1723,8 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         point_clouds_in_relationship: Iterable[CollectionObjectName],
         objects_in_relationship: Iterable[CollectionObjectName],
+        projection_options: ProjectionOptions,
         *,
-        projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
         auto_update_a_vector_group: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -1775,8 +1775,8 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         points_in_relationship: Iterable[PointName],
         objects_in_relationship: Iterable[CollectionObjectName],
+        projection_options: ProjectionOptions,
         *,
-        projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
         auto_update_a_vector_group: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -1854,7 +1854,7 @@ class WaveBOperationsMixin(_WaveBClient):
         relationships_to_minimize: Iterable[CollectionItemName],
         *,
         solver_mode: SolverMode = SolverMode.GAUSS_NEWTON,
-        motion_to_allow: FitDofOptions | None = None,
+        motion_to_allow: FitDofOptions,
         use_fit_dialog: bool = False,
         convergence_threshold: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -1878,9 +1878,9 @@ class WaveBOperationsMixin(_WaveBClient):
 
     async def relationship_watch_window_template(
         self,
+        watch_window_template_name: CollectionObjectName,
+        options: RelationshipWatchWindowTemplateOptions,
         *,
-        watch_window_template_name: CollectionObjectName | None = None,
-        options: RelationshipWatchWindowTemplateOptions | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
@@ -1889,7 +1889,6 @@ class WaveBOperationsMixin(_WaveBClient):
         show_deviation_y: MP qualifier: Ry.
         show_deviation_z: MP qualifier: Rz.
         """
-        options = options or RelationshipWatchWindowTemplateOptions()
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
             "RelationshipWatchWindowTemplate",
@@ -1946,9 +1945,9 @@ class WaveBOperationsMixin(_WaveBClient):
     async def set_object_to_object_direction_relationship_tolerances(
         self,
         relationship_name: CollectionItemName,
+        angle_between_vectors_tolerances: ToleranceScalarOptions,
+        mutual_perpendicular_length_tolerances: ToleranceScalarOptions,
         *,
-        angle_between_vectors_tolerances: ToleranceScalarOptions | None = None,
-        mutual_perpendicular_length_tolerances: ToleranceScalarOptions | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -2008,9 +2007,9 @@ class WaveBOperationsMixin(_WaveBClient):
     async def set_points_to_points_relationship_associated_data(
         self,
         relationship_name: CollectionItemName,
+        nominal_points: Iterable[PointName],
+        actual_points: Iterable[PointName],
         *,
-        nominal_points: Iterable[PointName] | None = None,
-        actual_points: Iterable[PointName] | None = None,
         ignore_empty_arguments: bool = True,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -2032,11 +2031,11 @@ class WaveBOperationsMixin(_WaveBClient):
     async def set_relationship_associated_data(
         self,
         relationship_name: CollectionItemName,
+        individual_points: Iterable[PointName],
+        point_groups: Iterable[CollectionObjectName],
+        point_clouds: Iterable[CollectionObjectName],
+        objects: Iterable[CollectionObjectName],
         *,
-        individual_points: Iterable[PointName] | None = None,
-        point_groups: Iterable[CollectionObjectName] | None = None,
-        point_clouds: Iterable[CollectionObjectName] | None = None,
-        objects: Iterable[CollectionObjectName] | None = None,
         ignore_empty_arguments: bool = True,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -2588,7 +2587,7 @@ class ConstructionOperations:
         limit_cross_section_extent: bool = False,
         radius_limit: float = 0.0,
         project_to_reference_surface: bool = False,
-        reference_object: CollectionObjectName | None = None,
+        reference_object: CollectionObjectName,
         cloud_thinning_settings: CloudThinningOptions | None = None,
         update_existing_cloud: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -2725,7 +2724,7 @@ class ConstructionOperations:
         z_axis_radius: float = 3.0,
         magnification: float = 1.0,
         uncertainty_ellipsoid: bool = False,
-        transform_in_working_coordinates: Transform | None = None,
+        transform_in_working_coordinates: Transform,
         ellipse_color: Color | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -2769,8 +2768,8 @@ class ConstructionOperations:
     async def construct_frame(
         self,
         new_frame_name: CollectionObjectName,
+        transform_in_working_coordinates: Transform,
         *,
-        transform_in_working_coordinates: Transform | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -2897,8 +2896,8 @@ class ConstructionOperations:
     async def construct_frame_from_transform_in_world(
         self,
         new_frame_name: CollectionObjectName,
+        transform_in_world_coordinates: Transform,
         *,
-        transform_in_world_coordinates: Transform | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -3821,7 +3820,7 @@ class ConstructionOperations:
         *,
         selection_prompt: str = "Select cloud point",
         construct_point: bool = False,
-        constructed_point_name: PointName | None = None,
+        constructed_point_name: PointName,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> Vector:
         return cast(
@@ -4243,7 +4242,7 @@ class ConstructionOperations:
         make_each_line_separate_group: bool = False,
         number_of_u_grids: int = 5,
         number_of_v_grids: int = 5,
-        edge_point_mode: EdgePointMode = EdgePointMode.INCLUDE_EDGES,
+        edge_point_mode: EdgePointMode,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -4397,8 +4396,8 @@ class ConstructionOperations:
         self,
         original_points: Iterable[PointName],
         group_for_new_points: CollectionObjectName,
+        shift_vector: Vector,
         *,
-        shift_vector: Vector | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -4444,7 +4443,7 @@ class ConstructionOperations:
         points_to_subsample: Iterable[PointName],
         *,
         subset_size: int = 10,
-        group_for_subset: CollectionObjectName | None = None,
+        group_for_subset: CollectionObjectName,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -5155,7 +5154,7 @@ class ConstructionOperations:
         show_uy: bool = False,
         show_uz: bool = False,
         show_u_mag: bool = False,
-        desired_coordinate_system: CoordinateSystemType = CoordinateSystemType.CARTESIAN,
+        desired_coordinate_system: CoordinateSystemType,
         notes: Iterable[str] | None = None,
         use_default_placement: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -5857,7 +5856,7 @@ class ConstructionOperations:
         *,
         collection_wildcard_criteria: str = "*",
         item_wildcard_criteria: str = "*",
-        item_type: ItemType = ItemType.ANY,
+        item_type: ItemType,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionItemName]:
         return cast(
@@ -5899,8 +5898,8 @@ class ConstructionOperations:
     async def make_collection_object_name_ref_list_by_type(
         self,
         collection: str,
+        object_type: ObjectType,
         *,
-        object_type: ObjectType = ObjectType.ANY,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
@@ -5921,8 +5920,8 @@ class ConstructionOperations:
     async def make_collection_object_name_ref_list_by_type_and_color(
         self,
         collection: str,
+        object_type: ObjectType,
         *,
-        object_type: ObjectType = ObjectType.ANY,
         object_color: Color = Color(255, 0, 0),
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
@@ -5966,7 +5965,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
-        object_type: ObjectType = ObjectType.ANY,
+        object_type: ObjectType,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
@@ -5989,7 +5988,7 @@ class ConstructionOperations:
         *,
         collection_wildcard_criteria: str = "*",
         object_wildcard_criteria: str = "*",
-        object_type: ObjectType = ObjectType.ANY,
+        object_type: ObjectType,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
@@ -6012,7 +6011,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
-        object_type: ObjectType = ObjectType.ANY,
+        object_type: ObjectType,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
@@ -6573,8 +6572,8 @@ class ConstructionOperations:
         point_to_project: PointName,
         surface_edge: CollectionObjectName,
         surface_name: CollectionObjectName,
+        edge_offset_direction: Vector,
         *,
-        edge_offset_direction: Vector | None = None,
         edge_offset_distance: float = 0.01,
         generate_output_vector_lines: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -6798,7 +6797,7 @@ class GdtOperations:
         enable_datum_alignment: bool = True,
         enable_custom_initial_alignment: bool = False,
         enable_initial_datum_alignment: bool = True,
-        alignment: CollectionItemName | None = None,
+        alignment: CollectionItemName,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -6873,7 +6872,7 @@ class GdtOperations:
         *,
         surface_offset: float = 0.1,
         edge_offset: float = 0.1,
-        offset_direction: OffsetDirectionType = OffsetDirectionType.BOTH,
+        offset_direction: OffsetDirectionType,
         include_points_within_cylinder_axis_proximity: bool = False,
         enforce_max_points_per_face_in_output: bool = False,
         max_points_per_face: int = 0,
@@ -7375,8 +7374,8 @@ class GdtOperations:
         use_high_points: bool = False,
         extrapolate_axial_extent: bool = True,
         exclude_from_auto_evaluation: bool = True,
-        distance_between_mode: GdtDistanceBetweenMode = GdtDistanceBetweenMode.CENTROID,
-        evaluation_method: GdtEvaluationMethod = GdtEvaluationMethod.NONE,
+        distance_between_mode: GdtDistanceBetweenMode,
+        evaluation_method: GdtEvaluationMethod,
         create_actual_features: bool = False,
         create_solved_points: bool = False,
         cross_section_criteria: float = 0.039370,
@@ -7718,7 +7717,7 @@ class InstrumentOperations:
         project_results_to_nominal_vector: bool = False,
         warbler_ramp_start_distance: float = 12.0,
         show_watch_window: bool = False,
-        deviation_vector_group_name: str | None = None,
+        deviation_vector_group_name: str,
         make_unmeasured_group: bool = False,
         measure_each_point_only_once: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -7880,8 +7879,8 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         output_target_name: PointName,
         nominal_point: PointName,
+        tolerance: ToleranceVectorOptions,
         *,
-        tolerance: ToleranceVectorOptions | None = None,
         html_prompt_file: FileReference | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -7906,7 +7905,7 @@ class InstrumentOperations:
         tcp_fixture: CollectionObjectName,
         tcp_measurements: Iterable[PointName],
         *,
-        tcp_in_working: Transform | None = None,
+        tcp_in_working: Transform,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> TcpFixtureUncertainties:
         return cast(
@@ -7968,13 +7967,13 @@ class InstrumentOperations:
         collimation_point: PointName,
         *,
         zero_moving_instrument: bool = False,
-        tilt_mode: CollimationTiltMode = CollimationTiltMode.FULL_COLLIMATION,
-        baseline_method: CollimationBaselineMethod = CollimationBaselineMethod.DETERMINED_BY_VALUE,
+        tilt_mode: CollimationTiltMode,
+        baseline_method: CollimationBaselineMethod,
         baseline_distance: float = 0.0,
-        scale_point_1: PointName | None = None,
-        scale_point_2: PointName | None = None,
-        not_measured_by_moving_instrument: PointName | None = None,
-        as_measured_by_moving_instrument: PointName | None = None,
+        scale_point_1: PointName,
+        scale_point_2: PointName,
+        not_measured_by_moving_instrument: PointName,
+        as_measured_by_moving_instrument: PointName,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -9361,7 +9360,7 @@ class InstrumentOperations:
         nominals_group: CollectionObjectName | None = None,
         move_in_working_frame: bool = False,
         auto_reject_outliers_and_resolve: bool = False,
-        show_usmn_dialog: ShowUsmnDialog = ShowUsmnDialog.NO,
+        show_usmn_dialog: ShowUsmnDialog,
         maximum_acceptable_rms_error: float = 0.0,
         maximum_acceptable_error: float = 0.0,
         excluded_groups: Sequence[CollectionObjectName] = (),
@@ -10373,7 +10372,7 @@ class InstrumentOperations:
         *,
         observation_index: int = 0,
         is_collimation_shot: bool = False,
-        targeted_instrument: CollectionInstrumentId | None = None,
+        targeted_instrument: CollectionInstrumentId,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -10535,8 +10534,8 @@ class InstrumentOperations:
 
     async def set_target_computation_options(
         self,
+        computation_method: TargetComputationMethod,
         *,
-        computation_method: TargetComputationMethod = TargetComputationMethod.USE_MOST_RECENT_SHOT_FROM_EACH_FACE,
         ignore_distance_measurements: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -11496,8 +11495,8 @@ class RobotCalibrationApplianceNodeOperations:
     async def set_calibration_appliance_node_measurement_offset_transform(
         self,
         calibration_appliance_node: CollectionObjectName,
+        measurement_offset_transform: Transform,
         *,
-        measurement_offset_transform: Transform | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -12166,7 +12165,7 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         calibration_name: str = "",
-        measurement_frame: Transform | None = None,
+        measurement_frame: Transform,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
@@ -12192,7 +12191,7 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         calibration_name: str = "",
-        tool_frame: Transform | None = None,
+        tool_frame: Transform,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
@@ -12218,7 +12217,7 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         reference_frame: CollectionObjectName,
         *,
-        destination_transform: Transform | None = None,
+        destination_transform: Transform,
         number_of_steps: int = 0,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -12286,8 +12285,8 @@ class RobotOperations:
     async def set_robot_machine_parameter(
         self,
         machine_id: CollectionMachineId,
+        parameter_name: str,
         *,
-        parameter_name: str = "",
         parameter_value: float,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:

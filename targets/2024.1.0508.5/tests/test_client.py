@@ -25,6 +25,7 @@ from briosa import (
     Color,
     ExecutionDisposition,
     ObjectType,
+    OffsetDirectionType,
     OperationFailureKind,
     PointName,
     RecoveryGuidance,
@@ -485,6 +486,21 @@ async def test_wave_b_defaults_results_groups_and_optional_list_wrappers() -> No
                 target_name="P1",
             )
         ],
+        groups=[
+            CollectionObjectName(
+                collection_name="Points",
+                object_name="Measured",
+                object_type=ObjectType.POINT_GROUP,
+            )
+        ],
+        clouds=[
+            CollectionObjectName(
+                collection_name="Clouds",
+                object_name="Scan 1",
+                object_type=ObjectType.CLOUD,
+            )
+        ],
+        offset_direction=OffsetDirectionType.BOTH,
     )
     _, raw_filter_request = transport.operation_requests[-1]
     filter_request = cast(
@@ -493,8 +509,9 @@ async def test_wave_b_defaults_results_groups_and_optional_list_wrappers() -> No
     )
     assert len(filter_request.points.values) == 1
     assert filter_request.points.values[0].target_name == "P1"
-    assert not filter_request.HasField("groups")
-    assert not filter_request.HasField("clouds")
+    assert filter_request.groups.values[0].object_name == "Measured"
+    assert filter_request.clouds.values[0].object_name == "Scan 1"
+    assert filter_request.HasField("offset_direction")
 
     await client.aclose()
 
