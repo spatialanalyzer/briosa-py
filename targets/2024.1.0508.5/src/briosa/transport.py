@@ -33,8 +33,12 @@ from briosa.models import (
     BriosaServerSnapshot,
     ExecutionDisposition,
     LifecycleRecoveryGuidance,
+    MpExecutionDetails,
+    MpExecutionState,
     OperationFailure,
     OperationFailureKind,
+    OutputRetrievalDetails,
+    OutputRetrievalState,
     RecoveryGuidance,
     ReplayGuidance,
     ReplaySafety,
@@ -463,6 +467,16 @@ def map_rpc_error(
                     tuple(ReplayGuidance), operation.replay_guidance
                 ),
                 replay_safety=_enum_at(tuple(ReplaySafety), operation.replay_safety),
+                mp_execution=(
+                    map_mp_execution(operation.mp_execution)
+                    if operation.HasField("mp_execution")
+                    else None
+                ),
+                worker_generation=(
+                    operation.worker_generation
+                    if operation.HasField("worker_generation")
+                    else None
+                ),
             )
         except BriosaProtocolError:
             return BriosaTransportError(status_code, "typed-error-malformed")
@@ -472,6 +486,28 @@ def map_rpc_error(
         return asyncio.CancelledError()
     return BriosaTransportError(
         status_code, f"transport-{status_code.value.replace('_', '-')}"
+    )
+
+
+def map_mp_execution(
+    execution: operation_outcomes_pb2.MpExecutionDetails,
+) -> MpExecutionDetails:
+    """Map MP execution details; an unknown state is a protocol failure."""
+    return MpExecutionDetails(
+        state=_enum_at(tuple(MpExecutionState), execution.state),
+        mp_result_code=(
+            execution.mp_result_code if execution.HasField("mp_result_code") else None
+        ),
+        output_retrievals=tuple(
+            OutputRetrievalDetails(
+                field_name=item.field_name,
+                state=_enum_at(tuple(OutputRetrievalState), item.state),
+                diagnostic_code=(
+                    item.diagnostic_code if item.HasField("diagnostic_code") else None
+                ),
+            )
+            for item in execution.output_retrievals
+        ),
     )
 
 

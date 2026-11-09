@@ -139,7 +139,7 @@ def test_every_operation_failure_kind_maps_to_its_own_member() -> None:
             grpc.StatusCode.INTERNAL,
             operation_outcomes_pb2.OperationError(
                 operation_id="file_operations.get_working_directory",
-                kind=value.number,  # type: ignore[arg-type]
+                kind=value.number,
                 diagnostic_code="diagnostic",
             ),
         )
@@ -205,7 +205,7 @@ def test_sdk_call_fault_keeps_its_own_kind_and_reads_the_phase_from_disposition(
         OperationFailureKind.OUTPUT_RETRIEVAL_FAILURE,
     }
     assert failure.execution_disposition is ExecutionDisposition(
-        operation_outcomes_pb2.ExecutionDisposition.Name(disposition)  # type: ignore[arg-type]
+        operation_outcomes_pb2.ExecutionDisposition.Name(disposition)
         .removeprefix("EXECUTION_DISPOSITION_")
         .lower()
     )
@@ -261,7 +261,6 @@ def test_partial_success_stays_distinct_inside_a_typed_failure() -> None:
     execution = error.failure.mp_execution
     assert execution is not None
     assert execution.state is MpExecutionState.PARTIAL_SUCCESS
-    assert execution.state is not MpExecutionState.SUCCEEDED
     assert execution.mp_result_code == 4
     assert execution.output_retrievals == (
         OutputRetrievalDetails(
@@ -330,7 +329,6 @@ def test_modal_dialog_watchdog_failure_is_surfaced_as_is() -> None:
         error.failure.recovery_guidance
         is RecoveryGuidance.OPERATOR_INTERVENTION_REQUIRED
     )
-    assert error.failure.recovery_guidance is not RecoveryGuidance.WORKER_REPLACEMENT
     assert error.reconciliation_required is True
 
 

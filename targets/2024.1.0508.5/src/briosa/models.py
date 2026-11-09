@@ -112,6 +112,26 @@ class OperationFailureKind(_StrEnum):
     MP_RESULT_RETRIEVAL_FAILURE = "mp_result_retrieval_failure"
     SDK_ARGUMENT_REJECTED = "sdk_argument_rejected"
     OVERLOADED = "overloaded"
+    SDK_CALL_FAULTED = "sdk_call_faulted"
+
+
+class MpExecutionState(_StrEnum):
+    """What happened to the MP command itself (MP execution details)."""
+
+    UNSPECIFIED = "unspecified"
+    SUCCEEDED = "succeeded"
+    EXECUTE_STEP_REJECTED = "execute_step_rejected"
+    FAILED = "failed"
+    RESULT_UNAVAILABLE = "result_unavailable"
+    ARGUMENT_REJECTED = "argument_rejected"
+    PARTIAL_SUCCESS = "partial_success"
+
+
+class OutputRetrievalState(_StrEnum):
+    UNSPECIFIED = "unspecified"
+    RETRIEVED = "retrieved"
+    NOT_ATTEMPTED = "not_attempted"
+    FAILED = "failed"
 
 
 class RecoveryGuidance(_StrEnum):
@@ -167,6 +187,8 @@ class SpatialAnalyzerLifecycleFailureKind(_StrEnum):
     SDK_NOT_STOPPED = "sdk_not_stopped"
     TIMEOUT = "timeout"
     INTERNAL = "internal"
+    CALLER_CANCELLED = "caller_cancelled"
+    CALLER_DEADLINE_EXCEEDED = "caller_deadline_exceeded"
 
 
 class SpatialAnalyzerSdkLifecycleFailureKind(_StrEnum):
@@ -189,6 +211,8 @@ class SpatialAnalyzerSdkLifecycleFailureKind(_StrEnum):
     SDK_CONNECTION_FAILED = "sdk_connection_failed"
     RECONNECT_NOT_REQUIRED = "reconnect_not_required"
     SDK_RECOVERY_REQUIRED = "sdk_recovery_required"
+    CALLER_CANCELLED = "caller_cancelled"
+    CALLER_DEADLINE_EXCEEDED = "caller_deadline_exceeded"
 
 
 class LifecycleRecoveryGuidance(_StrEnum):
@@ -292,6 +316,29 @@ class BriosaStartOptions:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class OutputRetrievalDetails:
+    """Retrieval of one result field, named by its public result field name."""
+
+    field_name: str
+    state: OutputRetrievalState
+    diagnostic_code: str | None = None
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class MpExecutionDetails:
+    """What the server proved about the MP command inside a typed failure.
+
+    ``state`` keeps ``PARTIAL_SUCCESS`` (MP code 4) distinct from
+    ``SUCCEEDED``. ``mp_result_code`` is the raw MP code when SpatialAnalyzer
+    returned one.
+    """
+
+    state: MpExecutionState
+    mp_result_code: int | None = None
+    output_retrievals: tuple[OutputRetrievalDetails, ...] = ()
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class OperationFailure:
     operation_id: str
     kind: OperationFailureKind
@@ -300,6 +347,8 @@ class OperationFailure:
     recovery_guidance: RecoveryGuidance
     replay_guidance: ReplayGuidance
     replay_safety: ReplaySafety
+    mp_execution: MpExecutionDetails | None = None
+    worker_generation: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
