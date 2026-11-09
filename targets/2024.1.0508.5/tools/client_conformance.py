@@ -18,19 +18,31 @@ from briosa import (
     BriosaCompatibilityError,
     BriosaOperationError,
     BriosaServerSelection,
+    BriosaSpatialAnalyzerSdkError,
     BriosaStartOptions,
     BriosaStartupError,
     BriosaTransportError,
     ExecutionDisposition,
+    LifecycleRecoveryGuidance,
+    MpCompletion,
+    MpExecutionState,
+    OperationAdmission,
+    OperationDurationClass,
     OperationFailureKind,
+    OperationValidationStatus,
+    OutputRetrievalState,
     RecoveryGuidance,
     ReplayGuidance,
     ReplaySafety,
+    RpcStatusCode,
     SpatialAnalyzerApplicationState,
     SpatialAnalyzerConnectionState,
+    SpatialAnalyzerExecutionReadinessState,
     SpatialAnalyzerOwnership,
+    SpatialAnalyzerSdkLifecycleFailureKind,
     SpatialAnalyzerSdkLifecycleState,
     SpatialAnalyzerSdkRecoveryMode,
+    SpatialAnalyzerSdkRecoveryState,
     SpatialAnalyzerSdkState,
     SpatialAnalyzerSdkTerminationKind,
     discover_installations,
@@ -38,6 +50,10 @@ from briosa import (
 
 CONTRACT_ID = "briosa.first-party-client.v1"
 WORKING_DIRECTORY_METHOD = "/briosa.FileOperations/GetWorkingDirectory"
+WORKING_DIRECTORY_OPERATION = "file_operations.get_working_directory"
+# lifecycle-cancellation: the fake worker holds its first Connect reply for 3 s.
+INTERRUPTED_CONNECT_DEADLINE = 1.0
+DETACHED_CONNECT_READINESS_LIMIT = 20.0
 _Error = TypeVar("_Error", bound=BaseException)
 
 
@@ -104,7 +120,7 @@ async def _run_scenario(scenario: str) -> None:
     briosa = BriosaClient(BriosaClientOptions(command_timeout=command_timeout))
     startup_succeeded = False
     try:
-        if scenario == "control-plane-only":
+        if scenario in {"control-plane-only", "lifecycle-cancellation"}:
             start_options = BriosaStartOptions(
                 start_spatial_analyzer_sdk=False,
                 launch_spatial_analyzer=False,
@@ -153,6 +169,12 @@ async def _run_scenario(scenario: str) -> None:
                 OperationFailureKind.OUTPUT_RETRIEVAL_FAILURE,
                 ExecutionDisposition.COMPLETED,
             )
+        elif scenario == "sdk-call-faulted":
+            await _assert_sdk_call_faulted(briosa)
+        elif scenario == "mp-partial-success":
+            await _assert_mp_partial_success(briosa)
+        elif scenario == "lifecycle-cancellation":
+            await _assert_lifecycle_cancellation(briosa)
         elif scenario == "deadline":
             await _assert_deadline(briosa)
         elif scenario == "cancellation":
@@ -228,6 +250,48 @@ async def _assert_capability_denied(briosa: BriosaClient) -> None:
         not snapshot.supports(WORKING_DIRECTORY_METHOD),
         "A policy-denied operation remained advertised.",
     )
+    _require(
+        snapshot.admission_profile == "standard",
+        "The packaged admission profile was not reported.",
+    )
+    _require(
+        snapshot.policy_fingerprint.startswith("sha256:"),
+        "The policy fingerprint was not reported.",
+    )
+    _require(
+        bool(snapshot.operations)
+        and all(
+            item.admission is OperationAdmission.ADMITTED
+            and item.duration_class
+            not in {OperationDurationClass.UNSPECIFIED, OperationDurationClass.UNKNOWN}
+            and item.validation_status
+            not in {
+                OperationValidationStatus.UNSPECIFIED,
+                OperationValidationStatus.UNKNOWN,
+            }
+            for item in snapshot.operations
+        ),
+        "An admitted capability lacks its reviewed classification.",
+    )
+    listing = await briosa.list_capabilities(include_denied=True)
+    denied = [
+        item
+        for item in listing.denied
+        if item.operation_id == WORKING_DIRECTORY_OPERATION
+    ]
+    _require(
+        len(denied) == 1 and denied[0].admission is OperationAdmission.DENIED_OVERRIDE,
+        "The denied listing did not report the override denial.",
+    )
+    _require(
+        listing.policy_fingerprint == snapshot.policy_fingerprint,
+        "The diagnostic listing reported a different policy.",
+    )
+    refreshed = await briosa.get_server_snapshot()
+    _require(
+        not refreshed.supports(WORKING_DIRECTORY_METHOD),
+        "The denied listing made a denied operation callable.",
+    )
     error = await _expect_raises(BriosaOperationError, briosa.get_working_directory)
     _require(
         error.failure.kind is OperationFailureKind.POLICY_DENIED,
@@ -254,6 +318,184 @@ async def _assert_operation_failure(
         error.failure.operation_id == "file_operations.get_working_directory",
         "The operation identity was not preserved.",
     )
+
+
+async def _assert_sdk_call_faulted(briosa: BriosaClient) -> None:
+    error = await _expect_raises(BriosaOperationError, briosa.get_working_directory)
+    failure = error.failure
+    _require(
+        error.status_code is RpcStatusCode.INTERNAL,
+        "The SDK call fault did not keep its gRPC status.",
+    )
+    _require(
+        failure.kind is OperationFailureKind.SDK_CALL_FAULTED,
+        "The SDK call fault was folded into another failure kind.",
+    )
+    _require(
+        failure.diagnostic_code == "sdk-execute-step-faulted"
+        and failure.operation_id == WORKING_DIRECTORY_OPERATION,
+        "The SDK call fault identity was not preserved.",
+    )
+    _require(
+        failure.execution_disposition is ExecutionDisposition.STARTED_OUTCOME_UNKNOWN
+        and failure.recovery_guidance is RecoveryGuidance.NONE
+        and failure.replay_guidance is ReplayGuidance.RECONCILE_BEFORE_REPLAY,
+        "The SDK call fault phase or guidance was not preserved.",
+    )
+    _require(
+        failure.mp_execution is not None
+        and failure.mp_execution.state is MpExecutionState.RESULT_UNAVAILABLE
+        and failure.mp_execution.mp_result_code is None,
+        "The SDK call fault lost its MP execution details.",
+    )
+    # A per-call SDK fault keeps the worker generation in service.
+    await briosa.get_working_directory()
+
+
+async def _assert_mp_partial_success(briosa: BriosaClient) -> None:
+    first: list[MpCompletion] = []
+    second: list[MpCompletion] = []
+    partial = await briosa.get_working_directory(on_mp_completion=first.append)
+    succeeded = await briosa.get_working_directory(on_mp_completion=second.append)
+    _require(
+        bool(partial) and bool(succeeded),
+        "A partial success did not return its output.",
+    )
+    _require(
+        first
+        == [MpCompletion(state=MpExecutionState.PARTIAL_SUCCESS, mp_result_code=4)],
+        "The partial success completion was not reported for its call.",
+    )
+    _require(
+        second == [MpCompletion(state=MpExecutionState.SUCCEEDED, mp_result_code=2)],
+        "The next call did not report its own completion.",
+    )
+    third: list[MpCompletion] = []
+    error = await _expect_raises(
+        BriosaOperationError,
+        lambda: briosa.get_working_directory(on_mp_completion=third.append),
+    )
+    failure = error.failure
+    _require(
+        error.status_code is RpcStatusCode.DATA_LOSS
+        and failure.kind is OperationFailureKind.OUTPUT_RETRIEVAL_FAILURE
+        and failure.execution_disposition is ExecutionDisposition.COMPLETED
+        and failure.replay_guidance is ReplayGuidance.DO_NOT_REPLAY,
+        "The partial success without output did not fail as an output failure.",
+    )
+    execution = failure.mp_execution
+    _require(
+        execution is not None
+        and execution.state is MpExecutionState.PARTIAL_SUCCESS
+        and execution.mp_result_code == 4
+        and len(execution.output_retrievals) == 1
+        and execution.output_retrievals[0].state is OutputRetrievalState.FAILED,
+        "The typed failure did not keep PartialSuccess distinct.",
+    )
+    _require(third == [], "A failed call reported an MP completion.")
+
+
+async def _assert_lifecycle_cancellation(briosa: BriosaClient) -> None:
+    application = await briosa.get_spatial_analyzer_state()
+    _require(
+        application.application_state is SpatialAnalyzerApplicationState.RUNNING
+        and application.ownership is SpatialAnalyzerOwnership.EXTERNAL
+        and application.application_generation is not None,
+        "The scenario requires the external SpatialAnalyzer.",
+    )
+    started = await briosa.start_spatial_analyzer_sdk()
+    generation = started.sdk_generation
+    if (
+        generation is None
+        or started.sdk_state is not SpatialAnalyzerSdkState.RUNNING
+        or started.connection_state is not SpatialAnalyzerConnectionState.DISCONNECTED
+        or started.ready_for_mp
+    ):
+        raise RuntimeError("The SDK did not start disconnected.")
+
+    # 1. The deadline ends only this caller's wait: the language-native deadline
+    #    outcome, with no invented disposition and no retry.
+    deadline = await _expect_raises(
+        BriosaTransportError,
+        lambda: briosa.connect_to_spatial_analyzer(
+            timeout=INTERRUPTED_CONNECT_DEADLINE
+        ),
+    )
+    _require(
+        deadline.status_code is RpcStatusCode.DEADLINE_EXCEEDED
+        and deadline.diagnostic_code == "transport-deadline-exceeded",
+        "The interrupted Connect did not surface as the caller's deadline.",
+    )
+
+    # 2. The accepted Connect still holds the lifecycle.
+    in_progress = await _expect_raises(
+        BriosaSpatialAnalyzerSdkError, briosa.connect_to_spatial_analyzer
+    )
+    _require(
+        in_progress.kind is SpatialAnalyzerSdkLifecycleFailureKind.STATE_CONFLICT
+        and in_progress.diagnostic_code == "sdk-lifecycle-transition-in-progress"
+        and in_progress.recovery_guidance is LifecycleRecoveryGuidance.REFRESH_STATE,
+        "A second Connect was not rejected as a transition in progress.",
+    )
+    _require(
+        in_progress.state.sdk_generation == generation
+        and in_progress.state.sdk_state
+        in {SpatialAnalyzerSdkState.CONNECTING, SpatialAnalyzerSdkState.VERIFYING},
+        "The transition in progress reported another generation or phase.",
+    )
+
+    # 3. Refreshing state shows the detached Connect finish on the same generation.
+    ready = await _wait_for_detached_connect(briosa, generation)
+    _require(
+        ready.ready_for_mp
+        and ready.connection_state is SpatialAnalyzerConnectionState.CONNECTED
+        and ready.execution_readiness_state
+        is SpatialAnalyzerExecutionReadinessState.EXECUTION_READY
+        and ready.recovery_state is SpatialAnalyzerSdkRecoveryState.NOT_REQUIRED
+        and ready.last_incident is None
+        and ready.application_generation == application.application_generation,
+        "The detached Connect did not leave the generation ready.",
+    )
+
+    # 4. MP work runs on that generation once discovery confirms readiness.
+    snapshot = await briosa.get_server_snapshot()
+    _require(snapshot.ready_for_mp, "Discovery did not report MP readiness.")
+    await briosa.get_working_directory()
+
+    # 5. A clean stop leaves the external application running.
+    stopped = await briosa.stop_spatial_analyzer_sdk()
+    after = await briosa.get_spatial_analyzer_state()
+    _require(
+        stopped.sdk_state is SpatialAnalyzerSdkState.STOPPED
+        and not stopped.ready_for_mp
+        and after.application_state is SpatialAnalyzerApplicationState.RUNNING
+        and after.ownership is SpatialAnalyzerOwnership.EXTERNAL
+        and after.application_generation == application.application_generation,
+        "The lifecycle shutdown was not clean.",
+    )
+
+
+async def _wait_for_detached_connect(
+    briosa: BriosaClient, generation: int
+) -> SpatialAnalyzerSdkLifecycleState:
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + DETACHED_CONNECT_READINESS_LIMIT
+    while True:
+        state = await briosa.get_spatial_analyzer_sdk_state()
+        _require(
+            state.sdk_generation == generation,
+            "The detached Connect changed the SDK generation.",
+        )
+        if state.sdk_state is SpatialAnalyzerSdkState.READY:
+            return state
+        _require(
+            state.sdk_state
+            in {SpatialAnalyzerSdkState.CONNECTING, SpatialAnalyzerSdkState.VERIFYING},
+            "The detached Connect ended without readiness.",
+        )
+        if loop.time() >= deadline:
+            raise TimeoutError("Timed out waiting for the detached Connect.")
+        await asyncio.sleep(0.05)
 
 
 async def _assert_deadline(briosa: BriosaClient) -> None:
