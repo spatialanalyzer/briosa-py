@@ -6,20 +6,16 @@ import inspect
 import typing
 from typing import cast
 
-import grpc
 import pytest
 from facade_support import (
-    FakeRpcError,
-    RecordingTransport,
     argument,
     bound_facades,
     facade_functions,
+    rejecting_transport,
     required_arguments,
+    sent,
     started_client,
 )
-from google.protobuf.message import Message
-
-from briosa import BriosaOperationError, operation_outcomes_pb2
 
 # Optional lists that map to plain repeated fields. An omitted list, or None,
 # is sent as an empty repeated field, which is the absent value on the wire.
@@ -48,35 +44,6 @@ REQUIRED_LISTS = {
         "other_objects_to_transform",
     ),
 }
-
-
-def rejecting_transport() -> RecordingTransport:
-    """Record each request, then fail it as an MP failure after dispatch."""
-    transport = RecordingTransport()
-    detail = operation_outcomes_pb2.OperationError(
-        operation_id="request-shape-test",
-        kind=operation_outcomes_pb2.OPERATION_FAILURE_KIND_MP_FAILURE,
-        diagnostic_code="mp-failed",
-    )
-
-    def reject(_path: str, _response_type: type[Message]) -> Message:
-        raise FakeRpcError(
-            grpc.StatusCode.FAILED_PRECONDITION,
-            (("briosa-operation-error-bin", detail.SerializeToString()),),
-        )
-
-    transport.default_response = reject
-    return transport
-
-
-async def sent(
-    transport: RecordingTransport, facade: typing.Any, **arguments: object
-) -> Message:
-    count = len(transport.requests)
-    with pytest.raises(BriosaOperationError):
-        await facade(**arguments)
-    assert len(transport.requests) == count + 1
-    return transport.requests[-1][1]
 
 
 @pytest.mark.parametrize(

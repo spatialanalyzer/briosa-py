@@ -12,11 +12,13 @@ from collections.abc import Callable
 from typing import Any, cast
 
 import grpc
+import pytest
 from google.protobuf.message import Message
 
 from briosa import (
     BriosaClient,
     BriosaLoggingOptions,
+    BriosaOperationError,
     BriosaServerSelection,
     SpatialAnalyzerLaunchOptions,
     Transform,
@@ -391,3 +393,32 @@ def required_arguments(function: Callable[..., Any]) -> dict[str, object]:
         for name, parameter in inspect.signature(function).parameters.items()
         if name != "self" and parameter.default is inspect.Parameter.empty
     }
+
+
+def rejecting_transport() -> RecordingTransport:
+    """Record each request, then fail it as an MP failure after dispatch."""
+    transport = RecordingTransport()
+    detail = operation_outcomes_pb2.OperationError(
+        operation_id="request-shape-test",
+        kind=operation_outcomes_pb2.OPERATION_FAILURE_KIND_MP_FAILURE,
+        diagnostic_code="mp-failed",
+    )
+
+    def reject(_path: str, _response_type: type[Message]) -> Message:
+        raise FakeRpcError(
+            grpc.StatusCode.FAILED_PRECONDITION,
+            (("briosa-operation-error-bin", detail.SerializeToString()),),
+        )
+
+    transport.default_response = reject
+    return transport
+
+
+async def sent(
+    transport: RecordingTransport, facade: Any, **arguments: object
+) -> Message:
+    count = len(transport.requests)
+    with pytest.raises(BriosaOperationError):
+        await facade(**arguments)
+    assert len(transport.requests) == count + 1
+    return transport.requests[-1][1]
