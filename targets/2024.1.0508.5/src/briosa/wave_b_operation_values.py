@@ -748,31 +748,31 @@ class RelationshipWatchWindowTemplateOptions:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class RobotModelLinkConfiguration:
-    link_type: RobotModelLinkType = RobotModelLinkType.DH
-    dh_alpha_component: float = 0.0
-    dh_a_component: float = 0.0
-    dh_d_component: float = 0.0
-    dh_theta_component: float = 0.0
-    dh_x_axis_deflection_factor: float = 0.0
-    dh_y_axis_deflection_factor: float = 0.0
-    dh_z_axis_deflection_factor: float = 0.0
-    six_dof_x_component: float = 0.0
-    six_dof_y_component: float = 0.0
-    six_dof_z_component: float = 0.0
-    six_dof_rx_component: float = 0.0
-    six_dof_ry_component: float = 0.0
-    six_dof_rz_component: float = 0.0
-    active_joint_component: RobotActiveJointComponent = RobotActiveJointComponent.NONE
-    encoder_offset_value: float = 0.0
-    minimum_encoder_limit: float = 0.0
-    maximum_encoder_limit: float = 0.0
-    encoder_sense_negative: bool = False
-    include_additional_encoder: bool = False
-    additional_encoder_index_offset: int = 0
-    additional_encoder_sense_negative: bool = False
-    segment_origin_mass_kg: float = 0.0
-    segment_cg_mass_kg: float = 0.0
-    segment_cg_in_segment: Vector = Vector(0.0, 0.0, 0.0)
+    link_type: RobotModelLinkType
+    dh_alpha_component: float
+    dh_a_component: float
+    dh_d_component: float
+    dh_theta_component: float
+    dh_x_axis_deflection_factor: float
+    dh_y_axis_deflection_factor: float
+    dh_z_axis_deflection_factor: float
+    six_dof_x_component: float
+    six_dof_y_component: float
+    six_dof_z_component: float
+    six_dof_rx_component: float
+    six_dof_ry_component: float
+    six_dof_rz_component: float
+    active_joint_component: RobotActiveJointComponent
+    encoder_offset_value: float
+    minimum_encoder_limit: float
+    maximum_encoder_limit: float
+    encoder_sense_negative: bool
+    include_additional_encoder: bool
+    additional_encoder_index_offset: int
+    additional_encoder_sense_negative: bool
+    segment_origin_mass_kg: float
+    segment_cg_mass_kg: float
+    segment_cg_in_segment: Vector
 
 
 __all__ = [

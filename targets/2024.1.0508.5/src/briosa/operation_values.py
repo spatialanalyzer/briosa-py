@@ -554,6 +554,8 @@ class ToleranceVectorOptions:
     low_y: ToleranceLimit = field(default_factory=ToleranceLimit)
     low_z: ToleranceLimit = field(default_factory=ToleranceLimit)
     low_magnitude: ToleranceLimit = field(default_factory=ToleranceLimit)
+    NO_LIMITS: ClassVar[ToleranceVectorOptions]
+    """Every limit disabled. Callers pass it explicitly; it is never a default."""
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -626,6 +628,7 @@ class PointDeltaReportOptions:
 ColorizationOptions.DEFAULT = ColorizationOptions()
 Font.DEFAULT = Font()
 FitConstraintScalarOptions.DEFAULT = FitConstraintScalarOptions()
+ToleranceVectorOptions.NO_LIMITS = ToleranceVectorOptions()
 ToleranceScalarOptions.DEFAULT = ToleranceScalarOptions()
 ProjectionOptions.DEFAULT = ProjectionOptions()
 PointDeltaReportOptions.DEFAULT = PointDeltaReportOptions()

@@ -1780,8 +1780,8 @@ class WaveBOperationsMixin(_WaveBClient):
         second_group_name: CollectionObjectName,
         *,
         auto_update_a_vector_group: bool = False,
-        tolerance: ToleranceVectorOptions | None = None,
-        constraint: ToleranceVectorOptions | None = None,
+        tolerance: ToleranceVectorOptions,
+        constraint: ToleranceVectorOptions,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -1813,8 +1813,8 @@ class WaveBOperationsMixin(_WaveBClient):
         use_view_zooming_with_proximity: bool = False,
         ignore_points_beyond_threshold: bool = False,
         proximity_threshold: float = 0.01,
-        tolerance: ToleranceVectorOptions | None = None,
-        constraint: ToleranceVectorOptions | None = None,
+        tolerance: ToleranceVectorOptions,
+        constraint: ToleranceVectorOptions,
         fit_weight: float = 1.0,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -1922,9 +1922,9 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         first_point_name: PointName,
         second_point_name: PointName,
+        tolerance: ToleranceVectorOptions,
+        constraint: ToleranceVectorOptions,
         *,
-        tolerance: ToleranceVectorOptions | None = None,
-        constraint: ToleranceVectorOptions | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -1976,8 +1976,8 @@ class WaveBOperationsMixin(_WaveBClient):
         measured_points: Iterable[PointName],
         *,
         auto_update_a_vector_group: bool = False,
-        tolerance: ToleranceVectorOptions | None = None,
-        constraint: ToleranceVectorOptions | None = None,
+        tolerance: ToleranceVectorOptions,
+        constraint: ToleranceVectorOptions,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -8052,7 +8052,7 @@ class InstrumentOperations:
         force_existing_group: bool = False,
         show_complete_dialog: bool = False,
         wait_for_completion: bool = True,
-        auto_start: bool = False,
+        auto_start: bool = True,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -8079,7 +8079,7 @@ class InstrumentOperations:
         geometry: CollectionObjectName,
         mode_profile: str,
         *,
-        wait_for_complete: bool = False,
+        wait_for_complete: bool = True,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -8331,7 +8331,7 @@ class InstrumentOperations:
         target: PointName,
         measurement_mode: str,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         wait_for_completion: bool = True,
         timeout_seconds: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -8568,8 +8568,8 @@ class InstrumentOperations:
     async def delete_measurement_observation(
         self,
         point_name: PointName,
+        observation_index: int,
         *,
-        observation_index: int = 0,
         delete_point_if_no_measurements_remain: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -10100,7 +10100,7 @@ class InstrumentOperations:
         existing_target_id: PointName,
         group_name_for_new_point: CollectionObjectName,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         html_prompt_file: FileReference | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
@@ -10128,7 +10128,7 @@ class InstrumentOperations:
         existing_target_id: PointName,
         group_name_for_new_point: CollectionObjectName,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         html_prompt_file: FileReference | None = None,
         tolerance: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -10158,7 +10158,7 @@ class InstrumentOperations:
         existing_target_id: PointName,
         group_name_for_new_point: CollectionObjectName,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         html_prompt_file: FileReference | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
@@ -10207,7 +10207,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         target_id: PointName,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         html_prompt_file: FileReference | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -10250,8 +10250,8 @@ class InstrumentOperations:
         self,
         source_point_name: PointName,
         destination_point_name: PointName,
+        observation_index: int,
         *,
-        observation_index: int = 0,
         delete_point_if_no_measurements_remain: bool = False,
         force_observation_active: bool = True,
         on_mp_completion: MpCompletionObserver | None = None,
@@ -10523,8 +10523,8 @@ class InstrumentOperations:
     async def set_absolute_instrument_scale_factor(
         self,
         instrument: CollectionInstrumentId,
+        scale_factor: float,
         *,
-        scale_factor: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -10774,10 +10774,10 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         *,
-        temperature: float = 0.0,
-        pressure: float = 0.0,
-        relative_humidity: float = 0.0,
-        set_automatically: bool = False,
+        temperature: float | None = None,
+        pressure: float | None = None,
+        relative_humidity: float | None = None,
+        set_automatically: bool,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
@@ -10939,8 +10939,8 @@ class InstrumentOperations:
     async def set_multiply_instrument_scale_factor(
         self,
         instrument: CollectionInstrumentId,
+        scale_factor: float,
         *,
-        scale_factor: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -12352,8 +12352,8 @@ class RobotOperations:
     async def delete_robot_calibration(
         self,
         machine_id: CollectionMachineId,
+        calibration_name: str,
         *,
-        calibration_name: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -12578,7 +12578,7 @@ class RobotOperations:
         destination_frame: CollectionObjectName,
         *,
         use_sa_kinematics: bool = False,
-        acknowledge_arrival: bool = False,
+        acknowledge_arrival: bool = True,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
@@ -12601,13 +12601,13 @@ class RobotOperations:
     async def move_robot_machine_to_joint_pose_six_dof(
         self,
         machine_id: CollectionMachineId,
+        joint_1: float,
+        joint_2: float,
+        joint_3: float,
+        joint_4: float,
+        joint_5: float,
+        joint_6: float,
         *,
-        joint_1: float = 0.0,
-        joint_2: float = 0.0,
-        joint_3: float = 0.0,
-        joint_4: float = 0.0,
-        joint_5: float = 0.0,
-        joint_6: float = 0.0,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
@@ -12633,7 +12633,7 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         destination_name: str = "",
-        acknowledge_arrival: bool = False,
+        acknowledge_arrival: bool = True,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
@@ -12831,10 +12831,9 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         link_name: str = "",
-        configuration: RobotModelLinkConfiguration | None = None,
+        configuration: RobotModelLinkConfiguration,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
-        configuration = configuration or RobotModelLinkConfiguration()
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
             "SetRobotMachineModelLinkParameters",
@@ -12878,7 +12877,7 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         parameter_name: str = "",
-        parameter_value: float = 0.0,
+        parameter_value: float,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(

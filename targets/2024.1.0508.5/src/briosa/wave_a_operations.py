@@ -368,7 +368,7 @@ class WaveAOperationsMixin:
         report_deviations: bool = False,
         fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
-        starting_condition_geometry: CollectionObjectName,
+        starting_condition_geometry: CollectionObjectName | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
@@ -406,7 +406,7 @@ class WaveAOperationsMixin:
         report_deviations: bool = False,
         fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
-        starting_condition_geometry: CollectionObjectName,
+        starting_condition_geometry: CollectionObjectName | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
@@ -444,7 +444,7 @@ class WaveAOperationsMixin:
         report_deviations: bool = False,
         fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
-        starting_condition_geometry: CollectionObjectName,
+        starting_condition_geometry: CollectionObjectName | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
@@ -2699,7 +2699,7 @@ class WaveAOperationsMixin:
         import_into_folders_matching_cad_file_hierarchy: bool = False,
         remove_empty_folders: bool = True,
         surface_normals_mode: int = 1,
-        prompt_on_missing_components: bool = True,
+        prompt_on_missing_components: bool = False,
         selective_import: bool = False,
         surface_compatibility_mode: bool,
         explode_surfaces: bool = False,
@@ -6298,8 +6298,8 @@ class WaveAOperationsMixin:
         chart_type: ChartType,
         data_set_to_chart: DatasetType,
         aux_data_set_to_chart: DatasetType,
-        template_chart_name: ChartName,
         *,
+        template_chart_name: ChartName | None = None,
         show_interface: bool = False,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
@@ -6905,8 +6905,8 @@ class WaveAOperationsMixin:
 
     async def remove_report_tag(
         self,
+        tag_name: str,
         *,
-        tag_name: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -7469,8 +7469,8 @@ class WaveAOperationsMixin:
 
     async def delete_folder(
         self,
+        folder_path: str,
         *,
-        folder_path: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -7952,8 +7952,8 @@ class WaveAOperationsMixin:
     async def scale_objects(
         self,
         objects: Iterable[CollectionObjectName],
+        scale_factor: float,
         *,
-        scale_factor: float = 0.000000,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -8348,7 +8348,7 @@ class WaveAOperationsMixin:
         self,
         *,
         profile_name: str = "Default",
-        profile_file_name: FileReference,
+        profile_file_name: FileReference | None = None,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
@@ -8526,8 +8526,8 @@ class WaveAOperationsMixin:
 
     async def delete_variable(
         self,
+        name: str,
         *,
-        name: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -8544,8 +8544,8 @@ class WaveAOperationsMixin:
 
     async def delete_variables_wildcard_match(
         self,
+        variable_wildcard_criteria: str,
         *,
-        variable_wildcard_criteria: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -9275,8 +9275,8 @@ class WaveAOperationsMixin:
     async def delete_ith_vector_from_vector_group(
         self,
         vector_group_name: CollectionObjectName,
+        vector_index: int,
         *,
-        vector_index: int = 0,
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
@@ -9295,8 +9295,8 @@ class WaveAOperationsMixin:
     async def delete_vector_by_name(
         self,
         vector_group_name: CollectionObjectName,
+        vector_name: str,
         *,
-        vector_name: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
