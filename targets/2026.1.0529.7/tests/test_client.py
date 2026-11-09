@@ -170,6 +170,12 @@ class FakeTransport:
         self.calls.append("snapshot")
         return matching_snapshot(self.connected and self.publish_ready_snapshot)
 
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> discovery_pb2.ListCapabilitiesResponse:
+        self.calls.append("list-capabilities")
+        return matching_snapshot(self.connected and self.publish_ready_snapshot)[1]
+
     async def get_application_state(
         self, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:

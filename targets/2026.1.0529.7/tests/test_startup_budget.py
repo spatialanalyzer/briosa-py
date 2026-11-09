@@ -226,6 +226,12 @@ class RecordingTransport:
         await self._record("snapshot", timeout)
         return snapshot(self._connected)
 
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> discovery_pb2.ListCapabilitiesResponse:
+        await self._record("list-capabilities", timeout)
+        return snapshot(self._connected)[1]
+
     async def get_application_state(
         self, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:

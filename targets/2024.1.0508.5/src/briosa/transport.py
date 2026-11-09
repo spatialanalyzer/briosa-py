@@ -27,14 +27,19 @@ from briosa.errors import (
 )
 from briosa.installation_models import BriosaInstallation, valid_version
 from briosa.models import (
+    BriosaCapabilityListing,
     BriosaOperationCapability,
     BriosaServerSnapshot,
     ExecutionDisposition,
     LifecycleRecoveryGuidance,
     MpExecutionDetails,
     MpExecutionState,
+    OperationAdmission,
+    OperationDurationClass,
     OperationFailure,
     OperationFailureKind,
+    OperationRiskFlag,
+    OperationValidationStatus,
     OutputRetrievalDetails,
     OutputRetrievalState,
     RecoveryGuidance,
@@ -74,6 +79,10 @@ class ClientTransport(Protocol):
         discovery_pb2.GetServerInfoResponse,
         discovery_pb2.ListCapabilitiesResponse,
     ]: ...
+
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> discovery_pb2.ListCapabilitiesResponse: ...
 
     async def get_application_state(
         self, timeout: float | None = None
@@ -146,12 +155,17 @@ class GrpcClientTransport:
         server = await self._discovery.GetServerInfo(
             discovery_pb2.GetServerInfoRequest(), timeout=timeout
         )
-        capabilities = await self._discovery.ListCapabilities(
-            discovery_pb2.ListCapabilitiesRequest(), timeout=timeout
+        capabilities = await self.list_capabilities(timeout=timeout)
+        return cast(discovery_pb2.GetServerInfoResponse, server), capabilities
+
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> discovery_pb2.ListCapabilitiesResponse:
+        response = await self._discovery.ListCapabilities(
+            discovery_pb2.ListCapabilitiesRequest(include_denied=include_denied),
+            timeout=timeout,
         )
-        return cast(discovery_pb2.GetServerInfoResponse, server), cast(
-            discovery_pb2.ListCapabilitiesResponse, capabilities
-        )
+        return cast(discovery_pb2.ListCapabilitiesResponse, response)
 
     async def get_application_state(
         self, timeout: float | None = None
@@ -277,18 +291,59 @@ def map_snapshot(
 ) -> BriosaServerSnapshot:
     _validate_compatibility(server, capabilities)
     version = server.version
+    listing = map_capability_listing(capabilities)
     return BriosaServerSnapshot(
         briosa_version=version.briosa_version,
         source_revision=version.source_revision,
         protocol_package=version.protocol_package,
         spatial_analyzer_target=version.spatial_analyzer_target,
         ready_for_mp=server.ready_for_mp,
+        operations=listing.admitted,
+        admission_profile=listing.admission_profile,
+        policy_fingerprint=listing.policy_fingerprint,
+    )
+
+
+def map_capability_listing(
+    capabilities: discovery_pb2.ListCapabilitiesResponse,
+) -> BriosaCapabilityListing:
+    """Map a capability listing; unknown classification values map to UNKNOWN."""
+    for actual, expected, diagnostic_code in (
+        (
+            capabilities.protocol_package,
+            PROTOCOL_PACKAGE,
+            "capability-protocol-package-mismatch",
+        ),
+        (
+            capabilities.spatial_analyzer_target,
+            SPATIAL_ANALYZER_TARGET,
+            "capability-sa-target-mismatch",
+        ),
+    ):
+        if actual != expected:
+            raise BriosaCompatibilityError(diagnostic_code)
+    return BriosaCapabilityListing(
+        admission_profile=capabilities.admission_profile,
+        policy_fingerprint=capabilities.policy_fingerprint,
         operations=tuple(
             BriosaOperationCapability(
                 operation_id=item.operation_id,
                 grpc_service=item.grpc_service,
                 rpc=item.rpc,
                 fully_qualified_method=item.fully_qualified_method,
+                risk_flags=tuple(
+                    dict.fromkeys(
+                        _open_enum_at(OperationRiskFlag, flag)
+                        for flag in item.risk_flags
+                    )
+                ),
+                duration_class=_open_enum_at(
+                    OperationDurationClass, item.duration_class
+                ),
+                validation_status=_open_enum_at(
+                    OperationValidationStatus, item.validation_status
+                ),
+                admission=_open_enum_at(OperationAdmission, item.admission),
             )
             for item in capabilities.operations
         ),
@@ -615,3 +670,18 @@ def _enum_at(values: tuple[_EnumValue, ...], number: int) -> _EnumValue:
         return values[number]
     except IndexError as error:
         raise BriosaProtocolError("unknown-enum-value") from error
+
+
+_OpenEnum = TypeVar(
+    "_OpenEnum",
+    OperationAdmission,
+    OperationDurationClass,
+    OperationRiskFlag,
+    OperationValidationStatus,
+)
+
+
+def _open_enum_at(enum_type: type[_OpenEnum], number: int) -> _OpenEnum:
+    """Map a wire number by position; a number this client doesn't know is UNKNOWN."""
+    known = tuple(member for member in enum_type if member.name != "UNKNOWN")
+    return known[number] if 0 <= number < len(known) else enum_type["UNKNOWN"]

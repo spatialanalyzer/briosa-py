@@ -227,6 +227,61 @@ class LifecycleRecoveryGuidance(_StrEnum):
     OPERATOR_ACTION_REQUIRED = "operator_action_required"
 
 
+class OperationRiskFlag(_StrEnum):
+    """A reviewed risk on an operation's classification row (#242)."""
+
+    UNSPECIFIED = "unspecified"
+    FILESYSTEM_METADATA = "filesystem_metadata"
+    FILESYSTEM_READ = "filesystem_read"
+    FILESYSTEM_WRITE = "filesystem_write"
+    FILESYSTEM_DELETE = "filesystem_delete"
+    DESTRUCTIVE = "destructive"
+    CODE_EXECUTION = "code_execution"
+    PHYSICAL_MOTION = "physical_motion"
+    DEVICE_SESSION = "device_session"
+    DEVICE_CONFIG = "device_config"
+    INTERACTIVE_UI = "interactive_ui"
+    EXTERNAL_IO = "external_io"
+    UNKNOWN = "unknown"
+    """A value from a later 3.x revision that this client doesn't know."""
+
+
+class OperationDurationClass(_StrEnum):
+    """The reviewed duration class, which selects the server execution budget."""
+
+    UNSPECIFIED = "unspecified"
+    QUICK = "quick"
+    LONG_RUNNING = "long_running"
+    INTERACTIVE = "interactive"
+    UNKNOWN = "unknown"
+    """A value from a later 3.x revision that this client doesn't know."""
+
+
+class OperationValidationStatus(_StrEnum):
+    """The recorded validation gap. It is informational and never gates a call."""
+
+    UNSPECIFIED = "unspecified"
+    NO_RECORDED_GAP = "no_recorded_gap"
+    FIXTURE_PENDING = "fixture_pending"
+    AT_RISK_UNVALIDATED = "at_risk_unvalidated"
+    UNKNOWN = "unknown"
+    """A value from a later 3.x revision that this client doesn't know."""
+
+
+class OperationAdmission(_StrEnum):
+    """The active policy's decision for an operation, as the server reports it."""
+
+    UNSPECIFIED = "unspecified"
+    ADMITTED = "admitted"
+    DENIED_PROFILE = "denied_profile"
+    DENIED_FLAG = "denied_flag"
+    DENIED_OVERRIDE = "denied_override"
+    DENIED_EXCLUSIVE = "denied_exclusive"
+    DENIED_UNREVIEWED = "denied_unreviewed"
+    UNKNOWN = "unknown"
+    """A value from a later 3.x revision; it never admits the operation."""
+
+
 @dataclass(frozen=True, slots=True)
 class BriosaClientOptions:
     command_timeout: float | None = None
@@ -405,23 +460,73 @@ class SpatialAnalyzerSdkLifecycleState:
 
 @dataclass(frozen=True, slots=True)
 class BriosaOperationCapability:
+    """One operation's reviewed classification row and its admission.
+
+    ``risk_flags`` is an ordered set; empty means no reviewed risk applies. A
+    request option can still open operator UI or leave work running, and the
+    server can deny that request; the client doesn't pre-validate it.
+    """
+
     operation_id: str
     grpc_service: str
     rpc: str
     fully_qualified_method: str
+    risk_flags: tuple[OperationRiskFlag, ...] = ()
+    duration_class: OperationDurationClass = OperationDurationClass.UNSPECIFIED
+    validation_status: OperationValidationStatus = OperationValidationStatus.UNSPECIFIED
+    admission: OperationAdmission = OperationAdmission.UNSPECIFIED
 
 
 @dataclass(frozen=True, slots=True)
 class BriosaServerSnapshot:
+    """The verified server identity and the generation's admitted operations.
+
+    ``operations`` holds only capabilities the server admitted.
+    ``policy_fingerprint`` is opaque: compare it only for equality, for example
+    to tell whether a replacement generation runs under the same policy.
+    """
+
     briosa_version: str
     source_revision: str
     protocol_package: str
     spatial_analyzer_target: str
     ready_for_mp: bool
     operations: tuple[BriosaOperationCapability, ...]
+    admission_profile: str
+    policy_fingerprint: str
 
     def supports(self, fully_qualified_method: str) -> bool:
         return any(
             operation.fully_qualified_method == fully_qualified_method
+            and operation.admission is OperationAdmission.ADMITTED
             for operation in self.operations
+        )
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class BriosaCapabilityListing:
+    """A diagnostic capability listing, optionally with denied operations.
+
+    Denied entries carry their denial reason in ``admission``. They never
+    enter the generation's admitted set and never make an operation callable.
+    """
+
+    admission_profile: str
+    policy_fingerprint: str
+    operations: tuple[BriosaOperationCapability, ...]
+
+    @property
+    def admitted(self) -> tuple[BriosaOperationCapability, ...]:
+        return tuple(
+            item
+            for item in self.operations
+            if item.admission is OperationAdmission.ADMITTED
+        )
+
+    @property
+    def denied(self) -> tuple[BriosaOperationCapability, ...]:
+        return tuple(
+            item
+            for item in self.operations
+            if item.admission is not OperationAdmission.ADMITTED
         )

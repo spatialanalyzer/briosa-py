@@ -23,6 +23,7 @@ from briosa.installation_discovery import read_installation, resolve_installatio
 from briosa.installation_models import BriosaInstallation, BriosaServerSelection
 from briosa.logging_options import BriosaLoggingOptions
 from briosa.models import (
+    BriosaCapabilityListing,
     BriosaClientOptions,
     BriosaServerSnapshot,
     BriosaStartOptions,
@@ -44,6 +45,7 @@ from briosa.transport import (
     ClientTransport,
     GrpcClientTransport,
     map_application_state,
+    map_capability_listing,
     map_rpc_error,
     map_sdk_state,
     map_snapshot,
@@ -240,6 +242,27 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
             snapshot = map_snapshot(*raw)
             session.update_snapshot(snapshot)
             return snapshot
+
+        return await self._run_lifecycle(operation)
+
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> BriosaCapabilityListing:
+        """List the server's capabilities for diagnosis.
+
+        With ``include_denied``, the listing also reports every registered
+        operation the active policy denies, each with its denial reason in
+        ``admission``. The listing never changes the generation's admitted set.
+        """
+
+        async def operation(session: _Session) -> BriosaCapabilityListing:
+            try:
+                raw = await session.transport.list_capabilities(
+                    include_denied=include_denied, timeout=_validate_timeout(timeout)
+                )
+            except grpc.RpcError as error:
+                raise map_rpc_error(error, session.application_state) from error
+            return map_capability_listing(raw)
 
         return await self._run_lifecycle(operation)
 
