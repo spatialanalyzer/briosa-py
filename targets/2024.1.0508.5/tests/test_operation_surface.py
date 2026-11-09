@@ -142,7 +142,7 @@ def facade_calls() -> list[tuple[str, ast.AsyncFunctionDef, ast.Call]]:
 
 
 def test_every_facade_sends_each_argument_once() -> None:
-    problems = []
+    problems: list[str] = []
     for name, function, call in facade_calls():
         parameters = {
             argument.arg

@@ -4,13 +4,27 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import Protocol, cast
+from dataclasses import fields, make_dataclass
+from typing import Any, Protocol, cast
 
 from briosa.models import MpCompletionObserver
 from briosa.operation_models import *  # noqa: F403
 from briosa.operation_values import *  # noqa: F403
 from briosa.wave_b_operation_models import *  # noqa: F403
 from briosa.wave_b_operation_values import *  # noqa: F403
+
+# The flat wire shape of GetRobotMachineModelLinkParametersResult: every
+# RobotModelLinkConfiguration member plus the current encoder value.
+_RobotModelLinkParametersWire = make_dataclass(
+    "_RobotModelLinkParametersWire",
+    [
+        *((item.name, item.type) for item in fields(RobotModelLinkConfiguration)),
+        ("encoder_value", float),
+    ],
+    frozen=True,
+    slots=True,
+    kw_only=True,
+)
 
 
 class _WaveBClient(Protocol):
@@ -2106,11 +2120,11 @@ class WaveBOperationsMixin(_WaveBClient):
             {
                 "vg_to_vg_relationship": vg_to_vg_relationship,
                 "minimum_gap": minimum_gap,
-                "minimum_gap_fit_weight": minimum_gap,
+                "minimum_gap_fit_weight": minimum_gap_fit_weight,
                 "maximum_gap": maximum_gap,
-                "maximum_gap_fit_weight": maximum_gap,
+                "maximum_gap_fit_weight": maximum_gap_fit_weight,
                 "nominal_gap": nominal_gap,
-                "nominal_gap_fit_weight": nominal_gap,
+                "nominal_gap_fit_weight": nominal_gap_fit_weight,
             },
             None,
             on_mp_completion=on_mp_completion,
@@ -2918,7 +2932,7 @@ class ConstructionOperations:
             "construction_operations.construct_frame_known_origin_object_direction_object_direction",
             {
                 "known_point": known_point,
-                "known_point_value_in_new_frame": known_point,
+                "known_point_value_in_new_frame": known_point_value_in_new_frame,
                 "primary_axis_object": primary_axis_object,
                 "primary_axis_defines_which_axis": primary_axis_defines_which_axis,
                 "secondary_axis_object": secondary_axis_object,
@@ -3876,7 +3890,7 @@ class ConstructionOperations:
                 "starting_point_number": starting_point_number,
                 "point_offset": point_offset,
                 "sub_sampling": sub_sampling,
-                "sub_sampling_distance": sub_sampling,
+                "sub_sampling_distance": sub_sampling_distance,
                 "show_progress": show_progress,
             },
             None,
@@ -4016,7 +4030,7 @@ class ConstructionOperations:
                 "point_names": point_names,
                 "group_name_to_contain_new_points": group_name_to_contain_new_points,
                 "point_name_prefix": point_name_prefix,
-                "point_name_suffix": point_names,
+                "point_name_suffix": point_name_suffix,
                 "axis": axis,
             },
             None,
@@ -4044,7 +4058,7 @@ class ConstructionOperations:
                 "point_names": point_names,
                 "group_name_to_contain_new_points": group_name_to_contain_new_points,
                 "point_name_prefix": point_name_prefix,
-                "point_name_suffix": point_names,
+                "point_name_suffix": point_name_suffix,
                 "axis": axis,
             },
             None,
@@ -4071,7 +4085,7 @@ class ConstructionOperations:
                 "point_names": point_names,
                 "group_name_to_contain_new_points": group_name_to_contain_new_points,
                 "point_name_prefix": point_name_prefix,
-                "point_name_suffix": point_names,
+                "point_name_suffix": point_name_suffix,
             },
             None,
             on_mp_completion=on_mp_completion,
@@ -5731,7 +5745,7 @@ class ConstructionOperations:
                 "construction_operations.get_ith_callout_position_in_callout_view",
                 {
                     "callout_view": callout_view,
-                    "callout_view_index": callout_view,
+                    "callout_view_index": callout_view_index,
                 },
                 CalloutPosition,
                 on_mp_completion=on_mp_completion,
@@ -6361,7 +6375,7 @@ class ConstructionOperations:
             "construction_operations.set_ith_callout_position_in_callout_view",
             {
                 "callout_view": callout_view,
-                "callout_view_index": callout_view,
+                "callout_view_index": callout_view_index,
                 "x_position": x_position,
                 "y_position": y_position,
             },
@@ -11851,19 +11865,26 @@ class RobotOperations:
         link_name: str = "",
         on_mp_completion: MpCompletionObserver | None = None,
     ) -> RobotModelLinkParameters:
-        return cast(
-            RobotModelLinkParameters,
-            await self._client._invoke_mp_operation(
-                "briosa.RobotOperations",
-                "GetRobotMachineModelLinkParameters",
-                "robot_operations.get_robot_machine_model_link_parameters",
-                {
-                    "machine_id": machine_id,
-                    "link_name": link_name,
-                },
-                RobotModelLinkParameters,
-                on_mp_completion=on_mp_completion,
+        # The wire result is flat; the public result nests the configuration.
+        wire: Any = await self._client._invoke_mp_operation(
+            "briosa.RobotOperations",
+            "GetRobotMachineModelLinkParameters",
+            "robot_operations.get_robot_machine_model_link_parameters",
+            {
+                "machine_id": machine_id,
+                "link_name": link_name,
+            },
+            _RobotModelLinkParametersWire,
+            on_mp_completion=on_mp_completion,
+        )
+        return RobotModelLinkParameters(
+            configuration=RobotModelLinkConfiguration(
+                **{
+                    item.name: getattr(wire, item.name)
+                    for item in fields(RobotModelLinkConfiguration)
+                }
             ),
+            encoder_value=wire.encoder_value,
         )
 
     async def get_robot_machine_parameter(

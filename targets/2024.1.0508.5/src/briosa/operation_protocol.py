@@ -64,6 +64,16 @@ _REGISTERED_MODULES = (
 _DESCRIPTORS = descriptor_pool.Default()  # type: ignore[no-untyped-call]
 
 
+# Result fields whose public name differs from the wire name. The quick fit
+# returns FitErrorResult like USMN, but its wire field is maximum_absolute_error
+# (briosa-py#45).
+_RESULT_FIELD_NAMES = {
+    "briosa.LocateInstrumentGroupToSurfaceQuickFitResult": {
+        "maximum_absolute_error": "maximum_error",
+    },
+}
+
+
 def operation_method(service: str, rpc: str) -> MethodDescriptor:
     return cast(
         MethodDescriptor,
@@ -95,28 +105,31 @@ def map_response(
         field for field in method.output_type.fields if field.name != "execution"
     ]
     result_fields = (
-        {item.name: item for item in fields(result_type)}
+        {item.name: item for item in fields(result_type) if item.init}
         if result_type is not None and is_dataclass(result_type)
         else {}
     )
-    mapped = {
-        field.name: _read_field(
+    names = _RESULT_FIELD_NAMES.get(method.output_type.full_name, {})
+    mapped = {}
+    for field in outputs:
+        name = names.get(field.name, field.name)
+        mapped[name] = _read_field(
             response,
             field,
-            allow_absent=(
-                field.name in result_fields
-                and result_fields[field.name].default is None
-            ),
+            allow_absent=name in result_fields and result_fields[name].default is None,
         )
-        for field in outputs
-    }
     if not mapped:
         return None
     if len(mapped) == 1:
         return next(iter(mapped.values()))
     if result_type is None:
         raise BriosaProtocolError("operation-result-type-missing")
-    return result_type(**mapped)
+    if set(mapped) != set(result_fields):
+        raise BriosaProtocolError("operation-result-field-drift")
+    try:
+        return result_type(**mapped)
+    except (TypeError, ValueError) as error:
+        raise BriosaProtocolError("operation-result-invalid") from error
 
 
 # Wire numbers of MpExecutionState that a successful MP result may carry.
