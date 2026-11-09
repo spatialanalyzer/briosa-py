@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import typing
 
 import grpc
 import pytest
@@ -62,6 +63,12 @@ def test_every_mp_operation_takes_a_keyword_only_completion_observer() -> None:
         assert parameter is not None, operation_id
         assert parameter.kind is inspect.Parameter.KEYWORD_ONLY, operation_id
         assert parameter.default is None, operation_id
+
+
+def test_a_completion_always_carries_its_mp_code() -> None:
+    assert typing.get_type_hints(MpCompletion)["mp_result_code"] is int
+    with pytest.raises(TypeError):
+        typing.cast(typing.Any, MpCompletion)(state=MpExecutionState.SUCCEEDED)
 
 
 async def test_partial_success_returns_its_outputs_and_reports_its_completion() -> None:
