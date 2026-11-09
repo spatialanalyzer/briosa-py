@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import cast
+from typing import Any, cast
 
 import grpc
 import pytest
@@ -76,6 +76,18 @@ class FakeRpcError(grpc.RpcError):
         self,
     ) -> tuple[tuple[str, str | bytes], ...]:
         return self._metadata
+
+
+def succeeded(response: Message) -> Message:
+    """Give a hand-built MP result the execution details every success carries."""
+    if not response.HasField("execution"):
+        cast(Any, response).execution.CopyFrom(
+            operation_outcomes_pb2.MpExecutionDetails(
+                state=operation_outcomes_pb2.MP_EXECUTION_STATE_SUCCEEDED,
+                mp_result_code=2,
+            )
+        )
+    return response
 
 
 class FakeOwnedServer:
@@ -257,16 +269,18 @@ class FakeTransport:
     ) -> Message:
         if path == "/briosa.FileOperations/GetWorkingDirectory":
             self.calls.append("get-working-directory")
-            return file_operations_pb2.GetWorkingDirectoryResult(
-                directory=r"C:\Working"
+            return succeeded(
+                file_operations_pb2.GetWorkingDirectoryResult(directory=r"C:\Working")
             )
         self.calls.append(path)
         self.operation_requests.append((path, request))
         if path in self.operation_responses:
-            return self.operation_responses[path]
+            return succeeded(self.operation_responses[path])
         if path == "/briosa.AnalysisOperations/GetNumberOfCollections":
-            return analysis_operations_pb2.GetNumberOfCollectionsResult(total_count=3)
-        return response_type()
+            return succeeded(
+                analysis_operations_pb2.GetNumberOfCollectionsResult(total_count=3)
+            )
+        return succeeded(response_type())
 
     async def close(self) -> None:
         self.calls.append("close-transport")

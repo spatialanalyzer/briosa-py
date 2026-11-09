@@ -1,4 +1,8 @@
-"""Per-call MP completion for every operation (#351, #360)."""
+"""Per-call MP completion for every operation (#351, #360).
+
+Every MP success is checked, observed or not: the execution details must be
+present and pair SUCCEEDED with MP code 2 or PARTIAL_SUCCESS with code 4 (C1).
+"""
 
 from __future__ import annotations
 
@@ -175,6 +179,7 @@ async def test_a_failed_call_reports_no_completion() -> None:
     await client.aclose()
 
 
+@pytest.mark.parametrize("observed", [True, False], ids=["observed", "unobserved"])
 @pytest.mark.parametrize(
     "response",
     [
@@ -182,19 +187,73 @@ async def test_a_failed_call_reports_no_completion() -> None:
         directory(operation_outcomes_pb2.MP_EXECUTION_STATE_FAILED, 3),
         directory(operation_outcomes_pb2.MP_EXECUTION_STATE_UNSPECIFIED, 2),
         directory(99, 2),
+        directory(SUCCEEDED, None),
+        directory(PARTIAL, None),
+        directory(SUCCEEDED, 4),
+        directory(PARTIAL, 2),
+        directory(SUCCEEDED, 3),
     ],
-    ids=["missing", "failed", "unspecified", "unknown"],
+    ids=[
+        "missing",
+        "failed",
+        "unspecified",
+        "unknown",
+        "succeeded-without-code",
+        "partial-without-code",
+        "succeeded-with-code-4",
+        "partial-with-code-2",
+        "succeeded-with-code-3",
+    ],
 )
-async def test_an_observed_success_without_a_valid_completion_is_a_protocol_failure(
-    response: file_operations_pb2.GetWorkingDirectoryResult,
+async def test_a_success_without_a_valid_completion_is_a_protocol_failure(
+    response: file_operations_pb2.GetWorkingDirectoryResult, observed: bool
 ) -> None:
     transport = RecordingTransport()
     transport.queue(WORKING_DIRECTORY, response)
     client = await started_client(transport)
     completions: list[MpCompletion] = []
+    observer = {"on_mp_completion": completions.append} if observed else {}
 
     with pytest.raises(BriosaProtocolError, match="mp-completion-invalid"):
-        await client.get_working_directory(on_mp_completion=completions.append)
+        await client.get_working_directory(**observer)
 
     assert completions == []
+    await client.aclose()
+
+
+async def test_a_generated_facade_checks_its_completion_without_an_observer() -> None:
+    transport = RecordingTransport()
+    transport.queue(
+        COLLECTION_COUNT,
+        analysis_operations_pb2.GetNumberOfCollectionsResult(
+            total_count=3, execution=execution(SUCCEEDED, None)
+        ),
+    )
+    client = await started_client(transport)
+
+    with pytest.raises(BriosaProtocolError, match="mp-completion-invalid"):
+        await client.get_number_of_collections()
+
+    await client.aclose()
+
+
+async def test_a_success_whose_outputs_fail_to_map_still_reports_its_completion() -> (
+    None
+):
+    transport = RecordingTransport()
+    transport.queue(
+        COLLECTION_COUNT,
+        analysis_operations_pb2.GetNumberOfCollectionsResult(
+            execution=execution(PARTIAL, 4)
+        ),
+    )
+    client = await started_client(transport)
+    completions: list[MpCompletion] = []
+
+    with pytest.raises(BriosaProtocolError, match="required-output-missing"):
+        await client.get_number_of_collections(on_mp_completion=completions.append)
+
+    assert completions == [
+        MpCompletion(state=MpExecutionState.PARTIAL_SUCCESS, mp_result_code=4)
+    ]
     await client.aclose()
