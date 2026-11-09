@@ -147,12 +147,12 @@ def snapshot() -> tuple[Any, Any]:
     return (
         discovery_pb2.GetServerInfoResponse(
             version=version_coordinates_pb2.VersionCoordinates(
-                briosa_version="0.9.0",
+                briosa_version="0.10.0",
                 source_revision="a" * 40,
                 protocol_package="briosa",
                 spatial_analyzer_target=SPATIAL_ANALYZER_TARGET,
             ),
-            compatibility=discovery_pb2.CompatibilityContract(major=2),
+            compatibility=discovery_pb2.CompatibilityContract(major=3),
             target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
         ),
         discovery_pb2.ListCapabilitiesResponse(
@@ -168,11 +168,11 @@ def test_contract_compatibility_and_selected_identity_are_separate() -> None:
     installation = BriosaInstallation(
         "id",
         Path("path"),
-        "0.9.0",
+        "0.10.0",
         "a" * 40,
         SPATIAL_ANALYZER_TARGET,
         "win-x64",
-        2,
+        3,
         0,
         "hash",
         "user",
@@ -182,9 +182,10 @@ def test_contract_compatibility_and_selected_identity_are_separate() -> None:
     _validate_compatibility(server, capabilities)
     with pytest.raises(BriosaCompatibilityError):
         validate_installation(server, installation)
-    server.compatibility.major = 1
-    with pytest.raises(BriosaCompatibilityError):
-        _validate_compatibility(server, capabilities)
+    for previous_major in (1, 2):
+        server.compatibility.major = previous_major
+        with pytest.raises(BriosaCompatibilityError):
+            _validate_compatibility(server, capabilities)
 
 
 def test_missing_contract_is_rejected_including_legacy_build() -> None:

@@ -337,7 +337,7 @@ def matching_snapshot(
         ),
         ready_for_mp=ready,
         target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
-        compatibility=discovery_pb2.CompatibilityContract(major=2),
+        compatibility=discovery_pb2.CompatibilityContract(major=3),
     )
     capabilities = discovery_pb2.ListCapabilitiesResponse(
         protocol_package=PROTOCOL_PACKAGE,
@@ -370,8 +370,8 @@ def application_lifecycle_failure() -> FakeRpcError:
 
 
 def test_protocol_identity_matches_reviewed_compatibility_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.9.0-dev.1-sa-2024.1.0508.5"
-    assert SOURCE_REVISION == "89b59aa0ddd05ea868d94c4e4a4f89ee0fbcbccb"
+    assert ARTIFACT_NAME == "briosa-protocol-0.10.0-dev.1-sa-2024.1.0508.5"
+    assert SOURCE_REVISION == "2960705eb3152646513dca2b5d2043cd7cfffb75"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2024.1.0508.5"

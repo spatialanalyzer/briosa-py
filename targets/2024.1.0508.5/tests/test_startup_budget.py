@@ -371,7 +371,7 @@ def snapshot(
         ),
         ready_for_mp=ready,
         target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
-        compatibility=discovery_pb2.CompatibilityContract(major=2),
+        compatibility=discovery_pb2.CompatibilityContract(major=3),
     )
     capabilities = discovery_pb2.ListCapabilitiesResponse(
         protocol_package=PROTOCOL_PACKAGE,
