@@ -71,13 +71,22 @@ target selector.
   protobuf field unset when omitted. An omitted optional list that maps to a
   plain repeated field is sent empty, its absent value on the wire. The client
   never sends an empty value, 0, or false for an argument the caller left unset.
+- An input the server requires is required: it has no default and is not
+  `T | None`, and the client never fills it in with an identity transform, a
+  default settings value, an empty list or a default choice. Omitting one fails
+  with `TypeError` before any call. An input stays optional only when the server
+  accepts it absent.
 - Every MP method takes the keyword-only call control
-  `on_mp_completion: MpCompletionObserver | None = None` (contract major 3). On
-  success the client calls it once, before returning, with an `MpCompletion`:
-  `SUCCEEDED` or `PARTIAL_SUCCESS` and the raw MP code. A partial success (MP
-  code 4) is a success: the method returns its outputs and never raises or
-  retries. A failed call reports no completion; its typed failure carries the
-  MP execution details instead. Return types never change.
+  `on_mp_completion: MpCompletionObserver | None = None` (contract major 3). The
+  client checks every MP success, observed or not: its execution details must
+  pair `SUCCEEDED` with MP code 2 or `PARTIAL_SUCCESS` with code 4, and anything
+  else, including a missing code, is `BriosaProtocolError`
+  (`mp-completion-invalid`). The client then calls the observer once with that
+  `MpCompletion`, before it maps the outputs, so the observer also hears of a
+  success whose outputs fail to map. A partial success (MP code 4) is a
+  success: the method returns its outputs and never raises or retries. A failed
+  call reports no completion; its typed failure carries the MP execution
+  details instead. Return types never change.
 
 ### Errors
 

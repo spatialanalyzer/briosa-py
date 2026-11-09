@@ -84,7 +84,8 @@ are authoritative; this section lists what changes for Python callers.
   usual and never raises or retries. To see how a call completed, pass the
   keyword-only `on_mp_completion` that every MP method takes. It receives one
   `MpCompletion` with `state` (`MpExecutionState.SUCCEEDED` or
-  `PARTIAL_SUCCESS`) and the raw `mp_result_code`, before the method returns:
+  `PARTIAL_SUCCESS`) and its `mp_result_code` (2 or 4), before the method
+  returns:
 
   ```python
   completions: list[MpCompletion] = []
@@ -92,6 +93,13 @@ are authoritative; this section lists what changes for Python callers.
   if completions[0].state is MpExecutionState.PARTIAL_SUCCESS:
       ...
   ```
+
+  The client checks every MP success, whether or not you pass an observer:
+  the execution details must pair `SUCCEEDED` with MP code 2 or
+  `PARTIAL_SUCCESS` with code 4. Anything else, including a missing code, is
+  `BriosaProtocolError` (`mp-completion-invalid`). The observer runs before the
+  outputs are mapped, so it hears of a success even when the outputs then fail
+  to map.
 
   A failed call reports no completion. Its `BriosaOperationError.failure`
   carries `mp_execution` (an `MpExecutionDetails`), which keeps
@@ -162,7 +170,8 @@ are authoritative; this section lists what changes for Python callers.
   `move_robot_machine_to_joint_pose_six_dof`; `set_automatically` of
   `set_instrument_weather_setting`; the `scale_factor` of `scale_objects` and of
   both instrument scale-factor setters; the model-link `configuration` (whose
-  members lose their defaults) and the robot `parameter_value`; the
+  members lose their defaults); the robot `parameter_name` and
+  `parameter_value` of `set_robot_machine_parameter`; the
   `observation_index` and `vector_index` of the three destructive index
   operations; and the names and patterns of `delete_folder`, `delete_variable`,
   `delete_variables_wildcard_match`, `delete_vector_by_name` and
@@ -176,6 +185,84 @@ are authoritative; this section lists what changes for Python callers.
   `other_objects_to_transform` are required, because the server rejects them
   empty. USMN `excluded_groups` stays optional; the server skips its setter for
   an empty list.
+- **Inputs the server requires are required**, with no fill-in: no identity
+  transform, default settings value, empty list or default choice. Omitting one
+  fails with `TypeError` before any call. These lose their default or `None`:
+  - **Transforms:** `calculate_tcp_fixture_uncertainties` (`tcp_in_working`);
+    `construct_ellipsoid` (`transform_in_working_coordinates`);
+    `construct_frame` (`transform_in_working_coordinates`);
+    `construct_frame_from_transform_in_world`
+    (`transform_in_world_coordinates`);
+    `set_calibration_appliance_node_measurement_offset_transform`
+    (`measurement_offset_transform`);
+    `set_robot_calibration_measurement_offset_in_tool_frame`
+    (`measurement_frame`); `set_robot_calibration_tool_frame` (`tool_frame`);
+    `set_robot_machine_base_transform` (`destination_transform`).
+  - **Settings:** `auto_filter_clouds_to_nominal_geometry_2d`
+    (`filter_proximity_settings_2d`);
+    `auto_filter_clouds_to_nominal_geometry_3d`
+    (`filter_proximity_settings_3d`);
+    `auto_filter_points_to_nominal_geometry_3d`
+    (`filter_proximity_settings_3d`); `do_relationship_fit` (`motion_to_allow`);
+    `make_groups_to_objects_relationship` (`projection_options`);
+    `make_point_clouds_to_objects_relationship` (`projection_options`);
+    `make_points_to_objects_relationship` (`projection_options`);
+    `move_collections_by_minimizing_relationships` (`motion_to_allow`);
+    `relationship_watch_window_template` (`options`).
+  - **Tolerances:** `build_target` (`tolerance`);
+    `make_frame_to_frame_relationship` (`orientation_tolerance`,
+    `position_tolerance`);
+    `set_object_to_object_direction_relationship_tolerances`
+    (`angle_between_vectors_tolerances`,
+    `mutual_perpendicular_length_tolerances`).
+  - **Lists:** `auto_filter_points_groups_clouds_to_surface_faces` (`points`,
+    `groups`, `clouds`); `create_points_to_objects_map` (`points`, `groups`);
+    `set_points_to_points_relationship_associated_data` (`nominal_points`,
+    `actual_points`); `set_relationship_associated_data` (`individual_points`,
+    `point_groups`, `point_clouds`, `objects`).
+  - **Choices:** `auto_filter_points_groups_clouds_to_surface_faces`
+    (`offset_direction`); `collimation` (`tilt_mode`, `baseline_method`);
+    `construct_points_from_surfaces_on_uv_grid` (`edge_point_mode`);
+    `create_point_callout` (`desired_coordinate_system`);
+    `feature_inspection_auto_filter` (`offset_direction`);
+    `locate_instruments_usmn` (`show_usmn_dialog`);
+    `make_collection_item_name_ref_list_wildcard_selection` (`item_type`);
+    `make_collection_object_name_ref_list_by_type` (`object_type`);
+    `make_collection_object_name_ref_list_by_type_and_color` (`object_type`);
+    `make_collection_object_name_ref_list_runtime_select` (`object_type`);
+    `make_collection_object_name_ref_list_wildcard_selection` (`object_type`);
+    `make_collection_object_name_runtime_select` (`object_type`);
+    `make_dynamic_circle_relationship` (`construction_mode`);
+    `make_dynamic_ellipse_relationship` (`construction_mode`);
+    `make_dynamic_line_relationship` (`construction_mode`);
+    `make_dynamic_plane_relationship` (`construction_mode`);
+    `make_dynamic_point_relationship` (`construction_mode`); `set_gdt_options`
+    (`distance_between_mode`, `evaluation_method`);
+    `set_target_computation_options` (`computation_method`).
+  - **Names, points and vectors:** `auto_correspond_with_proximity_trigger`
+    (`deviation_vector_group_name`); `collimation` (`scale_point_1`,
+    `scale_point_2`, `not_measured_by_moving_instrument`,
+    `as_measured_by_moving_instrument`); `construct_cross_section_cloud`
+    (`reference_object`); `construct_point_from_cloud_point_runtime_select`
+    (`constructed_point_name`); `construct_points_shifted_in_working_frame`
+    (`shift_vector`); `construct_points_subset_with_greatest_spacing`
+    (`group_for_subset`); `enable_disable_datum_alignment_for_feature_check`
+    (`alignment`); `get_gradient_at_projected_point_on_surface_edge`
+    (`edge_offset_direction`); `make_dynamic_point_relationship`
+    (`third_reference_geometry`); `relationship_watch_window_template`
+    (`watch_window_template_name`); `set_observation_collimation_shot_options`
+    (`targeted_instrument`).
+  - **Option members:** the three proximity modes of `FilterProximitySettings`;
+    the `udp_network_transmit_settings` of
+    `RelationshipWatchWindowTemplateOptions` (pass
+    `RelationshipWatchWindowUdpSettings()` to leave UDP off); and the `objects`,
+    `geometry_relationships`, `auxiliary_object` and
+    `auxiliary_geometry_relationship` of both GD&T annotation options, which are
+    now keyword-only. `ReportOutputOptions` needs exactly one destination.
+  Pass `ProjectionOptions.DEFAULT` to keep the reviewed projection defaults. A
+  newly required input that follows every positional parameter and precedes
+  every optional input in MP order is positional; the others are required
+  keywords, so no existing positional parameter moves.
 - An argument you leave unset is never sent as an empty value, 0 or false, and
   the client doesn't pre-validate empty values. The server rejects them before
   dispatch with `VALIDATION` and `NOT_STARTED`. See the
@@ -238,6 +325,10 @@ with their value types:
   `operation-result-invalid`), never as a bare `TypeError`.
 - `get_working_directory` is an ordinary MP operation now. A missing directory
   is `required-output-missing:directory`, like any other missing output.
+- `get_relationship_ref_list_variable` and
+  `get_report_items_reference_list_variable` are annotated
+  `list[CollectionItemName]`, the type they return; they said
+  `list[CollectionObjectName]`.
 
 ## Server selection
 
