@@ -406,7 +406,7 @@ class MpCompletion:
     """
 
     state: MpExecutionState
-    mp_result_code: int | None = None
+    mp_result_code: int
 
 
 MpCompletionObserver = Callable[[MpCompletion], object]
