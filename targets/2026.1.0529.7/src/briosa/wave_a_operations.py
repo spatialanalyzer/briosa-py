@@ -374,7 +374,7 @@ class WaveAOperationsMixin:
         """MP argument notes.
 
         fit_interface_tolerance: -1.0 uses the profile tolerance.
-        starting_condition_geometry: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        starting_condition_geometry: Optional. Omitted, the field is left unset and SpatialAnalyzer fits without a starting geometry.
         """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -412,7 +412,7 @@ class WaveAOperationsMixin:
         """MP argument notes.
 
         fit_interface_tolerance: -1.0 uses the profile tolerance.
-        starting_condition_geometry: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        starting_condition_geometry: Optional. Omitted, the field is left unset and SpatialAnalyzer fits without a starting geometry.
         """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -450,7 +450,7 @@ class WaveAOperationsMixin:
         """MP argument notes.
 
         fit_interface_tolerance: -1.0 uses the profile tolerance.
-        starting_condition_geometry: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        starting_condition_geometry: Optional. Omitted, the field is left unset and SpatialAnalyzer fits without a starting geometry.
         """
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -6508,7 +6508,7 @@ class WaveAOperationsMixin:
     ) -> None:
         """MP argument notes.
 
-        template_chart_name: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        template_chart_name: Optional. Omitted, the field is left unset and the server skips its setter.
         """
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -8556,7 +8556,7 @@ class WaveAOperationsMixin:
     ) -> None:
         """MP argument notes.
 
-        profile_file_name: Optional in the MP editor; the existing API presence and omission behavior is unchanged.
+        profile_file_name: Optional. Omitted, the field is left unset and the server skips its setter.
         """
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
