@@ -153,7 +153,7 @@ python -m venv .venv
 ./.venv/Scripts/python -m mypy
 ./.venv/Scripts/python -m pytest
 ./eng/Test-Conformance.ps1 `
-  -ArtifactPath C:\path\to\briosa-client-conformance-0.6.1-sa-2024.1.0508.5-win-x64.zip `
+  -ArtifactPath C:\path\to\briosa-client-conformance-0.9.2-sa-2024.1.0508.5-win-x64.zip `
   -ExpectIncompatible `
   -PythonExecutable ./.venv/Scripts/python.exe
 ./.venv/Scripts/python -m build
@@ -204,8 +204,9 @@ and [server observability guide](https://github.com/spatialanalyzer/briosa/blob/
 ## Compatibility and validation
 
 This package pins its generation artifact and tests the declared compatibility
-contract against packaged servers. The retained 0.6.1 baseline must be rejected.
-Exact SA target, runtime identity, capabilities, and readiness still gate MP calls.
+contract against packaged servers. The retained Server 0.9.2 baseline, the
+newest major-2 server, must be rejected. Exact SA target, runtime identity,
+capabilities, and readiness still gate MP calls.
 
 Portable conformance covers lifecycle, identity mismatch, denied capabilities,
 typed MP and output failure, deadlines, cancellation, watchdog recovery, SDK loss,
