@@ -252,7 +252,7 @@ are authoritative; this section lists what changes for Python callers.
     (`third_reference_geometry`); `relationship_watch_window_template`
     (`watch_window_template_name`); `set_observation_collimation_shot_options`
     (`targeted_instrument`).
-  - **Option members:** the three proximity modes of `FilterProximitySettings`;
+  - **Option members:** every member of `FilterProximitySettings` (below);
     the `udp_network_transmit_settings` of
     `RelationshipWatchWindowTemplateOptions` (pass
     `RelationshipWatchWindowUdpSettings()` to leave UDP off); and the `objects`,
@@ -263,6 +263,16 @@ are authoritative; this section lists what changes for Python callers.
   newly required input that follows every positional parameter and precedes
   every optional input in MP order is positional; the others are required
   keywords, so no existing positional parameter moves.
+- **Proximity settings.** All eleven `FilterProximitySettings` members are
+  required, with no default: the six distances (`surface_inclusion_proximity`,
+  `edge_exclusion_proximity`, `planar_inclusion_proximity`,
+  `planar_exclusion_proximity`, `radial_inclusion_proximity`,
+  `geometry_extraction_tolerance`), the two Booleans (`project_to_plane`,
+  `assert_plane_boundaries`) and the three proximity modes. The server reads the
+  distances and Booleans without checking presence, so an absent one would
+  reach SA as 0 or false, and a distance is a length in the SA job's units.
+  Client 0.4 filled in 0.1, 0.1, 0.5, 0.1, 0.1 and 0.01, `True` and `False`, and
+  `BOTH` for each mode. Pass the values your job needs instead.
 - An argument you leave unset is never sent as an empty value, 0 or false, and
   the client doesn't pre-validate empty values. The server rejects them before
   dispatch with `VALIDATION` and `NOT_STARTED`. See the
