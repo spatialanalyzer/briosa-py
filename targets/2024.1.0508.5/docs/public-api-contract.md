@@ -65,7 +65,19 @@ target selector.
 - Reviewed scalar defaults appear directly in keyword-only signatures and are
   sent explicitly. Structured defaults are named, deeply immutable domain
   constants; callers derive modified dataclass values with
-  `dataclasses.replace()`.
+  `dataclasses.replace()`. A named value that a caller passes explicitly, such
+  as `ToleranceVectorOptions.NO_LIMITS`, is never an implicit default.
+- An optional input with no reviewed default is `T | None = None` and leaves its
+  protobuf field unset when omitted. An omitted optional list that maps to a
+  plain repeated field is sent empty, its absent value on the wire. The client
+  never sends an empty value, 0, or false for an argument the caller left unset.
+- Every MP method takes the keyword-only call control
+  `on_mp_completion: MpCompletionObserver | None = None` (contract major 3). On
+  success the client calls it once, before returning, with an `MpCompletion`:
+  `SUCCEEDED` or `PARTIAL_SUCCESS` and the raw MP code. A partial success (MP
+  code 4) is a success: the method returns its outputs and never raises or
+  retries. A failed call reports no completion; its typed failure carries the
+  MP execution details instead. Return types never change.
 
 ### Errors
 
@@ -81,6 +93,16 @@ target selector.
   `asyncio.CancelledError` propagates normally. A diagnostic gRPC exception may
   be retained through Python's conventional `__cause__` without becoming part of
   policy or the public value model.
+- Every `OperationFailureKind` value is its own member, including
+  `SDK_CALL_FAULTED`; the execution disposition carries its phase.
+  `OperationFailure.mp_execution` keeps `PARTIAL_SUCCESS` distinct inside a
+  typed failure.
+- A caller's own interruption is reported the native way: task cancellation as
+  `asyncio.CancelledError`, and a `timeout` or `command_timeout` as
+  `BriosaTransportError` with `transport-deadline-exceeded`. When a lifecycle
+  detail does arrive with `CALLER_CANCELLED` or `CALLER_DEADLINE_EXCEEDED`, it is
+  the typed lifecycle error with that kind, never a state conflict, and the
+  client never retries it.
 
 ### Lifecycle and concurrency
 
@@ -144,10 +166,6 @@ observation further until
 [spatialanalyzer/briosa#317](https://github.com/spatialanalyzer/briosa/issues/317)
 lands.
 
-Released 0.9 servers and the pinned protocol build `89b59aa` have no larger
-defaults: their startup bound is a fixed 10 s, and their readiness probe uses the
-quick execution budget (30 s by default), so the default covers them too.
-
 When the server's lifecycle bounds are raised, size the client budget to at
 least three times `StartupTimeout`, plus `ReadinessProbeTimeout`, plus
 `ApplicationStartupTimeout` when launching, plus 10 s, plus a margin. For
@@ -159,23 +177,20 @@ Each lifecycle method takes a keyword-only `timeout: float | None = None`. The
 client sends a gRPC deadline only when the caller supplies one, and
 `command_timeout` applies only to MP commands.
 
-What happens on the server when a caller stops waiting during an SDK start,
-connection, or recovery depends on the server build:
-
-- Builds that contain
-  [spatialanalyzer/briosa#315](https://github.com/spatialanalyzer/briosa/pull/315)
-  (briosa main from `0c7ff7a`, planned for the contract-major-3 release) finish
-  an exchange they have accepted under their own bounds, whether the caller
-  stopped waiting through the startup budget, a `timeout`, or task cancellation.
-- Older supported builds, including every released 0.9 server and the pinned
-  protocol build `89b59aa`, cancel the exchange with the caller. A cancelled SDK
-  start, or the replacement start inside a recovery, terminates the new worker
-  and leaves the SDK stopped (`worker-startup-cancelled`). A cancelled ConnectEx
-  retires the generation, which then needs recovery (`connect-ex-cancelled`). A
-  cancelled readiness probe quarantines the generation and requires operator
-  recovery (`execution-readiness-probe-cancelled`).
-
-Either way, refresh SDK state before deciding what to do next.
+A contract-major-3 server finishes an SDK start, connection, or recovery it
+has accepted under its own bounds
+([spatialanalyzer/briosa#315](https://github.com/spatialanalyzer/briosa/pull/315)),
+whether the caller stopped waiting through the startup budget, a `timeout`, or
+task cancellation. A start the client abandoned may therefore still produce a
+ready generation. Refresh SDK state with `get_spatial_analyzer_sdk_state()`
+before deciding what to do next, and call `get_server_snapshot()` to reopen MP
+calls on a generation that became ready. A second lifecycle call during the
+accepted transition fails with `sdk-lifecycle-transition-in-progress`
+(`STATE_CONFLICT`, `REFRESH_STATE`): refresh and retry later, and stop a
+generation you own only after the transition has ended. The same applies to
+`launch_spatial_analyzer`
+([#356](https://github.com/spatialanalyzer/briosa/pull/356)): after a launch
+timeout, refresh application state before launching again.
 
 A lifecycle `timeout` shorter than the server's worst case for that call can
 stop the caller waiting before the server's typed failure, lifecycle state, and
@@ -196,10 +211,7 @@ observation. Allow more on a heavily loaded machine.
 When the server's bounds are raised, add the increase: `StartupTimeout` counts
 once for Start and Recover and twice for Connect, `ReadinessProbeTimeout` once
 for Connect, and the application startup and shutdown bounds once for Launch and
-Close. Released 0.9 servers and the pinned build `89b59aa` have the same or
-shorter worst cases, with one exception: they associate the application after
-Connect reports readiness, so Connect can also wait behind an MP command that
-another client submits in between.
+Close.
 
 ## Deferred design decisions
 

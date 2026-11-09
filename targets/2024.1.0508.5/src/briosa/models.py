@@ -338,10 +338,9 @@ class BriosaStartOptions:
     association 60 s) plus 20 seconds for server host startup, process
     observation, and round trips. Raise it when the server's lifecycle bounds are
     raised. Expiry during an in-flight RPC is reported the same way; cancelling the
-    caller's task only stops that caller from waiting. A server that includes
-    spatialanalyzer/briosa#315 finishes an SDK start or connection it has accepted
-    after the client stops waiting; older servers, including released 0.9 builds,
-    cancel it, which can leave the SDK stopped or faulted.
+    caller's task only stops that caller from waiting. The server finishes an SDK
+    start or connection it has accepted after the client stops waiting
+    (spatialanalyzer/briosa#315), so refresh SDK state before retrying.
     """
 
     server_selection: BriosaServerSelection = field(
