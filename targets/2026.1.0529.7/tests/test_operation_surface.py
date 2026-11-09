@@ -104,10 +104,6 @@ def protocol_methods() -> set[str]:
 
 def test_every_protocol_operation_has_exactly_one_facade() -> None:
     facades = facade_rpcs()
-    facades.setdefault(
-        "file_operations.get_working_directory",
-        ("briosa.FileOperations", "GetWorkingDirectory"),
-    )
     invoked = [f"/{service}/{rpc}" for service, rpc in facades.values()]
     assert len(invoked) == len(set(invoked))
     assert set(invoked) == protocol_methods()

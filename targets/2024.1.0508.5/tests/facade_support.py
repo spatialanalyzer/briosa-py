@@ -267,7 +267,7 @@ def facade_functions() -> dict[str, Callable[..., Any]]:
         owners = [
             surface
             for surface in (BriosaClient, *GROUPED_SURFACES.values())
-            if method_name in vars(surface)
+            if hasattr(surface, method_name)
         ]
         assert len(owners) == 1, operation_id
         functions[operation_id] = getattr(owners[0], method_name)

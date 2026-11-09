@@ -20,6 +20,7 @@ from briosa import (
     MpCompletion,
     MpExecutionState,
     analysis_operations_pb2,
+    construction_operations_pb2,
     file_operations_pb2,
     operation_outcomes_pb2,
 )
@@ -105,13 +106,18 @@ async def test_generated_facades_report_the_completion_of_their_own_call() -> No
             total_count=5, execution=execution(PARTIAL, 4)
         ),
     )
+    transport.queue(
+        "/briosa.ConstructionOperations/GetActiveCollectionName",
+        construction_operations_pb2.GetActiveCollectionNameResult(
+            currently_active_collection_name="Inspection",
+            execution=execution(SUCCEEDED, 2),
+        ),
+    )
     client = await started_client(transport)
     completions: list[MpCompletion] = []
 
     count = await client.get_number_of_collections(on_mp_completion=completions.append)
-    await client.construction_operations.get_active_collection_name(
-        on_mp_completion=completions.append
-    )
+    await client.get_active_collection_name(on_mp_completion=completions.append)
 
     assert count == 5
     assert completions == [

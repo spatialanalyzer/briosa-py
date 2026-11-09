@@ -208,7 +208,8 @@ async def _assert_default_ready(briosa: BriosaClient) -> None:
     # Retained packages have the old keyword; test their actual public surface.
     parameters = inspect.signature(briosa.cloud_display_control).parameters
     key = "thin" if "thin" in parameters else "thin_draw_increment"
-    await briosa.cloud_display_control(**{key: 3, "point_size": 2})
+    arguments: dict[str, Any] = {key: 3, "point_size": 2}
+    await briosa.cloud_display_control(**arguments)
 
 
 async def _assert_attach_existing(briosa: BriosaClient) -> None:

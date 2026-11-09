@@ -26,6 +26,7 @@ from briosa.models import (
     BriosaClientOptions,
     BriosaServerSnapshot,
     BriosaStartOptions,
+    MpCompletionObserver,
     SpatialAnalyzerLaunchOptions,
     SpatialAnalyzerLifecycleState,
     SpatialAnalyzerSdkLifecycleState,
@@ -34,6 +35,7 @@ from briosa.models import (
 )
 from briosa.operation_protocol import (
     build_request,
+    map_mp_completion,
     map_response,
     operation_method,
     response_type,
@@ -348,27 +350,25 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
             )
         )
 
-    async def get_working_directory(self) -> str:
-        lock = self._bind_loop()
-        async with lock:
-            self._ensure_open()
-            if self._start_task is not None:
-                raise BriosaLifecycleError("client-start-in-progress")
-            session = self._require_session()
-            if not session.command_admission_open:
-                raise BriosaLifecycleError("mp-command-admission-closed")
-            session.active_commands += 1
-            session.commands_drained.clear()
-        try:
-            return await session.transport.get_working_directory(
-                self._options.command_timeout
-            )
-        except grpc.RpcError as error:
-            raise map_rpc_error(error, session.application_state) from error
-        finally:
-            await asyncio.shield(self._exit_command(session))
+    async def get_working_directory(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> str:
+        """Return SpatialAnalyzer's working directory."""
+        return cast(
+            str,
+            await self._invoke_mp_operation(
+                "briosa.FileOperations",
+                "GetWorkingDirectory",
+                "file_operations.get_working_directory",
+                {},
+                None,
+                on_mp_completion=on_mp_completion,
+            ),
+        )
 
-    async def get_active_collection_name(self) -> str:
+    async def get_active_collection_name(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> str:
         """Return the name of the active SpatialAnalyzer collection."""
         return cast(
             str,
@@ -378,6 +378,7 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                 "construction_operations.get_active_collection_name",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -388,6 +389,8 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         operation_id: str,
         values: dict[str, Any],
         result_type: type[Any] | None,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Any:
         method = operation_method(service, rpc)
         request = build_request(method, values)
@@ -409,7 +412,10 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                 response_type(method),
                 self._options.command_timeout,
             )
-            return map_response(method, response, result_type)
+            result = map_response(method, response, result_type)
+            if on_mp_completion is not None:
+                on_mp_completion(map_mp_completion(response))
+            return result
         except grpc.RpcError as error:
             raise map_rpc_error(error, session.application_state) from error
         finally:

@@ -6,6 +6,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any, cast
 
+from briosa.models import MpCompletionObserver
 from briosa.operation_models import (
     ActiveUnits,
     AskForStringPullDownVersionResult,
@@ -138,6 +139,8 @@ class WaveAOperationsMixin:
         operation_id: str,
         values: dict[str, Any],
         result_type: type[Any] | None,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Any:
         raise NotImplementedError
 
@@ -148,6 +151,7 @@ class WaveAOperationsMixin:
         *,
         nominal_angle: float = 0.000000,
         angle_tolerance: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         """MP argument notes.
 
@@ -166,6 +170,7 @@ class WaveAOperationsMixin:
                     "angle_tolerance": angle_tolerance,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -176,6 +181,7 @@ class WaveAOperationsMixin:
         *,
         nominal_angle: float = 0.000000,
         angle_tolerance: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         """MP argument notes.
 
@@ -194,6 +200,7 @@ class WaveAOperationsMixin:
                     "angle_tolerance": angle_tolerance,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -204,6 +211,7 @@ class WaveAOperationsMixin:
         *,
         nominal_angle: float = 0.000000,
         angle_tolerance: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         """MP argument notes.
 
@@ -222,6 +230,7 @@ class WaveAOperationsMixin:
                     "angle_tolerance": angle_tolerance,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -243,6 +252,7 @@ class WaveAOperationsMixin:
         lock_degrees_of_freedom: bool = False,
         generate_event: bool = False,
         file_path_for_csv_text_report: FileReference,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> BestFitTransformationGroupToGroupResult:
         """MP argument notes.
 
@@ -274,6 +284,7 @@ class WaveAOperationsMixin:
                     "file_path_for_csv_text_report": file_path_for_csv_text_report,
                 },
                 BestFitTransformationGroupToGroupResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -281,6 +292,8 @@ class WaveAOperationsMixin:
         self,
         reference_group: CollectionObjectName,
         corresponding_group: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> ComputeGroupToGroupOrientationRxRyRzResult:
         return cast(
             ComputeGroupToGroupOrientationRxRyRzResult,
@@ -293,6 +306,7 @@ class WaveAOperationsMixin:
                     "corresponding_group": corresponding_group,
                 },
                 ComputeGroupToGroupOrientationRxRyRzResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -304,6 +318,7 @@ class WaveAOperationsMixin:
         uncertainty_reference_frame_mode: str = "With respect to WORLD",
         grouping_mode: str = "Group per point",
         point_set_mode: str = "Point clouds",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CreatePointUncertaintyCloudPointSetsResult:
         return cast(
             CreatePointUncertaintyCloudPointSetsResult,
@@ -319,6 +334,7 @@ class WaveAOperationsMixin:
                     "point_set_mode": point_set_mode,
                 },
                 CreatePointUncertaintyCloudPointSetsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -327,6 +343,7 @@ class WaveAOperationsMixin:
         point_name_list: Iterable[PointName],
         *,
         number_of_samples: int = 1000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -337,6 +354,7 @@ class WaveAOperationsMixin:
                 "number_of_samples": number_of_samples,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -351,6 +369,7 @@ class WaveAOperationsMixin:
         fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
         starting_condition_geometry: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -372,6 +391,7 @@ class WaveAOperationsMixin:
                 "starting_condition_geometry": starting_condition_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -387,6 +407,7 @@ class WaveAOperationsMixin:
         fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
         starting_condition_geometry: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -409,6 +430,7 @@ class WaveAOperationsMixin:
                 "starting_condition_geometry": starting_condition_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -423,6 +445,7 @@ class WaveAOperationsMixin:
         fit_interface_tolerance: float = -1.000000,
         ignore_out_of_tolerance_points: bool = False,
         starting_condition_geometry: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -444,12 +467,15 @@ class WaveAOperationsMixin:
                 "starting_condition_geometry": starting_condition_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_bspline_properties(
         self,
         b_spline_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetBSplinePropertiesResult:
         return cast(
             GetBSplinePropertiesResult,
@@ -461,12 +487,15 @@ class WaveAOperationsMixin:
                     "b_spline_name": b_spline_name,
                 },
                 GetBSplinePropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_circle_properties(
         self,
         circle_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetCirclePropertiesResult:
         return cast(
             GetCirclePropertiesResult,
@@ -478,12 +507,15 @@ class WaveAOperationsMixin:
                     "circle_name": circle_name,
                 },
                 GetCirclePropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_cone_properties(
         self,
         cone_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetConePropertiesResult:
         return cast(
             GetConePropertiesResult,
@@ -495,6 +527,7 @@ class WaveAOperationsMixin:
                     "cone_name": cone_name,
                 },
                 GetConePropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -503,6 +536,7 @@ class WaveAOperationsMixin:
         point_set: CollectionObjectName,
         *,
         point_set_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetCoordinateForIthPointInPointSetResult:
         return cast(
             GetCoordinateForIthPointInPointSetResult,
@@ -515,12 +549,15 @@ class WaveAOperationsMixin:
                     "point_set_index": point_set_index,
                 },
                 GetCoordinateForIthPointInPointSetResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_cylinder_properties(
         self,
         cylinder_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetCylinderPropertiesResult:
         return cast(
             GetCylinderPropertiesResult,
@@ -532,12 +569,15 @@ class WaveAOperationsMixin:
                     "cylinder_name": cylinder_name,
                 },
                 GetCylinderPropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_ellipse_properties(
         self,
         ellipse_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetEllipsePropertiesResult:
         return cast(
             GetEllipsePropertiesResult,
@@ -549,12 +589,15 @@ class WaveAOperationsMixin:
                     "ellipse_name": ellipse_name,
                 },
                 GetEllipsePropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_euler_parameters_for_frame(
         self,
         frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetEulerParametersForFrameResult:
         return cast(
             GetEulerParametersForFrameResult,
@@ -566,6 +609,7 @@ class WaveAOperationsMixin:
                     "frame": frame,
                 },
                 GetEulerParametersForFrameResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -574,6 +618,7 @@ class WaveAOperationsMixin:
         frame_set: CollectionObjectName,
         *,
         frame_set_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetEulerParametersForIthFrameInFrameSetResult:
         return cast(
             GetEulerParametersForIthFrameInFrameSetResult,
@@ -586,6 +631,7 @@ class WaveAOperationsMixin:
                     "frame_set_index": frame_set_index,
                 },
                 GetEulerParametersForIthFrameInFrameSetResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -593,6 +639,7 @@ class WaveAOperationsMixin:
         self,
         *,
         collection_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -604,6 +651,7 @@ class WaveAOperationsMixin:
                     "collection_index": collection_index,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -612,6 +660,7 @@ class WaveAOperationsMixin:
         group_name: CollectionObjectName,
         *,
         point_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetIthPointFromGroupResult:
         return cast(
             GetIthPointFromGroupResult,
@@ -624,12 +673,15 @@ class WaveAOperationsMixin:
                     "point_index": point_index,
                 },
                 GetIthPointFromGroupResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_line_properties(
         self,
         line_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetLinePropertiesResult:
         return cast(
             GetLinePropertiesResult,
@@ -641,6 +693,7 @@ class WaveAOperationsMixin:
                     "line_name": line_name,
                 },
                 GetLinePropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -649,6 +702,7 @@ class WaveAOperationsMixin:
         point_name: PointName,
         *,
         auxiliary_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetMeasurementAuxiliaryDataResult:
         return cast(
             GetMeasurementAuxiliaryDataResult,
@@ -661,12 +715,15 @@ class WaveAOperationsMixin:
                     "auxiliary_name": auxiliary_name,
                 },
                 GetMeasurementAuxiliaryDataResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_measurement_info_data(
         self,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -678,12 +735,15 @@ class WaveAOperationsMixin:
                     "point_name": point_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_measurement_weather_data(
         self,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetMeasurementWeatherDataResult:
         return cast(
             GetMeasurementWeatherDataResult,
@@ -695,10 +755,13 @@ class WaveAOperationsMixin:
                     "point_name": point_name,
                 },
                 GetMeasurementWeatherDataResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
-    async def get_number_of_collections(self) -> int:
+    async def get_number_of_collections(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> int:
         return cast(
             int,
             await self._invoke_mp_operation(
@@ -707,12 +770,15 @@ class WaveAOperationsMixin:
                 "analysis_operations.get_number_of_collections",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_number_of_frames_in_frame_set(
         self,
         frame_set_container: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -724,12 +790,15 @@ class WaveAOperationsMixin:
                     "frame_set_container": frame_set_container,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_number_of_points_in_group(
         self,
         group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -741,12 +810,15 @@ class WaveAOperationsMixin:
                     "group_name": group_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_number_of_points_in_point_set(
         self,
         point_set_container: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -758,12 +830,15 @@ class WaveAOperationsMixin:
                     "point_set_container": point_set_container,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_object_reporting_frame(
         self,
         object_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -775,12 +850,15 @@ class WaveAOperationsMixin:
                     "object_name": object_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_plane_properties(
         self,
         plane_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPlanePropertiesResult:
         return cast(
             GetPlanePropertiesResult,
@@ -792,12 +870,15 @@ class WaveAOperationsMixin:
                     "plane_name": plane_name,
                 },
                 GetPlanePropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_point_coordinate(
         self,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPointCoordinateResult:
         return cast(
             GetPointCoordinateResult,
@@ -809,12 +890,15 @@ class WaveAOperationsMixin:
                     "point_name": point_name,
                 },
                 GetPointCoordinateResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_point_coordinate_cylindrical(
         self,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPointCoordinateCylindricalResult:
         return cast(
             GetPointCoordinateCylindricalResult,
@@ -826,12 +910,15 @@ class WaveAOperationsMixin:
                     "point_name": point_name,
                 },
                 GetPointCoordinateCylindricalResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_point_coordinate_polar(
         self,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPointCoordinatePolarResult:
         return cast(
             GetPointCoordinatePolarResult,
@@ -843,12 +930,15 @@ class WaveAOperationsMixin:
                     "point_name": point_name,
                 },
                 GetPointCoordinatePolarResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_point_properties(
         self,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPointPropertiesResult:
         return cast(
             GetPointPropertiesResult,
@@ -860,6 +950,7 @@ class WaveAOperationsMixin:
                     "point_name": point_name,
                 },
                 GetPointPropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -867,6 +958,8 @@ class WaveAOperationsMixin:
         self,
         point: PointName,
         line: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPointToLineDistanceResult:
         return cast(
             GetPointToLineDistanceResult,
@@ -879,6 +972,7 @@ class WaveAOperationsMixin:
                     "line": line,
                 },
                 GetPointToLineDistanceResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -886,6 +980,8 @@ class WaveAOperationsMixin:
         self,
         first_point: PointName,
         second_point: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPointToPointDistanceResult:
         return cast(
             GetPointToPointDistanceResult,
@@ -898,12 +994,15 @@ class WaveAOperationsMixin:
                     "second_point": second_point,
                 },
                 GetPointToPointDistanceResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_point_tolerance(
         self,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPointToleranceResult:
         return cast(
             GetPointToleranceResult,
@@ -915,12 +1014,15 @@ class WaveAOperationsMixin:
                     "point_name": point_name,
                 },
                 GetPointToleranceResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_slot_properties(
         self,
         slot_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetSlotPropertiesResult:
         return cast(
             GetSlotPropertiesResult,
@@ -932,12 +1034,15 @@ class WaveAOperationsMixin:
                     "slot_name": slot_name,
                 },
                 GetSlotPropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_sphere_properties(
         self,
         sphere_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetSpherePropertiesResult:
         return cast(
             GetSpherePropertiesResult,
@@ -949,12 +1054,15 @@ class WaveAOperationsMixin:
                     "sphere_name": sphere_name,
                 },
                 GetSpherePropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_surface_physical_stats(
         self,
         surface_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetSurfacePhysicalStatsResult:
         return cast(
             GetSurfacePhysicalStatsResult,
@@ -966,6 +1074,7 @@ class WaveAOperationsMixin:
                     "surface_name": surface_name,
                 },
                 GetSurfacePhysicalStatsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -974,6 +1083,7 @@ class WaveAOperationsMixin:
         frame_set: CollectionObjectName,
         *,
         frame_set_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -986,6 +1096,7 @@ class WaveAOperationsMixin:
                     "frame_set_index": frame_set_index,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -994,6 +1105,7 @@ class WaveAOperationsMixin:
         point_set: CollectionObjectName,
         *,
         point_set_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -1006,12 +1118,15 @@ class WaveAOperationsMixin:
                     "point_set_index": point_set_index,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_torus_properties(
         self,
         torus_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetTorusPropertiesResult:
         return cast(
             GetTorusPropertiesResult,
@@ -1023,6 +1138,7 @@ class WaveAOperationsMixin:
                     "torus_name": torus_name,
                 },
                 GetTorusPropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1031,6 +1147,7 @@ class WaveAOperationsMixin:
         frame_set: CollectionObjectName,
         *,
         frame_set_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -1043,6 +1160,7 @@ class WaveAOperationsMixin:
                     "frame_set_index": frame_set_index,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1054,6 +1172,7 @@ class WaveAOperationsMixin:
         do_conventional_fit: bool = False,
         rms_tolerance: float = 0.000000,
         maximum_absolute_tolerance: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GroupToSurfaceFitResult:
         """MP argument notes.
 
@@ -1074,6 +1193,7 @@ class WaveAOperationsMixin:
                     "maximum_absolute_tolerance": maximum_absolute_tolerance,
                 },
                 GroupToSurfaceFitResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1082,6 +1202,7 @@ class WaveAOperationsMixin:
         geometry_fit_profiles_file_path: FileReference,
         *,
         overwrite_profiles_with_same_name: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1092,6 +1213,7 @@ class WaveAOperationsMixin:
                 "overwrite_profiles_with_same_name": overwrite_profiles_with_same_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1100,6 +1222,7 @@ class WaveAOperationsMixin:
         object_name: CollectionObjectName,
         *,
         object_type: ObjectType = ObjectType.ANY,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> bool:
         return cast(
             bool,
@@ -1112,6 +1235,7 @@ class WaveAOperationsMixin:
                     "object_type": object_type,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1130,6 +1254,7 @@ class WaveAOperationsMixin:
         make_cardinal_points: bool = True,
         cardinal_pt_1_center: bool = True,
         cardinal_pt_2_point_on_normal: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1156,6 +1281,7 @@ class WaveAOperationsMixin:
                 "cardinal_pt_2_point_on_normal": cardinal_pt_2_point_on_normal,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1171,6 +1297,7 @@ class WaveAOperationsMixin:
         cardinal_pt_1_vertex: bool = True,
         cardinal_pt_2_point_on_axis: bool = True,
         cardinal_pt_3_cut_point_on_axis: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1193,6 +1320,7 @@ class WaveAOperationsMixin:
                 "cardinal_pt_3_cut_point_on_axis": cardinal_pt_3_cut_point_on_axis,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1215,6 +1343,7 @@ class WaveAOperationsMixin:
         cardinal_pt_1_begin_pt: bool = True,
         cardinal_pt_2_end_pt: bool = True,
         cardinal_pt_3_center: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1244,6 +1373,7 @@ class WaveAOperationsMixin:
                 "cardinal_pt_3_center": cardinal_pt_3_center,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1262,6 +1392,7 @@ class WaveAOperationsMixin:
         cardinal_pt_2_point_on_normal: bool = True,
         cardinal_pt_3_focal_pt_1: bool = True,
         cardinal_pt_4_focal_pt_2: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1287,6 +1418,7 @@ class WaveAOperationsMixin:
                 "cardinal_pt_4_focal_pt_2": cardinal_pt_4_focal_pt_2,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1299,6 +1431,7 @@ class WaveAOperationsMixin:
         cardinal_pt_1_point_a: bool = True,
         cardinal_pt_2_point_b: bool = True,
         cardinal_pt_3_mid_point: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1313,6 +1446,7 @@ class WaveAOperationsMixin:
                 "cardinal_pt_3_mid_point": cardinal_pt_3_mid_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1327,6 +1461,7 @@ class WaveAOperationsMixin:
         make_cardinal_points: bool = True,
         cardinal_pt_1_vertex: bool = True,
         cardinal_pt_2_focal_point: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1348,6 +1483,7 @@ class WaveAOperationsMixin:
                 "cardinal_pt_2_focal_point": cardinal_pt_2_focal_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1362,6 +1498,7 @@ class WaveAOperationsMixin:
         make_cardinal_points: bool = True,
         cardinal_pt_1_centroid: bool = True,
         cardinal_pt_2_point_on_normal: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1382,6 +1519,7 @@ class WaveAOperationsMixin:
                 "cardinal_pt_2_point_on_normal": cardinal_pt_2_point_on_normal,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1402,6 +1540,7 @@ class WaveAOperationsMixin:
         cardinal_pt_2_point_on_normal: bool = True,
         cardinal_pt_3_centerline_pt_1: bool = True,
         cardinal_pt_4_centerline_pt_2: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1429,6 +1568,7 @@ class WaveAOperationsMixin:
                 "cardinal_pt_4_centerline_pt_2": cardinal_pt_4_centerline_pt_2,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1442,6 +1582,7 @@ class WaveAOperationsMixin:
         make_cardinal_points: bool = True,
         cardinal_pt_1_center: bool = True,
         computation_method: SphereFitComputationMode = SphereFitComputationMode.STANDARD,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1462,6 +1603,7 @@ class WaveAOperationsMixin:
                 "computation_method": computation_method,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1473,6 +1615,7 @@ class WaveAOperationsMixin:
         sphere_target_radius: float = 0.000000,
         target_contact_plane: CollectionObjectName,
         point_to_create_at_hole: PointName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> MushroomTargetHoleInspectionResult:
         return cast(
             MushroomTargetHoleInspectionResult,
@@ -1488,6 +1631,7 @@ class WaveAOperationsMixin:
                     "point_to_create_at_hole": point_to_create_at_hole,
                 },
                 MushroomTargetHoleInspectionResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1498,6 +1642,7 @@ class WaveAOperationsMixin:
         resulting_point_name: PointName,
         *,
         additional_material_thickness: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1510,6 +1655,7 @@ class WaveAOperationsMixin:
                 "additional_material_thickness": additional_material_thickness,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1520,6 +1666,7 @@ class WaveAOperationsMixin:
         resulting_point_name: PointName,
         *,
         additional_material_thickness: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1532,6 +1679,7 @@ class WaveAOperationsMixin:
                 "additional_material_thickness": additional_material_thickness,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1546,6 +1694,7 @@ class WaveAOperationsMixin:
         skip_factor: int = 0,
         rms_tolerance: float = 0.000000,
         maximum_absolute_tolerance: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> QueryCloudsToObjectsResult:
         """MP argument notes.
 
@@ -1569,6 +1718,7 @@ class WaveAOperationsMixin:
                     "maximum_absolute_tolerance": maximum_absolute_tolerance,
                 },
                 QueryCloudsToObjectsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1583,6 +1733,7 @@ class WaveAOperationsMixin:
         skip_factor: int = 0,
         rms_tolerance: float = 0.000000,
         maximum_absolute_tolerance: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> QueryCloudsToSurfaceResult:
         """MP argument notes.
 
@@ -1606,6 +1757,7 @@ class WaveAOperationsMixin:
                     "maximum_absolute_tolerance": maximum_absolute_tolerance,
                 },
                 QueryCloudsToSurfaceResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1613,6 +1765,8 @@ class WaveAOperationsMixin:
         self,
         reference_frame_name: CollectionObjectName,
         corresponding_frame_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> QueryFrameToFrameResult:
         return cast(
             QueryFrameToFrameResult,
@@ -1625,6 +1779,7 @@ class WaveAOperationsMixin:
                     "corresponding_frame_name": corresponding_frame_name,
                 },
                 QueryFrameToFrameResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1638,6 +1793,7 @@ class WaveAOperationsMixin:
         rms_tolerance: float = 0.000000,
         maximum_absolute_tolerance: float = 0.000000,
         show_results_dialog: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> QueryGroupsToObjectsResult:
         """MP argument notes.
 
@@ -1662,6 +1818,7 @@ class WaveAOperationsMixin:
                     "show_results_dialog": show_results_dialog,
                 },
                 QueryGroupsToObjectsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1671,6 +1828,7 @@ class WaveAOperationsMixin:
         objects: Iterable[CollectionObjectName],
         *,
         ignore_target_offset: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> QueryPointToObjectsResult:
         return cast(
             QueryPointToObjectsResult,
@@ -1684,6 +1842,7 @@ class WaveAOperationsMixin:
                     "ignore_target_offset": ignore_target_offset,
                 },
                 QueryPointToObjectsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1692,6 +1851,8 @@ class WaveAOperationsMixin:
         value_1st_point: PointName,
         value_2nd_point: PointName,
         curve: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -1705,6 +1866,7 @@ class WaveAOperationsMixin:
                     "curve": curve,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1718,6 +1880,7 @@ class WaveAOperationsMixin:
         vector_group_name_for_radial: CollectionObjectName,
         vector_group_name_for_planar: CollectionObjectName,
         vector_group_name_for_combined: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1733,6 +1896,7 @@ class WaveAOperationsMixin:
                 "vector_group_name_for_combined": vector_group_name_for_combined,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1746,6 +1910,7 @@ class WaveAOperationsMixin:
         rms_tolerance: float = 0.000000,
         maximum_absolute_tolerance: float = 0.000000,
         show_results_dialog: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> QueryPointsToObjectsResult:
         """MP argument notes.
 
@@ -1769,6 +1934,7 @@ class WaveAOperationsMixin:
                     "show_results_dialog": show_results_dialog,
                 },
                 QueryPointsToObjectsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1778,6 +1944,7 @@ class WaveAOperationsMixin:
         single_point: PointName,
         *,
         show_vector_properties: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1789,6 +1956,7 @@ class WaveAOperationsMixin:
                 "show_vector_properties": show_vector_properties,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1799,6 +1967,7 @@ class WaveAOperationsMixin:
         hidden_points: bool = False,
         relationships: bool = False,
         refresh_filtered_cloud_data: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1811,6 +1980,7 @@ class WaveAOperationsMixin:
                 "refresh_filtered_cloud_data": refresh_filtered_cloud_data,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1821,6 +1991,7 @@ class WaveAOperationsMixin:
         *,
         distance_threshold: float = 0.000000,
         verify_results: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1833,6 +2004,7 @@ class WaveAOperationsMixin:
                 "verify_results": verify_results,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1844,6 +2016,7 @@ class WaveAOperationsMixin:
         proximity_threshold: float = 0.000000,
         verify_results: bool = False,
         rename_all_proximate_points: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1857,12 +2030,15 @@ class WaveAOperationsMixin:
                 "rename_all_proximate_points": rename_all_proximate_points,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def reverse_bsplines(
         self,
         b_spline_list: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1872,12 +2048,15 @@ class WaveAOperationsMixin:
                 "b_spline_list": b_spline_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def reverse_plane_normals(
         self,
         plane_list: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1887,12 +2066,15 @@ class WaveAOperationsMixin:
                 "plane_list": plane_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def reverse_surface_normals(
         self,
         surface_list: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1902,6 +2084,7 @@ class WaveAOperationsMixin:
                 "surface_list": surface_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1912,6 +2095,7 @@ class WaveAOperationsMixin:
         normal_direction: Vector,
         *,
         radius: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1924,6 +2108,7 @@ class WaveAOperationsMixin:
                 "radius": radius,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1938,6 +2123,7 @@ class WaveAOperationsMixin:
         cone_theta_span: float = 0.000000,
         cone_included_angle: float = 0.000000,
         cut_length_from_apex: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1959,6 +2145,7 @@ class WaveAOperationsMixin:
                 "cut_length_from_apex": cut_length_from_apex,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1975,6 +2162,7 @@ class WaveAOperationsMixin:
         enable_theta_extent_display_mode: bool = True,
         theta_start_in_degrees: float = 0.000000,
         theta_span_in_degrees: float = 360.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -1993,6 +2181,7 @@ class WaveAOperationsMixin:
                 "theta_span_in_degrees": theta_span_in_degrees,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2000,6 +2189,7 @@ class WaveAOperationsMixin:
         self,
         *,
         colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2009,6 +2199,7 @@ class WaveAOperationsMixin:
                 "colorization_options": colorization_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2020,6 +2211,7 @@ class WaveAOperationsMixin:
         *,
         major_axis_radius: float = 0.000000,
         minor_axis_radius: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2033,6 +2225,7 @@ class WaveAOperationsMixin:
                 "minor_axis_radius": minor_axis_radius,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2043,6 +2236,7 @@ class WaveAOperationsMixin:
         *,
         fit_profile_name: str = "",
         apply_cardinal_point_settings: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2055,6 +2249,7 @@ class WaveAOperationsMixin:
                 "apply_cardinal_point_settings": apply_cardinal_point_settings,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2065,6 +2260,7 @@ class WaveAOperationsMixin:
         end_coordinate: Vector,
         *,
         length: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -2081,6 +2277,7 @@ class WaveAOperationsMixin:
                 "length": length,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2091,6 +2288,7 @@ class WaveAOperationsMixin:
         auxiliary_name: str = "",
         value: float = 0.000000,
         units: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2103,6 +2301,7 @@ class WaveAOperationsMixin:
                 "units": units,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2110,6 +2309,8 @@ class WaveAOperationsMixin:
         self,
         object_name: CollectionObjectName,
         reporting_frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2120,6 +2321,7 @@ class WaveAOperationsMixin:
                 "reporting_frame": reporting_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2131,6 +2333,7 @@ class WaveAOperationsMixin:
         radial_offset: float = 0.000000,
         position_tolerance: ToleranceVectorOptions,
         component_weights: Vector,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2144,6 +2347,7 @@ class WaveAOperationsMixin:
                 "component_weights": component_weights,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2156,6 +2360,7 @@ class WaveAOperationsMixin:
         weight_normalization_mode: str = "Set to fixed value",
         fixed_weight_value: float = 1.000000,
         output_weighted_point_group: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -2172,6 +2377,7 @@ class WaveAOperationsMixin:
                     "output_weighted_point_group": output_weighted_point_group,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2181,6 +2387,7 @@ class WaveAOperationsMixin:
         *,
         frame_set_index: int = 0,
         transform_in_working: Transform,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2192,6 +2399,7 @@ class WaveAOperationsMixin:
                 "transform_in_working": transform_in_working,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2202,6 +2410,7 @@ class WaveAOperationsMixin:
         sphere_target_radius: float = 0.000000,
         point_to_create_at_sphere_center: PointName,
         line_defining_the_axis: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> SphereAxisCheckResult:
         return cast(
             SphereAxisCheckResult,
@@ -2216,6 +2425,7 @@ class WaveAOperationsMixin:
                     "line_defining_the_axis": line_defining_the_axis,
                 },
                 SphereAxisCheckResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2228,6 +2438,7 @@ class WaveAOperationsMixin:
         initial_temperature: float = 0.000000,
         final_temperature: float = 0.000000,
         scaled_group_name: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -2249,6 +2460,7 @@ class WaveAOperationsMixin:
                 "scaled_group_name": scaled_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2259,6 +2471,7 @@ class WaveAOperationsMixin:
         destination_frame_name: CollectionObjectName,
         *,
         number_of_steps: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2271,6 +2484,7 @@ class WaveAOperationsMixin:
                 "number_of_steps": number_of_steps,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2278,6 +2492,8 @@ class WaveAOperationsMixin:
         self,
         objects_to_transform: Iterable[CollectionObjectName],
         delta_transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2288,6 +2504,7 @@ class WaveAOperationsMixin:
                 "delta_transform": delta_transform,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2295,6 +2512,8 @@ class WaveAOperationsMixin:
         self,
         objects_to_transform: Iterable[CollectionObjectName],
         delta_transform: WorldTransform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2305,6 +2524,7 @@ class WaveAOperationsMixin:
                 "delta_transform": delta_transform,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2312,6 +2532,8 @@ class WaveAOperationsMixin:
         self,
         objects_to_translate: Iterable[CollectionObjectName],
         delta_translation: Vector,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.AnalysisOperations",
@@ -2322,12 +2544,15 @@ class WaveAOperationsMixin:
                 "delta_translation": delta_translation,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_dimension(
         self,
         dimension_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.DimensionOperations",
@@ -2337,12 +2562,15 @@ class WaveAOperationsMixin:
                 "dimension_name": dimension_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_dimension_value(
         self,
         dimension_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetDimensionValueResult:
         return cast(
             GetDimensionValueResult,
@@ -2354,6 +2582,7 @@ class WaveAOperationsMixin:
                     "dimension_name": dimension_name,
                 },
                 GetDimensionValueResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2367,6 +2596,7 @@ class WaveAOperationsMixin:
         nominal: float = 0.000000,
         high_tolerance: float = 0.000000,
         low_tolerance: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.DimensionOperations",
@@ -2382,12 +2612,15 @@ class WaveAOperationsMixin:
                 "low_tolerance": low_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_event(
         self,
         event_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.EventOperations",
@@ -2397,6 +2630,7 @@ class WaveAOperationsMixin:
                 "event_name": event_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2407,6 +2641,7 @@ class WaveAOperationsMixin:
         *,
         decimal_precision: int = 6,
         overwrite_existing_file: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.EventOperations",
@@ -2419,6 +2654,7 @@ class WaveAOperationsMixin:
                 "overwrite_existing_file": overwrite_existing_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2427,6 +2663,7 @@ class WaveAOperationsMixin:
         event_list: Iterable[CollectionItemName],
         *,
         event_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionItemName:
         return cast(
             CollectionItemName,
@@ -2439,12 +2676,15 @@ class WaveAOperationsMixin:
                     "event_index": event_index,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_number_of_events_in_event_ref_list(
         self,
         event_list: Iterable[CollectionItemName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -2456,6 +2696,7 @@ class WaveAOperationsMixin:
                     "event_list": event_list,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2465,6 +2706,7 @@ class WaveAOperationsMixin:
         new_event_name: CollectionObjectName,
         *,
         overwrite_if_exists: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.EventOperations",
@@ -2476,16 +2718,20 @@ class WaveAOperationsMixin:
                 "overwrite_if_exists": overwrite_if_exists,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def backup_now(self) -> None:
+    async def backup_now(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
             "BackupNow",
             "file_operations.backup_now",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2495,6 +2741,7 @@ class WaveAOperationsMixin:
         destination_file_name: FileReference,
         *,
         overwrite: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2506,12 +2753,15 @@ class WaveAOperationsMixin:
                 "overwrite": overwrite,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_general_file(
         self,
         file_name: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2521,6 +2771,7 @@ class WaveAOperationsMixin:
                 "file_name": file_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2557,6 +2808,7 @@ class WaveAOperationsMixin:
         explode_surfaces: bool = False,
         cad_file_units: str = "",
         build_callout_views: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> DirectCadAccessResult:
         """MP argument notes.
 
@@ -2602,6 +2854,7 @@ class WaveAOperationsMixin:
                     "build_callout_views": build_callout_views,
                 },
                 DirectCadAccessResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2615,6 +2868,7 @@ class WaveAOperationsMixin:
         include_export_format_info: bool = False,
         decimal_precision: int = 6,
         append: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2630,6 +2884,7 @@ class WaveAOperationsMixin:
                 "append": append,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2640,6 +2895,7 @@ class WaveAOperationsMixin:
         *,
         export_frame_mode: str = "Fixed XYZ",
         overwrite_existing_file: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2652,6 +2908,7 @@ class WaveAOperationsMixin:
                 "overwrite_existing_file": overwrite_existing_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2665,6 +2922,7 @@ class WaveAOperationsMixin:
         show_progress_dialog: bool = False,
         include_cloud_point_labeling: bool = False,
         include_scan_direction_vector: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2680,6 +2938,7 @@ class WaveAOperationsMixin:
                 "include_scan_direction_vector": include_scan_direction_vector,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2699,6 +2958,7 @@ class WaveAOperationsMixin:
         maximum_precision: bool = False,
         decimal_precision: int = 6,
         append: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -2724,6 +2984,7 @@ class WaveAOperationsMixin:
                 "append": append,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2748,6 +3009,7 @@ class WaveAOperationsMixin:
         maximum_precision: bool = False,
         decimal_precision: int = 6,
         append: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -2778,6 +3040,7 @@ class WaveAOperationsMixin:
                 "append": append,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2788,6 +3051,7 @@ class WaveAOperationsMixin:
         cloud_names: Iterable[CollectionObjectName],
         *,
         include_point_labels: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2800,6 +3064,7 @@ class WaveAOperationsMixin:
                 "include_point_labels": include_point_labels,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2810,6 +3075,7 @@ class WaveAOperationsMixin:
         embedded_file_name: str = "",
         external_file_name: FileReference,
         replace_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2822,12 +3088,15 @@ class WaveAOperationsMixin:
                 "replace_existing": replace_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def export_hidden_point_bar_xml_file(
         self,
         xml_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2837,12 +3106,15 @@ class WaveAOperationsMixin:
                 "xml_file_path": xml_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def export_iges_file_entire_model(
         self,
         iges_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2852,6 +3124,7 @@ class WaveAOperationsMixin:
                 "iges_file_path": iges_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2859,6 +3132,8 @@ class WaveAOperationsMixin:
         self,
         iges_file_path: FileReference,
         object_name_list: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2869,6 +3144,7 @@ class WaveAOperationsMixin:
                 "object_name_list": object_name_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2879,6 +3155,7 @@ class WaveAOperationsMixin:
         *,
         overwrite_existing_file: bool = False,
         show_progress_dialog: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2891,6 +3168,7 @@ class WaveAOperationsMixin:
                 "show_progress_dialog": show_progress_dialog,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2915,6 +3193,7 @@ class WaveAOperationsMixin:
         relationship_list: Iterable[CollectionItemName],
         feature_check_list: Iterable[CollectionItemName],
         vector_group_list: Iterable[CollectionObjectName],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2941,12 +3220,15 @@ class WaveAOperationsMixin:
                 "vector_group_list": vector_group_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def export_qdas_data_list(
         self,
         qdas_export_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2956,6 +3238,7 @@ class WaveAOperationsMixin:
                 "qdas_export_file_path": qdas_export_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2963,6 +3246,8 @@ class WaveAOperationsMixin:
         self,
         stl_file_path: FileReference,
         mesh: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2973,12 +3258,15 @@ class WaveAOperationsMixin:
                 "mesh": mesh,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def export_step_file_entire_model(
         self,
         step_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -2988,6 +3276,7 @@ class WaveAOperationsMixin:
                 "step_file_path": step_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2995,6 +3284,8 @@ class WaveAOperationsMixin:
         self,
         step_file_path: FileReference,
         object_name_list: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3005,12 +3296,15 @@ class WaveAOperationsMixin:
                 "object_name_list": object_name_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def export_vda_fs_file_entire_model(
         self,
         vda_fs_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3020,6 +3314,7 @@ class WaveAOperationsMixin:
                 "vda_fs_file_path": vda_fs_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3027,6 +3322,8 @@ class WaveAOperationsMixin:
         self,
         vda_fs_file_path: FileReference,
         object_name_list: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3037,6 +3334,7 @@ class WaveAOperationsMixin:
                 "object_name_list": object_name_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3049,6 +3347,7 @@ class WaveAOperationsMixin:
         use_full_precision: bool = False,
         vector_name_format: ExportVectorNameFormat,
         include_vector_length: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -3068,6 +3367,7 @@ class WaveAOperationsMixin:
                 "include_vector_length": include_vector_length,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3077,6 +3377,7 @@ class WaveAOperationsMixin:
         directory: str = "",
         file_name_pattern: str = "*.*",
         recursive: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -3090,6 +3391,7 @@ class WaveAOperationsMixin:
                     "recursive": recursive,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3098,6 +3400,7 @@ class WaveAOperationsMixin:
         *,
         directory: str = "",
         recursive: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -3110,6 +3413,7 @@ class WaveAOperationsMixin:
                     "recursive": recursive,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3118,6 +3422,7 @@ class WaveAOperationsMixin:
         data_share_file_path: FileReference,
         *,
         boolean_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> bool:
         return cast(
             bool,
@@ -3130,6 +3435,7 @@ class WaveAOperationsMixin:
                     "boolean_name": boolean_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3138,6 +3444,7 @@ class WaveAOperationsMixin:
         data_share_file_path: FileReference,
         *,
         double_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -3150,6 +3457,7 @@ class WaveAOperationsMixin:
                     "double_name": double_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3158,6 +3466,7 @@ class WaveAOperationsMixin:
         data_share_file_path: FileReference,
         *,
         integer_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -3170,6 +3479,7 @@ class WaveAOperationsMixin:
                     "integer_name": integer_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3177,6 +3487,7 @@ class WaveAOperationsMixin:
         self,
         *,
         k_field_target: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -3188,6 +3499,7 @@ class WaveAOperationsMixin:
                     "k_field_target": k_field_target,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3196,6 +3508,7 @@ class WaveAOperationsMixin:
         data_share_file_path: FileReference,
         *,
         string_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -3208,6 +3521,7 @@ class WaveAOperationsMixin:
                     "string_name": string_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3216,6 +3530,7 @@ class WaveAOperationsMixin:
         data_share_file_path: FileReference,
         *,
         transform_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -3228,6 +3543,7 @@ class WaveAOperationsMixin:
                     "transform_name": transform_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3236,6 +3552,7 @@ class WaveAOperationsMixin:
         data_share_file_path: FileReference,
         *,
         vector_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Vector:
         return cast(
             Vector,
@@ -3248,6 +3565,7 @@ class WaveAOperationsMixin:
                     "vector_name": vector_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3262,6 +3580,7 @@ class WaveAOperationsMixin:
         import_as_cloud: bool = False,
         ensure_new_point_group: bool = True,
         ensure_unique_names: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3278,6 +3597,7 @@ class WaveAOperationsMixin:
                 "ensure_unique_names": ensure_unique_names,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3290,6 +3610,7 @@ class WaveAOperationsMixin:
         angular_units: AngularUnits = AngularUnits.DEGREES,
         frame_set_container_name: CollectionObjectName,
         ensure_unique_name: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3304,6 +3625,7 @@ class WaveAOperationsMixin:
                 "ensure_unique_name": ensure_unique_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3317,6 +3639,7 @@ class WaveAOperationsMixin:
         prioritize_color_over_intensity: bool = True,
         import_scan_blocks_as_separate_clouds: bool = False,
         units: DistanceUnits = DistanceUnits.INCHES,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3332,6 +3655,7 @@ class WaveAOperationsMixin:
                 "units": units,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3340,6 +3664,7 @@ class WaveAOperationsMixin:
         external_file_name: FileReference,
         *,
         replace_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3350,6 +3675,7 @@ class WaveAOperationsMixin:
                 "replace_existing": replace_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3358,6 +3684,7 @@ class WaveAOperationsMixin:
         external_file_name: FileReference,
         *,
         replace_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3368,6 +3695,7 @@ class WaveAOperationsMixin:
                 "replace_existing": replace_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3376,6 +3704,7 @@ class WaveAOperationsMixin:
         xml_file_path: FileReference,
         *,
         replace_existing_entries: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3386,12 +3715,15 @@ class WaveAOperationsMixin:
                 "replace_existing_entries": replace_existing_entries,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def import_iges_file(
         self,
         iges_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3401,6 +3733,7 @@ class WaveAOperationsMixin:
                 "iges_file_path": iges_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3409,6 +3742,8 @@ class WaveAOperationsMixin:
         instrument_id: CollectionInstrumentId,
         group_name: CollectionObjectName,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3420,6 +3755,7 @@ class WaveAOperationsMixin:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3428,6 +3764,8 @@ class WaveAOperationsMixin:
         instrument_id: CollectionInstrumentId,
         scan_cloud_name: CollectionObjectName,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3439,6 +3777,7 @@ class WaveAOperationsMixin:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3447,6 +3786,7 @@ class WaveAOperationsMixin:
         external_mp_file_name: FileReference,
         *,
         replace_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3457,12 +3797,15 @@ class WaveAOperationsMixin:
                 "replace_existing": replace_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def import_nominals_from_xml_file(
         self,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3472,6 +3815,7 @@ class WaveAOperationsMixin:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3479,6 +3823,8 @@ class WaveAOperationsMixin:
         self,
         cloud_name: CollectionObjectName,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3489,12 +3835,15 @@ class WaveAOperationsMixin:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def import_qdas_catalog_file(
         self,
         qdas_dfd_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3504,6 +3853,7 @@ class WaveAOperationsMixin:
                 "qdas_dfd_file_path": qdas_dfd_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3513,6 +3863,7 @@ class WaveAOperationsMixin:
         *,
         allow_operator_selections: bool = False,
         selected_collections: Iterable[str],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -3528,12 +3879,15 @@ class WaveAOperationsMixin:
                 "selected_collections": selected_collections,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def import_sa_windows_placement(
         self,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3543,12 +3897,15 @@ class WaveAOperationsMixin:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def import_sat_file(
         self,
         sat_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3558,6 +3915,7 @@ class WaveAOperationsMixin:
                 "sat_file_path": sat_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3567,6 +3925,7 @@ class WaveAOperationsMixin:
         *,
         display_entity_filters: bool = False,
         display_residuals: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3578,6 +3937,7 @@ class WaveAOperationsMixin:
                 "display_residuals": display_residuals,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3588,6 +3948,7 @@ class WaveAOperationsMixin:
         units: DistanceUnits = DistanceUnits.MILLIMETERS,
         import_mesh: bool = True,
         import_point_cloud: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3600,12 +3961,15 @@ class WaveAOperationsMixin:
                 "import_point_cloud": import_point_cloud,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def import_vda_fs_file(
         self,
         vda_fs_file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3615,12 +3979,15 @@ class WaveAOperationsMixin:
                 "vda_fs_file_path": vda_fs_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def import_vstars_xyz_file(
         self,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3630,12 +3997,15 @@ class WaveAOperationsMixin:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def import_vstars_cameras(
         self,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3645,6 +4015,7 @@ class WaveAOperationsMixin:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3660,6 +4031,7 @@ class WaveAOperationsMixin:
         save_button_text: str = "Save",
         cancel_button_text: str = "Cancel",
         hide_save_and_cancel_buttons: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3677,6 +4049,7 @@ class WaveAOperationsMixin:
                 "hide_save_and_cancel_buttons": hide_save_and_cancel_buttons,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3689,6 +4062,7 @@ class WaveAOperationsMixin:
         input_data_share_file_path: FileReference,
         output_data_share_file_path: FileReference,
         save_in_binary_format: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3703,6 +4077,7 @@ class WaveAOperationsMixin:
                 "save_in_binary_format": save_in_binary_format,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3711,6 +4086,7 @@ class WaveAOperationsMixin:
         *,
         collection_wildcard_criteria: str = "*",
         file_name_pattern: str = "*.*",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -3723,6 +4099,7 @@ class WaveAOperationsMixin:
                     "file_name_pattern": file_name_pattern,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3730,6 +4107,8 @@ class WaveAOperationsMixin:
         self,
         file_path: FileReference,
         group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3740,22 +4119,28 @@ class WaveAOperationsMixin:
                 "group_name": group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def new_sa_file(self) -> None:
+    async def new_sa_file(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
             "NewSaFile",
             "file_operations.new_sa_file",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def open_sa_file(
         self,
         sa_file_name: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3765,12 +4150,15 @@ class WaveAOperationsMixin:
                 "sa_file_name": sa_file_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def open_template_file(
         self,
         template_file_name: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3780,6 +4168,7 @@ class WaveAOperationsMixin:
                 "template_file_name": template_file_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3788,6 +4177,7 @@ class WaveAOperationsMixin:
         *,
         materials_file_path: str = "",
         bay_file_path: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3798,6 +4188,7 @@ class WaveAOperationsMixin:
                 "bay_file_path": bay_file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3821,6 +4212,7 @@ class WaveAOperationsMixin:
         relationship_list: Iterable[CollectionItemName],
         feature_check_list: Iterable[CollectionItemName],
         vector_group_list: Iterable[CollectionObjectName],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3846,6 +4238,7 @@ class WaveAOperationsMixin:
                 "vector_group_list": vector_group_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3855,6 +4248,7 @@ class WaveAOperationsMixin:
         destination_file_name: FileReference,
         *,
         overwrite: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3866,22 +4260,28 @@ class WaveAOperationsMixin:
                 "overwrite": overwrite,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def save(self) -> None:
+    async def save(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
             "Save",
             "file_operations.save",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def save_as_read_only_template(
         self,
         template_file_name: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3891,6 +4291,7 @@ class WaveAOperationsMixin:
                 "template_file_name": template_file_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3900,6 +4301,7 @@ class WaveAOperationsMixin:
         *,
         add_serial_number: bool = False,
         optional_number: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3911,6 +4313,7 @@ class WaveAOperationsMixin:
                 "optional_number": optional_number,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3920,6 +4323,7 @@ class WaveAOperationsMixin:
         *,
         boolean_name: str = "",
         boolean_value: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3931,6 +4335,7 @@ class WaveAOperationsMixin:
                 "boolean_value": boolean_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3940,6 +4345,7 @@ class WaveAOperationsMixin:
         *,
         double_name: str = "",
         double_value: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3951,6 +4357,7 @@ class WaveAOperationsMixin:
                 "double_value": double_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3960,6 +4367,7 @@ class WaveAOperationsMixin:
         *,
         integer_name: str = "",
         integer_value: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3971,6 +4379,7 @@ class WaveAOperationsMixin:
                 "integer_value": integer_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3980,6 +4389,7 @@ class WaveAOperationsMixin:
         *,
         string_name: str = "",
         string_value: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -3991,6 +4401,7 @@ class WaveAOperationsMixin:
                 "string_value": string_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4000,6 +4411,7 @@ class WaveAOperationsMixin:
         *,
         transform_name: str = "",
         transform_value: Transform,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -4011,6 +4423,7 @@ class WaveAOperationsMixin:
                 "transform_value": transform_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4020,6 +4433,7 @@ class WaveAOperationsMixin:
         *,
         vector_name: str = "",
         vector_value: Vector,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -4031,16 +4445,20 @@ class WaveAOperationsMixin:
                 "vector_value": vector_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def terminate_all_running_mps(self) -> None:
+    async def terminate_all_running_mps(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
             "TerminateAllRunningMPs",
             "file_operations.terminate_all_running_mps",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4048,6 +4466,7 @@ class WaveAOperationsMixin:
         self,
         *,
         use_library: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -4057,12 +4476,15 @@ class WaveAOperationsMixin:
                 "use_library": use_library,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def verify_general_file_exists(
         self,
         file_name: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -4072,12 +4494,15 @@ class WaveAOperationsMixin:
                 "file_name": file_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def verify_mp_file_exists(
         self,
         mp_file_name: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.FileOperations",
@@ -4087,6 +4512,7 @@ class WaveAOperationsMixin:
                 "mp_file_name": mp_file_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4095,6 +4521,7 @@ class WaveAOperationsMixin:
         mp_subroutine_file_path: FileReference,
         *,
         share_parent_variables: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpSubroutines",
@@ -4105,6 +4532,7 @@ class WaveAOperationsMixin:
                 "share_parent_variables": share_parent_variables,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4114,6 +4542,7 @@ class WaveAOperationsMixin:
         task_name: str = "",
         comment_text: str = "",
         effort_index: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4125,6 +4554,7 @@ class WaveAOperationsMixin:
                 "effort_index": effort_index,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4133,6 +4563,7 @@ class WaveAOperationsMixin:
         *,
         task_name_font: Font = Font.DEFAULT,
         task_comment_font: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4143,6 +4574,7 @@ class WaveAOperationsMixin:
                 "task_comment_font": task_comment_font,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4150,6 +4582,7 @@ class WaveAOperationsMixin:
         self,
         *,
         task_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4159,12 +4592,15 @@ class WaveAOperationsMixin:
                 "task_index": task_index,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_overview_image(
         self,
         image_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4174,6 +4610,7 @@ class WaveAOperationsMixin:
                 "image_path": image_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4181,6 +4618,7 @@ class WaveAOperationsMixin:
         self,
         *,
         overview_title: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4190,6 +4628,7 @@ class WaveAOperationsMixin:
                 "overview_title": overview_title,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4198,6 +4637,7 @@ class WaveAOperationsMixin:
         *,
         task_index: int = 0,
         task_comment: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4208,6 +4648,7 @@ class WaveAOperationsMixin:
                 "task_comment": task_comment,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4217,6 +4658,7 @@ class WaveAOperationsMixin:
         task_index: int = 0,
         increments_completed: int = 0,
         total_increments: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4228,6 +4670,7 @@ class WaveAOperationsMixin:
                 "total_increments": total_increments,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4236,6 +4679,7 @@ class WaveAOperationsMixin:
         *,
         task_item_index: int = 0,
         task_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4246,6 +4690,7 @@ class WaveAOperationsMixin:
                 "task_name": task_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4254,6 +4699,7 @@ class WaveAOperationsMixin:
         *,
         task_index: int = 0,
         show_progress: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4264,6 +4710,7 @@ class WaveAOperationsMixin:
                 "show_progress": show_progress,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4271,6 +4718,7 @@ class WaveAOperationsMixin:
         self,
         *,
         show: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.MpTaskOverview",
@@ -4280,6 +4728,7 @@ class WaveAOperationsMixin:
                 "show": show,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4292,6 +4741,7 @@ class WaveAOperationsMixin:
         min_value: float = 0.000000,
         max_value: float = 0.000000,
         font: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -4308,6 +4758,7 @@ class WaveAOperationsMixin:
                     "font": font,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4320,6 +4771,7 @@ class WaveAOperationsMixin:
         min_value: int = 0,
         max_value: int = 0,
         font: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -4336,6 +4788,7 @@ class WaveAOperationsMixin:
                     "font": font,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4345,6 +4798,7 @@ class WaveAOperationsMixin:
         question_to_ask: str = "",
         initial_value: PointName,
         font: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -4358,6 +4812,7 @@ class WaveAOperationsMixin:
                     "font": font,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4368,6 +4823,7 @@ class WaveAOperationsMixin:
         password_entry: bool = False,
         initial_answer: str = "",
         font: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -4382,6 +4838,7 @@ class WaveAOperationsMixin:
                     "font": font,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4391,6 +4848,7 @@ class WaveAOperationsMixin:
         possible_answers: Iterable[str],
         *,
         font: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> AskForStringPullDownVersionResult:
         return cast(
             AskForStringPullDownVersionResult,
@@ -4404,6 +4862,7 @@ class WaveAOperationsMixin:
                     "font": font,
                 },
                 AskForStringPullDownVersionResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4415,6 +4874,7 @@ class WaveAOperationsMixin:
         window_caption: str = "",
         window_width: int = 0,
         window_height: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         """MP argument notes.
 
@@ -4435,6 +4895,7 @@ class WaveAOperationsMixin:
                     "window_height": window_height,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4446,6 +4907,7 @@ class WaveAOperationsMixin:
         button1_text: str = "",
         button2_text: str = "",
         button3_text: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         """MP argument notes.
 
@@ -4467,12 +4929,15 @@ class WaveAOperationsMixin:
                     "button3_text": button3_text,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def object_existence_test_check_only(
         self,
         object_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> bool:
         return cast(
             bool,
@@ -4484,6 +4949,7 @@ class WaveAOperationsMixin:
                     "object_name": object_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4492,6 +4958,7 @@ class WaveAOperationsMixin:
         relationships: Iterable[CollectionItemName],
         *,
         enable: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -4502,12 +4969,15 @@ class WaveAOperationsMixin:
                 "enable": enable,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def geom_relationship_ignore_input_points(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -4517,12 +4987,15 @@ class WaveAOperationsMixin:
                 "relationship_name": relationship_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def geom_relationship_reuse_ignored_input_points(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -4532,12 +5005,15 @@ class WaveAOperationsMixin:
                 "relationship_name": relationship_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_geom_relationship_auto_vectors(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetGeomRelationshipAutoVectorsResult:
         return cast(
             GetGeomRelationshipAutoVectorsResult,
@@ -4549,12 +5025,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetGeomRelationshipAutoVectorsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_geom_relationship_cardinal_points(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -4566,6 +5045,7 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4574,6 +5054,7 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         criteria: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetGeomRelationshipCriteriaResult:
         return cast(
             GetGeomRelationshipCriteriaResult,
@@ -4586,12 +5067,15 @@ class WaveAOperationsMixin:
                     "criteria": criteria,
                 },
                 GetGeomRelationshipCriteriaResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_geom_relationship_measured_avg_point(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -4603,12 +5087,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_geom_relationship_measured_geometry(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -4620,12 +5107,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_geom_relationship_nominal_avg_point(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -4637,12 +5127,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_geom_relationship_nominal_geometry(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -4654,12 +5147,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_geom_relationship_point_list(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetGeomRelationshipPointListResult:
         return cast(
             GetGeomRelationshipPointListResult,
@@ -4671,12 +5167,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetGeomRelationshipPointListResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_geom_relationship_projection_plane(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -4688,12 +5187,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_pipe_relationship_cut_status(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPipeRelationshipCutStatusResult:
         return cast(
             GetPipeRelationshipCutStatusResult,
@@ -4705,12 +5207,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetPipeRelationshipCutStatusResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_pipe_relationship_properties(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPipeRelationshipPropertiesResult:
         return cast(
             GetPipeRelationshipPropertiesResult,
@@ -4722,12 +5227,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetPipeRelationshipPropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_pipe_relationship_weights(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPipeRelationshipWeightsResult:
         return cast(
             GetPipeRelationshipWeightsResult,
@@ -4739,12 +5247,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetPipeRelationshipWeightsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_fit_constraints_scalar_type(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetRelationshipFitConstraintsScalarTypeResult:
         return cast(
             GetRelationshipFitConstraintsScalarTypeResult,
@@ -4756,12 +5267,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetRelationshipFitConstraintsScalarTypeResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_outlier_rejection_scalar_type(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetRelationshipOutlierRejectionScalarTypeResult:
         return cast(
             GetRelationshipOutlierRejectionScalarTypeResult,
@@ -4773,12 +5287,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetRelationshipOutlierRejectionScalarTypeResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_projection_options(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetRelationshipProjectionOptionsResult:
         return cast(
             GetRelationshipProjectionOptionsResult,
@@ -4790,12 +5307,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetRelationshipProjectionOptionsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_reporting_frame(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -4807,12 +5327,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_sub_sampling_options(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetRelationshipSubSamplingOptionsResult:
         return cast(
             GetRelationshipSubSamplingOptionsResult,
@@ -4824,12 +5347,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetRelationshipSubSamplingOptionsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_tolerance_scalar_type(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetRelationshipToleranceScalarTypeResult:
         return cast(
             GetRelationshipToleranceScalarTypeResult,
@@ -4841,12 +5367,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetRelationshipToleranceScalarTypeResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_tolerance_vector_type(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetRelationshipToleranceVectorTypeResult:
         return cast(
             GetRelationshipToleranceVectorTypeResult,
@@ -4858,12 +5387,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 GetRelationshipToleranceVectorTypeResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_type(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -4875,12 +5407,15 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_weighting(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -4892,6 +5427,7 @@ class WaveAOperationsMixin:
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4900,6 +5436,8 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         pipe_1_object_name: CollectionObjectName,
         pipe_2_object_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -4911,6 +5449,7 @@ class WaveAOperationsMixin:
                 "pipe_2_object_name": pipe_2_object_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4924,6 +5463,7 @@ class WaveAOperationsMixin:
         pipe_2_make_cut: bool = True,
         pipe_2_create_frame: bool = False,
         pipe_2_frame_name: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -4939,6 +5479,7 @@ class WaveAOperationsMixin:
                 "pipe_2_frame_name": pipe_2_frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4950,6 +5491,7 @@ class WaveAOperationsMixin:
         pipe_1_frame_name: CollectionObjectName,
         pipe_2_force_cut_to_frame: bool = True,
         pipe_2_frame_name: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -4963,6 +5505,7 @@ class WaveAOperationsMixin:
                 "pipe_2_frame_name": pipe_2_frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4973,6 +5516,7 @@ class WaveAOperationsMixin:
         trap_clouds: bool = True,
         instrument_id: CollectionInstrumentId,
         measurement_mode: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -4989,6 +5533,7 @@ class WaveAOperationsMixin:
                 "measurement_mode": measurement_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5000,6 +5545,7 @@ class WaveAOperationsMixin:
         points_type: PointFilterInputType = PointFilterInputType.CARDINAL_POINTS,
         use_vector_group_custom_prefix: bool = False,
         vector_group_custom_prefix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5013,6 +5559,7 @@ class WaveAOperationsMixin:
                 "vector_group_custom_prefix": vector_group_custom_prefix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5023,6 +5570,7 @@ class WaveAOperationsMixin:
         create_cardinal_pts_when_fitting: bool = True,
         prefix_cardinal_pts_name_with_rel_name: bool = True,
         cardinal_pts_group_name: str = "GR-Cardinal Pts",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5035,6 +5583,7 @@ class WaveAOperationsMixin:
                 "cardinal_pts_group_name": cardinal_pts_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5047,6 +5596,7 @@ class WaveAOperationsMixin:
         tolerance_options: ToleranceScalarOptions = ToleranceScalarOptions.DEFAULT,
         optimization_delta_weight: float = 0.000000,
         optimization_out_of_tolerance_weight: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5061,6 +5611,7 @@ class WaveAOperationsMixin:
                 "optimization_out_of_tolerance_weight": optimization_out_of_tolerance_weight,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5068,6 +5619,8 @@ class WaveAOperationsMixin:
         self,
         relationship_name: CollectionObjectName,
         measured_geometry: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5078,6 +5631,7 @@ class WaveAOperationsMixin:
                 "measured_geometry": measured_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5087,6 +5641,7 @@ class WaveAOperationsMixin:
         *,
         compare_to_nominal: bool = True,
         nominal_average_point: PointName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5098,6 +5653,7 @@ class WaveAOperationsMixin:
                 "nominal_average_point": nominal_average_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5107,6 +5663,7 @@ class WaveAOperationsMixin:
         *,
         compare_to_nominal: bool = True,
         nominal_geometry: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5118,6 +5675,7 @@ class WaveAOperationsMixin:
                 "nominal_geometry": nominal_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5127,6 +5685,7 @@ class WaveAOperationsMixin:
         *,
         project_to_plane: bool = True,
         projection_plane_name: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5138,6 +5697,7 @@ class WaveAOperationsMixin:
                 "projection_plane_name": projection_plane_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5147,6 +5707,7 @@ class WaveAOperationsMixin:
         *,
         angle_between_vectors_fit_constraints: FitConstraintScalarOptions = FitConstraintScalarOptions.DEFAULT,
         mutual_perpendicular_length_fit_constraints: FitConstraintScalarOptions = FitConstraintScalarOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5158,6 +5719,7 @@ class WaveAOperationsMixin:
                 "mutual_perpendicular_length_fit_constraints": mutual_perpendicular_length_fit_constraints,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5173,6 +5735,7 @@ class WaveAOperationsMixin:
         pipe_2_outer_diameter: float = 0.000000,
         pipe_2_cut_begin: float = 0.000000,
         pipe_2_cut_end: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5190,6 +5753,7 @@ class WaveAOperationsMixin:
                 "pipe_2_cut_end": pipe_2_cut_end,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5205,6 +5769,7 @@ class WaveAOperationsMixin:
         out_of_material_offset: float = 1.000000,
         constrain_region_at_od: bool = False,
         constrain_id_od_overlap: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5222,6 +5787,7 @@ class WaveAOperationsMixin:
                 "constrain_id_od_overlap": constrain_id_od_overlap,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5232,6 +5798,7 @@ class WaveAOperationsMixin:
         create_auto_vectors_avf: bool = False,
         use_vector_group_custom_prefix: bool = False,
         vector_group_custom_prefix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5244,6 +5811,7 @@ class WaveAOperationsMixin:
                 "vector_group_custom_prefix": vector_group_custom_prefix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5253,6 +5821,7 @@ class WaveAOperationsMixin:
         geom_rel_avn_vg_default_prefix: str = "GR-AVN-",
         geom_rel_avf_vg_default_prefix: str = "GR-AVF-",
         non_geom_rel_vg_default_prefix: str = "Auto Vectors: ",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5264,6 +5833,7 @@ class WaveAOperationsMixin:
                 "non_geom_rel_vg_default_prefix": non_geom_rel_vg_default_prefix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5272,6 +5842,7 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         desired_measurement_count: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5282,6 +5853,7 @@ class WaveAOperationsMixin:
                 "desired_measurement_count": desired_measurement_count,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5290,6 +5862,7 @@ class WaveAOperationsMixin:
         relationships: Iterable[CollectionItemName],
         *,
         dormant_status: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5300,6 +5873,7 @@ class WaveAOperationsMixin:
                 "dormant_status": dormant_status,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5308,6 +5882,7 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         fit_constraint_options: FitConstraintScalarOptions = FitConstraintScalarOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5318,6 +5893,7 @@ class WaveAOperationsMixin:
                 "fit_constraint_options": fit_constraint_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5325,6 +5901,8 @@ class WaveAOperationsMixin:
         self,
         relationship_name: CollectionObjectName,
         orientation_vector_constraint: ToleranceVectorOptions,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5335,12 +5913,15 @@ class WaveAOperationsMixin:
                 "orientation_vector_constraint": orientation_vector_constraint,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_relationship_outlier_rejection_scalar_type(
         self,
         relationship_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5350,6 +5931,7 @@ class WaveAOperationsMixin:
                 "relationship_name": relationship_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5357,6 +5939,8 @@ class WaveAOperationsMixin:
         self,
         relationship_name: CollectionObjectName,
         position_vector_constraint: ToleranceVectorOptions,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5367,6 +5951,7 @@ class WaveAOperationsMixin:
                 "position_vector_constraint": position_vector_constraint,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5375,6 +5960,7 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5385,6 +5971,7 @@ class WaveAOperationsMixin:
                 "projection_options": projection_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5392,6 +5979,8 @@ class WaveAOperationsMixin:
         self,
         relationship_name: CollectionObjectName,
         reporting_frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5402,6 +5991,7 @@ class WaveAOperationsMixin:
                 "reporting_frame": reporting_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5410,6 +6000,7 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         use_sigmoidal_gap_constraints: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5420,6 +6011,7 @@ class WaveAOperationsMixin:
                 "use_sigmoidal_gap_constraints": use_sigmoidal_gap_constraints,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5431,6 +6023,7 @@ class WaveAOperationsMixin:
         i_value: int = 20,
         use_no_more_than_n_points: bool = True,
         n_value: int = 10000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5444,6 +6037,7 @@ class WaveAOperationsMixin:
                 "n_value": n_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5452,6 +6046,7 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         tolerance_options: ToleranceScalarOptions = ToleranceScalarOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5462,6 +6057,7 @@ class WaveAOperationsMixin:
                 "tolerance_options": tolerance_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5469,6 +6065,8 @@ class WaveAOperationsMixin:
         self,
         relationship_name: CollectionObjectName,
         vector_tolerance: ToleranceVectorOptions,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5479,6 +6077,7 @@ class WaveAOperationsMixin:
                 "vector_tolerance": vector_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5493,6 +6092,7 @@ class WaveAOperationsMixin:
         surface_analysis_mode: SurfaceAnalysisMode = SurfaceAnalysisMode.RELATIONSHIP,
         colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
         show_color_bar_in_view: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -5514,6 +6114,7 @@ class WaveAOperationsMixin:
                 "show_color_bar_in_view": show_color_bar_in_view,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5522,6 +6123,7 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         weight: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5532,6 +6134,7 @@ class WaveAOperationsMixin:
                 "weight": weight,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5540,6 +6143,7 @@ class WaveAOperationsMixin:
         collection_name: CollectionName,
         *,
         pick_weighting_mode: RelWeightingMode = RelWeightingMode.NORMALIZE_EQUATION_COUNT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -5550,6 +6154,7 @@ class WaveAOperationsMixin:
                 "pick_weighting_mode": pick_weighting_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5558,6 +6163,7 @@ class WaveAOperationsMixin:
         charts: Iterable[CollectionItemName],
         *,
         clear_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5568,6 +6174,7 @@ class WaveAOperationsMixin:
                 "clear_existing": clear_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5577,6 +6184,7 @@ class WaveAOperationsMixin:
         report_name: CollectionObjectName,
         *,
         show_report: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5588,6 +6196,7 @@ class WaveAOperationsMixin:
                 "show_report": show_report,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5596,6 +6205,7 @@ class WaveAOperationsMixin:
         custom_tables_to_report: Iterable[CollectionItemName],
         *,
         clear_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5606,6 +6216,7 @@ class WaveAOperationsMixin:
                 "clear_existing": clear_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5614,6 +6225,7 @@ class WaveAOperationsMixin:
         datums: Iterable[CollectionObjectName],
         *,
         clear_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5624,6 +6236,7 @@ class WaveAOperationsMixin:
                 "clear_existing": clear_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5632,6 +6245,7 @@ class WaveAOperationsMixin:
         events: Iterable[CollectionItemName],
         *,
         clear_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5642,6 +6256,7 @@ class WaveAOperationsMixin:
                 "clear_existing": clear_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5650,6 +6265,7 @@ class WaveAOperationsMixin:
         feature_checks: Iterable[CollectionItemName],
         *,
         clear_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5660,6 +6276,7 @@ class WaveAOperationsMixin:
                 "clear_existing": clear_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5672,6 +6289,7 @@ class WaveAOperationsMixin:
         horizontal_location: float = 1.000000,
         vertical_location: float = 1.000000,
         show_report: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5686,6 +6304,7 @@ class WaveAOperationsMixin:
                 "show_report": show_report,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5694,6 +6313,7 @@ class WaveAOperationsMixin:
         objects: Iterable[CollectionObjectName],
         *,
         clear_existing: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5704,6 +6324,7 @@ class WaveAOperationsMixin:
                 "clear_existing": clear_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5712,6 +6333,7 @@ class WaveAOperationsMixin:
         pictures: Iterable[CollectionItemName],
         *,
         clear_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5722,6 +6344,7 @@ class WaveAOperationsMixin:
                 "clear_existing": clear_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5730,6 +6353,7 @@ class WaveAOperationsMixin:
         relationships: Iterable[CollectionItemName],
         *,
         clear_existing: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5740,6 +6364,7 @@ class WaveAOperationsMixin:
                 "clear_existing": clear_existing,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5750,6 +6375,7 @@ class WaveAOperationsMixin:
         *,
         show_report: bool = False,
         begin_on_new_page: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5762,12 +6388,15 @@ class WaveAOperationsMixin:
                 "begin_on_new_page": begin_on_new_page,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def capture_current_view(
         self,
         picture_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5777,12 +6406,15 @@ class WaveAOperationsMixin:
                 "picture_name": picture_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def capture_screen_to_file_bmp_jpg_png_gif_tiff(
         self,
         file_to_save_to: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5792,12 +6424,15 @@ class WaveAOperationsMixin:
                 "file_to_save_to": file_to_save_to,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def clear_custom_table(
         self,
         table_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5807,26 +6442,33 @@ class WaveAOperationsMixin:
                 "table_name": table_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def close_all_reports(self) -> None:
+    async def close_all_reports(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
             "CloseAllReports",
             "reporting_operations.close_all_reports",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def close_html_display_board(self) -> None:
+    async def close_html_display_board(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
             "CloseHtmlDisplayBoard",
             "reporting_operations.close_html_display_board",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5836,6 +6478,7 @@ class WaveAOperationsMixin:
         output_sa_report_name: CollectionObjectName,
         *,
         show_report: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5847,6 +6490,7 @@ class WaveAOperationsMixin:
                 "show_report": show_report,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5860,6 +6504,7 @@ class WaveAOperationsMixin:
         template_chart_name: ChartName,
         *,
         show_interface: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -5879,6 +6524,7 @@ class WaveAOperationsMixin:
                 "show_interface": show_interface,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5895,6 +6541,7 @@ class WaveAOperationsMixin:
         report_page_settings: ReportPageSettings = ReportPageSettings.PORTRAIT,
         generate_now: bool = False,
         show_generated_report: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -5917,12 +6564,15 @@ class WaveAOperationsMixin:
                 "show_generated_report": show_generated_report,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_chart(
         self,
         chart_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5932,12 +6582,15 @@ class WaveAOperationsMixin:
                 "chart_name": chart_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_custom_table(
         self,
         table_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5947,12 +6600,15 @@ class WaveAOperationsMixin:
                 "table_name": table_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_picture(
         self,
         picture_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5962,12 +6618,15 @@ class WaveAOperationsMixin:
                 "picture_name": picture_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_sa_doc(
         self,
         doc_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5977,12 +6636,15 @@ class WaveAOperationsMixin:
                 "doc_name": doc_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_sa_report(
         self,
         report_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -5992,12 +6654,15 @@ class WaveAOperationsMixin:
                 "report_name": report_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_sa_report_template(
         self,
         report_template_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6007,6 +6672,7 @@ class WaveAOperationsMixin:
                 "report_template_name": report_template_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6015,6 +6681,7 @@ class WaveAOperationsMixin:
         *,
         report_output_options: ReportOutputOptions = ReportOutputOptions.DEFAULT,
         open_report: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6025,6 +6692,7 @@ class WaveAOperationsMixin:
                 "open_report": open_report,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6033,6 +6701,7 @@ class WaveAOperationsMixin:
         html_output_file: FileReference,
         *,
         decimal_precision: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6043,12 +6712,15 @@ class WaveAOperationsMixin:
                 "decimal_precision": decimal_precision,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def generate_update_templated_report(
         self,
         report_template: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6058,6 +6730,7 @@ class WaveAOperationsMixin:
                 "report_template": report_template,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6067,6 +6740,7 @@ class WaveAOperationsMixin:
         *,
         row: int = 0,
         column: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -6080,6 +6754,7 @@ class WaveAOperationsMixin:
                     "column": column,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6089,6 +6764,7 @@ class WaveAOperationsMixin:
         *,
         row: int = 0,
         column: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -6102,10 +6778,13 @@ class WaveAOperationsMixin:
                     "column": column,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
-    async def get_defined_report_tags(self) -> list[str]:
+    async def get_defined_report_tags(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> list[str]:
         return cast(
             list[str],
             await self._invoke_mp_operation(
@@ -6114,6 +6793,7 @@ class WaveAOperationsMixin:
                 "reporting_operations.get_defined_report_tags",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6121,6 +6801,7 @@ class WaveAOperationsMixin:
         self,
         *,
         tag_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetReportTagValueResult:
         return cast(
             GetReportTagValueResult,
@@ -6132,6 +6813,7 @@ class WaveAOperationsMixin:
                     "tag_name": tag_name,
                 },
                 GetReportTagValueResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6140,6 +6822,7 @@ class WaveAOperationsMixin:
         input_html_file: FileReference,
         *,
         show_board: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6150,6 +6833,7 @@ class WaveAOperationsMixin:
                 "show_board": show_board,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6158,6 +6842,7 @@ class WaveAOperationsMixin:
         table_name: CollectionObjectName,
         *,
         decimal_precision: int = 6,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6168,6 +6853,7 @@ class WaveAOperationsMixin:
                 "decimal_precision": decimal_precision,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6175,6 +6861,8 @@ class WaveAOperationsMixin:
         self,
         new_sa_report_name: CollectionObjectName,
         sa_report_template: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -6189,6 +6877,7 @@ class WaveAOperationsMixin:
                 "sa_report_template": sa_report_template,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6202,6 +6891,7 @@ class WaveAOperationsMixin:
         plot_additional_xy_value: bool = False,
         x_value: float = 0.000000,
         y_value: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> bool:
         return cast(
             bool,
@@ -6219,6 +6909,7 @@ class WaveAOperationsMixin:
                     "y_value": y_value,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6230,6 +6921,7 @@ class WaveAOperationsMixin:
         reported_value: float = 0.000000,
         decimal_precision: int = 0,
         display_timeout: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6243,12 +6935,15 @@ class WaveAOperationsMixin:
                 "display_timeout": display_timeout,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def notify_user_html(
         self,
         html_file: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6258,6 +6953,7 @@ class WaveAOperationsMixin:
                 "html_file": html_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6268,6 +6964,7 @@ class WaveAOperationsMixin:
         font: Font = Font.DEFAULT,
         reported_value: int = 0,
         display_timeout: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6280,6 +6977,7 @@ class WaveAOperationsMixin:
                 "display_timeout": display_timeout,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6290,6 +6988,7 @@ class WaveAOperationsMixin:
         font: Font = Font.DEFAULT,
         auto_expand_to_fit_text: bool = False,
         display_timeout: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6302,6 +7001,7 @@ class WaveAOperationsMixin:
                 "display_timeout": display_timeout,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6311,6 +7011,7 @@ class WaveAOperationsMixin:
         file_name: FileReference,
         *,
         show_file: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6322,6 +7023,7 @@ class WaveAOperationsMixin:
                 "show_file": show_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6331,6 +7033,7 @@ class WaveAOperationsMixin:
         file_name: FileReference,
         *,
         show_pdf: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6342,6 +7045,7 @@ class WaveAOperationsMixin:
                 "show_pdf": show_pdf,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6351,6 +7055,7 @@ class WaveAOperationsMixin:
         *,
         report_name: str = "",
         open_report: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -6366,12 +7071,15 @@ class WaveAOperationsMixin:
                 "open_report": open_report,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def refresh_callout_views_in_sa_report(
         self,
         report_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6381,16 +7089,20 @@ class WaveAOperationsMixin:
                 "report_name": report_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def refresh_report_bar(self) -> None:
+    async def refresh_report_bar(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
             "RefreshReportBar",
             "reporting_operations.refresh_report_bar",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6398,6 +7110,7 @@ class WaveAOperationsMixin:
         self,
         *,
         tag_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6407,6 +7120,7 @@ class WaveAOperationsMixin:
                 "tag_name": tag_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6416,6 +7130,7 @@ class WaveAOperationsMixin:
         new_picture_name: CollectionItemName,
         *,
         overwrite_if_exists: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6427,6 +7142,7 @@ class WaveAOperationsMixin:
                 "overwrite_if_exists": overwrite_if_exists,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6434,6 +7150,8 @@ class WaveAOperationsMixin:
         self,
         chart_to_save: ChartName,
         file_to_save_to: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6444,6 +7162,7 @@ class WaveAOperationsMixin:
                 "file_to_save_to": file_to_save_to,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6452,6 +7171,7 @@ class WaveAOperationsMixin:
         file_to_save_to: FileReference,
         *,
         render_scale_factor: float = 1.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -6466,6 +7186,7 @@ class WaveAOperationsMixin:
                 "render_scale_factor": render_scale_factor,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6477,6 +7198,7 @@ class WaveAOperationsMixin:
         column: int = 0,
         foreground_color_name: Color,
         background_color_name: Color,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6490,6 +7212,7 @@ class WaveAOperationsMixin:
                 "background_color_name": background_color_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6502,6 +7225,7 @@ class WaveAOperationsMixin:
         value: float = 0.000000,
         span: int = 1,
         decimal_precision: int = -1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6516,6 +7240,7 @@ class WaveAOperationsMixin:
                 "decimal_precision": decimal_precision,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6526,6 +7251,7 @@ class WaveAOperationsMixin:
         row: int = 0,
         column: int = 0,
         font: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6538,6 +7264,7 @@ class WaveAOperationsMixin:
                 "font": font,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6549,6 +7276,7 @@ class WaveAOperationsMixin:
         column: int = 0,
         value: str = "",
         span: int = 1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6562,6 +7290,7 @@ class WaveAOperationsMixin:
                 "span": span,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6573,6 +7302,7 @@ class WaveAOperationsMixin:
         column: int = 0,
         header_text: str = "",
         span: int = 1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6586,6 +7316,7 @@ class WaveAOperationsMixin:
                 "span": span,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6595,6 +7326,7 @@ class WaveAOperationsMixin:
         *,
         row: int = 0,
         value: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6606,6 +7338,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6615,6 +7348,7 @@ class WaveAOperationsMixin:
         *,
         title_line_1: str = "",
         title_line_2: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6626,6 +7360,7 @@ class WaveAOperationsMixin:
                 "title_line_2": title_line_2,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6646,6 +7381,7 @@ class WaveAOperationsMixin:
         sort_by_point_names: bool = True,
         make_default: bool = False,
         apply_to_all: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6668,6 +7404,7 @@ class WaveAOperationsMixin:
                 "apply_to_all": apply_to_all,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6676,6 +7413,7 @@ class WaveAOperationsMixin:
         relationship_name: CollectionObjectName,
         *,
         report_options: PointDeltaReportOptions = PointDeltaReportOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6686,6 +7424,7 @@ class WaveAOperationsMixin:
                 "report_options": report_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6693,6 +7432,7 @@ class WaveAOperationsMixin:
         self,
         *,
         show_report_bar: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6702,12 +7442,15 @@ class WaveAOperationsMixin:
                 "show_report_bar": show_report_bar,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_report_options_for_object(
         self,
         object: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6717,6 +7460,7 @@ class WaveAOperationsMixin:
                 "object": object,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6725,6 +7469,7 @@ class WaveAOperationsMixin:
         *,
         tag_name: str = "",
         tag_value: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6735,6 +7480,7 @@ class WaveAOperationsMixin:
                 "tag_value": tag_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6743,6 +7489,7 @@ class WaveAOperationsMixin:
         *,
         tag_name: str = "",
         tag_value: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6753,6 +7500,7 @@ class WaveAOperationsMixin:
                 "tag_value": tag_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6761,6 +7509,7 @@ class WaveAOperationsMixin:
         *,
         tag_name: str = "",
         tag_value: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6771,6 +7520,7 @@ class WaveAOperationsMixin:
                 "tag_value": tag_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6779,6 +7529,7 @@ class WaveAOperationsMixin:
         picture_name: CollectionItemName,
         *,
         scale: float = 100.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6789,6 +7540,7 @@ class WaveAOperationsMixin:
                 "scale": scale,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6797,6 +7549,7 @@ class WaveAOperationsMixin:
         vector_group: CollectionObjectName,
         *,
         report_options: PointDeltaReportOptions = PointDeltaReportOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ReportingOperations",
@@ -6807,12 +7560,15 @@ class WaveAOperationsMixin:
                 "report_options": report_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_scale_bar(
         self,
         scale_bar_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ScaleBarOperations",
@@ -6822,12 +7578,15 @@ class WaveAOperationsMixin:
                 "scale_bar_name": scale_bar_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_scale_bar_stats(
         self,
         scale_bar_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetScaleBarStatsResult:
         return cast(
             GetScaleBarStatsResult,
@@ -6839,6 +7598,7 @@ class WaveAOperationsMixin:
                     "scale_bar_name": scale_bar_name,
                 },
                 GetScaleBarStatsResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6851,6 +7611,7 @@ class WaveAOperationsMixin:
         length_of_bar_at_68f: float = 0.000000,
         material_cte: float = 0.000000,
         tolerance: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         """MP argument notes.
 
@@ -6872,6 +7633,7 @@ class WaveAOperationsMixin:
                     "tolerance": tolerance,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6880,6 +7642,7 @@ class WaveAOperationsMixin:
         object_name: CollectionObjectName,
         *,
         inward_positive: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ScaleBarOperations",
@@ -6890,16 +7653,20 @@ class WaveAOperationsMixin:
                 "inward_positive": inward_positive,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def close_all_watch_windows(self) -> None:
+    async def close_all_watch_windows(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
             "CloseAllWatchWindows",
             "utility_operations.close_all_watch_windows",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6907,6 +7674,7 @@ class WaveAOperationsMixin:
         self,
         *,
         folder_path: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -6916,12 +7684,15 @@ class WaveAOperationsMixin:
                 "folder_path": folder_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_items(
         self,
         item_list: Iterable[CollectionItemName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -6931,12 +7702,15 @@ class WaveAOperationsMixin:
                 "item_list": item_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_objects(
         self,
         object_names: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -6946,10 +7720,13 @@ class WaveAOperationsMixin:
                 "object_names": object_names,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def get_active_language(self) -> GetActiveLanguageResult:
+    async def get_active_language(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> GetActiveLanguageResult:
         return cast(
             GetActiveLanguageResult,
             await self._invoke_mp_operation(
@@ -6958,10 +7735,13 @@ class WaveAOperationsMixin:
                 "utility_operations.get_active_language",
                 {},
                 GetActiveLanguageResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
-    async def get_active_units(self) -> ActiveUnits:
+    async def get_active_units(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> ActiveUnits:
         return cast(
             ActiveUnits,
             await self._invoke_mp_operation(
@@ -6970,10 +7750,13 @@ class WaveAOperationsMixin:
                 "utility_operations.get_active_units",
                 {},
                 ActiveUnits,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
-    async def get_angular_representation(self) -> bool:
+    async def get_angular_representation(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> bool:
         return cast(
             bool,
             await self._invoke_mp_operation(
@@ -6982,12 +7765,15 @@ class WaveAOperationsMixin:
                 "utility_operations.get_angular_representation",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_collection_notes(
         self,
         collection: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -6999,6 +7785,7 @@ class WaveAOperationsMixin:
                     "collection": collection,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7006,6 +7793,7 @@ class WaveAOperationsMixin:
         self,
         *,
         folder_path: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -7017,6 +7805,7 @@ class WaveAOperationsMixin:
                     "folder_path": folder_path,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7024,6 +7813,7 @@ class WaveAOperationsMixin:
         self,
         *,
         folder_path: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -7035,6 +7825,7 @@ class WaveAOperationsMixin:
                     "folder_path": folder_path,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7043,6 +7834,7 @@ class WaveAOperationsMixin:
         *,
         search_string: str = "",
         case_sensitive_search: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -7055,12 +7847,15 @@ class WaveAOperationsMixin:
                     "case_sensitive_search": case_sensitive_search,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_object_notes(
         self,
         object: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -7072,6 +7867,7 @@ class WaveAOperationsMixin:
                     "object": object,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7079,6 +7875,7 @@ class WaveAOperationsMixin:
         self,
         *,
         opc_server_da_tag_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -7090,6 +7887,7 @@ class WaveAOperationsMixin:
                     "opc_server_da_tag_name": opc_server_da_tag_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7097,6 +7895,7 @@ class WaveAOperationsMixin:
         self,
         *,
         opc_server_da_tag_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -7108,6 +7907,7 @@ class WaveAOperationsMixin:
                     "opc_server_da_tag_name": opc_server_da_tag_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7115,6 +7915,7 @@ class WaveAOperationsMixin:
         self,
         *,
         opc_server_da_tag_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -7126,12 +7927,15 @@ class WaveAOperationsMixin:
                     "opc_server_da_tag_name": opc_server_da_tag_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_point_notes(
         self,
         point: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -7143,6 +7947,7 @@ class WaveAOperationsMixin:
                     "point": point,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7150,6 +7955,7 @@ class WaveAOperationsMixin:
         self,
         *,
         display: int = -1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetScreenResolutionResult:
         """MP argument notes.
 
@@ -7165,10 +7971,13 @@ class WaveAOperationsMixin:
                     "display": display,
                 },
                 GetScreenResolutionResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
-    async def get_working_frame_properties(self) -> WorkingFrameProperties:
+    async def get_working_frame_properties(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> WorkingFrameProperties:
         return cast(
             WorkingFrameProperties,
             await self._invoke_mp_operation(
@@ -7177,6 +7986,7 @@ class WaveAOperationsMixin:
                 "utility_operations.get_working_frame_properties",
                 {},
                 WorkingFrameProperties,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7185,6 +7995,7 @@ class WaveAOperationsMixin:
         base_point_name: PointName,
         *,
         increment: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -7197,6 +8008,7 @@ class WaveAOperationsMixin:
                     "increment": increment,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7204,6 +8016,7 @@ class WaveAOperationsMixin:
         self,
         *,
         lock_items: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7213,6 +8026,7 @@ class WaveAOperationsMixin:
                 "lock_items": lock_items,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7222,6 +8036,7 @@ class WaveAOperationsMixin:
         instruments: Iterable[CollectionInstrumentId],
         *,
         lock_items: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7233,6 +8048,7 @@ class WaveAOperationsMixin:
                 "lock_items": lock_items,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7243,6 +8059,7 @@ class WaveAOperationsMixin:
         datum_ref_list: Iterable[CollectionObjectName],
         *,
         lock_out_trapping: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7255,6 +8072,7 @@ class WaveAOperationsMixin:
                 "lock_out_trapping": lock_out_trapping,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7263,6 +8081,7 @@ class WaveAOperationsMixin:
         collection: CollectionName,
         *,
         folder_path: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7273,6 +8092,7 @@ class WaveAOperationsMixin:
                 "folder_path": folder_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7281,6 +8101,7 @@ class WaveAOperationsMixin:
         *,
         source_folder_path: str = "",
         destination_folder_path: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7291,12 +8112,15 @@ class WaveAOperationsMixin:
                 "destination_folder_path": destination_folder_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def move_instruments_drag_graphically(
         self,
         instruments: Iterable[CollectionInstrumentId],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7306,12 +8130,15 @@ class WaveAOperationsMixin:
                 "instruments": instruments,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def move_objects_drag_graphically(
         self,
         objects: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7321,6 +8148,7 @@ class WaveAOperationsMixin:
                 "objects": objects,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7329,6 +8157,7 @@ class WaveAOperationsMixin:
         objects: Iterable[CollectionObjectName],
         *,
         scale_factor: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7339,6 +8168,7 @@ class WaveAOperationsMixin:
                 "scale_factor": scale_factor,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7347,6 +8177,7 @@ class WaveAOperationsMixin:
         language_file_name: FileReference,
         *,
         font: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7357,6 +8188,7 @@ class WaveAOperationsMixin:
                 "font": font,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7369,6 +8201,7 @@ class WaveAOperationsMixin:
         simplify_inch_fraction: bool = True,
         temperature: TemperatureUnits = TemperatureUnits.FAHRENHEIT,
         angular: AngularUnits = AngularUnits.DEGREES,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7383,6 +8216,7 @@ class WaveAOperationsMixin:
                 "angular": angular,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7390,6 +8224,7 @@ class WaveAOperationsMixin:
         self,
         *,
         value_0_360: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -7404,6 +8239,7 @@ class WaveAOperationsMixin:
                 "value_0_360": value_0_360,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7411,6 +8247,7 @@ class WaveAOperationsMixin:
         self,
         *,
         active: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7420,6 +8257,7 @@ class WaveAOperationsMixin:
                 "active": active,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7428,6 +8266,7 @@ class WaveAOperationsMixin:
         *,
         auto_job_file_restore_points_active: bool = True,
         auto_measurements_backup_active: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7438,6 +8277,7 @@ class WaveAOperationsMixin:
                 "auto_measurements_backup_active": auto_measurements_backup_active,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7445,6 +8285,7 @@ class WaveAOperationsMixin:
         self,
         *,
         active: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7454,6 +8295,7 @@ class WaveAOperationsMixin:
                 "active": active,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7463,6 +8305,7 @@ class WaveAOperationsMixin:
         notes: Iterable[str],
         *,
         append: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -7478,6 +8321,7 @@ class WaveAOperationsMixin:
                 "append": append,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7489,6 +8333,7 @@ class WaveAOperationsMixin:
         scale: int = 6,
         unit_vector: int = 6,
         weight: int = 3,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7502,6 +8347,7 @@ class WaveAOperationsMixin:
                 "weight": weight,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7511,6 +8357,7 @@ class WaveAOperationsMixin:
         folder_path: str = "",
         notes: Iterable[str],
         append: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -7526,6 +8373,7 @@ class WaveAOperationsMixin:
                 "append": append,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7534,6 +8382,8 @@ class WaveAOperationsMixin:
         sa_interaction_mode: SaInteractionMode,
         measurement_plan_interaction_mode: MpInteractionMode,
         measurement_plan_dialog_interaction_mode: MpDialogInteractionMode,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7545,6 +8395,7 @@ class WaveAOperationsMixin:
                 "measurement_plan_dialog_interaction_mode": measurement_plan_dialog_interaction_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7552,6 +8403,7 @@ class WaveAOperationsMixin:
         self,
         *,
         active: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7561,6 +8413,7 @@ class WaveAOperationsMixin:
                 "active": active,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7568,6 +8421,7 @@ class WaveAOperationsMixin:
         self,
         *,
         prohibit_cancel: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7577,6 +8431,7 @@ class WaveAOperationsMixin:
                 "prohibit_cancel": prohibit_cancel,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7586,6 +8441,7 @@ class WaveAOperationsMixin:
         notes: Iterable[str],
         *,
         append: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -7601,6 +8457,7 @@ class WaveAOperationsMixin:
                 "append": append,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7609,6 +8466,7 @@ class WaveAOperationsMixin:
         *,
         opc_server_da_tag_name: str = "",
         value: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7619,6 +8477,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7627,6 +8486,7 @@ class WaveAOperationsMixin:
         *,
         opc_server_da_tag_name: str = "",
         value: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7637,6 +8497,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7645,6 +8506,7 @@ class WaveAOperationsMixin:
         *,
         opc_server_da_tag_name: str = "",
         value: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7655,6 +8517,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7664,6 +8527,7 @@ class WaveAOperationsMixin:
         notes: Iterable[str],
         *,
         append: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -7679,6 +8543,7 @@ class WaveAOperationsMixin:
                 "append": append,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7687,6 +8552,7 @@ class WaveAOperationsMixin:
         *,
         profile_name: str = "Default",
         profile_file_name: FileReference,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -7701,6 +8567,7 @@ class WaveAOperationsMixin:
                 "profile_file_name": profile_file_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7708,6 +8575,7 @@ class WaveAOperationsMixin:
         self,
         *,
         idle_count: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7717,6 +8585,7 @@ class WaveAOperationsMixin:
                 "idle_count": idle_count,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7724,6 +8593,7 @@ class WaveAOperationsMixin:
         self,
         *,
         auto_wrap_search_string: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7733,12 +8603,15 @@ class WaveAOperationsMixin:
                 "auto_wrap_search_string": auto_wrap_search_string,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_working_frame(
         self,
         new_working_frame_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7748,6 +8621,7 @@ class WaveAOperationsMixin:
                 "new_working_frame_name": new_working_frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7760,6 +8634,7 @@ class WaveAOperationsMixin:
         upper_limit: int = 0,
         suppress_time_remaining: bool = True,
         close_dialog: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7774,6 +8649,7 @@ class WaveAOperationsMixin:
                 "close_dialog": close_dialog,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7781,6 +8657,7 @@ class WaveAOperationsMixin:
         self,
         *,
         number_of_entries_to_keep: int = 10,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7790,6 +8667,7 @@ class WaveAOperationsMixin:
                 "number_of_entries_to_keep": number_of_entries_to_keep,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7797,6 +8675,7 @@ class WaveAOperationsMixin:
         self,
         *,
         log_entry: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.UtilityOperations",
@@ -7806,6 +8685,7 @@ class WaveAOperationsMixin:
                 "log_entry": log_entry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7814,6 +8694,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         double_value: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -7824,6 +8705,7 @@ class WaveAOperationsMixin:
                 "double_value": double_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7831,6 +8713,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -7840,6 +8723,7 @@ class WaveAOperationsMixin:
                 "name": name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7847,6 +8731,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -7856,6 +8741,7 @@ class WaveAOperationsMixin:
                 "name": name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7863,6 +8749,7 @@ class WaveAOperationsMixin:
         self,
         *,
         variable_wildcard_criteria: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -7872,6 +8759,7 @@ class WaveAOperationsMixin:
                 "variable_wildcard_criteria": variable_wildcard_criteria,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7879,6 +8767,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> bool:
         return cast(
             bool,
@@ -7890,6 +8779,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7897,6 +8787,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -7908,6 +8799,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7915,6 +8807,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -7926,6 +8819,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7933,6 +8827,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -7944,6 +8839,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7951,6 +8847,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -7962,6 +8859,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7969,6 +8867,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[float]:
         return cast(
             list[float],
@@ -7980,6 +8879,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7987,6 +8887,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetNamedDoubleListVariableMinMaxResult:
         return cast(
             GetNamedDoubleListVariableMinMaxResult,
@@ -7998,6 +8899,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 GetNamedDoubleListVariableMinMaxResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8005,6 +8907,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -8016,6 +8919,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8023,6 +8927,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -8034,6 +8939,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8041,6 +8947,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -8052,6 +8959,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8059,6 +8967,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -8070,6 +8979,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8077,6 +8987,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[str]:
         return cast(
             list[str],
@@ -8088,6 +8999,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8095,6 +9007,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -8106,6 +9019,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8113,6 +9027,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -8124,6 +9039,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8131,6 +9047,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[VectorName]:
         return cast(
             list[VectorName],
@@ -8142,6 +9059,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8149,6 +9067,7 @@ class WaveAOperationsMixin:
         self,
         *,
         name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Vector:
         return cast(
             Vector,
@@ -8160,6 +9079,7 @@ class WaveAOperationsMixin:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8168,6 +9088,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8178,6 +9099,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8186,6 +9108,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8196,6 +9119,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8204,6 +9128,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Iterable[CollectionObjectName],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8214,6 +9139,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8222,6 +9148,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8232,6 +9159,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8240,6 +9168,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Font = Font.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8250,6 +9179,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8258,6 +9188,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8268,6 +9199,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8276,6 +9208,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         double_list_variable: Iterable[float],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8286,6 +9219,7 @@ class WaveAOperationsMixin:
                 "double_list_variable": double_list_variable,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8294,6 +9228,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Iterable[PointName],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8304,6 +9239,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8312,6 +9248,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: PointName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8322,6 +9259,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8330,6 +9268,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Iterable[CollectionItemName],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8340,6 +9279,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8348,6 +9288,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Iterable[CollectionItemName],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8358,6 +9299,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8366,6 +9308,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Iterable[str],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8376,6 +9319,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8384,6 +9328,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8394,6 +9339,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8402,6 +9348,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Transform,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8412,6 +9359,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8420,6 +9368,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Iterable[VectorName],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8430,6 +9379,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8438,6 +9388,7 @@ class WaveAOperationsMixin:
         *,
         name: str = "",
         value: Vector,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.Variables",
@@ -8448,6 +9399,7 @@ class WaveAOperationsMixin:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8457,6 +9409,7 @@ class WaveAOperationsMixin:
         *,
         vector_name: str = "",
         vector_name_list: Iterable[VectorName],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.VectorOperations",
@@ -8468,6 +9421,7 @@ class WaveAOperationsMixin:
                 "vector_name_list": vector_name_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8476,6 +9430,7 @@ class WaveAOperationsMixin:
         *,
         treat_individually: bool = False,
         colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -8490,6 +9445,7 @@ class WaveAOperationsMixin:
                 "colorization_options": colorization_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8499,6 +9455,7 @@ class WaveAOperationsMixin:
         *,
         treat_individually: bool = False,
         colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -8514,6 +9471,7 @@ class WaveAOperationsMixin:
                 "colorization_options": colorization_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8522,6 +9480,7 @@ class WaveAOperationsMixin:
         vector_group_name: CollectionObjectName,
         *,
         vector_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.VectorOperations",
@@ -8532,6 +9491,7 @@ class WaveAOperationsMixin:
                 "vector_index": vector_index,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8540,6 +9500,7 @@ class WaveAOperationsMixin:
         vector_group_name: CollectionObjectName,
         *,
         vector_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.VectorOperations",
@@ -8550,12 +9511,15 @@ class WaveAOperationsMixin:
                 "vector_name": vector_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_vectors(
         self,
         vector_name_list: Iterable[VectorName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.VectorOperations",
@@ -8565,6 +9529,7 @@ class WaveAOperationsMixin:
                 "vector_name_list": vector_name_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8573,6 +9538,7 @@ class WaveAOperationsMixin:
         vector_group_name: CollectionObjectName,
         *,
         vector_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetIthVectorFromVectorGroupResult:
         return cast(
             GetIthVectorFromVectorGroupResult,
@@ -8585,6 +9551,7 @@ class WaveAOperationsMixin:
                     "vector_index": vector_index,
                 },
                 GetIthVectorFromVectorGroupResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8593,6 +9560,7 @@ class WaveAOperationsMixin:
         vector_name_list: Iterable[VectorName],
         *,
         vector_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetIthVectorFromVectorNameRefListResult:
         return cast(
             GetIthVectorFromVectorNameRefListResult,
@@ -8605,12 +9573,15 @@ class WaveAOperationsMixin:
                     "vector_index": vector_index,
                 },
                 GetIthVectorFromVectorNameRefListResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_number_of_vectors_in_vector_group(
         self,
         vector_group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -8622,12 +9593,15 @@ class WaveAOperationsMixin:
                     "vector_group_name": vector_group_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_number_of_vectors_in_vector_name_ref_list(
         self,
         vector_name_list: Iterable[VectorName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -8639,6 +9613,7 @@ class WaveAOperationsMixin:
                     "vector_name_list": vector_name_list,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8647,6 +9622,7 @@ class WaveAOperationsMixin:
         vector_group_name: CollectionObjectName,
         *,
         vector_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetVectorFromVectorGroupByNameResult:
         return cast(
             GetVectorFromVectorGroupByNameResult,
@@ -8659,12 +9635,15 @@ class WaveAOperationsMixin:
                     "vector_name": vector_name,
                 },
                 GetVectorFromVectorGroupByNameResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_vector_group_properties(
         self,
         vector_group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetVectorGroupPropertiesResult:
         return cast(
             GetVectorGroupPropertiesResult,
@@ -8676,6 +9655,7 @@ class WaveAOperationsMixin:
                     "vector_group_name": vector_group_name,
                 },
                 GetVectorGroupPropertiesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8683,6 +9663,7 @@ class WaveAOperationsMixin:
         self,
         *,
         colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.VectorOperations",
@@ -8692,6 +9673,7 @@ class WaveAOperationsMixin:
                 "colorization_options": colorization_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8700,6 +9682,7 @@ class WaveAOperationsMixin:
         vector_groups_to_be_set: Iterable[CollectionVectorGroupName],
         *,
         colorization_options: ColorizationOptions = ColorizationOptions.DEFAULT,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.VectorOperations",
@@ -8710,6 +9693,7 @@ class WaveAOperationsMixin:
                 "colorization_options": colorization_options,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8726,6 +9710,7 @@ class WaveAOperationsMixin:
         secondary_coordinate_granularity: float = 0.000000,
         tertiary_coordinate_granularity: float = 0.000000,
         ascending: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[VectorName]:
         return cast(
             list[VectorName],
@@ -8746,16 +9731,20 @@ class WaveAOperationsMixin:
                     "ascending": ascending,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
-    async def auto_scale(self) -> None:
+    async def auto_scale(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "AutoScale",
             "view_control.auto_scale",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8765,6 +9754,7 @@ class WaveAOperationsMixin:
         object_type: ObjectType = ObjectType.ANY,
         collection_wildcard_criteria: str = "*",
         object_wildcard_criteria: str = "*",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -8776,12 +9766,15 @@ class WaveAOperationsMixin:
                 "object_wildcard_criteria": object_wildcard_criteria,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def center_graphics_about_point(
         self,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -8791,6 +9784,7 @@ class WaveAOperationsMixin:
                 "point_name": point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8807,6 +9801,7 @@ class WaveAOperationsMixin:
         origin_y: float = 0.000000,
         restore_render_mode: bool = False,
         rendering_mode: RenderModeType = RenderModeType.WIREFRAME,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -8825,10 +9820,13 @@ class WaveAOperationsMixin:
                 "rendering_mode": rendering_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def get_active_clipping_planes(self) -> list[CollectionObjectName]:
+    async def get_active_clipping_planes(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
             await self._invoke_mp_operation(
@@ -8837,12 +9835,15 @@ class WaveAOperationsMixin:
                 "view_control.get_active_clipping_planes",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_point_of_view_parameters(
         self,
         view_name: ViewName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetPointOfViewParametersResult:
         return cast(
             GetPointOfViewParametersResult,
@@ -8854,22 +9855,28 @@ class WaveAOperationsMixin:
                     "view_name": view_name,
                 },
                 GetPointOfViewParametersResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
-    async def hide_all_callout_views(self) -> None:
+    async def hide_all_callout_views(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "HideAllCalloutViews",
             "view_control.hide_all_callout_views",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def hide_objects(
         self,
         objects_to_hide: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -8879,6 +9886,7 @@ class WaveAOperationsMixin:
                 "objects_to_hide": objects_to_hide,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8887,6 +9895,7 @@ class WaveAOperationsMixin:
         object_names: Iterable[CollectionObjectName],
         *,
         high_light_objects: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -8901,6 +9910,7 @@ class WaveAOperationsMixin:
                 "high_light_objects": high_light_objects,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8909,6 +9919,7 @@ class WaveAOperationsMixin:
         point_name: PointName,
         *,
         show_point: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -8923,6 +9934,7 @@ class WaveAOperationsMixin:
                 "show_point": show_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8931,6 +9943,7 @@ class WaveAOperationsMixin:
         relationships: Iterable[CollectionItemName],
         *,
         high_light_relationships: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -8945,12 +9958,15 @@ class WaveAOperationsMixin:
                 "high_light_relationships": high_light_relationships,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def load_ribbon_bar_from_xml_file(
         self,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -8960,26 +9976,33 @@ class WaveAOperationsMixin:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def refresh_views(self) -> None:
+    async def refresh_views(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "RefreshViews",
             "view_control.refresh_views",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
-    async def reset_ribbon_bar_to_default(self) -> None:
+    async def reset_ribbon_bar_to_default(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
             "ResetRibbonBarToDefault",
             "view_control.reset_ribbon_bar_to_default",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8988,6 +10011,7 @@ class WaveAOperationsMixin:
         view_name: ViewName,
         *,
         restore_zoom_settings: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -8998,6 +10022,7 @@ class WaveAOperationsMixin:
                 "restore_zoom_settings": restore_zoom_settings,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9007,6 +10032,8 @@ class WaveAOperationsMixin:
         gradient_start_color_name: Color,
         gradient_end_color_name: Color,
         highlight_color: Color,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9019,12 +10046,15 @@ class WaveAOperationsMixin:
                 "highlight_color": highlight_color,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_mp_window_state(
         self,
         mp_window_state: WindowState,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9034,6 +10064,7 @@ class WaveAOperationsMixin:
                 "mp_window_state": mp_window_state,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9043,6 +10074,7 @@ class WaveAOperationsMixin:
         new_working_color_name: Color,
         *,
         auto_increment: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9054,6 +10086,7 @@ class WaveAOperationsMixin:
                 "auto_increment": auto_increment,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9063,6 +10096,7 @@ class WaveAOperationsMixin:
         rendering_type: TranslucencyType,
         *,
         opacity_value: float = 0.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9074,12 +10108,15 @@ class WaveAOperationsMixin:
                 "opacity_value": opacity_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_point_of_view(
         self,
         view_name: ViewName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9089,12 +10126,15 @@ class WaveAOperationsMixin:
                 "view_name": view_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_point_of_view_from_frame(
         self,
         frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9104,6 +10144,7 @@ class WaveAOperationsMixin:
                 "frame": frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9122,6 +10163,7 @@ class WaveAOperationsMixin:
         reference_frame_object: CollectionObjectName,
         use_scan_stripe_for_view_focus: bool = True,
         zoom_factor: float = 1.000000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9142,12 +10184,15 @@ class WaveAOperationsMixin:
                 "zoom_factor": zoom_factor,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_render_mode_type(
         self,
         rendering_mode: RenderModeType,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9157,6 +10202,7 @@ class WaveAOperationsMixin:
                 "rendering_mode": rendering_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9165,6 +10211,7 @@ class WaveAOperationsMixin:
         *,
         pos_x: int = 0,
         pos_y: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9175,6 +10222,7 @@ class WaveAOperationsMixin:
                 "pos_y": pos_y,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9183,6 +10231,7 @@ class WaveAOperationsMixin:
         *,
         width: int = 0,
         height: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9193,12 +10242,15 @@ class WaveAOperationsMixin:
                 "height": height,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_sa_window_state(
         self,
         sa_window_state: WindowState,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9208,6 +10260,7 @@ class WaveAOperationsMixin:
                 "sa_window_state": sa_window_state,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9215,6 +10268,7 @@ class WaveAOperationsMixin:
         self,
         *,
         use_full_names: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9224,6 +10278,7 @@ class WaveAOperationsMixin:
                 "use_full_names": use_full_names,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9231,6 +10286,7 @@ class WaveAOperationsMixin:
         self,
         *,
         show_toolkit: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9240,6 +10296,7 @@ class WaveAOperationsMixin:
                 "show_toolkit": show_toolkit,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9248,6 +10305,7 @@ class WaveAOperationsMixin:
         object: CollectionObjectName,
         *,
         remove_clipping_plane: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9258,12 +10316,15 @@ class WaveAOperationsMixin:
                 "remove_clipping_plane": remove_clipping_plane,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_working_color(
         self,
         new_working_color_name: Color,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9273,6 +10334,7 @@ class WaveAOperationsMixin:
                 "new_working_color_name": new_working_color_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9280,6 +10342,7 @@ class WaveAOperationsMixin:
         self,
         *,
         auto_increment: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9289,6 +10352,7 @@ class WaveAOperationsMixin:
                 "auto_increment": auto_increment,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9299,6 +10363,7 @@ class WaveAOperationsMixin:
         specific_collection: CollectionName,
         object_type_to_show_hide: ObjectType = ObjectType.ANY,
         hide: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -9315,6 +10380,7 @@ class WaveAOperationsMixin:
                 "hide": hide,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9323,6 +10389,7 @@ class WaveAOperationsMixin:
         callout_view_to_show: CollectionItemName,
         *,
         show_callout_view: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9333,6 +10400,7 @@ class WaveAOperationsMixin:
                 "show_callout_view": show_callout_view,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9341,6 +10409,7 @@ class WaveAOperationsMixin:
         dimension_name: CollectionItemName,
         *,
         show_dimension: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9351,6 +10420,7 @@ class WaveAOperationsMixin:
                 "show_dimension": show_dimension,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9359,6 +10429,7 @@ class WaveAOperationsMixin:
         point_names: Iterable[PointName],
         *,
         show: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -9373,6 +10444,7 @@ class WaveAOperationsMixin:
                 "show": show,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9381,6 +10453,7 @@ class WaveAOperationsMixin:
         object_type_to_show: CollectionObjectName,
         *,
         all_collections: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9391,6 +10464,7 @@ class WaveAOperationsMixin:
                 "all_collections": all_collections,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9404,6 +10478,7 @@ class WaveAOperationsMixin:
         feature_checks: Iterable[CollectionItemName],
         datums: Iterable[CollectionObjectName],
         collections: Iterable[str],
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9419,6 +10494,7 @@ class WaveAOperationsMixin:
                 "collections": collections,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9427,6 +10503,7 @@ class WaveAOperationsMixin:
         *,
         point_labels_on: bool = False,
         objects_labels_on: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9437,12 +10514,15 @@ class WaveAOperationsMixin:
                 "objects_labels_on": objects_labels_on,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def show_objects(
         self,
         objects_to_show: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9452,6 +10532,7 @@ class WaveAOperationsMixin:
                 "objects_to_show": objects_to_show,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9462,6 +10543,7 @@ class WaveAOperationsMixin:
         show: bool = False,
         highlight: bool = False,
         set_inspection_view: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9474,6 +10556,7 @@ class WaveAOperationsMixin:
                 "set_inspection_view": set_inspection_view,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9484,6 +10567,7 @@ class WaveAOperationsMixin:
         show: bool = False,
         highlight: bool = False,
         set_inspection_view: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9496,6 +10580,7 @@ class WaveAOperationsMixin:
                 "set_inspection_view": set_inspection_view,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9503,6 +10588,7 @@ class WaveAOperationsMixin:
         self,
         *,
         show_inspection_bar: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9512,6 +10598,7 @@ class WaveAOperationsMixin:
                 "show_inspection_bar": show_inspection_bar,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9521,6 +10608,7 @@ class WaveAOperationsMixin:
         *,
         minimize_interface: bool = False,
         hide_interface: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9532,6 +10620,7 @@ class WaveAOperationsMixin:
                 "hide_interface": hide_interface,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9539,6 +10628,7 @@ class WaveAOperationsMixin:
         self,
         *,
         show_instrument_probe_tip: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9548,6 +10638,7 @@ class WaveAOperationsMixin:
                 "show_instrument_probe_tip": show_instrument_probe_tip,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9556,6 +10647,7 @@ class WaveAOperationsMixin:
         instrument_i_ds: Iterable[CollectionInstrumentId],
         *,
         show_instruments: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9566,6 +10658,7 @@ class WaveAOperationsMixin:
                 "show_instruments": show_instruments,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9574,6 +10667,7 @@ class WaveAOperationsMixin:
         collection_name: CollectionName,
         *,
         show_relationship_report: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9584,6 +10678,7 @@ class WaveAOperationsMixin:
                 "show_relationship_report": show_relationship_report,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9597,6 +10692,7 @@ class WaveAOperationsMixin:
         window_top_left_y_position: int = 0,
         window_width: int = 0,
         window_height: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ViewControl",
@@ -9612,6 +10708,7 @@ class WaveAOperationsMixin:
                 "window_height": window_height,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 

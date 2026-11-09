@@ -38,6 +38,7 @@ from briosa import (
     cloud_and_mesh_operations_pb2,
     construction_operations_pb2,
     discovery_pb2,
+    file_operations_pb2,
     lifecycle_pb2,
     operation_outcomes_pb2,
     relationship_operations_pb2,
@@ -241,10 +242,6 @@ class FakeTransport:
         self.connected = False
         return self._sdk_state()
 
-    async def get_working_directory(self, timeout: float | None = None) -> str:
-        self.calls.append("get-working-directory")
-        return r"C:\Working"
-
     async def invoke_operation(
         self,
         path: str,
@@ -252,6 +249,11 @@ class FakeTransport:
         response_type: type[Message],
         timeout: float | None = None,
     ) -> Message:
+        if path == "/briosa.FileOperations/GetWorkingDirectory":
+            self.calls.append("get-working-directory")
+            return file_operations_pb2.GetWorkingDirectoryResult(
+                directory=r"C:\Working"
+            )
         self.calls.append(path)
         self.operation_requests.append((path, request))
         if path in self.operation_responses:

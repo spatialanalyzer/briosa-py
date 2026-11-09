@@ -88,7 +88,11 @@ async def test_legacy_surface_construction_preserves_seven_explicit_false_values
     parameters = inspect.signature(
         client.construct_objects_from_surface_faces_runtime_select
     ).parameters
-    assert all(p.default is inspect.Parameter.empty for p in parameters.values())
+    assert all(
+        parameter.default is inspect.Parameter.empty
+        for name, parameter in parameters.items()
+        if name != "on_mp_completion"
+    )
     await client.aclose()
 
 

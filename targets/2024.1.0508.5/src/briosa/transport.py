@@ -12,8 +12,6 @@ from google.protobuf.message import DecodeError, Message
 from briosa import (
     discovery_pb2,
     discovery_pb2_grpc,
-    file_operations_pb2,
-    file_operations_pb2_grpc,
     lifecycle_pb2,
     lifecycle_pb2_grpc,
     operation_outcomes_pb2,
@@ -115,8 +113,6 @@ class ClientTransport(Protocol):
         self, expected_generation: int, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState: ...
 
-    async def get_working_directory(self, timeout: float | None = None) -> str: ...
-
     async def invoke_operation(
         self,
         path: str,
@@ -139,9 +135,6 @@ class GrpcClientTransport:
         )
         self._sdk = lifecycle_pb2_grpc.SpatialAnalyzerSdkLifecycleStub(  # type: ignore[no-untyped-call]
             self._channel
-        )
-        self._file_operations = file_operations_pb2_grpc.FileOperationsStub(
-            self._channel  # type: ignore[no-untyped-call]
         )
 
     async def get_server_snapshot(
@@ -259,17 +252,6 @@ class GrpcClientTransport:
             timeout=timeout,
         )
         return cast(lifecycle_pb2.RecoverSpatialAnalyzerSdkResponse, response).state
-
-    async def get_working_directory(self, timeout: float | None = None) -> str:
-        response = cast(
-            file_operations_pb2.GetWorkingDirectoryResult,
-            await self._file_operations.GetWorkingDirectory(
-                file_operations_pb2.GetWorkingDirectoryRequest(), timeout=timeout
-            ),
-        )
-        if not response.HasField("directory"):
-            raise BriosaProtocolError("working-directory-missing")
-        return response.directory
 
     async def invoke_operation(
         self,

@@ -36,6 +36,7 @@ from briosa import (
 from briosa import operation_values as public_values
 from briosa import wave_b_operation_values as wave_b_public_values
 from briosa.errors import BriosaProtocolError
+from briosa.models import MpCompletion, MpExecutionState
 
 # Imports above intentionally register every Wave A descriptor in the default pool.
 _REGISTERED_MODULES = (
@@ -116,6 +117,31 @@ def map_response(
     if result_type is None:
         raise BriosaProtocolError("operation-result-type-missing")
     return result_type(**mapped)
+
+
+# Wire numbers of MpExecutionState that a successful MP result may carry.
+_COMPLETION_STATES = {
+    1: MpExecutionState.SUCCEEDED,
+    6: MpExecutionState.PARTIAL_SUCCESS,
+}
+
+
+def map_mp_completion(response: Message) -> MpCompletion:
+    """Read how a successful MP result completed from its execution details."""
+    if "execution" not in response.DESCRIPTOR.fields_by_name or not response.HasField(
+        "execution"
+    ):
+        raise BriosaProtocolError("mp-completion-invalid")
+    execution = cast(Any, response).execution
+    state = _COMPLETION_STATES.get(execution.state)
+    if state is None:
+        raise BriosaProtocolError("mp-completion-invalid")
+    return MpCompletion(
+        state=state,
+        mp_result_code=(
+            execution.mp_result_code if execution.HasField("mp_result_code") else None
+        ),
+    )
 
 
 def _assign_field(message: Message, field: FieldDescriptor, value: object) -> None:
@@ -283,4 +309,10 @@ def re_sub_pascal(value: str) -> str:
     return re.sub(r"(?<!^)(?=[A-Z])", "_", value)
 
 
-__all__ = ["build_request", "map_response", "operation_method", "response_type"]
+__all__ = [
+    "build_request",
+    "map_mp_completion",
+    "map_response",
+    "operation_method",
+    "response_type",
+]

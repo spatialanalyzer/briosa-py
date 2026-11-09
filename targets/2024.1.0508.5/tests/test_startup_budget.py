@@ -287,9 +287,6 @@ class RecordingTransport:
         self._connected = False
         return self._sdk_state()
 
-    async def get_working_directory(self, timeout: float | None = None) -> str:
-        raise NotImplementedError
-
     async def invoke_operation(
         self,
         path: str,

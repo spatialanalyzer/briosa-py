@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -336,6 +337,25 @@ class MpExecutionDetails:
     state: MpExecutionState
     mp_result_code: int | None = None
     output_retrievals: tuple[OutputRetrievalDetails, ...] = ()
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class MpCompletion:
+    """How one successful MP call completed.
+
+    ``state`` is ``SUCCEEDED`` or ``PARTIAL_SUCCESS``. A partial success (MP
+    code 4) did its work and returned its outputs, but did not have its full
+    intended effect; it is still a success, so the call neither raises nor
+    retries. ``mp_result_code`` is the raw MP code when SpatialAnalyzer
+    returned one.
+    """
+
+    state: MpExecutionState
+    mp_result_code: int | None = None
+
+
+MpCompletionObserver = Callable[[MpCompletion], object]
+"""A per-call callback that receives the call's ``MpCompletion``."""
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
