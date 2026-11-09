@@ -413,17 +413,23 @@ class FeatureCheckReportingOptions:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class FilterProximitySettings:
-    surface_inclusion_proximity: float = 0.1
-    edge_exclusion_proximity: float = 0.1
-    planar_inclusion_proximity: float = 0.5
-    planar_exclusion_proximity: float = 0.1
-    radial_inclusion_proximity: float = 0.1
-    geometry_extraction_tolerance: float = 0.01
+    """Auto Filter proximity settings. Every member is required.
+
+    The distances are lengths in the SA job's units, so the client has no
+    default for them.
+    """
+
+    surface_inclusion_proximity: float
+    edge_exclusion_proximity: float
+    planar_inclusion_proximity: float
+    planar_exclusion_proximity: float
+    radial_inclusion_proximity: float
+    geometry_extraction_tolerance: float
     surface_proximity_mode: OffsetDirectionType
     planar_proximity_mode: OffsetDirectionType
     radial_proximity_mode: OffsetDirectionType
-    project_to_plane: bool = True
-    assert_plane_boundaries: bool = False
+    project_to_plane: bool
+    assert_plane_boundaries: bool
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
