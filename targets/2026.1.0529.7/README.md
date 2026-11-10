@@ -344,6 +344,12 @@ with their value types:
   `get_report_items_reference_list_variable` are annotated
   `list[CollectionItemName]`, the type they return; they said
   `list[CollectionObjectName]`.
+- A negative enum number now fails like any other unknown value. Client 0.4
+  counted it from the end of the member list, so a lifecycle state or typed
+  failure could report a member the server never sent. An operation error
+  that carries one, including in its MP execution details, fails as
+  `typed-error-malformed`; a lifecycle state or lifecycle error raises
+  `BriosaProtocolError` (`unknown-enum-value`).
 
 ## Server selection
 
