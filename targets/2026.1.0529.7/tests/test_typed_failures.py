@@ -5,13 +5,16 @@ from __future__ import annotations
 import asyncio
 import re
 from enum import Enum
+from typing import Any
 
 import grpc
 import pytest
 from google.protobuf import descriptor_pool
+from google.protobuf.message import Message
 
 from briosa import (
     BriosaOperationError,
+    BriosaProtocolError,
     BriosaSpatialAnalyzerError,
     BriosaSpatialAnalyzerSdkError,
     BriosaTransportError,
@@ -35,6 +38,7 @@ from briosa import (
     SpatialAnalyzerSdkRecoveryState,
     SpatialAnalyzerSdkState,
     SpatialAnalyzerSdkTerminationKind,
+    discovery_pb2,
     lifecycle_pb2,
     operation_outcomes_pb2,
 )
@@ -308,6 +312,186 @@ def test_unknown_mp_execution_state_is_a_malformed_detail() -> None:
     )
     assert isinstance(mapped, BriosaTransportError)
     assert mapped.diagnostic_code == "typed-error-malformed"
+
+
+# Every enum field the client maps by wire number, by the detail it arrives in.
+# Each path names one field of the matching valid detail below.
+EnumFields = tuple[tuple[str, type[Enum]], ...]
+OPERATION_DETAIL_ENUMS: EnumFields = (
+    ("kind", OperationFailureKind),
+    ("execution_disposition", ExecutionDisposition),
+    ("recovery_guidance", RecoveryGuidance),
+    ("replay_guidance", ReplayGuidance),
+    ("replay_safety", ReplaySafety),
+    ("mp_execution.state", MpExecutionState),
+    ("mp_execution.output_retrievals.0.state", OutputRetrievalState),
+)
+APPLICATION_DETAIL_ENUMS: EnumFields = (
+    ("kind", SpatialAnalyzerLifecycleFailureKind),
+    ("recovery_guidance", LifecycleRecoveryGuidance),
+    ("state.application_state", SpatialAnalyzerApplicationState),
+    ("state.ownership", SpatialAnalyzerOwnership),
+)
+SDK_DETAIL_ENUMS: EnumFields = (
+    ("kind", SpatialAnalyzerSdkLifecycleFailureKind),
+    ("recovery_guidance", LifecycleRecoveryGuidance),
+    ("state.sdk_state", SpatialAnalyzerSdkState),
+    ("state.connection_state", SpatialAnalyzerConnectionState),
+    ("state.execution_readiness_state", SpatialAnalyzerExecutionReadinessState),
+    ("state.recovery_state", SpatialAnalyzerSdkRecoveryState),
+    ("state.last_incident.termination_kind", SpatialAnalyzerSdkTerminationKind),
+    ("state.last_incident.execution_disposition", ExecutionDisposition),
+)
+
+
+def out_of_range(fields: EnumFields) -> list[Any]:
+    """Pair each field with wire numbers outside its enum.
+
+    The numbers are one past the last member and each negative number that a
+    bare tuple index would wrap onto a member (-1 onto the last one).
+    """
+    return [
+        pytest.param(path, number, id=f"{path}={number}")
+        for path, public_enum in fields
+        for number in (len(public_enum), *range(-len(public_enum), 0))
+    ]
+
+
+def set_wire_number(message: Message, path: str, number: int) -> None:
+    """Set the enum field at a dotted path; a digit step is a list index."""
+    *parents, leaf = path.split(".")
+    target: Any = message
+    for step in parents:
+        target = target[int(step)] if step.isdigit() else getattr(target, step)
+    setattr(target, leaf, number)
+
+
+def trailer_error(trailer: str, detail: Message) -> BaseException:
+    return map_rpc_error(
+        FakeRpcError(
+            grpc.StatusCode.FAILED_PRECONDITION,
+            ((trailer, detail.SerializeToString()),),
+        )
+    )
+
+
+def valid_operation_detail() -> operation_outcomes_pb2.OperationError:
+    return operation_outcomes_pb2.OperationError(
+        operation_id="file_operations.get_working_directory",
+        kind=operation_outcomes_pb2.OPERATION_FAILURE_KIND_OUTPUT_RETRIEVAL_FAILURE,
+        diagnostic_code="output-retrieval-failed",
+        execution_disposition=operation_outcomes_pb2.EXECUTION_DISPOSITION_COMPLETED,
+        recovery_guidance=operation_outcomes_pb2.RECOVERY_GUIDANCE_NONE,
+        replay_guidance=operation_outcomes_pb2.REPLAY_GUIDANCE_DO_NOT_REPLAY,
+        replay_safety=operation_outcomes_pb2.REPLAY_SAFETY_SAFE,
+        mp_execution=operation_outcomes_pb2.MpExecutionDetails(
+            state=operation_outcomes_pb2.MP_EXECUTION_STATE_PARTIAL_SUCCESS,
+            mp_result_code=4,
+            output_retrievals=[
+                operation_outcomes_pb2.OutputRetrievalDetails(
+                    field_name="directory",
+                    state=operation_outcomes_pb2.OUTPUT_RETRIEVAL_STATE_FAILED,
+                )
+            ],
+        ),
+    )
+
+
+def valid_application_detail() -> lifecycle_pb2.SpatialAnalyzerLifecycleError:
+    return lifecycle_pb2.SpatialAnalyzerLifecycleError(
+        rpc="LaunchSpatialAnalyzer",
+        kind=lifecycle_pb2.SPATIAL_ANALYZER_LIFECYCLE_FAILURE_KIND_STATE_CONFLICT,
+        diagnostic_code="application-state-conflict",
+        recovery_guidance=lifecycle_pb2.LIFECYCLE_RECOVERY_GUIDANCE_REFRESH_STATE,
+        state=lifecycle_pb2.SpatialAnalyzerLifecycleState(
+            state_revision=2,
+            application_state=lifecycle_pb2.SPATIAL_ANALYZER_APPLICATION_STATE_STARTING,
+            ownership=lifecycle_pb2.SPATIAL_ANALYZER_OWNERSHIP_SERVER_LAUNCHED,
+        ),
+    )
+
+
+def valid_sdk_detail() -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleError:
+    return lifecycle_pb2.SpatialAnalyzerSdkLifecycleError(
+        rpc="ConnectToSpatialAnalyzer",
+        kind=lifecycle_pb2.SPATIAL_ANALYZER_SDK_LIFECYCLE_FAILURE_KIND_STATE_CONFLICT,
+        diagnostic_code="sdk-state-conflict",
+        recovery_guidance=lifecycle_pb2.LIFECYCLE_RECOVERY_GUIDANCE_REFRESH_STATE,
+        state=lifecycle_pb2.SpatialAnalyzerSdkLifecycleState(
+            state_revision=4,
+            sdk_state=lifecycle_pb2.SPATIAL_ANALYZER_SDK_STATE_FAULTED,
+            sdk_generation=2,
+            connection_state=discovery_pb2.SPATIAL_ANALYZER_CONNECTION_STATE_FAULTED,
+            execution_readiness_state=(
+                discovery_pb2.SPATIAL_ANALYZER_EXECUTION_READINESS_STATE_OPERATOR_RECOVERY_REQUIRED
+            ),
+            recovery_state=(
+                lifecycle_pb2.SPATIAL_ANALYZER_SDK_RECOVERY_STATE_RECOVERY_AVAILABLE
+            ),
+            last_incident={
+                "sdk_generation": 2,
+                "termination_kind": (
+                    lifecycle_pb2.SPATIAL_ANALYZER_SDK_TERMINATION_KIND_WATCHDOG_TERMINATED
+                ),
+                "execution_disposition": (
+                    operation_outcomes_pb2.EXECUTION_DISPOSITION_STARTED_OUTCOME_UNKNOWN
+                ),
+            },
+        ),
+    )
+
+
+@pytest.mark.parametrize(("path", "number"), out_of_range(OPERATION_DETAIL_ENUMS))
+def test_an_out_of_range_enum_makes_an_operation_detail_malformed(
+    path: str, number: int
+) -> None:
+    detail = valid_operation_detail()
+    assert isinstance(trailer_error(OPERATION_TRAILER, detail), BriosaOperationError)
+    set_wire_number(detail, path, number)
+
+    mapped = trailer_error(OPERATION_TRAILER, detail)
+
+    assert isinstance(mapped, BriosaTransportError)
+    assert mapped.diagnostic_code == "typed-error-malformed"
+
+
+@pytest.mark.parametrize(("path", "number"), out_of_range(APPLICATION_DETAIL_ENUMS))
+def test_an_out_of_range_enum_in_an_application_detail_is_a_protocol_error(
+    path: str, number: int
+) -> None:
+    detail = valid_application_detail()
+    assert isinstance(
+        trailer_error(APPLICATION_TRAILER, detail), BriosaSpatialAnalyzerError
+    )
+    set_wire_number(detail, path, number)
+
+    with pytest.raises(BriosaProtocolError, match="unknown-enum-value"):
+        trailer_error(APPLICATION_TRAILER, detail)
+
+
+@pytest.mark.parametrize(("path", "number"), out_of_range(SDK_DETAIL_ENUMS))
+def test_an_out_of_range_enum_in_an_sdk_detail_is_a_protocol_error(
+    path: str, number: int
+) -> None:
+    detail = valid_sdk_detail()
+    assert isinstance(trailer_error(SDK_TRAILER, detail), BriosaSpatialAnalyzerSdkError)
+    set_wire_number(detail, path, number)
+
+    with pytest.raises(BriosaProtocolError, match="unknown-enum-value"):
+        trailer_error(SDK_TRAILER, detail)
+
+
+def test_every_positional_enum_is_checked_out_of_range() -> None:
+    checked = {
+        public_enum
+        for fields in (
+            OPERATION_DETAIL_ENUMS,
+            APPLICATION_DETAIL_ENUMS,
+            SDK_DETAIL_ENUMS,
+        )
+        for _, public_enum in fields
+    }
+    assert checked == set(POSITIONAL_ENUMS)
 
 
 def test_modal_dialog_watchdog_failure_is_surfaced_as_is() -> None:
