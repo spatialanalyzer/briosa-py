@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
 from briosa.operation_values import *  # noqa: F403
@@ -23,11 +23,6 @@ class BSplinePointSortMode(str, Enum):
     USE_SELECTION_ORDER = "use_selection_order"
     CLOSEST_NEIGHBORS_FROM_FIRST_SELECTION = "closest_neighbors_from_first_selection"
     CLOSEST_NEIGHBORS_IN_CURVE_DIRECTION = "closest_neighbors_in_curve_direction"
-
-
-class CircleLineMode(str, Enum):
-    CIRCLE = "circle"
-    LINE = "line"
 
 
 class CloudBoxType(str, Enum):
@@ -230,17 +225,6 @@ class InstrumentPositionReportingFrame(str, Enum):
     WORKING = "Working"
 
 
-class MeshOrientationType(str, Enum):
-    USE_CURRENT_POINT_OF_VIEW = "Use Current Point of View"
-    USE_CURRENT_WORKING_FRAME = "Use Current Working Frame"
-
-
-class MirrorFramePlane(str, Enum):
-    XY = "xy"
-    XZ = "xz"
-    YZ = "yz"
-
-
 class OffsetDirectionType(str, Enum):
     BOTH = "both"
     POSITIVE_ONLY = "positiveOnly"
@@ -433,17 +417,23 @@ class FeatureCheckReportingOptions:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class FilterProximitySettings:
-    surface_inclusion_proximity: float = 0.1
-    edge_exclusion_proximity: float = 0.1
-    planar_inclusion_proximity: float = 0.5
-    planar_exclusion_proximity: float = 0.1
-    radial_inclusion_proximity: float = 0.1
-    geometry_extraction_tolerance: float = 0.01
-    surface_proximity_mode: OffsetDirectionType = OffsetDirectionType.BOTH
-    planar_proximity_mode: OffsetDirectionType = OffsetDirectionType.BOTH
-    radial_proximity_mode: OffsetDirectionType = OffsetDirectionType.BOTH
-    project_to_plane: bool = True
-    assert_plane_boundaries: bool = False
+    """Auto Filter proximity settings. Every member is required.
+
+    The distances are lengths in the SA job's units, so the client has no
+    default for them.
+    """
+
+    surface_inclusion_proximity: float
+    edge_exclusion_proximity: float
+    planar_inclusion_proximity: float
+    planar_exclusion_proximity: float
+    radial_inclusion_proximity: float
+    geometry_extraction_tolerance: float
+    surface_proximity_mode: OffsetDirectionType
+    planar_proximity_mode: OffsetDirectionType
+    radial_proximity_mode: OffsetDirectionType
+    project_to_plane: bool
+    assert_plane_boundaries: bool
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -701,24 +691,24 @@ class WrtlChannelStatus:
     active_channel: int
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class MakeGdtDatumAnnotationOptions:
     datum_name: str
-    objects: Sequence[CollectionObjectName] = field(default_factory=tuple)
-    geometry_relationships: Sequence[CollectionItemName] = field(default_factory=tuple)
+    objects: Sequence[CollectionObjectName]
+    geometry_relationships: Sequence[CollectionItemName]
     surface_faces: SurfaceFaceList | None = None
-    auxiliary_object: CollectionObjectName | None = None
-    auxiliary_geometry_relationship: CollectionItemName | None = None
+    auxiliary_object: CollectionObjectName
+    auxiliary_geometry_relationship: CollectionItemName
     is_slot: bool = False
     force_surface_feature: bool = False
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class MakeGdtFeatureCheckAnnotationOptions:
     feature_annotation_name: str
     feature_type: GdtFeatureType = GdtFeatureType.TRUE_POSITION
-    objects: Sequence[CollectionObjectName] = field(default_factory=tuple)
-    geometry_relationships: Sequence[CollectionItemName] = field(default_factory=tuple)
+    objects: Sequence[CollectionObjectName]
+    geometry_relationships: Sequence[CollectionItemName]
     surface_faces: SurfaceFaceList | None = None
     decompose_multiple_features: bool = False
     auto_create_diameter_checks: bool = False
@@ -735,8 +725,8 @@ class MakeGdtFeatureCheckAnnotationOptions:
     per_unit_area_width_step_over_percent: float = 50.0
     per_unit_area_circle_diameter: float = 0.0
     per_unit_area_diameter_step_over: float = 50.0
-    auxiliary_object: CollectionObjectName | None = None
-    auxiliary_geometry_relationship: CollectionItemName | None = None
+    auxiliary_object: CollectionObjectName
+    auxiliary_geometry_relationship: CollectionItemName
     use_nominal_for_dimension_tolerance: bool = True
     use_reference_object_for_nominal: bool = True
     nominal_dimension_tolerance: float = 0.0
@@ -759,40 +749,38 @@ class RelationshipWatchWindowTemplateOptions:
     show_deviation_y: bool = True
     show_deviation_z: bool = True
     show_deviation_magnitude: bool = True
-    udp_network_transmit_settings: RelationshipWatchWindowUdpSettings = (
-        RelationshipWatchWindowUdpSettings()
-    )
+    udp_network_transmit_settings: RelationshipWatchWindowUdpSettings
     transparent_background: bool = False
     hide_units: bool = False
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class RobotModelLinkConfiguration:
-    link_type: RobotModelLinkType = RobotModelLinkType.DH
-    dh_alpha_component: float = 0.0
-    dh_a_component: float = 0.0
-    dh_d_component: float = 0.0
-    dh_theta_component: float = 0.0
-    dh_x_axis_deflection_factor: float = 0.0
-    dh_y_axis_deflection_factor: float = 0.0
-    dh_z_axis_deflection_factor: float = 0.0
-    six_dof_x_component: float = 0.0
-    six_dof_y_component: float = 0.0
-    six_dof_z_component: float = 0.0
-    six_dof_rx_component: float = 0.0
-    six_dof_ry_component: float = 0.0
-    six_dof_rz_component: float = 0.0
-    active_joint_component: RobotActiveJointComponent = RobotActiveJointComponent.NONE
-    encoder_offset_value: float = 0.0
-    minimum_encoder_limit: float = 0.0
-    maximum_encoder_limit: float = 0.0
-    encoder_sense_negative: bool = False
-    include_additional_encoder: bool = False
-    additional_encoder_index_offset: int = 0
-    additional_encoder_sense_negative: bool = False
-    segment_origin_mass_kg: float = 0.0
-    segment_cg_mass_kg: float = 0.0
-    segment_cg_in_segment: Vector = Vector(0.0, 0.0, 0.0)
+    link_type: RobotModelLinkType
+    dh_alpha_component: float
+    dh_a_component: float
+    dh_d_component: float
+    dh_theta_component: float
+    dh_x_axis_deflection_factor: float
+    dh_y_axis_deflection_factor: float
+    dh_z_axis_deflection_factor: float
+    six_dof_x_component: float
+    six_dof_y_component: float
+    six_dof_z_component: float
+    six_dof_rx_component: float
+    six_dof_ry_component: float
+    six_dof_rz_component: float
+    active_joint_component: RobotActiveJointComponent
+    encoder_offset_value: float
+    minimum_encoder_limit: float
+    maximum_encoder_limit: float
+    encoder_sense_negative: bool
+    include_additional_encoder: bool
+    additional_encoder_index_offset: int
+    additional_encoder_sense_negative: bool
+    segment_origin_mass_kg: float
+    segment_cg_mass_kg: float
+    segment_cg_in_segment: Vector
 
 
 __all__ = [
@@ -800,7 +788,6 @@ __all__ = [
     "BSplineFitOptions",
     "BSplinePointSortMode",
     "CalloutViewProperties",
-    "CircleLineMode",
     "CloudBoxType",
     "CloudThinningMode",
     "CloudThinningOptions",
@@ -843,8 +830,6 @@ __all__ = [
     "LrSnrInfo",
     "MakeGdtDatumAnnotationOptions",
     "MakeGdtFeatureCheckAnnotationOptions",
-    "MeshOrientationType",
-    "MirrorFramePlane",
     "ObjectOriginResult",
     "ObservationInfo",
     "ObservationSphericalValues",

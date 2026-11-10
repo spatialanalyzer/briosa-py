@@ -16,12 +16,6 @@ class BSplinePointSortMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     B_SPLINE_POINT_SORT_MODE_CLOSEST_NEIGHBORS_FROM_FIRST_SELECTION: _ClassVar[BSplinePointSortMode]
     B_SPLINE_POINT_SORT_MODE_CLOSEST_NEIGHBORS_IN_CURVE_DIRECTION: _ClassVar[BSplinePointSortMode]
 
-class CircleLineMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-    __slots__ = ()
-    CIRCLE_LINE_MODE_UNSPECIFIED: _ClassVar[CircleLineMode]
-    CIRCLE_LINE_MODE_CIRCLE: _ClassVar[CircleLineMode]
-    CIRCLE_LINE_MODE_LINE: _ClassVar[CircleLineMode]
-
 class FrameConstructionMethod(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     FRAME_CONSTRUCTION_METHOD_UNSPECIFIED: _ClassVar[FrameConstructionMethod]
@@ -87,24 +81,11 @@ class EdgePointMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     EDGE_POINT_MODE_EXCLUDE_EDGES: _ClassVar[EdgePointMode]
     EDGE_POINT_MODE_EDGES_ONLY: _ClassVar[EdgePointMode]
 
-class MeshOrientationType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-    __slots__ = ()
-    MESH_ORIENTATION_TYPE_UNSPECIFIED: _ClassVar[MeshOrientationType]
-    MESH_ORIENTATION_TYPE_USE_CURRENT_POINT_OF_VIEW: _ClassVar[MeshOrientationType]
-    MESH_ORIENTATION_TYPE_USE_CURRENT_WORKING_FRAME: _ClassVar[MeshOrientationType]
-
 class SurfaceDissectionMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     SURFACE_DISSECTION_MODE_UNSPECIFIED: _ClassVar[SurfaceDissectionMode]
     SURFACE_DISSECTION_MODE_ENTIRE_SOLID: _ClassVar[SurfaceDissectionMode]
     SURFACE_DISSECTION_MODE_SELECT_FACES: _ClassVar[SurfaceDissectionMode]
-
-class MirrorFramePlane(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-    __slots__ = ()
-    MIRROR_FRAME_PLANE_UNSPECIFIED: _ClassVar[MirrorFramePlane]
-    MIRROR_FRAME_PLANE_XY: _ClassVar[MirrorFramePlane]
-    MIRROR_FRAME_PLANE_XZ: _ClassVar[MirrorFramePlane]
-    MIRROR_FRAME_PLANE_YZ: _ClassVar[MirrorFramePlane]
 
 class ConstructObjectType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -124,9 +105,6 @@ B_SPLINE_POINT_SORT_MODE_UNSPECIFIED: BSplinePointSortMode
 B_SPLINE_POINT_SORT_MODE_USE_SELECTION_ORDER: BSplinePointSortMode
 B_SPLINE_POINT_SORT_MODE_CLOSEST_NEIGHBORS_FROM_FIRST_SELECTION: BSplinePointSortMode
 B_SPLINE_POINT_SORT_MODE_CLOSEST_NEIGHBORS_IN_CURVE_DIRECTION: BSplinePointSortMode
-CIRCLE_LINE_MODE_UNSPECIFIED: CircleLineMode
-CIRCLE_LINE_MODE_CIRCLE: CircleLineMode
-CIRCLE_LINE_MODE_LINE: CircleLineMode
 FRAME_CONSTRUCTION_METHOD_UNSPECIFIED: FrameConstructionMethod
 FRAME_CONSTRUCTION_METHOD_ORIGIN_X_XY: FrameConstructionMethod
 FRAME_CONSTRUCTION_METHOD_ORIGIN_X_XZ: FrameConstructionMethod
@@ -171,16 +149,9 @@ EDGE_POINT_MODE_UNSPECIFIED: EdgePointMode
 EDGE_POINT_MODE_INCLUDE_EDGES: EdgePointMode
 EDGE_POINT_MODE_EXCLUDE_EDGES: EdgePointMode
 EDGE_POINT_MODE_EDGES_ONLY: EdgePointMode
-MESH_ORIENTATION_TYPE_UNSPECIFIED: MeshOrientationType
-MESH_ORIENTATION_TYPE_USE_CURRENT_POINT_OF_VIEW: MeshOrientationType
-MESH_ORIENTATION_TYPE_USE_CURRENT_WORKING_FRAME: MeshOrientationType
 SURFACE_DISSECTION_MODE_UNSPECIFIED: SurfaceDissectionMode
 SURFACE_DISSECTION_MODE_ENTIRE_SOLID: SurfaceDissectionMode
 SURFACE_DISSECTION_MODE_SELECT_FACES: SurfaceDissectionMode
-MIRROR_FRAME_PLANE_UNSPECIFIED: MirrorFramePlane
-MIRROR_FRAME_PLANE_XY: MirrorFramePlane
-MIRROR_FRAME_PLANE_XZ: MirrorFramePlane
-MIRROR_FRAME_PLANE_YZ: MirrorFramePlane
 CONSTRUCT_OBJECT_TYPE_UNSPECIFIED: ConstructObjectType
 CONSTRUCT_OBJECT_TYPE_ANY: ConstructObjectType
 CONSTRUCT_OBJECT_TYPE_CIRCLES: ConstructObjectType
@@ -518,20 +489,6 @@ class SetDefaultCalloutViewPropertiesResult(_message.Message):
     execution: _operation_outcomes_pb2.MpExecutionDetails
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
-class SetCalloutViewPropertiesRequest(_message.Message):
-    __slots__ = ("callout_views", "properties")
-    CALLOUT_VIEWS_FIELD_NUMBER: _ClassVar[int]
-    PROPERTIES_FIELD_NUMBER: _ClassVar[int]
-    callout_views: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionItemName]
-    properties: CalloutViewProperties
-    def __init__(self, callout_views: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., properties: _Optional[_Union[CalloutViewProperties, _Mapping]] = ...) -> None: ...
-
-class SetCalloutViewPropertiesResult(_message.Message):
-    __slots__ = ("execution",)
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
 class DeleteCalloutViewRequest(_message.Message):
     __slots__ = ("callout_view",)
     CALLOUT_VIEW_FIELD_NUMBER: _ClassVar[int]
@@ -824,22 +781,6 @@ class CalloutViewProperties(_message.Message):
     font: _spatial_analyzer_values_pb2.Font
     def __init__(self, lock_view_point: bool = ..., recall_working_frame: bool = ..., recall_visible_layer: bool = ..., callout_leader_thickness: _Optional[int] = ..., callout_leader_color: _Optional[_Union[_spatial_analyzer_values_pb2.Color, _Mapping]] = ..., callout_border_thickness: _Optional[int] = ..., callout_border_color: _Optional[_Union[_spatial_analyzer_values_pb2.Color, _Mapping]] = ..., divide_text_with_lines: bool = ..., font: _Optional[_Union[_spatial_analyzer_values_pb2.Font, _Mapping]] = ...) -> None: ...
 
-class MakeCalloutViewRefListWildcardSelectionRequest(_message.Message):
-    __slots__ = ("collection_wildcard_criteria", "callout_view_wildcard_criteria")
-    COLLECTION_WILDCARD_CRITERIA_FIELD_NUMBER: _ClassVar[int]
-    CALLOUT_VIEW_WILDCARD_CRITERIA_FIELD_NUMBER: _ClassVar[int]
-    collection_wildcard_criteria: str
-    callout_view_wildcard_criteria: str
-    def __init__(self, collection_wildcard_criteria: _Optional[str] = ..., callout_view_wildcard_criteria: _Optional[str] = ...) -> None: ...
-
-class MakeCalloutViewRefListWildcardSelectionResult(_message.Message):
-    __slots__ = ("callout_views", "execution")
-    CALLOUT_VIEWS_FIELD_NUMBER: _ClassVar[int]
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    callout_views: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionItemName]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, callout_views: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionItemName, _Mapping]]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
 class ConstructCircleRequest(_message.Message):
     __slots__ = ("circle_name", "circle_center", "circle_normal", "circle_radius")
     CIRCLE_NAME_FIELD_NUMBER: _ClassVar[int]
@@ -857,34 +798,6 @@ class ConstructCircleResult(_message.Message):
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
     execution: _operation_outcomes_pb2.MpExecutionDetails
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
-class ConstructCirclesLinesFromSurfacesRequest(_message.Message):
-    __slots__ = ("surfaces", "minimum_diameter", "maximum_diameter", "tolerance", "single_surface", "circle_line_mode", "destination_collection_name", "base_name")
-    SURFACES_FIELD_NUMBER: _ClassVar[int]
-    MINIMUM_DIAMETER_FIELD_NUMBER: _ClassVar[int]
-    MAXIMUM_DIAMETER_FIELD_NUMBER: _ClassVar[int]
-    TOLERANCE_FIELD_NUMBER: _ClassVar[int]
-    SINGLE_SURFACE_FIELD_NUMBER: _ClassVar[int]
-    CIRCLE_LINE_MODE_FIELD_NUMBER: _ClassVar[int]
-    DESTINATION_COLLECTION_NAME_FIELD_NUMBER: _ClassVar[int]
-    BASE_NAME_FIELD_NUMBER: _ClassVar[int]
-    surfaces: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
-    minimum_diameter: float
-    maximum_diameter: float
-    tolerance: float
-    single_surface: bool
-    circle_line_mode: CircleLineMode
-    destination_collection_name: _spatial_analyzer_values_pb2.CollectionName
-    base_name: str
-    def __init__(self, surfaces: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., minimum_diameter: _Optional[float] = ..., maximum_diameter: _Optional[float] = ..., tolerance: _Optional[float] = ..., single_surface: bool = ..., circle_line_mode: _Optional[_Union[CircleLineMode, str]] = ..., destination_collection_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionName, _Mapping]] = ..., base_name: _Optional[str] = ...) -> None: ...
-
-class ConstructCirclesLinesFromSurfacesResult(_message.Message):
-    __slots__ = ("geometry_objects", "execution")
-    GEOMETRY_OBJECTS_FIELD_NUMBER: _ClassVar[int]
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    geometry_objects: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, geometry_objects: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class SetOrConstructDefaultCollectionRequest(_message.Message):
     __slots__ = ("collection_name",)
@@ -1729,24 +1642,6 @@ class SetCollectionInstrumentRefListVariableResult(_message.Message):
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
     execution: _operation_outcomes_pb2.MpExecutionDetails
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
-class AddCollectionInstrumentsToRefListWildcardSelectionRequest(_message.Message):
-    __slots__ = ("collection_instrument_ref_list", "collection_wildcard_criteria", "instrument_wildcard_criteria")
-    COLLECTION_INSTRUMENT_REF_LIST_FIELD_NUMBER: _ClassVar[int]
-    COLLECTION_WILDCARD_CRITERIA_FIELD_NUMBER: _ClassVar[int]
-    INSTRUMENT_WILDCARD_CRITERIA_FIELD_NUMBER: _ClassVar[int]
-    collection_instrument_ref_list: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionInstrumentId]
-    collection_wildcard_criteria: str
-    instrument_wildcard_criteria: str
-    def __init__(self, collection_instrument_ref_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]]] = ..., collection_wildcard_criteria: _Optional[str] = ..., instrument_wildcard_criteria: _Optional[str] = ...) -> None: ...
-
-class AddCollectionInstrumentsToRefListWildcardSelectionResult(_message.Message):
-    __slots__ = ("collection_instrument_ref_list", "execution")
-    COLLECTION_INSTRUMENT_REF_LIST_FIELD_NUMBER: _ClassVar[int]
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    collection_instrument_ref_list: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionInstrumentId]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, collection_instrument_ref_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionInstrumentId, _Mapping]]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
 class MakeCollectionInstrumentRefListRuntimeSelectRequest(_message.Message):
     __slots__ = ("user_prompt",)
@@ -3418,24 +3313,6 @@ class CreateHiddenPointResult(_message.Message):
     execution: _operation_outcomes_pb2.MpExecutionDetails
     def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
-class ConstructPolygonizedSurfaceFromPointCloudsRequest(_message.Message):
-    __slots__ = ("point_cloud_list", "mesh_orientation", "grid_resolution", "polygonized_surface_name")
-    POINT_CLOUD_LIST_FIELD_NUMBER: _ClassVar[int]
-    MESH_ORIENTATION_FIELD_NUMBER: _ClassVar[int]
-    GRID_RESOLUTION_FIELD_NUMBER: _ClassVar[int]
-    POLYGONIZED_SURFACE_NAME_FIELD_NUMBER: _ClassVar[int]
-    point_cloud_list: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
-    mesh_orientation: MeshOrientationType
-    grid_resolution: float
-    polygonized_surface_name: _spatial_analyzer_values_pb2.CollectionObjectName
-    def __init__(self, point_cloud_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., mesh_orientation: _Optional[_Union[MeshOrientationType, str]] = ..., grid_resolution: _Optional[float] = ..., polygonized_surface_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
-
-class ConstructPolygonizedSurfaceFromPointCloudsResult(_message.Message):
-    __slots__ = ("execution",)
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
 class ConstructScaleBarRequest(_message.Message):
     __slots__ = ("scale_bar_name", "begin_target", "end_target", "length", "uncertainty", "use_relative_tolerances", "use_high_tolerances", "use_low_tolerances", "high_tolerance", "low_tolerance")
     SCALE_BAR_NAME_FIELD_NUMBER: _ClassVar[int]
@@ -3862,34 +3739,6 @@ class MakeVectorNameRefListFromVectorGroupResult(_message.Message):
     execution: _operation_outcomes_pb2.MpExecutionDetails
     def __init__(self, resultant_vector_name_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.VectorName, _Mapping]]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
 
-class MakeVectorNameRefListRuntimeSelectRequest(_message.Message):
-    __slots__ = ("user_prompt",)
-    USER_PROMPT_FIELD_NUMBER: _ClassVar[int]
-    user_prompt: str
-    def __init__(self, user_prompt: _Optional[str] = ...) -> None: ...
-
-class MakeVectorNameRefListRuntimeSelectResult(_message.Message):
-    __slots__ = ("resultant_vector_name_list", "execution")
-    RESULTANT_VECTOR_NAME_LIST_FIELD_NUMBER: _ClassVar[int]
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    resultant_vector_name_list: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.VectorName]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, resultant_vector_name_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.VectorName, _Mapping]]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
-class MakeCollectionVectorGroupNameRefListRuntimeSelectRequest(_message.Message):
-    __slots__ = ("user_prompt",)
-    USER_PROMPT_FIELD_NUMBER: _ClassVar[int]
-    user_prompt: str
-    def __init__(self, user_prompt: _Optional[str] = ...) -> None: ...
-
-class MakeCollectionVectorGroupNameRefListRuntimeSelectResult(_message.Message):
-    __slots__ = ("resultant_collection_vector_group_name_reference_list", "execution")
-    RESULTANT_COLLECTION_VECTOR_GROUP_NAME_REFERENCE_LIST_FIELD_NUMBER: _ClassVar[int]
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    resultant_collection_vector_group_name_reference_list: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionVectorGroupName]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, resultant_collection_vector_group_name_reference_list: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionVectorGroupName, _Mapping]]] = ..., execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
 class MakeVectorNamesUniqueInVectorGroupRequest(_message.Message):
     __slots__ = ("vector_group_name",)
     VECTOR_GROUP_NAME_FIELD_NUMBER: _ClassVar[int]
@@ -3897,24 +3746,6 @@ class MakeVectorNamesUniqueInVectorGroupRequest(_message.Message):
     def __init__(self, vector_group_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ...) -> None: ...
 
 class MakeVectorNamesUniqueInVectorGroupResult(_message.Message):
-    __slots__ = ("execution",)
-    EXECUTION_FIELD_NUMBER: _ClassVar[int]
-    execution: _operation_outcomes_pb2.MpExecutionDetails
-    def __init__(self, execution: _Optional[_Union[_operation_outcomes_pb2.MpExecutionDetails, _Mapping]] = ...) -> None: ...
-
-class MirrorObjectsRequest(_message.Message):
-    __slots__ = ("objects", "frame_name", "frame_plane_to_mirror_around", "copy")
-    OBJECTS_FIELD_NUMBER: _ClassVar[int]
-    FRAME_NAME_FIELD_NUMBER: _ClassVar[int]
-    FRAME_PLANE_TO_MIRROR_AROUND_FIELD_NUMBER: _ClassVar[int]
-    COPY_FIELD_NUMBER: _ClassVar[int]
-    objects: _containers.RepeatedCompositeFieldContainer[_spatial_analyzer_values_pb2.CollectionObjectName]
-    frame_name: _spatial_analyzer_values_pb2.CollectionObjectName
-    frame_plane_to_mirror_around: MirrorFramePlane
-    copy: bool
-    def __init__(self, objects: _Optional[_Iterable[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]]] = ..., frame_name: _Optional[_Union[_spatial_analyzer_values_pb2.CollectionObjectName, _Mapping]] = ..., frame_plane_to_mirror_around: _Optional[_Union[MirrorFramePlane, str]] = ..., copy: bool = ...) -> None: ...
-
-class MirrorObjectsResult(_message.Message):
     __slots__ = ("execution",)
     EXECUTION_FIELD_NUMBER: _ClassVar[int]
     execution: _operation_outcomes_pb2.MpExecutionDetails

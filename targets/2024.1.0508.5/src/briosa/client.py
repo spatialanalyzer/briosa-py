@@ -23,9 +23,11 @@ from briosa.installation_discovery import read_installation, resolve_installatio
 from briosa.installation_models import BriosaInstallation, BriosaServerSelection
 from briosa.logging_options import BriosaLoggingOptions
 from briosa.models import (
+    BriosaCapabilityListing,
     BriosaClientOptions,
     BriosaServerSnapshot,
     BriosaStartOptions,
+    MpCompletionObserver,
     SpatialAnalyzerLaunchOptions,
     SpatialAnalyzerLifecycleState,
     SpatialAnalyzerSdkLifecycleState,
@@ -34,6 +36,7 @@ from briosa.models import (
 )
 from briosa.operation_protocol import (
     build_request,
+    map_mp_completion,
     map_response,
     operation_method,
     response_type,
@@ -42,6 +45,7 @@ from briosa.transport import (
     ClientTransport,
     GrpcClientTransport,
     map_application_state,
+    map_capability_listing,
     map_rpc_error,
     map_sdk_state,
     map_snapshot,
@@ -241,6 +245,27 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
 
         return await self._run_lifecycle(operation)
 
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> BriosaCapabilityListing:
+        """List the server's capabilities for diagnosis.
+
+        With ``include_denied``, the listing also reports every registered
+        operation the active policy denies, each with its denial reason in
+        ``admission``. The listing never changes the generation's admitted set.
+        """
+
+        async def operation(session: _Session) -> BriosaCapabilityListing:
+            try:
+                raw = await session.transport.list_capabilities(
+                    include_denied=include_denied, timeout=_validate_timeout(timeout)
+                )
+            except grpc.RpcError as error:
+                raise map_rpc_error(error, session.application_state) from error
+            return map_capability_listing(raw)
+
+        return await self._run_lifecycle(operation)
+
     async def get_spatial_analyzer_state(
         self, *, timeout: float | None = None
     ) -> SpatialAnalyzerLifecycleState:
@@ -348,27 +373,25 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
             )
         )
 
-    async def get_working_directory(self) -> str:
-        lock = self._bind_loop()
-        async with lock:
-            self._ensure_open()
-            if self._start_task is not None:
-                raise BriosaLifecycleError("client-start-in-progress")
-            session = self._require_session()
-            if not session.command_admission_open:
-                raise BriosaLifecycleError("mp-command-admission-closed")
-            session.active_commands += 1
-            session.commands_drained.clear()
-        try:
-            return await session.transport.get_working_directory(
-                self._options.command_timeout
-            )
-        except grpc.RpcError as error:
-            raise map_rpc_error(error, session.application_state) from error
-        finally:
-            await asyncio.shield(self._exit_command(session))
+    async def get_working_directory(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> str:
+        """Return SpatialAnalyzer's working directory."""
+        return cast(
+            str,
+            await self._invoke_mp_operation(
+                "briosa.FileOperations",
+                "GetWorkingDirectory",
+                "file_operations.get_working_directory",
+                {},
+                None,
+                on_mp_completion=on_mp_completion,
+            ),
+        )
 
-    async def get_active_collection_name(self) -> str:
+    async def get_active_collection_name(
+        self, *, on_mp_completion: MpCompletionObserver | None = None
+    ) -> str:
         """Return the name of the active SpatialAnalyzer collection."""
         return cast(
             str,
@@ -378,6 +401,7 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                 "construction_operations.get_active_collection_name",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -388,6 +412,8 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         operation_id: str,
         values: dict[str, Any],
         result_type: type[Any] | None,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Any:
         method = operation_method(service, rpc)
         request = build_request(method, values)
@@ -409,6 +435,11 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                 response_type(method),
                 self._options.command_timeout,
             )
+            # C1: every success is checked, observed or not, and the observer
+            # hears of it before the outputs are mapped.
+            completion = map_mp_completion(response)
+            if on_mp_completion is not None:
+                on_mp_completion(completion)
             return map_response(method, response, result_type)
         except grpc.RpcError as error:
             raise map_rpc_error(error, session.application_state) from error

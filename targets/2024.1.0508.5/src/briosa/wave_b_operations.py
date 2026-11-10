@@ -4,12 +4,27 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import Protocol, cast
+from dataclasses import fields, make_dataclass
+from typing import Any, Protocol, cast
 
+from briosa.models import MpCompletionObserver
 from briosa.operation_models import *  # noqa: F403
 from briosa.operation_values import *  # noqa: F403
 from briosa.wave_b_operation_models import *  # noqa: F403
 from briosa.wave_b_operation_values import *  # noqa: F403
+
+# The flat wire shape of GetRobotMachineModelLinkParametersResult: every
+# RobotModelLinkConfiguration member plus the current encoder value.
+_RobotModelLinkParametersWire = make_dataclass(
+    "_RobotModelLinkParametersWire",
+    [
+        *((item.name, item.type) for item in fields(RobotModelLinkConfiguration)),
+        ("encoder_value", float),
+    ],
+    frozen=True,
+    slots=True,
+    kw_only=True,
+)
 
 
 class _WaveBClient(Protocol):
@@ -20,6 +35,8 @@ class _WaveBClient(Protocol):
         operation_id: str,
         values: dict[str, object],
         result_type: type[object] | None,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> object: ...
 
 
@@ -29,6 +46,8 @@ class WaveBOperationsMixin(_WaveBClient):
         collection: CollectionName,
         crib_sheet_name: str,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """Run Crib Sheet using the selected instrument."""
         await self._invoke_mp_operation(
@@ -41,12 +60,15 @@ class WaveBOperationsMixin(_WaveBClient):
                 "instrument": instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
 
     async def project_objects(
         self,
         instrument: CollectionInstrumentId,
         objects_to_project: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """Project Objects; the input iterable is materialized once before the RPC."""
         await self._invoke_mp_operation(
@@ -55,9 +77,15 @@ class WaveBOperationsMixin(_WaveBClient):
             "instrument_operations.project_objects",
             {"instrument": instrument, "objects_to_project": objects_to_project},
             None,
+            on_mp_completion=on_mp_completion,
         )
 
-    async def stop_projection(self, instrument: CollectionInstrumentId) -> None:
+    async def stop_projection(
+        self,
+        instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
+    ) -> None:
         """Stop Projection on the selected instrument."""
         await self._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -65,6 +93,7 @@ class WaveBOperationsMixin(_WaveBClient):
             "instrument_operations.stop_projection",
             {"instrument": instrument},
             None,
+            on_mp_completion=on_mp_completion,
         )
 
     async def cloud_display_control(
@@ -72,6 +101,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         thin: int = 1,
         point_size: int = 1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -86,6 +116,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "point_size": point_size,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -97,6 +128,7 @@ class WaveBOperationsMixin(_WaveBClient):
         show_bounding_box: bool = True,
         use_all_points: bool = False,
         desired_point_count: int = 1000,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> ResetCloudBoundingBoxResult:
         return cast(
             ResetCloudBoundingBoxResult,
@@ -112,12 +144,15 @@ class WaveBOperationsMixin(_WaveBClient):
                     "desired_point_count": desired_point_count,
                 },
                 ResetCloudBoundingBoxResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_cloud_point_count(
         self,
         cloud_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GetCloudPointCountResult:
         return cast(
             GetCloudPointCountResult,
@@ -129,6 +164,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "cloud_name": cloud_name,
                 },
                 GetCloudPointCountResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -137,6 +173,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         enable_cloud_clipping: bool = False,
         reference_object: CollectionObjectName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -147,6 +184,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "reference_object": reference_object,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -160,6 +198,7 @@ class WaveBOperationsMixin(_WaveBClient):
         tolerance: float = 0.0,
         minimum_good_points_per_unit_length: int = 0,
         maximum_bad_points_percentage: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -177,6 +216,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "maximum_bad_points_percentage": maximum_bad_points_percentage,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -194,6 +234,7 @@ class WaveBOperationsMixin(_WaveBClient):
         use_cosine_projection_method: bool = False,
         minimum_edge_points_per_segment: int = 0,
         intermediate_calculation_results_file: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -215,12 +256,15 @@ class WaveBOperationsMixin(_WaveBClient):
                     "intermediate_calculation_results_file": intermediate_calculation_results_file,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def enable_all_cloud_cross_sections(
         self,
         cross_section_cloud_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -230,6 +274,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "cross_section_cloud_name": cross_section_cloud_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -239,6 +284,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         cross_section_id: int = 0,
         enable: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -250,6 +296,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "enable": enable,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -258,6 +305,7 @@ class WaveBOperationsMixin(_WaveBClient):
         cross_section_cloud_name: CollectionObjectName,
         *,
         cross_section_id: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -268,12 +316,15 @@ class WaveBOperationsMixin(_WaveBClient):
                 "cross_section_id": cross_section_id,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_number_of_cross_sections_in_cross_section_cloud(
         self,
         cross_section_cloud_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -285,6 +336,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "cross_section_cloud_name": cross_section_cloud_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -297,6 +349,7 @@ class WaveBOperationsMixin(_WaveBClient):
         proximity: float = 0.0,
         allowable_offset_direction: OffsetDirectionType = OffsetDirectionType.BOTH,
         output_type: PointOutputType = PointOutputType.POINTS,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -311,6 +364,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "output_type": output_type,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -323,6 +377,7 @@ class WaveBOperationsMixin(_WaveBClient):
         proximity: float = 0.0,
         maximum_number_of_points: int = 0,
         output_type: PointOutputType = PointOutputType.POINTS,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -337,6 +392,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "output_type": output_type,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -350,6 +406,7 @@ class WaveBOperationsMixin(_WaveBClient):
         high_proximity: float = 0.0,
         skip_factor: int = 0,
         output_type: PointOutputType = PointOutputType.POINTS,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -365,6 +422,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "output_type": output_type,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -377,6 +435,7 @@ class WaveBOperationsMixin(_WaveBClient):
         minimum_proximity: float = 0.0,
         maximum_proximity: float = 0.0,
         output_type: PointOutputType = PointOutputType.POINTS,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -391,6 +450,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "output_type": output_type,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -404,6 +464,7 @@ class WaveBOperationsMixin(_WaveBClient):
         minimum_proximity: float = 0.0,
         maximum_proximity: float = 0.0,
         output_type: PointOutputType = PointOutputType.POINTS,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -419,6 +480,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "output_type": output_type,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -433,6 +495,7 @@ class WaveBOperationsMixin(_WaveBClient):
         maximum_distance_from_vector_begin: float = 0.0,
         minimum_number_of_required_points: int = 0,
         output_type: PointOutputType = PointOutputType.POINTS,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -449,6 +512,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "output_type": output_type,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -478,6 +542,7 @@ class WaveBOperationsMixin(_WaveBClient):
         gray_scale_low_enabled: bool = False,
         gray_scale_low_threshold: int = 0,
         rgb_filter_operation: RGBFilterOperation = RGBFilterOperation.RESET_AND_APPLY_FILTER,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -509,6 +574,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "rgb_filter_operation": rgb_filter_operation,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -519,6 +585,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         radius: float = 0.0,
         delete_inside: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -531,36 +598,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "delete_inside": delete_inside,
             },
             None,
-        )
-        return None
-
-    async def delete_cloud_points_by_x_y_z_range(
-        self,
-        cloud_names: Iterable[CollectionObjectName],
-        *,
-        x_min: float | None = None,
-        x_max: float | None = None,
-        y_min: float | None = None,
-        y_max: float | None = None,
-        z_min: float | None = None,
-        z_max: float | None = None,
-        delete_inside: bool = False,
-    ) -> None:
-        await self._invoke_mp_operation(
-            "briosa.CloudAndMeshOperations",
-            "DeleteCloudPointsByXYZRange",
-            "cloud_and_mesh_operations.delete_cloud_points_by_xyz_range",
-            {
-                "cloud_names": cloud_names,
-                "x_min": x_min,
-                "x_max": x_max,
-                "y_min": y_min,
-                "y_max": y_max,
-                "z_min": z_min,
-                "z_max": z_max,
-                "delete_inside": delete_inside,
-            },
-            None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -574,6 +612,7 @@ class WaveBOperationsMixin(_WaveBClient):
         finalize: bool = True,
         use_scan_direction_for_point_normal: bool = True,
         json_file: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.CloudAndMeshOperations",
@@ -589,6 +628,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "json_file": json_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -596,6 +636,8 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         mesh: CollectionObjectName,
         plane: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> MeshVolumeResult:
         return cast(
             MeshVolumeResult,
@@ -608,6 +650,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "plane": plane,
                 },
                 MeshVolumeResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -617,6 +660,7 @@ class WaveBOperationsMixin(_WaveBClient):
         new_object_name: CollectionObjectName,
         *,
         overwrite_if_exists: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -628,6 +672,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "overwrite_if_exists": overwrite_if_exists,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -638,6 +683,7 @@ class WaveBOperationsMixin(_WaveBClient):
         second_delta_point: PointName,
         *,
         destination_collection_name: CollectionName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -650,6 +696,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "destination_collection_name": destination_collection_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -657,6 +704,8 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         source_objects: Iterable[CollectionObjectName],
         destination_collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -667,12 +716,15 @@ class WaveBOperationsMixin(_WaveBClient):
                 "destination_collection_name": destination_collection_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_points(
         self,
         point_names: Iterable[PointName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -682,6 +734,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "point_names": point_names,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -689,6 +742,8 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         groups_to_delete_from: Iterable[CollectionObjectName],
         wildcard_selection_names: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -699,28 +754,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "wildcard_selection_names": wildcard_selection_names,
             },
             None,
-        )
-        return None
-
-    async def mirror_objects(
-        self,
-        objects: Iterable[CollectionObjectName],
-        frame_name: CollectionObjectName,
-        frame_plane_to_mirror_around: MirrorFramePlane,
-        *,
-        copy: bool = True,
-    ) -> None:
-        await self._invoke_mp_operation(
-            "briosa.ConstructionOperations",
-            "MirrorObjects",
-            "construction_operations.mirror_objects",
-            {
-                "objects": objects,
-                "frame_name": frame_name,
-                "frame_plane_to_mirror_around": frame_plane_to_mirror_around,
-                "copy": copy,
-            },
-            None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -729,6 +763,8 @@ class WaveBOperationsMixin(_WaveBClient):
         objects_to_move: Iterable[CollectionObjectName],
         first_delta_point: PointName,
         second_delta_point: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -740,6 +776,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "second_delta_point": second_delta_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -747,6 +784,8 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         source_objects: Iterable[CollectionObjectName],
         destination_collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -757,6 +796,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "destination_collection_name": destination_collection_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -764,6 +804,8 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         original_collection_name: CollectionName,
         new_collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -774,6 +816,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "new_collection_name": new_collection_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -783,6 +826,7 @@ class WaveBOperationsMixin(_WaveBClient):
         new_item_name: CollectionItemName,
         *,
         overwrite_if_exists: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -794,6 +838,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "overwrite_if_exists": overwrite_if_exists,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -803,6 +848,7 @@ class WaveBOperationsMixin(_WaveBClient):
         new_object_name: CollectionObjectName,
         *,
         overwrite_if_exists: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -814,6 +860,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "overwrite_if_exists": overwrite_if_exists,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -823,6 +870,7 @@ class WaveBOperationsMixin(_WaveBClient):
         new_point_name: PointName,
         *,
         overwrite_if_exists: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -834,6 +882,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "overwrite_if_exists": overwrite_if_exists,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -843,6 +892,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         name_pattern: str = "NewName_%d",
         start_value: int = 1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -854,6 +904,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "start_value": start_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -867,6 +918,7 @@ class WaveBOperationsMixin(_WaveBClient):
         construct_lines: bool,
         construct_points: bool,
         construct_circles: bool,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -882,6 +934,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "construct_circles": construct_circles,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -891,8 +944,9 @@ class WaveBOperationsMixin(_WaveBClient):
         clouds: Iterable[CollectionObjectName],
         *,
         cloud_thinning_settings: CloudThinningOptions | None = None,
-        filter_proximity_settings_2d: FilterProximitySettings | None = None,
+        filter_proximity_settings_2d: FilterProximitySettings,
         geometry_extraction_tolerance: float = 0.01,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -906,6 +960,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "geometry_extraction_tolerance": geometry_extraction_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -915,7 +970,8 @@ class WaveBOperationsMixin(_WaveBClient):
         clouds: Iterable[CollectionObjectName],
         *,
         cloud_thinning_settings: CloudThinningOptions | None = None,
-        filter_proximity_settings_3d: FilterProximitySettings | None = None,
+        filter_proximity_settings_3d: FilterProximitySettings,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -928,6 +984,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "filter_proximity_settings_3d": filter_proximity_settings_3d,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -935,17 +992,18 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         surfaces: Iterable[CollectionObjectName],
         *,
-        points: Iterable[PointName] | None = None,
-        groups: Iterable[CollectionObjectName] | None = None,
-        clouds: Iterable[CollectionObjectName] | None = None,
+        points: Iterable[PointName],
+        groups: Iterable[CollectionObjectName],
+        clouds: Iterable[CollectionObjectName],
         surface_offset: float = 0.1,
         edge_offset: float = 0.1,
-        offset_direction: OffsetDirectionType = OffsetDirectionType.BOTH,
+        offset_direction: OffsetDirectionType,
         enforce_max_points_per_face_in_output: bool = False,
         max_points_per_face: int = 0,
         cloud_thinning_settings: CloudThinningOptions | None = None,
         output_cloud_base_name: str = "InspAutoFilteredCloud",
         use_face_ids_for_suffix: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -966,6 +1024,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "use_face_ids_for_suffix": use_face_ids_for_suffix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -973,8 +1032,9 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         auto_filter_target_relationships: Iterable[CollectionItemName],
         points: Iterable[PointName],
+        filter_proximity_settings_3d: FilterProximitySettings,
         *,
-        filter_proximity_settings_3d: FilterProximitySettings | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -986,6 +1046,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "filter_proximity_settings_3d": filter_proximity_settings_3d,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -994,6 +1055,7 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         *,
         display_results: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1004,6 +1066,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "display_results": display_results,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1012,9 +1075,10 @@ class WaveBOperationsMixin(_WaveBClient):
         points_to_objects_map_name: str,
         objects: Iterable[CollectionObjectName],
         *,
-        points: Iterable[PointName] | None = None,
-        groups: Iterable[CollectionObjectName] | None = None,
+        points: Iterable[PointName],
+        groups: Iterable[CollectionObjectName],
         proximity_tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1028,12 +1092,15 @@ class WaveBOperationsMixin(_WaveBClient):
                 "points_to_objects_map_name": points_to_objects_map_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_relationship(
         self,
         relationship_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1043,6 +1110,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "relationship_name": relationship_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1053,8 +1121,9 @@ class WaveBOperationsMixin(_WaveBClient):
         instruments_to_move: Iterable[CollectionInstrumentId],
         *,
         solver_mode: SolverMode = SolverMode.GAUSS_NEWTON,
-        motion_to_allow: FitDofOptions | None = None,
+        motion_to_allow: FitDofOptions,
         use_fit_dialog: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> RelationshipFitResult:
         return cast(
             RelationshipFitResult,
@@ -1071,6 +1140,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "use_fit_dialog": use_fit_dialog,
                 },
                 RelationshipFitResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1080,6 +1150,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         sigma_threshold: float = 3.0,
         modify_existing_input_clouds: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GeometryRelationshipOutlierFilterMetrics:
         return cast(
             GeometryRelationshipOutlierFilterMetrics,
@@ -1093,6 +1164,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "modify_existing_input_clouds": modify_existing_input_clouds,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1101,6 +1173,7 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_ref_list: Iterable[CollectionItemName],
         *,
         summary_table_name: str = "Geometry Relationship Summary",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1111,12 +1184,15 @@ class WaveBOperationsMixin(_WaveBClient):
                 "summary_table_name": summary_table_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_general_relationship_statistics(
         self,
         relationship_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GeneralRelationshipStatistics:
         return cast(
             GeneralRelationshipStatistics,
@@ -1128,6 +1204,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "relationship_name": relationship_name,
                 },
                 GeneralRelationshipStatistics,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1136,6 +1213,7 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         *,
         include_all_criteria: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> tuple[str, ...]:
         return cast(
             tuple[str, ...],
@@ -1148,6 +1226,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "include_all_criteria": include_all_criteria,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1155,6 +1234,8 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         points_to_objects_map_name: str,
         points: Iterable[PointName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> tuple[CollectionObjectName, ...]:
         return cast(
             tuple[CollectionObjectName, ...],
@@ -1167,12 +1248,15 @@ class WaveBOperationsMixin(_WaveBClient):
                     "points": points,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_point_to_point_relationship_statistics(
         self,
         relationship_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointToPointRelationshipStatistics:
         return cast(
             PointToPointRelationshipStatistics,
@@ -1184,12 +1268,15 @@ class WaveBOperationsMixin(_WaveBClient):
                     "relationship_name": relationship_name,
                 },
                 PointToPointRelationshipStatistics,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_points_to_objects_relationship_statistics(
         self,
         relationship_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointsToObjectsRelationshipStatistics:
         return cast(
             PointsToObjectsRelationshipStatistics,
@@ -1201,12 +1288,15 @@ class WaveBOperationsMixin(_WaveBClient):
                     "relationship_name": relationship_name,
                 },
                 PointsToObjectsRelationshipStatistics,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_points_to_points_relationship_associated_data(
         self,
         relationship_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointsToPointsRelationshipAssociatedData:
         return cast(
             PointsToPointsRelationshipAssociatedData,
@@ -1218,12 +1308,15 @@ class WaveBOperationsMixin(_WaveBClient):
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_associated_data(
         self,
         relationship_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> RelationshipAssociatedData:
         return cast(
             RelationshipAssociatedData,
@@ -1235,12 +1328,15 @@ class WaveBOperationsMixin(_WaveBClient):
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_relationship_status(
         self,
         relationship_name: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> RelationshipStatusFlags:
         return cast(
             RelationshipStatusFlags,
@@ -1252,6 +1348,7 @@ class WaveBOperationsMixin(_WaveBClient):
                     "relationship_name": relationship_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -1262,6 +1359,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         average_point_name: PointName | None = None,
         nominal_point_name: PointName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1274,6 +1372,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "nominal_point_name": nominal_point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1283,7 +1382,8 @@ class WaveBOperationsMixin(_WaveBClient):
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicCircleMode = DynamicCircleMode.CYLINDER_AND_PLANE_HOLD_PLANE_NORMAL,
+        construction_mode: DynamicCircleMode,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1296,6 +1396,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "second_reference_geometry": second_reference_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1305,7 +1406,8 @@ class WaveBOperationsMixin(_WaveBClient):
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicEllipseMode = DynamicEllipseMode.CYLINDER_AND_PLANE_INTERSECTION,
+        construction_mode: DynamicEllipseMode,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1318,6 +1420,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "second_reference_geometry": second_reference_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1327,7 +1430,8 @@ class WaveBOperationsMixin(_WaveBClient):
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicLineMode = DynamicLineMode.INTERSECTION_OF_TWO_PLANES,
+        construction_mode: DynamicLineMode,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1340,6 +1444,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "second_reference_geometry": second_reference_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1349,8 +1454,9 @@ class WaveBOperationsMixin(_WaveBClient):
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicPlaneMode = DynamicPlaneMode.BISECT_TWO_PLANES,
+        construction_mode: DynamicPlaneMode,
         offset_plane_offset: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1364,6 +1470,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "offset_plane_offset": offset_plane_offset,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1372,9 +1479,10 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         first_reference_geometry: CollectionObjectName,
         second_reference_geometry: CollectionObjectName,
+        third_reference_geometry: CollectionObjectName,
         *,
-        construction_mode: DynamicPointMode = DynamicPointMode.INTERSECTION_LINE_AND_PLANE,
-        third_reference_geometry: CollectionObjectName | None = None,
+        construction_mode: DynamicPointMode,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1388,6 +1496,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "third_reference_geometry": third_reference_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1396,9 +1505,10 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         first_frame_name: CollectionObjectName,
         second_frame_name: CollectionObjectName,
+        orientation_tolerance: ToleranceScalarOptions,
+        position_tolerance: ToleranceVectorOptions,
         *,
-        orientation_tolerance: ToleranceScalarOptions | None = None,
-        position_tolerance: ToleranceVectorOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1412,6 +1522,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "position_tolerance": position_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1420,6 +1531,8 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         nominal_geometry: CollectionObjectName,
         measured_geometry: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1431,6 +1544,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "measured_geometry": measured_geometry,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1442,6 +1556,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         resulting_object_name: CollectionObjectName | None = None,
         fit_profile_name: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1455,6 +1570,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "fit_profile_name": fit_profile_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1466,6 +1582,7 @@ class WaveBOperationsMixin(_WaveBClient):
         *,
         resulting_object_name: CollectionObjectName | None = None,
         fit_profile_name: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1479,6 +1596,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "fit_profile_name": fit_profile_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1489,8 +1607,9 @@ class WaveBOperationsMixin(_WaveBClient):
         second_group_name: CollectionObjectName,
         *,
         auto_update_a_vector_group: bool = False,
-        tolerance: ToleranceVectorOptions | None = None,
-        constraint: ToleranceVectorOptions | None = None,
+        tolerance: ToleranceVectorOptions,
+        constraint: ToleranceVectorOptions,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1505,6 +1624,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "constraint": constraint,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1520,9 +1640,10 @@ class WaveBOperationsMixin(_WaveBClient):
         use_view_zooming_with_proximity: bool = False,
         ignore_points_beyond_threshold: bool = False,
         proximity_threshold: float = 0.01,
-        tolerance: ToleranceVectorOptions | None = None,
-        constraint: ToleranceVectorOptions | None = None,
+        tolerance: ToleranceVectorOptions,
+        constraint: ToleranceVectorOptions,
         fit_weight: float = 1.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1543,6 +1664,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "fit_weight": fit_weight,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1551,9 +1673,10 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         point_groups_in_relationship: Iterable[CollectionObjectName],
         objects_in_relationship: Iterable[CollectionObjectName],
+        projection_options: ProjectionOptions,
         *,
-        projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
         auto_update_a_vector_group: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1567,6 +1690,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "auto_update_a_vector_group": auto_update_a_vector_group,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1577,6 +1701,7 @@ class WaveBOperationsMixin(_WaveBClient):
         second_object_in_relationship: CollectionObjectName,
         *,
         nominal_angle: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1589,6 +1714,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "nominal_angle": nominal_angle,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1597,9 +1723,10 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         point_clouds_in_relationship: Iterable[CollectionObjectName],
         objects_in_relationship: Iterable[CollectionObjectName],
+        projection_options: ProjectionOptions,
         *,
-        projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
         auto_update_a_vector_group: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1613,6 +1740,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "auto_update_a_vector_group": auto_update_a_vector_group,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1621,9 +1749,10 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         first_point_name: PointName,
         second_point_name: PointName,
+        tolerance: ToleranceVectorOptions,
+        constraint: ToleranceVectorOptions,
         *,
-        tolerance: ToleranceVectorOptions | None = None,
-        constraint: ToleranceVectorOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1637,6 +1766,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "constraint": constraint,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1645,9 +1775,10 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         points_in_relationship: Iterable[PointName],
         objects_in_relationship: Iterable[CollectionObjectName],
+        projection_options: ProjectionOptions,
         *,
-        projection_options: ProjectionOptions = ProjectionOptions.DEFAULT,
         auto_update_a_vector_group: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1661,6 +1792,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "auto_update_a_vector_group": auto_update_a_vector_group,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1671,8 +1803,9 @@ class WaveBOperationsMixin(_WaveBClient):
         measured_points: Iterable[PointName],
         *,
         auto_update_a_vector_group: bool = False,
-        tolerance: ToleranceVectorOptions | None = None,
-        constraint: ToleranceVectorOptions | None = None,
+        tolerance: ToleranceVectorOptions,
+        constraint: ToleranceVectorOptions,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1687,6 +1820,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "constraint": constraint,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1697,6 +1831,7 @@ class WaveBOperationsMixin(_WaveBClient):
         corresponding_vector_group: CollectionObjectName,
         *,
         set_opposing_vector_group_polarity: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1709,6 +1844,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "set_opposing_vector_group_polarity": set_opposing_vector_group_polarity,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1718,9 +1854,10 @@ class WaveBOperationsMixin(_WaveBClient):
         relationships_to_minimize: Iterable[CollectionItemName],
         *,
         solver_mode: SolverMode = SolverMode.GAUSS_NEWTON,
-        motion_to_allow: FitDofOptions | None = None,
+        motion_to_allow: FitDofOptions,
         use_fit_dialog: bool = False,
         convergence_threshold: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1735,14 +1872,16 @@ class WaveBOperationsMixin(_WaveBClient):
                 "convergence_threshold": convergence_threshold,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def relationship_watch_window_template(
         self,
+        watch_window_template_name: CollectionObjectName,
+        options: RelationshipWatchWindowTemplateOptions,
         *,
-        watch_window_template_name: CollectionObjectName | None = None,
-        options: RelationshipWatchWindowTemplateOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -1750,7 +1889,6 @@ class WaveBOperationsMixin(_WaveBClient):
         show_deviation_y: MP qualifier: Ry.
         show_deviation_z: MP qualifier: Rz.
         """
-        options = options or RelationshipWatchWindowTemplateOptions()
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
             "RelationshipWatchWindowTemplate",
@@ -1772,6 +1910,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "hide_units": options.hide_units,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1784,6 +1923,7 @@ class WaveBOperationsMixin(_WaveBClient):
         use_view_zooming: bool = True,
         ignore_points_beyond_threshold: bool = True,
         proximity_threshold: float = 0.01,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1798,15 +1938,17 @@ class WaveBOperationsMixin(_WaveBClient):
                 "proximity_threshold": proximity_threshold,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_object_to_object_direction_relationship_tolerances(
         self,
         relationship_name: CollectionItemName,
+        angle_between_vectors_tolerances: ToleranceScalarOptions,
+        mutual_perpendicular_length_tolerances: ToleranceScalarOptions,
         *,
-        angle_between_vectors_tolerances: ToleranceScalarOptions | None = None,
-        mutual_perpendicular_length_tolerances: ToleranceScalarOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1818,6 +1960,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "mutual_perpendicular_length_tolerances": mutual_perpendicular_length_tolerances,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1827,6 +1970,7 @@ class WaveBOperationsMixin(_WaveBClient):
         length_perturbation: float = 0.0001,
         angular_perturbation: float = 0.0001,
         damping: float = 1.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1838,6 +1982,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "damping": damping,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1845,6 +1990,7 @@ class WaveBOperationsMixin(_WaveBClient):
         self,
         *,
         max_number_of_step_size_reduction: int = 5,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1854,16 +2000,18 @@ class WaveBOperationsMixin(_WaveBClient):
                 "max_number_of_step_size_reduction": max_number_of_step_size_reduction,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_points_to_points_relationship_associated_data(
         self,
         relationship_name: CollectionItemName,
+        nominal_points: Iterable[PointName],
+        actual_points: Iterable[PointName],
         *,
-        nominal_points: Iterable[PointName] | None = None,
-        actual_points: Iterable[PointName] | None = None,
         ignore_empty_arguments: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1876,18 +2024,20 @@ class WaveBOperationsMixin(_WaveBClient):
                 "ignore_empty_arguments": ignore_empty_arguments,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_relationship_associated_data(
         self,
         relationship_name: CollectionItemName,
+        individual_points: Iterable[PointName],
+        point_groups: Iterable[CollectionObjectName],
+        point_clouds: Iterable[CollectionObjectName],
+        objects: Iterable[CollectionObjectName],
         *,
-        individual_points: Iterable[PointName] | None = None,
-        point_groups: Iterable[CollectionObjectName] | None = None,
-        point_clouds: Iterable[CollectionObjectName] | None = None,
-        objects: Iterable[CollectionObjectName] | None = None,
         ignore_empty_arguments: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1902,6 +2052,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "ignore_empty_arguments": ignore_empty_arguments,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1912,6 +2063,7 @@ class WaveBOperationsMixin(_WaveBClient):
         radial_offset: float = 1.0,
         minimum_axial_offset: float = -10.0,
         maximum_axial_offset: float = 10.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1924,6 +2076,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "maximum_axial_offset": maximum_axial_offset,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1932,6 +2085,7 @@ class WaveBOperationsMixin(_WaveBClient):
         vg_to_vg_relationship: CollectionItemName,
         *,
         fit_gradient_factor: float = 50.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1942,6 +2096,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "fit_gradient_factor": fit_gradient_factor,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1955,6 +2110,7 @@ class WaveBOperationsMixin(_WaveBClient):
         maximum_gap_fit_weight: float = 10.0,
         nominal_gap: float = 0.0,
         nominal_gap_fit_weight: float = 1.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1963,13 +2119,14 @@ class WaveBOperationsMixin(_WaveBClient):
             {
                 "vg_to_vg_relationship": vg_to_vg_relationship,
                 "minimum_gap": minimum_gap,
-                "minimum_gap_fit_weight": minimum_gap,
+                "minimum_gap_fit_weight": minimum_gap_fit_weight,
                 "maximum_gap": maximum_gap,
-                "maximum_gap_fit_weight": maximum_gap,
+                "maximum_gap_fit_weight": maximum_gap_fit_weight,
                 "nominal_gap": nominal_gap,
-                "nominal_gap_fit_weight": nominal_gap,
+                "nominal_gap_fit_weight": nominal_gap_fit_weight,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1978,6 +2135,7 @@ class WaveBOperationsMixin(_WaveBClient):
         vg_to_vg_relationship: CollectionItemName,
         *,
         set_opposing_vector_group_polarity: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -1988,6 +2146,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "set_opposing_vector_group_polarity": set_opposing_vector_group_polarity,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -1997,6 +2156,7 @@ class WaveBOperationsMixin(_WaveBClient):
         instrument_id: CollectionInstrumentId,
         *,
         start_trapping: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -2008,6 +2168,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "start_trapping": start_trapping,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2016,6 +2177,7 @@ class WaveBOperationsMixin(_WaveBClient):
         relationship_name: CollectionItemName,
         *,
         point_edit_mode: GeometryRelationshipPointEditMode = GeometryRelationshipPointEditMode.POINT_LIST,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._invoke_mp_operation(
             "briosa.RelationshipOperations",
@@ -2026,6 +2188,7 @@ class WaveBOperationsMixin(_WaveBClient):
                 "point_edit_mode": point_edit_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2044,6 +2207,7 @@ class ConstructionOperations:
         *,
         surface_offset_range: float = 10,
         bi_directional_projection: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2059,12 +2223,15 @@ class ConstructionOperations:
                 "mesh_serving_as_projection_target": mesh_serving_as_projection_target,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def auto_arrange_callout_view(
         self,
         callout_view: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2074,11 +2241,14 @@ class ConstructionOperations:
                 "callout_view": callout_view,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def clear_hidden_point_bar_database(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2086,6 +2256,7 @@ class ConstructionOperations:
             "construction_operations.clear_hidden_point_bar_database",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2096,6 +2267,7 @@ class ConstructionOperations:
         surface_name: CollectionObjectName,
         *,
         approximation_tolerance: float = 0.0001,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2108,6 +2280,7 @@ class ConstructionOperations:
                 "approximation_tolerance": approximation_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2118,6 +2291,7 @@ class ConstructionOperations:
         second_surface_name: CollectionObjectName,
         *,
         approximation_tolerance: float = 0.0001,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2130,6 +2304,7 @@ class ConstructionOperations:
                 "approximation_tolerance": approximation_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2139,6 +2314,7 @@ class ConstructionOperations:
         point_set_container: CollectionObjectName,
         *,
         b_spline_fit_options: BSplineFitOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2150,6 +2326,7 @@ class ConstructionOperations:
                 "point_set_container": point_set_container,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2159,6 +2336,7 @@ class ConstructionOperations:
         point_list: Iterable[PointName],
         *,
         b_spline_fit_options: BSplineFitOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2170,6 +2348,7 @@ class ConstructionOperations:
                 "point_list": point_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2179,6 +2358,7 @@ class ConstructionOperations:
         b_spline_list: Iterable[CollectionObjectName],
         *,
         close_resulting_b_spline: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2190,6 +2370,7 @@ class ConstructionOperations:
                 "close_resulting_b_spline": close_resulting_b_spline,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2202,6 +2383,7 @@ class ConstructionOperations:
         closed_line_segment_limit: int = 3,
         unclosed_line_segment_limit: int = 3,
         create_intersection_points: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -2218,6 +2400,7 @@ class ConstructionOperations:
                     "create_intersection_points": create_intersection_points,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2226,6 +2409,7 @@ class ConstructionOperations:
         line_list: Iterable[CollectionObjectName],
         *,
         resulting_b_spline_name_prefix: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -2238,6 +2422,7 @@ class ConstructionOperations:
                     "line_list": line_list,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2246,6 +2431,7 @@ class ConstructionOperations:
         surface_list: Iterable[CollectionObjectName],
         *,
         resulting_b_spline_name_prefix: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -2258,6 +2444,7 @@ class ConstructionOperations:
                     "surface_list": surface_list,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2265,6 +2452,8 @@ class ConstructionOperations:
         self,
         source_cloud_name: CollectionObjectName,
         destination_cloud_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2275,6 +2464,7 @@ class ConstructionOperations:
                 "destination_cloud_name": destination_cloud_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2284,6 +2474,8 @@ class ConstructionOperations:
         circle_center: Vector,
         circle_normal: Vector,
         circle_radius: float,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2296,11 +2488,14 @@ class ConstructionOperations:
                 "circle_radius": circle_radius,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_circles_from_surface_faces_runtime_select(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2308,40 +2503,9 @@ class ConstructionOperations:
             "construction_operations.construct_circles_from_surface_faces_runtime_select",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
-
-    async def construct_circles_lines_from_surfaces(
-        self,
-        surfaces: Iterable[CollectionObjectName],
-        circle_line_mode: CircleLineMode,
-        *,
-        minimum_diameter: float = 0.0,
-        maximum_diameter: float = 0.0,
-        tolerance: float = 0.02,
-        single_surface: bool = False,
-        destination_collection_name: CollectionName | None = None,
-        base_name: str = "Geometry Object",
-    ) -> list[CollectionObjectName]:
-        return cast(
-            list[CollectionObjectName],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "ConstructCirclesLinesFromSurfaces",
-                "construction_operations.construct_circles_lines_from_surfaces",
-                {
-                    "surfaces": surfaces,
-                    "minimum_diameter": minimum_diameter,
-                    "maximum_diameter": maximum_diameter,
-                    "tolerance": tolerance,
-                    "single_surface": single_surface,
-                    "circle_line_mode": circle_line_mode,
-                    "destination_collection_name": destination_collection_name,
-                    "base_name": base_name,
-                },
-                None,
-            ),
-        )
 
     async def construct_collection(
         self,
@@ -2349,6 +2513,7 @@ class ConstructionOperations:
         *,
         folder_path: str = "",
         make_default_collection: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2360,6 +2525,7 @@ class ConstructionOperations:
                 "make_default_collection": make_default_collection,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2372,6 +2538,8 @@ class ConstructionOperations:
         cone_theta_start: float,
         cone_theta_span: float,
         cone_included_angle: float,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2387,11 +2555,14 @@ class ConstructionOperations:
                 "cone_included_angle": cone_included_angle,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_cones_from_surface_faces_runtime_select(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2399,6 +2570,7 @@ class ConstructionOperations:
             "construction_operations.construct_cones_from_surface_faces_runtime_select",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2415,9 +2587,10 @@ class ConstructionOperations:
         limit_cross_section_extent: bool = False,
         radius_limit: float = 0.0,
         project_to_reference_surface: bool = False,
-        reference_object: CollectionObjectName | None = None,
+        reference_object: CollectionObjectName,
         cloud_thinning_settings: CloudThinningOptions | None = None,
         update_existing_cloud: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2439,6 +2612,7 @@ class ConstructionOperations:
                 "update_existing_cloud": update_existing_cloud,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2454,6 +2628,7 @@ class ConstructionOperations:
         project_to_reference_surface: bool = False,
         cloud_thinning_settings: CloudThinningOptions | None = None,
         update_existing_cloud: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2471,6 +2646,7 @@ class ConstructionOperations:
                 "update_existing_cloud": update_existing_cloud,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2481,6 +2657,8 @@ class ConstructionOperations:
         cylinder_axis: Vector,
         cylinder_diameter: float,
         cylinder_length: float,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2494,6 +2672,7 @@ class ConstructionOperations:
                 "cylinder_length": cylinder_length,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2503,6 +2682,8 @@ class ConstructionOperations:
         cylinder_end_point_a: Vector,
         cylinder_end_point_b: Vector,
         cylinder_diameter: float,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2515,11 +2696,14 @@ class ConstructionOperations:
                 "cylinder_diameter": cylinder_diameter,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_cylinders_from_surface_faces_runtime_select(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2527,6 +2711,7 @@ class ConstructionOperations:
             "construction_operations.construct_cylinders_from_surface_faces_runtime_select",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2539,8 +2724,9 @@ class ConstructionOperations:
         z_axis_radius: float = 3.0,
         magnification: float = 1.0,
         uncertainty_ellipsoid: bool = False,
-        transform_in_working_coordinates: Transform | None = None,
+        transform_in_working_coordinates: Transform,
         ellipse_color: Color | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2557,12 +2743,15 @@ class ConstructionOperations:
                 "ellipse_color": ellipse_color,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_folders(
         self,
         folder_path: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2572,14 +2761,16 @@ class ConstructionOperations:
                 "folder_path": folder_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_frame(
         self,
         new_frame_name: CollectionObjectName,
+        transform_in_working_coordinates: Transform,
         *,
-        transform_in_working_coordinates: Transform | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2590,6 +2781,7 @@ class ConstructionOperations:
                 "transform_in_working_coordinates": transform_in_working_coordinates,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2600,6 +2792,7 @@ class ConstructionOperations:
         clocking_point: PointName,
         *,
         frame_name: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2612,6 +2805,7 @@ class ConstructionOperations:
                 "frame_name": frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2620,6 +2814,8 @@ class ConstructionOperations:
         machine_id: CollectionMachineId,
         link_name: str,
         resulting_frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2631,6 +2827,7 @@ class ConstructionOperations:
                 "resulting_frame": resulting_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2639,6 +2836,7 @@ class ConstructionOperations:
         objects: Iterable[CollectionObjectName],
         *,
         frame_name: CollectionObjectName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2649,6 +2847,7 @@ class ConstructionOperations:
                 "frame_name": frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2658,6 +2857,7 @@ class ConstructionOperations:
         axis_to_reverse: FrameAxis,
         *,
         frame_name: CollectionObjectName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2669,6 +2869,7 @@ class ConstructionOperations:
                 "axis_to_reverse": axis_to_reverse,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2677,6 +2878,7 @@ class ConstructionOperations:
         point_list: Iterable[PointName],
         *,
         show_frame: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2687,14 +2889,16 @@ class ConstructionOperations:
                 "show_frame": show_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_frame_from_transform_in_world(
         self,
         new_frame_name: CollectionObjectName,
+        transform_in_world_coordinates: Transform,
         *,
-        transform_in_world_coordinates: Transform | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2705,6 +2909,7 @@ class ConstructionOperations:
                 "transform_in_world_coordinates": transform_in_world_coordinates,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2718,6 +2923,7 @@ class ConstructionOperations:
         secondary_axis_defines_which_axis: AxisIdentifier,
         *,
         frame_name: CollectionObjectName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2725,7 +2931,7 @@ class ConstructionOperations:
             "construction_operations.construct_frame_known_origin_object_direction_object_direction",
             {
                 "known_point": known_point,
-                "known_point_value_in_new_frame": known_point,
+                "known_point_value_in_new_frame": known_point_value_in_new_frame,
                 "primary_axis_object": primary_axis_object,
                 "primary_axis_defines_which_axis": primary_axis_defines_which_axis,
                 "secondary_axis_object": secondary_axis_object,
@@ -2733,6 +2939,7 @@ class ConstructionOperations:
                 "frame_name": frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2741,6 +2948,7 @@ class ConstructionOperations:
         instrument_id: CollectionInstrumentId,
         *,
         frame_name: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2751,6 +2959,7 @@ class ConstructionOperations:
                 "frame_name": frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2759,6 +2968,7 @@ class ConstructionOperations:
         reference_object: CollectionObjectName,
         *,
         frame_name: CollectionObjectName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2769,6 +2979,7 @@ class ConstructionOperations:
                 "frame_name": frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2778,6 +2989,7 @@ class ConstructionOperations:
         point_on_x_axis: PointName,
         *,
         frame_name: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2789,6 +3001,7 @@ class ConstructionOperations:
                 "frame_name": frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2802,6 +3015,7 @@ class ConstructionOperations:
         z_value_on_plane: float,
         *,
         frame_name: CollectionObjectName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2817,6 +3031,7 @@ class ConstructionOperations:
                 "frame_name": frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2828,6 +3043,7 @@ class ConstructionOperations:
         secondary_axis_point: PointName,
         *,
         frame_name: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2841,6 +3057,7 @@ class ConstructionOperations:
                 "frame_name": frame_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2849,6 +3066,7 @@ class ConstructionOperations:
         new_frame_name: CollectionObjectName,
         *,
         wait_for_completion: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2859,6 +3077,7 @@ class ConstructionOperations:
                 "wait_for_completion": wait_for_completion,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2869,6 +3088,7 @@ class ConstructionOperations:
         mesh_serving_as_projection_target: CollectionObjectName,
         *,
         bi_directional_projection: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -2883,6 +3103,7 @@ class ConstructionOperations:
                     "mesh_serving_as_projection_target": mesh_serving_as_projection_target,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2894,6 +3115,7 @@ class ConstructionOperations:
         mesh_serving_as_projection_target: CollectionObjectName,
         *,
         bi_directional_projection: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -2909,6 +3131,7 @@ class ConstructionOperations:
                     "mesh_serving_as_projection_target": mesh_serving_as_projection_target,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -2916,6 +3139,8 @@ class ConstructionOperations:
         self,
         line_name: CollectionObjectName,
         slot_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2926,6 +3151,7 @@ class ConstructionOperations:
                 "slot_name": slot_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2935,6 +3161,7 @@ class ConstructionOperations:
         line_name: CollectionObjectName,
         *,
         observation_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2946,6 +3173,7 @@ class ConstructionOperations:
                 "line_name": line_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2955,6 +3183,7 @@ class ConstructionOperations:
         object: CollectionObjectName,
         *,
         line_length: float = 1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2966,6 +3195,7 @@ class ConstructionOperations:
                 "object": object,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2974,6 +3204,8 @@ class ConstructionOperations:
         line_to_create: CollectionObjectName,
         object_name: CollectionObjectName,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -2985,6 +3217,7 @@ class ConstructionOperations:
                 "point_name": point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -2993,6 +3226,8 @@ class ConstructionOperations:
         line_to_create: CollectionObjectName,
         line_to_project: CollectionObjectName,
         object_to_project_to: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3004,6 +3239,7 @@ class ConstructionOperations:
                 "object_to_project_to": object_to_project_to,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3012,6 +3248,8 @@ class ConstructionOperations:
         line_name: CollectionObjectName,
         first_plane: CollectionObjectName,
         second_plane: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3023,6 +3261,7 @@ class ConstructionOperations:
                 "second_plane": second_plane,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3031,6 +3270,8 @@ class ConstructionOperations:
         line_name: CollectionObjectName,
         first_point: PointName,
         second_point: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3042,6 +3283,7 @@ class ConstructionOperations:
                 "second_point": second_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3050,6 +3292,8 @@ class ConstructionOperations:
         line_name: CollectionObjectName,
         first_vector: Vector,
         second_vector: Vector,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3061,11 +3305,14 @@ class ConstructionOperations:
                 "second_vector": second_vector,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_lines_from_surface_faces_runtime_select(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3073,6 +3320,7 @@ class ConstructionOperations:
             "construction_operations.construct_lines_from_surface_faces_runtime_select",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3083,6 +3331,7 @@ class ConstructionOperations:
         *,
         use_current_measurements_marked_as_mirror_shots: bool = True,
         nominal_cube_face_angle: float = 90,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -3097,6 +3346,7 @@ class ConstructionOperations:
                     "nominal_cube_face_angle": nominal_cube_face_angle,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3106,6 +3356,7 @@ class ConstructionOperations:
         point_list: Iterable[PointName],
         *,
         open_perimeter: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3117,6 +3368,7 @@ class ConstructionOperations:
                 "open_perimeter": open_perimeter,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3127,6 +3379,7 @@ class ConstructionOperations:
         plane_normal: Vector,
         *,
         plane_edge_dimension: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3139,6 +3392,7 @@ class ConstructionOperations:
                 "plane_edge_dimension": plane_edge_dimension,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3149,6 +3403,7 @@ class ConstructionOperations:
         through_point_name: PointName,
         *,
         plane_edge_dimension: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3161,6 +3416,7 @@ class ConstructionOperations:
                 "plane_edge_dimension": plane_edge_dimension,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3169,6 +3425,8 @@ class ConstructionOperations:
         resultant_plane_name: CollectionObjectName,
         first_plane: CollectionObjectName,
         second_plane: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3180,6 +3438,7 @@ class ConstructionOperations:
                 "second_plane": second_plane,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3192,6 +3451,7 @@ class ConstructionOperations:
         resulting_low_plane_name: CollectionObjectName | None = None,
         override_target_point_offsets: bool = False,
         offset_value: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3206,11 +3466,14 @@ class ConstructionOperations:
                 "offset_value": offset_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_planes_from_surface_faces_runtime_select(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3218,6 +3481,7 @@ class ConstructionOperations:
             "construction_operations.construct_planes_from_surface_faces_runtime_select",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3225,6 +3489,8 @@ class ConstructionOperations:
         self,
         circle_name: CollectionObjectName,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3235,6 +3501,7 @@ class ConstructionOperations:
                 "point_name": point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3245,6 +3512,7 @@ class ConstructionOperations:
         point_name: PointName,
         *,
         approximation_tolerance: float = 0.001,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3257,6 +3525,7 @@ class ConstructionOperations:
                 "point_name": point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3265,6 +3534,8 @@ class ConstructionOperations:
         plane_name: CollectionObjectName,
         line_name: CollectionObjectName,
         resulting_point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3276,6 +3547,7 @@ class ConstructionOperations:
                 "resulting_point_name": resulting_point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3285,6 +3557,8 @@ class ConstructionOperations:
         plane_2_name: CollectionObjectName,
         plane_3_name: CollectionObjectName,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3297,6 +3571,7 @@ class ConstructionOperations:
                 "point_name": point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3305,6 +3580,8 @@ class ConstructionOperations:
         first_b_spline_name: CollectionObjectName,
         second_b_spline_name: CollectionObjectName,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3316,6 +3593,7 @@ class ConstructionOperations:
                 "point_name": point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3324,6 +3602,8 @@ class ConstructionOperations:
         first_line_name: CollectionObjectName,
         second_line_name: CollectionObjectName,
         resulting_point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3335,6 +3615,7 @@ class ConstructionOperations:
                 "resulting_point_name": resulting_point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3342,6 +3623,8 @@ class ConstructionOperations:
         self,
         line_name: CollectionObjectName,
         point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3352,6 +3635,7 @@ class ConstructionOperations:
                 "point_name": point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3360,6 +3644,8 @@ class ConstructionOperations:
         point_to_project: PointName,
         object_name: CollectionObjectName,
         resulting_point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3371,6 +3657,7 @@ class ConstructionOperations:
                 "resulting_point_name": resulting_point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3381,6 +3668,7 @@ class ConstructionOperations:
         *,
         cloud_thinning_settings: CloudThinningOptions | None = None,
         hide_original_point_clouds: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3393,6 +3681,7 @@ class ConstructionOperations:
                 "hide_original_point_clouds": hide_original_point_clouds,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3400,6 +3689,8 @@ class ConstructionOperations:
         self,
         source_clouds: Iterable[CollectionObjectName],
         destination_cloud_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3410,6 +3701,7 @@ class ConstructionOperations:
                 "destination_cloud_name": destination_cloud_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3421,6 +3713,7 @@ class ConstructionOperations:
         *,
         acceptance_angle: float = 30.0,
         hide_source_cloud: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3434,12 +3727,15 @@ class ConstructionOperations:
                 "hide_source_cloud": hide_source_cloud,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_point_clouds_from_existing_cloud_points_runtime_select(
         self,
         cloud_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3449,6 +3745,7 @@ class ConstructionOperations:
                 "cloud_name": cloud_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3460,6 +3757,7 @@ class ConstructionOperations:
         desired_point_spacing: float = 0.02,
         minimum_points_per_output_point: int = 3,
         hide_original_point_clouds: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3473,6 +3771,7 @@ class ConstructionOperations:
                 "hide_original_point_clouds": hide_original_point_clouds,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3480,6 +3779,8 @@ class ConstructionOperations:
         self,
         point_group_name: CollectionObjectName,
         cloud_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3490,6 +3791,7 @@ class ConstructionOperations:
                 "cloud_name": cloud_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3497,6 +3799,8 @@ class ConstructionOperations:
         self,
         point_names: Iterable[PointName],
         resulting_point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3507,6 +3811,7 @@ class ConstructionOperations:
                 "resulting_point_name": resulting_point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3515,7 +3820,8 @@ class ConstructionOperations:
         *,
         selection_prompt: str = "Select cloud point",
         construct_point: bool = False,
-        constructed_point_name: PointName | None = None,
+        constructed_point_name: PointName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Vector:
         return cast(
             Vector,
@@ -3529,6 +3835,7 @@ class ConstructionOperations:
                     "constructed_point_name": constructed_point_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3540,6 +3847,7 @@ class ConstructionOperations:
         *,
         survey_target_type: SurveyTargetType = SurveyTargetType.TRIANGLE,
         search_diameter: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3553,6 +3861,7 @@ class ConstructionOperations:
                 "result_center_point_name": result_center_point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3567,6 +3876,7 @@ class ConstructionOperations:
         sub_sampling: bool = False,
         sub_sampling_distance: float = 0.5,
         show_progress: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3579,10 +3889,11 @@ class ConstructionOperations:
                 "starting_point_number": starting_point_number,
                 "point_offset": point_offset,
                 "sub_sampling": sub_sampling,
-                "sub_sampling_distance": sub_sampling,
+                "sub_sampling_distance": sub_sampling_distance,
                 "show_progress": show_progress,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3590,6 +3901,8 @@ class ConstructionOperations:
         self,
         point_name_list: Iterable[PointName],
         group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3600,6 +3913,7 @@ class ConstructionOperations:
                 "group_name": group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3610,6 +3924,7 @@ class ConstructionOperations:
         optional_group_name_suffix: str = "",
         make_vector_begin_points: bool = False,
         make_vector_end_points: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -3624,6 +3939,7 @@ class ConstructionOperations:
                     "make_vector_end_points": make_vector_end_points,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3631,6 +3947,8 @@ class ConstructionOperations:
         self,
         point_name: PointName,
         working_coordinates: Vector,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3641,6 +3959,7 @@ class ConstructionOperations:
                 "working_coordinates": working_coordinates,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3649,6 +3968,8 @@ class ConstructionOperations:
         circle_name: CollectionObjectName,
         line_name: CollectionObjectName,
         base_point_name_for_results: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3660,6 +3981,7 @@ class ConstructionOperations:
                 "base_point_name_for_results": base_point_name_for_results,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3670,6 +3992,7 @@ class ConstructionOperations:
         resultant_group_name: CollectionObjectName,
         *,
         point_suffix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3682,6 +4005,7 @@ class ConstructionOperations:
                 "resultant_group_name": resultant_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3694,6 +4018,7 @@ class ConstructionOperations:
         group_name_to_contain_new_points: str = "",
         point_name_prefix: str = "",
         point_name_suffix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3704,10 +4029,11 @@ class ConstructionOperations:
                 "point_names": point_names,
                 "group_name_to_contain_new_points": group_name_to_contain_new_points,
                 "point_name_prefix": point_name_prefix,
-                "point_name_suffix": point_names,
+                "point_name_suffix": point_name_suffix,
                 "axis": axis,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3720,6 +4046,7 @@ class ConstructionOperations:
         group_name_to_contain_new_points: str = "",
         point_name_prefix: str = "",
         point_name_suffix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3730,10 +4057,11 @@ class ConstructionOperations:
                 "point_names": point_names,
                 "group_name_to_contain_new_points": group_name_to_contain_new_points,
                 "point_name_prefix": point_name_prefix,
-                "point_name_suffix": point_names,
+                "point_name_suffix": point_name_suffix,
                 "axis": axis,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3745,6 +4073,7 @@ class ConstructionOperations:
         group_name_to_contain_new_points: str = "",
         point_name_prefix: str = "",
         point_name_suffix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3755,9 +4084,10 @@ class ConstructionOperations:
                 "point_names": point_names,
                 "group_name_to_contain_new_points": group_name_to_contain_new_points,
                 "point_name_prefix": point_name_prefix,
-                "point_name_suffix": point_names,
+                "point_name_suffix": point_name_suffix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3768,6 +4098,7 @@ class ConstructionOperations:
         group_to_contain_matched_points: CollectionObjectName,
         *,
         same_point_tolerance: float = 0.1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3780,6 +4111,7 @@ class ConstructionOperations:
                 "group_to_contain_matched_points": group_to_contain_matched_points,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3790,6 +4122,7 @@ class ConstructionOperations:
         group_to_contain_matched_points: CollectionObjectName,
         *,
         same_point_tolerance: float = 0.25,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3802,6 +4135,7 @@ class ConstructionOperations:
                 "group_to_contain_matched_points": group_to_contain_matched_points,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3813,6 +4147,7 @@ class ConstructionOperations:
         mesh_serving_as_projection_target: CollectionObjectName,
         *,
         bi_directional_projection: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -3828,6 +4163,7 @@ class ConstructionOperations:
                     "mesh_serving_as_projection_target": mesh_serving_as_projection_target,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -3840,6 +4176,7 @@ class ConstructionOperations:
         radial_shift: float = 0.0,
         theta_shift: float = 0.0,
         planar_shift: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -3858,6 +4195,7 @@ class ConstructionOperations:
                 "planar_shift": planar_shift,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3865,6 +4203,8 @@ class ConstructionOperations:
         self,
         cylinder_name: CollectionObjectName,
         group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3875,11 +4215,14 @@ class ConstructionOperations:
                 "group_name": group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_points_from_surface_faces_runtime_select(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3887,6 +4230,7 @@ class ConstructionOperations:
             "construction_operations.construct_points_from_surface_faces_runtime_select",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3898,7 +4242,8 @@ class ConstructionOperations:
         make_each_line_separate_group: bool = False,
         number_of_u_grids: int = 5,
         number_of_v_grids: int = 5,
-        edge_point_mode: EdgePointMode = EdgePointMode.INCLUDE_EDGES,
+        edge_point_mode: EdgePointMode,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3913,6 +4258,7 @@ class ConstructionOperations:
                 "edge_point_mode": edge_point_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3930,6 +4276,7 @@ class ConstructionOperations:
         z_min: float = 0.0,
         z_max: float = 0.0,
         z_count: int = 1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3949,6 +4296,7 @@ class ConstructionOperations:
                 "z_count": z_count,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3959,6 +4307,7 @@ class ConstructionOperations:
         *,
         number_of_evenly_spaced_points: int = 10,
         resultant_point_name_prefix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3971,6 +4320,7 @@ class ConstructionOperations:
                 "resultant_point_name_prefix": resultant_point_name_prefix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -3983,6 +4333,7 @@ class ConstructionOperations:
         maximum_trim_edge_angle: float = 15.0,
         maximum_chord_length: float = 0.0,
         resultant_point_name_prefix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -3997,6 +4348,7 @@ class ConstructionOperations:
                 "resultant_point_name_prefix": resultant_point_name_prefix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4004,6 +4356,8 @@ class ConstructionOperations:
         self,
         object_name_list: Iterable[CollectionObjectName],
         resultant_group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4014,6 +4368,7 @@ class ConstructionOperations:
                 "resultant_group_name": resultant_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4022,6 +4377,7 @@ class ConstructionOperations:
         group_name_for_points: CollectionObjectName,
         *,
         first_point_name: str = "p0",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4032,6 +4388,7 @@ class ConstructionOperations:
                 "first_point_name": first_point_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4039,8 +4396,9 @@ class ConstructionOperations:
         self,
         original_points: Iterable[PointName],
         group_for_new_points: CollectionObjectName,
+        shift_vector: Vector,
         *,
-        shift_vector: Vector | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4052,6 +4410,7 @@ class ConstructionOperations:
                 "shift_vector": shift_vector,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4062,6 +4421,7 @@ class ConstructionOperations:
         *,
         distance_between_points: float = 0.5,
         resultant_point_name_prefix: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4074,6 +4434,7 @@ class ConstructionOperations:
                 "resultant_point_name_prefix": resultant_point_name_prefix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4082,7 +4443,8 @@ class ConstructionOperations:
         points_to_subsample: Iterable[PointName],
         *,
         subset_size: int = 10,
-        group_for_subset: CollectionObjectName | None = None,
+        group_for_subset: CollectionObjectName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4094,6 +4456,7 @@ class ConstructionOperations:
                 "group_for_subset": group_for_subset,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4104,6 +4467,7 @@ class ConstructionOperations:
         group_for_new_points: CollectionObjectName,
         *,
         include_prior_complete_name: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4116,6 +4480,7 @@ class ConstructionOperations:
                 "include_prior_complete_name": include_prior_complete_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4124,6 +4489,8 @@ class ConstructionOperations:
         sphere_name: CollectionObjectName,
         sphere_center: Vector,
         sphere_radius: float,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -4139,11 +4506,14 @@ class ConstructionOperations:
                 "sphere_radius": sphere_radius,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_spheres_from_surface_faces_runtime_select(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4151,12 +4521,15 @@ class ConstructionOperations:
             "construction_operations.construct_spheres_from_surface_faces_runtime_select",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_surface_by_dissecting_surfaces(
         self,
         dissection_mode: SurfaceDissectionMode,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -4168,6 +4541,7 @@ class ConstructionOperations:
                     "dissection_mode": dissection_mode,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4177,6 +4551,7 @@ class ConstructionOperations:
         *,
         surface_offset: float = 0.0,
         hide_original_surface: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4188,6 +4563,7 @@ class ConstructionOperations:
                 "hide_original_surface": hide_original_surface,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4196,6 +4572,8 @@ class ConstructionOperations:
         nominal_surface: CollectionObjectName,
         actual_data_point_list: Iterable[PointName],
         resulting_surface_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4207,6 +4585,7 @@ class ConstructionOperations:
                 "resulting_surface_name": resulting_surface_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4214,6 +4593,8 @@ class ConstructionOperations:
         self,
         annotation_list: Iterable[CollectionObjectName],
         resulting_surface_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4224,6 +4605,7 @@ class ConstructionOperations:
                 "resulting_surface_name": resulting_surface_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4231,6 +4613,8 @@ class ConstructionOperations:
         self,
         resulting_surface_name: CollectionObjectName,
         b_spline_list: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4241,6 +4625,7 @@ class ConstructionOperations:
                 "b_spline_list": b_spline_list,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4253,6 +4638,7 @@ class ConstructionOperations:
         delete_original_surfaces: bool = False,
         enable_sewing_tolerance: bool = False,
         sewing_tolerance: float = -1.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4267,6 +4653,7 @@ class ConstructionOperations:
                 "sewing_tolerance": sewing_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4274,6 +4661,8 @@ class ConstructionOperations:
         self,
         resulting_surface_name: CollectionObjectName,
         cone_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4284,6 +4673,7 @@ class ConstructionOperations:
                 "cone_name": cone_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4294,6 +4684,7 @@ class ConstructionOperations:
         *,
         internal_cylinder: bool = True,
         use_theta_extent_mode: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4306,6 +4697,7 @@ class ConstructionOperations:
                 "use_theta_extent_mode": use_theta_extent_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4313,6 +4705,8 @@ class ConstructionOperations:
         self,
         resulting_surface_name: CollectionObjectName,
         plane_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4323,6 +4717,7 @@ class ConstructionOperations:
                 "plane_name": plane_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4332,6 +4727,7 @@ class ConstructionOperations:
         resulting_surface_name: CollectionObjectName,
         *,
         b_spline_fit_options: BSplineFitOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4343,6 +4739,7 @@ class ConstructionOperations:
                 "resulting_surface_name": resulting_surface_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4350,6 +4747,8 @@ class ConstructionOperations:
         self,
         resulting_surface_name: CollectionObjectName,
         sphere_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4360,12 +4759,15 @@ class ConstructionOperations:
                 "sphere_name": sphere_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_surfaces_by_dissecting_surfaces_from_ref_list(
         self,
         surfaces_to_dissect: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -4377,6 +4779,7 @@ class ConstructionOperations:
                     "surfaces_to_dissect": surfaces_to_dissect,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4385,6 +4788,8 @@ class ConstructionOperations:
         projection_target_name_list: Iterable[CollectionObjectName],
         point_list: Iterable[PointName],
         resulting_surface_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4396,12 +4801,15 @@ class ConstructionOperations:
                 "resulting_surface_name": resulting_surface_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_surfaces_from_objects(
         self,
         objects: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4411,6 +4819,7 @@ class ConstructionOperations:
                 "objects": objects,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4422,6 +4831,7 @@ class ConstructionOperations:
         *,
         area_radius: float = 0.0,
         area_tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4435,6 +4845,7 @@ class ConstructionOperations:
                 "resultant_vector_group_name": resultant_vector_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4442,6 +4853,8 @@ class ConstructionOperations:
         self,
         relationship_name: CollectionObjectName,
         vector_group_name: CollectionVectorGroupName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4452,6 +4865,7 @@ class ConstructionOperations:
                 "vector_group_name": vector_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4459,6 +4873,8 @@ class ConstructionOperations:
         self,
         vector_name_list: Iterable[VectorName],
         resultant_vector_group_name: CollectionVectorGroupName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4469,6 +4885,7 @@ class ConstructionOperations:
                 "resultant_vector_group_name": resultant_vector_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4481,6 +4898,7 @@ class ConstructionOperations:
         rms_deviation_tolerance: float = 0.0,
         max_absolute_deviation_tolerance: float = 0.0,
         average_deviation_tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> ConstructVectorGroupGroupToGroupCompareResult:
         return cast(
             ConstructVectorGroupGroupToGroupCompareResult,
@@ -4497,6 +4915,7 @@ class ConstructionOperations:
                     "average_deviation_tolerance": average_deviation_tolerance,
                 },
                 ConstructVectorGroupGroupToGroupCompareResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4508,6 +4927,7 @@ class ConstructionOperations:
         delta_in_working_coordinates: Vector,
         *,
         is_magnitude_negative: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4521,6 +4941,7 @@ class ConstructionOperations:
                 "is_magnitude_negative": is_magnitude_negative,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4532,6 +4953,7 @@ class ConstructionOperations:
         direction_in_working_coordinates: Vector,
         *,
         signed_magnitude: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4545,6 +4967,7 @@ class ConstructionOperations:
                 "signed_magnitude": signed_magnitude,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4553,6 +4976,8 @@ class ConstructionOperations:
         instrument_id: CollectionInstrumentId,
         group_names: Iterable[CollectionObjectName],
         new_collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4564,6 +4989,7 @@ class ConstructionOperations:
                 "new_collection_name": new_collection_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4575,6 +5001,7 @@ class ConstructionOperations:
         *,
         hidden_point_rod_index: int = 0,
         overwrite_existing_point: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4588,6 +5015,7 @@ class ConstructionOperations:
                 "point_name_to_create": point_name_to_create,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4598,6 +5026,7 @@ class ConstructionOperations:
         a_to_b_distance: float = 0.0,
         a_to_c_distance: float = 0.0,
         inter_point_tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         """MP argument notes.
 
@@ -4617,6 +5046,7 @@ class ConstructionOperations:
                     "inter_point_tolerance": inter_point_tolerance,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -4644,6 +5074,7 @@ class ConstructionOperations:
         show_units: bool = False,
         attach_callout_to_end_point: bool = True,
         use_default_placement: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4673,6 +5104,7 @@ class ConstructionOperations:
                 "use_default_placement": use_default_placement,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4685,6 +5117,7 @@ class ConstructionOperations:
         view_y_position: float = 0.6,
         scale_image_percent: int = 100,
         object_for_callout_anchor_point: CollectionItemName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4699,6 +5132,7 @@ class ConstructionOperations:
                 "object_for_callout_anchor_point": object_for_callout_anchor_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4720,9 +5154,10 @@ class ConstructionOperations:
         show_uy: bool = False,
         show_uz: bool = False,
         show_u_mag: bool = False,
-        desired_coordinate_system: CoordinateSystemType = CoordinateSystemType.CARTESIAN,
+        desired_coordinate_system: CoordinateSystemType,
         notes: Iterable[str] | None = None,
         use_default_placement: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -4754,10 +5189,11 @@ class ConstructionOperations:
                 "show_uz": show_uz,
                 "show_umag": show_u_mag,
                 "desired_coordinate_system": desired_coordinate_system,
-                "notes": notes,
+                "notes": () if notes is None else notes,
                 "use_default_placement": use_default_placement,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4786,6 +5222,7 @@ class ConstructionOperations:
         additional_z_comments: str | None = None,
         additional_notes: Iterable[str] | None = None,
         use_default_placement: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4812,10 +5249,13 @@ class ConstructionOperations:
                 "additional_x_comments": additional_x_comments,
                 "additional_y_comments": additional_y_comments,
                 "additional_z_comments": additional_z_comments,
-                "additional_notes": additional_notes,
+                "additional_notes": ()
+                if additional_notes is None
+                else additional_notes,
                 "use_default_placement": use_default_placement,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4827,6 +5267,7 @@ class ConstructionOperations:
         view_x_position: float = 0.0,
         view_y_position: float = 0.0,
         additional_notes: Iterable[str] | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4837,9 +5278,12 @@ class ConstructionOperations:
                 "relationship_name": relationship_name,
                 "view_x_position": view_x_position,
                 "view_y_position": view_y_position,
-                "additional_notes": additional_notes,
+                "additional_notes": ()
+                if additional_notes is None
+                else additional_notes,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4851,6 +5295,7 @@ class ConstructionOperations:
         view_x_position: float = 0.4,
         view_y_position: float = 0.6,
         callout_anchor_point: PointName | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4864,6 +5309,7 @@ class ConstructionOperations:
                 "callout_anchor_point": callout_anchor_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -4892,6 +5338,7 @@ class ConstructionOperations:
         additional_notes: Iterable[str] | None = None,
         attach_callout_to_end_point: bool = False,
         use_default_placement: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -4917,17 +5364,22 @@ class ConstructionOperations:
                 "show_start_point": show_start_point,
                 "show_end_point": show_end_point,
                 "show_units": show_units,
-                "additional_notes": additional_notes,
+                "additional_notes": ()
+                if additional_notes is None
+                else additional_notes,
                 "attach_callout_to_end_point": attach_callout_to_end_point,
                 "use_default_placement": use_default_placement,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def decompose_transform_into_doubles_euler_xyz(
         self,
         input_transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> EulerXyzTransformComponents:
         return cast(
             EulerXyzTransformComponents,
@@ -4939,12 +5391,15 @@ class ConstructionOperations:
                     "input_transform": input_transform,
                 },
                 EulerXyzTransformComponents,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def decompose_transform_into_doubles_euler_zxz(
         self,
         input_transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> EulerZxzTransformComponents:
         return cast(
             EulerZxzTransformComponents,
@@ -4956,12 +5411,15 @@ class ConstructionOperations:
                     "input_transform": input_transform,
                 },
                 EulerZxzTransformComponents,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def decompose_transform_into_doubles_euler_zyx(
         self,
         input_transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> EulerZyxTransformComponents:
         return cast(
             EulerZyxTransformComponents,
@@ -4973,12 +5431,15 @@ class ConstructionOperations:
                     "input_transform": input_transform,
                 },
                 EulerZyxTransformComponents,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def decompose_transform_into_doubles_euler_zyz(
         self,
         input_transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> EulerZyzTransformComponents:
         return cast(
             EulerZyzTransformComponents,
@@ -4990,12 +5451,15 @@ class ConstructionOperations:
                     "input_transform": input_transform,
                 },
                 EulerZyzTransformComponents,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def decompose_transform_into_doubles_fixed_xyz(
         self,
         input_transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> FixedXyzTransformComponents:
         return cast(
             FixedXyzTransformComponents,
@@ -5007,12 +5471,15 @@ class ConstructionOperations:
                     "input_transform": input_transform,
                 },
                 FixedXyzTransformComponents,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def decompose_transform_into_vectors_fixed_xyz(
         self,
         input_transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> FixedXyzTransformVectors:
         return cast(
             FixedXyzTransformVectors,
@@ -5024,12 +5491,15 @@ class ConstructionOperations:
                     "input_transform": input_transform,
                 },
                 FixedXyzTransformVectors,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def decompose_transform_into_vectors_origin_and_axes(
         self,
         transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> TransformAxes:
         return cast(
             TransformAxes,
@@ -5041,12 +5511,15 @@ class ConstructionOperations:
                     "transform": transform,
                 },
                 TransformAxes,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def decompose_world_transform_operator_into_doubles_fixed_xyz_in_world(
         self,
         input_world_transform_operator: WorldTransform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> WorldFixedXyzTransformComponents:
         return cast(
             WorldFixedXyzTransformComponents,
@@ -5058,12 +5531,15 @@ class ConstructionOperations:
                     "input_world_transform_operator": input_world_transform_operator,
                 },
                 WorldFixedXyzTransformComponents,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def decompose_world_transform_operator_into_vectors_fixed_xyz_in_world(
         self,
         input_world_transform_operator: WorldTransform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> WorldFixedXyzTransformVectors:
         return cast(
             WorldFixedXyzTransformVectors,
@@ -5075,12 +5551,15 @@ class ConstructionOperations:
                     "input_world_transform_operator": input_world_transform_operator,
                 },
                 WorldFixedXyzTransformVectors,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def delete_callout_view(
         self,
         callout_view: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5090,12 +5569,15 @@ class ConstructionOperations:
                 "callout_view": callout_view,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_collection(
         self,
         collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5105,6 +5587,7 @@ class ConstructionOperations:
                 "collection_name": collection_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5114,6 +5597,7 @@ class ConstructionOperations:
         *,
         case_sensitive_search: bool = True,
         allow_deleting_all_collections: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> DeleteCollectionsByWildcardResult:
         return cast(
             DeleteCollectionsByWildcardResult,
@@ -5127,6 +5611,7 @@ class ConstructionOperations:
                     "allow_deleting_all_collections": allow_deleting_all_collections,
                 },
                 DeleteCollectionsByWildcardResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5136,6 +5621,7 @@ class ConstructionOperations:
         *,
         case_sensitive_search: bool = True,
         allow_deleting_all_folders: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> DeleteFoldersByWildcardResult:
         return cast(
             DeleteFoldersByWildcardResult,
@@ -5149,6 +5635,7 @@ class ConstructionOperations:
                     "allow_deleting_all_folders": allow_deleting_all_folders,
                 },
                 DeleteFoldersByWildcardResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5156,6 +5643,7 @@ class ConstructionOperations:
         self,
         *,
         hidden_point_rod_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5165,6 +5653,7 @@ class ConstructionOperations:
                 "hidden_point_rod_index": hidden_point_rod_index,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5178,6 +5667,7 @@ class ConstructionOperations:
         minimum_point_count: int = 50,
         perform_final_fit: bool = True,
         final_fit_cone_angle: float = 120.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -5195,12 +5685,15 @@ class ConstructionOperations:
                     "final_fit_cone_angle": final_fit_cone_angle,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_collection_instrument_ref_list_variable(
         self,
         name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionInstrumentId]:
         return cast(
             list[CollectionInstrumentId],
@@ -5212,12 +5705,15 @@ class ConstructionOperations:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_hidden_point_rod_index_by_name(
         self,
         hidden_point_rod_name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -5229,6 +5725,7 @@ class ConstructionOperations:
                     "hidden_point_rod_name": hidden_point_rod_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5236,6 +5733,8 @@ class ConstructionOperations:
         self,
         callout_view: CollectionItemName,
         callout_view_index: int,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CalloutPosition:
         return cast(
             CalloutPosition,
@@ -5245,15 +5744,18 @@ class ConstructionOperations:
                 "construction_operations.get_ith_callout_position_in_callout_view",
                 {
                     "callout_view": callout_view,
-                    "callout_view_index": callout_view,
+                    "callout_view_index": callout_view_index,
                 },
                 CalloutPosition,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_number_of_callouts_in_callout_view(
         self,
         callout_view: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -5265,12 +5767,15 @@ class ConstructionOperations:
                     "callout_view": callout_view,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_working_transform_of_object_fixed_xyz(
         self,
         object_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -5282,12 +5787,15 @@ class ConstructionOperations:
                     "object_name": object_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def invert_transform(
         self,
         transform: Transform,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -5299,6 +5807,7 @@ class ConstructionOperations:
                     "transform": transform,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5306,6 +5815,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionInstrumentId:
         return cast(
             CollectionInstrumentId,
@@ -5317,6 +5827,7 @@ class ConstructionOperations:
                     "user_prompt": user_prompt,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5324,6 +5835,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionInstrumentId]:
         return cast(
             list[CollectionInstrumentId],
@@ -5335,6 +5847,7 @@ class ConstructionOperations:
                     "user_prompt": user_prompt,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5343,7 +5856,8 @@ class ConstructionOperations:
         *,
         collection_wildcard_criteria: str = "*",
         item_wildcard_criteria: str = "*",
-        item_type: ItemType = ItemType.ANY,
+        item_type: ItemType,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionItemName]:
         return cast(
             list[CollectionItemName],
@@ -5357,6 +5871,7 @@ class ConstructionOperations:
                     "item_type": item_type,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5364,6 +5879,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionName:
         return cast(
             CollectionName,
@@ -5375,14 +5891,16 @@ class ConstructionOperations:
                     "user_prompt": user_prompt,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_collection_object_name_ref_list_by_type(
         self,
         collection: str,
+        object_type: ObjectType,
         *,
-        object_type: ObjectType = ObjectType.ANY,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -5395,15 +5913,17 @@ class ConstructionOperations:
                     "object_type": object_type,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_collection_object_name_ref_list_by_type_and_color(
         self,
         collection: str,
+        object_type: ObjectType,
         *,
-        object_type: ObjectType = ObjectType.ANY,
         object_color: Color = Color(255, 0, 0),
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -5417,12 +5937,15 @@ class ConstructionOperations:
                     "object_color": object_color,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_collection_object_name_ref_list_from_all_groups_in_collection(
         self,
         collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -5434,6 +5957,7 @@ class ConstructionOperations:
                     "collection_name": collection_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5441,7 +5965,8 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
-        object_type: ObjectType = ObjectType.ANY,
+        object_type: ObjectType,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -5454,6 +5979,7 @@ class ConstructionOperations:
                     "object_type": object_type,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5462,7 +5988,8 @@ class ConstructionOperations:
         *,
         collection_wildcard_criteria: str = "*",
         object_wildcard_criteria: str = "*",
-        object_type: ObjectType = ObjectType.ANY,
+        object_type: ObjectType,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -5476,6 +6003,7 @@ class ConstructionOperations:
                     "object_type": object_type,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5483,7 +6011,8 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
-        object_type: ObjectType = ObjectType.ANY,
+        object_type: ObjectType,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -5496,24 +6025,7 @@ class ConstructionOperations:
                     "object_type": object_type,
                 },
                 None,
-            ),
-        )
-
-    async def make_collection_vector_group_name_ref_list_runtime_select(
-        self,
-        *,
-        user_prompt: str = "",
-    ) -> list[CollectionVectorGroupName]:
-        return cast(
-            list[CollectionVectorGroupName],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "MakeCollectionVectorGroupNameRefListRuntimeSelect",
-                "construction_operations.make_collection_vector_group_name_ref_list_runtime_select",
-                {
-                    "user_prompt": user_prompt,
-                },
-                None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5522,6 +6034,7 @@ class ConstructionOperations:
         *,
         collection_wildcard_criteria: str = "*",
         event_wildcard_criteria: str = "*",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionItemName]:
         return cast(
             list[CollectionItemName],
@@ -5534,6 +6047,7 @@ class ConstructionOperations:
                     "event_wildcard_criteria": event_wildcard_criteria,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5541,6 +6055,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionItemName]:
         return cast(
             list[CollectionItemName],
@@ -5552,12 +6067,15 @@ class ConstructionOperations:
                     "user_prompt": user_prompt,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_point_name_ref_list_from_group(
         self,
         group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -5569,6 +6087,7 @@ class ConstructionOperations:
                     "group_name": group_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5576,6 +6095,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -5587,6 +6107,7 @@ class ConstructionOperations:
                     "user_prompt": user_prompt,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5596,6 +6117,7 @@ class ConstructionOperations:
         collection_wildcard_criteria: str = "*",
         group_name_wildcard_criteria: str = "*",
         point_name_wildcard_criteria: str = "*",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -5609,6 +6131,7 @@ class ConstructionOperations:
                     "point_name_wildcard_criteria": point_name_wildcard_criteria,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5616,6 +6139,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -5627,12 +6151,15 @@ class ConstructionOperations:
                     "user_prompt": user_prompt,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_report_ref_list_from_collection(
         self,
         collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionItemName]:
         return cast(
             list[CollectionItemName],
@@ -5644,6 +6171,7 @@ class ConstructionOperations:
                     "collection_name": collection_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5651,6 +6179,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionItemName]:
         return cast(
             list[CollectionItemName],
@@ -5662,6 +6191,7 @@ class ConstructionOperations:
                     "user_prompt": user_prompt,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5670,6 +6200,7 @@ class ConstructionOperations:
         string_content: SystemString,
         *,
         format_string: str | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -5682,6 +6213,7 @@ class ConstructionOperations:
                     "format_string": format_string,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5695,6 +6227,7 @@ class ConstructionOperations:
         e2: float = 0,
         e3: float = 0,
         e4: float = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -5712,6 +6245,7 @@ class ConstructionOperations:
                     "e4": e4,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5724,6 +6258,7 @@ class ConstructionOperations:
         rx: float = 0,
         ry: float = 0,
         rz: float = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -5740,12 +6275,15 @@ class ConstructionOperations:
                     "rz": rz,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_vector_name_ref_list_from_vector_group(
         self,
         vector_group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[VectorName]:
         return cast(
             list[VectorName],
@@ -5757,30 +6295,15 @@ class ConstructionOperations:
                     "vector_group_name": vector_group_name,
                 },
                 None,
-            ),
-        )
-
-    async def make_vector_name_ref_list_runtime_select(
-        self,
-        *,
-        user_prompt: str = " Select Vectors (ENTER when done) ",
-    ) -> list[VectorName]:
-        return cast(
-            list[VectorName],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "MakeVectorNameRefListRuntimeSelect",
-                "construction_operations.make_vector_name_ref_list_runtime_select",
-                {
-                    "user_prompt": user_prompt,
-                },
-                None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_vector_names_unique_in_vector_group(
         self,
         vector_group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5790,6 +6313,7 @@ class ConstructionOperations:
                 "vector_group_name": vector_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5799,6 +6323,7 @@ class ConstructionOperations:
         new_callout_view_name: CollectionItemName,
         *,
         overwrite_if_exists: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5810,6 +6335,7 @@ class ConstructionOperations:
                 "overwrite_if_exists": overwrite_if_exists,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5817,6 +6343,8 @@ class ConstructionOperations:
         self,
         name: str,
         value: Iterable[CollectionInstrumentId],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5827,6 +6355,7 @@ class ConstructionOperations:
                 "value": value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5836,6 +6365,8 @@ class ConstructionOperations:
         callout_view_index: int,
         x_position: int,
         y_position: int,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5843,17 +6374,20 @@ class ConstructionOperations:
             "construction_operations.set_ith_callout_position_in_callout_view",
             {
                 "callout_view": callout_view,
-                "callout_view_index": callout_view,
+                "callout_view_index": callout_view_index,
                 "x_position": x_position,
                 "y_position": y_position,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_or_construct_default_collection(
         self,
         collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5863,6 +6397,7 @@ class ConstructionOperations:
                 "collection_name": collection_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5870,6 +6405,8 @@ class ConstructionOperations:
         self,
         point_name: PointName,
         position_in_working_coordinates: Vector,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5880,6 +6417,7 @@ class ConstructionOperations:
                 "position_in_working_coordinates": position_in_working_coordinates,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5889,6 +6427,7 @@ class ConstructionOperations:
         *,
         shift_along_normal: float = 0.0,
         grow_bounds_by_factor: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5900,6 +6439,7 @@ class ConstructionOperations:
                 "grow_bounds_by_factor": grow_bounds_by_factor,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -5907,6 +6447,8 @@ class ConstructionOperations:
         self,
         point_name_list: Iterable[PointName],
         delta_in_working_coordinates: Vector,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -5917,30 +6459,9 @@ class ConstructionOperations:
                 "delta_in_working_coordinates": delta_in_working_coordinates,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
-
-    async def add_collection_instruments_to_ref_list_wildcard_selection(
-        self,
-        collection_instrument_ref_list: Iterable[CollectionInstrumentId],
-        *,
-        collection_wildcard_criteria: str = "*",
-        instrument_wildcard_criteria: str = "*",
-    ) -> list[CollectionInstrumentId]:
-        return cast(
-            list[CollectionInstrumentId],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "AddCollectionInstrumentsToRefListWildcardSelection",
-                "construction_operations.add_collection_instruments_to_ref_list_wildcard_selection",
-                {
-                    "collection_instrument_ref_list": collection_instrument_ref_list,
-                    "collection_wildcard_criteria": collection_wildcard_criteria,
-                    "instrument_wildcard_criteria": instrument_wildcard_criteria,
-                },
-                None,
-            ),
-        )
 
     async def average_set_of_groups(
         self,
@@ -5950,6 +6471,7 @@ class ConstructionOperations:
         rms_tolerance: float = 0.0,
         maximum_absolute_tolerance: float = 0.0,
         maximum_average_tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GroupAverageResult:
         return cast(
             GroupAverageResult,
@@ -5965,6 +6487,7 @@ class ConstructionOperations:
                     "maximum_average_tolerance": maximum_average_tolerance,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -5977,6 +6500,7 @@ class ConstructionOperations:
         reference_frame: CollectionObjectName | None = None,
         destination_collection_name: CollectionName | None = None,
         base_name: str = "Geometry Object",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -5993,6 +6517,7 @@ class ConstructionOperations:
                     "base_name": base_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6000,6 +6525,8 @@ class ConstructionOperations:
         self,
         object_name: CollectionObjectName,
         resultant_point_name: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> ObjectOriginResult:
         return cast(
             ObjectOriginResult,
@@ -6012,6 +6539,7 @@ class ConstructionOperations:
                     "resultant_point_name": resultant_point_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6021,6 +6549,7 @@ class ConstructionOperations:
         surface_name: CollectionObjectName,
         *,
         generate_output_vector_lines: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> ProjectedPointGradient:
         return cast(
             ProjectedPointGradient,
@@ -6034,6 +6563,7 @@ class ConstructionOperations:
                     "generate_output_vector_lines": generate_output_vector_lines,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6042,10 +6572,11 @@ class ConstructionOperations:
         point_to_project: PointName,
         surface_edge: CollectionObjectName,
         surface_name: CollectionObjectName,
+        edge_offset_direction: Vector,
         *,
-        edge_offset_direction: Vector | None = None,
         edge_offset_distance: float = 0.01,
         generate_output_vector_lines: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> ProjectedPointGradient:
         """MP argument notes.
 
@@ -6066,26 +6597,7 @@ class ConstructionOperations:
                     "generate_output_vector_lines": generate_output_vector_lines,
                 },
                 None,
-            ),
-        )
-
-    async def make_callout_view_ref_list_wildcard_selection(
-        self,
-        *,
-        collection_wildcard_criteria: str = "*",
-        callout_view_wildcard_criteria: str = "*",
-    ) -> list[CollectionItemName]:
-        return cast(
-            list[CollectionItemName],
-            await self._client._invoke_mp_operation(
-                "briosa.ConstructionOperations",
-                "MakeCalloutViewRefListWildcardSelection",
-                "construction_operations.make_callout_view_ref_list_wildcard_selection",
-                {
-                    "collection_wildcard_criteria": collection_wildcard_criteria,
-                    "callout_view_wildcard_criteria": callout_view_wildcard_criteria,
-                },
-                None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6094,6 +6606,7 @@ class ConstructionOperations:
         collection_object_name: CollectionObjectName,
         *,
         use_number_suffix: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -6106,6 +6619,7 @@ class ConstructionOperations:
                     "use_number_suffix": use_number_suffix,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6114,6 +6628,7 @@ class ConstructionOperations:
         point_name: PointName,
         *,
         use_number_suffix: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -6126,6 +6641,7 @@ class ConstructionOperations:
                     "use_number_suffix": use_number_suffix,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6133,6 +6649,7 @@ class ConstructionOperations:
         self,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionItemName]:
         return cast(
             list[CollectionItemName],
@@ -6144,6 +6661,7 @@ class ConstructionOperations:
                     "user_prompt": user_prompt,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6152,6 +6670,7 @@ class ConstructionOperations:
         *,
         collection_wildcard_criteria: str = "*",
         relationship_wildcard_criteria: str = "*",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionItemName]:
         return cast(
             list[CollectionItemName],
@@ -6164,6 +6683,7 @@ class ConstructionOperations:
                     "relationship_wildcard_criteria": relationship_wildcard_criteria,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6172,6 +6692,7 @@ class ConstructionOperations:
         *,
         default_callout_view_name: str = "Callout 1",
         properties: CalloutViewProperties | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -6182,46 +6703,7 @@ class ConstructionOperations:
                 "properties": properties,
             },
             None,
-        )
-        return None
-
-    async def set_callout_view_properties(
-        self,
-        callout_views: Iterable[CollectionItemName],
-        *,
-        properties: CalloutViewProperties | None = None,
-    ) -> None:
-        await self._client._invoke_mp_operation(
-            "briosa.ConstructionOperations",
-            "SetCalloutViewProperties",
-            "construction_operations.set_callout_view_properties",
-            {
-                "callout_views": callout_views,
-                "properties": properties,
-            },
-            None,
-        )
-        return None
-
-    async def construct_polygonized_surface_from_point_clouds(
-        self,
-        point_cloud_list: Iterable[CollectionObjectName],
-        mesh_orientation: MeshOrientationType,
-        polygonized_surface_name: CollectionObjectName,
-        *,
-        grid_resolution: float = 0.0,
-    ) -> None:
-        await self._client._invoke_mp_operation(
-            "briosa.ConstructionOperations",
-            "ConstructPolygonizedSurfaceFromPointClouds",
-            "construction_operations.construct_polygonized_surface_from_point_clouds",
-            {
-                "point_cloud_list": point_cloud_list,
-                "mesh_orientation": mesh_orientation,
-                "grid_resolution": grid_resolution,
-                "polygonized_surface_name": polygonized_surface_name,
-            },
-            None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6238,6 +6720,7 @@ class ConstructionOperations:
         use_low_tolerances: bool = False,
         high_tolerance: float = 0.0,
         low_tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.ConstructionOperations",
@@ -6256,6 +6739,7 @@ class ConstructionOperations:
                 "low_tolerance": low_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6271,6 +6755,7 @@ class GdtOperations:
         instruments_to_move: Iterable[CollectionInstrumentId],
         *,
         apply_feature_check_transform: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6283,12 +6768,15 @@ class GdtOperations:
                 "apply_feature_check_transform": apply_feature_check_transform,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_feature_checks(
         self,
         feature_checks: Sequence[CollectionItemName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6298,6 +6786,7 @@ class GdtOperations:
                 "feature_checks": feature_checks,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6308,7 +6797,8 @@ class GdtOperations:
         enable_datum_alignment: bool = True,
         enable_custom_initial_alignment: bool = False,
         enable_initial_datum_alignment: bool = True,
-        alignment: CollectionItemName | None = None,
+        alignment: CollectionItemName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6322,6 +6812,7 @@ class GdtOperations:
                 "alignment": alignment,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6331,6 +6822,7 @@ class GdtOperations:
         *,
         perform_evaluation: bool = True,
         simultaneous_evaluation: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> EvaluateFeatureCheckResult:
         return cast(
             EvaluateFeatureCheckResult,
@@ -6344,6 +6836,7 @@ class GdtOperations:
                     "simultaneous_evaluation": simultaneous_evaluation,
                 },
                 EvaluateFeatureCheckResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6353,6 +6846,7 @@ class GdtOperations:
         *,
         simultaneous_evaluation: bool = False,
         restrict_evaluations_to_listed_checks: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> EvaluateFeatureChecksResult:
         return cast(
             EvaluateFeatureChecksResult,
@@ -6366,24 +6860,26 @@ class GdtOperations:
                     "restrict_evaluations_to_listed_checks": restrict_evaluations_to_listed_checks,
                 },
                 EvaluateFeatureChecksResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def feature_inspection_auto_filter(
         self,
+        point_names: Iterable[PointName],
+        group_names: Iterable[CollectionObjectName],
+        cloud_names: Iterable[CollectionObjectName],
         *,
-        point_names: Iterable[PointName] | None = None,
-        group_names: Iterable[CollectionObjectName] | None = None,
-        cloud_names: Iterable[CollectionObjectName] | None = None,
         surface_offset: float = 0.1,
         edge_offset: float = 0.1,
-        offset_direction: OffsetDirectionType = OffsetDirectionType.BOTH,
+        offset_direction: OffsetDirectionType,
         include_points_within_cylinder_axis_proximity: bool = False,
         enforce_max_points_per_face_in_output: bool = False,
         max_points_per_face: int = 0,
-        feature_check_name_list: Iterable[CollectionItemName] | None = None,
+        feature_check_name_list: Iterable[CollectionItemName],
         include_datums: bool = True,
         create_cloud_for_each_datum_or_check: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6404,6 +6900,7 @@ class GdtOperations:
                 "create_cloud_for_each_datum_or_check": create_cloud_for_each_datum_or_check,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6412,6 +6909,7 @@ class GdtOperations:
         feature_check_list: Iterable[CollectionItemName],
         *,
         summary_table_name: str = "GDT Feature Check Summary",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6422,12 +6920,15 @@ class GdtOperations:
                 "summary_table_name": summary_table_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_datum_measurements(
         self,
         datum: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GdtMeasurements:
         return cast(
             GdtMeasurements,
@@ -6439,12 +6940,15 @@ class GdtOperations:
                     "datum": datum,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_feature_check_cylinder_eval_options(
         self,
         feature_check: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> FeatureCheckCylinderEvalOptions:
         return cast(
             FeatureCheckCylinderEvalOptions,
@@ -6456,12 +6960,15 @@ class GdtOperations:
                     "feature_check": feature_check,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_feature_check_datum_references(
         self,
         feature_check: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> FeatureCheckDatumReferencesResult:
         return cast(
             FeatureCheckDatumReferencesResult,
@@ -6473,12 +6980,15 @@ class GdtOperations:
                     "feature_check": feature_check,
                 },
                 FeatureCheckDatumReferencesResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_feature_check_measurements(
         self,
         feature_check: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GdtMeasurements:
         return cast(
             GdtMeasurements,
@@ -6490,12 +7000,15 @@ class GdtOperations:
                     "feature_check": feature_check,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_feature_check_reporting_frame(
         self,
         feature_check: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -6507,12 +7020,15 @@ class GdtOperations:
                     "feature_check": feature_check,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_annotation_ref_list_from_collection(
         self,
         collection: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Sequence[CollectionItemName]:
         return cast(
             Sequence[CollectionItemName],
@@ -6524,6 +7040,7 @@ class GdtOperations:
                     "collection": collection,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6532,6 +7049,7 @@ class GdtOperations:
         *,
         collection_wildcard_criteria: str = "*",
         annotation_wildcard_criteria: str = "*",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Sequence[CollectionItemName]:
         return cast(
             Sequence[CollectionItemName],
@@ -6544,12 +7062,15 @@ class GdtOperations:
                     "annotation_wildcard_criteria": annotation_wildcard_criteria,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_datum_ref_list_from_collection(
         self,
         collection: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Sequence[CollectionObjectName]:
         return cast(
             Sequence[CollectionObjectName],
@@ -6561,12 +7082,15 @@ class GdtOperations:
                     "collection": collection,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_feature_check_ref_list_from_collection(
         self,
         collection: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Sequence[CollectionItemName]:
         return cast(
             Sequence[CollectionItemName],
@@ -6578,6 +7102,7 @@ class GdtOperations:
                     "collection": collection,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6586,6 +7111,7 @@ class GdtOperations:
         *,
         collection_wildcard_criteria: str = "*",
         feature_check_wildcard_criteria: str = "*",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Sequence[CollectionItemName]:
         return cast(
             Sequence[CollectionItemName],
@@ -6598,12 +7124,15 @@ class GdtOperations:
                     "feature_check_wildcard_criteria": feature_check_wildcard_criteria,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_feature_checks(
         self,
         collection: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6613,12 +7142,15 @@ class GdtOperations:
                 "collection": collection,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def make_gdt_datum_annotation(
         self,
         options: MakeGdtDatumAnnotationOptions,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6635,12 +7167,15 @@ class GdtOperations:
                 "force_surface_feature": options.force_surface_feature,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def make_gdt_feature_check_annotation(
         self,
         options: MakeGdtFeatureCheckAnnotationOptions,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -6684,12 +7219,15 @@ class GdtOperations:
                 "projected_tolerance_zone": options.projected_tolerance_zone,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def make_surface_face_list_from_surface(
         self,
         surface: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> SurfaceFaceList:
         return cast(
             SurfaceFaceList,
@@ -6701,11 +7239,14 @@ class GdtOperations:
                     "surface": surface,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_surface_face_list_runtime_select(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> SurfaceFaceList:
         return cast(
             SurfaceFaceList,
@@ -6715,12 +7256,15 @@ class GdtOperations:
                 "gdt_operations.make_surface_face_list_runtime_select",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def refresh_datums_feature_checks_from_annotations(
         self,
         collection: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6730,6 +7274,7 @@ class GdtOperations:
                 "collection": collection,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6740,6 +7285,7 @@ class GdtOperations:
         cloud_names: Iterable[CollectionObjectName],
         *,
         replace_existing_measurements: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6752,6 +7298,7 @@ class GdtOperations:
                 "replace_existing_measurements": replace_existing_measurements,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6761,6 +7308,7 @@ class GdtOperations:
         *,
         enable_actual_diameter_override: bool = False,
         actual_diameter_override: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6772,6 +7320,7 @@ class GdtOperations:
                 "actual_diameter_override": actual_diameter_override,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6782,6 +7331,7 @@ class GdtOperations:
         cloud_names: Iterable[CollectionObjectName],
         *,
         replace_existing_measurements: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6794,6 +7344,7 @@ class GdtOperations:
                 "replace_existing_measurements": replace_existing_measurements,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6801,6 +7352,8 @@ class GdtOperations:
         self,
         feature_check: CollectionItemName,
         reporting_frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6811,6 +7364,7 @@ class GdtOperations:
                 "reporting_frame": reporting_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6820,12 +7374,13 @@ class GdtOperations:
         use_high_points: bool = False,
         extrapolate_axial_extent: bool = True,
         exclude_from_auto_evaluation: bool = True,
-        distance_between_mode: GdtDistanceBetweenMode = GdtDistanceBetweenMode.CENTROID,
-        evaluation_method: GdtEvaluationMethod = GdtEvaluationMethod.NONE,
+        distance_between_mode: GdtDistanceBetweenMode,
+        evaluation_method: GdtEvaluationMethod,
         create_actual_features: bool = False,
         create_solved_points: bool = False,
         cross_section_criteria: float = 0.039370,
         enable_auto_feature_detection: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6843,6 +7398,7 @@ class GdtOperations:
                 "enable_auto_feature_detection": enable_auto_feature_detection,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6850,6 +7406,7 @@ class GdtOperations:
         self,
         *,
         global_simultaneous_evaluation: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6859,6 +7416,7 @@ class GdtOperations:
                 "global_simultaneous_evaluation": global_simultaneous_evaluation,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6868,6 +7426,7 @@ class GdtOperations:
         instrument_id: CollectionInstrumentId,
         *,
         start_trapping: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6879,12 +7438,15 @@ class GdtOperations:
                 "start_trapping": start_trapping,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_feature_check_reporting_options(
         self,
         feature_check: CollectionItemName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> FeatureCheckReportingOptions:
         return cast(
             FeatureCheckReportingOptions,
@@ -6896,11 +7458,14 @@ class GdtOperations:
                     "feature_check": feature_check,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_gdt_options(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> GdtOptions:
         return cast(
             GdtOptions,
@@ -6910,6 +7475,7 @@ class GdtOperations:
                 "gdt_operations.get_gdt_options",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6923,6 +7489,7 @@ class GdtOperations:
         show_feature_summary: bool = False,
         show_point_details_summary: bool = False,
         show_lower_tier_tables: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.GdtOperations",
@@ -6938,6 +7505,7 @@ class GdtOperations:
                 "show_lower_tier_tables": show_lower_tier_tables,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -6951,6 +7519,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         *,
         deactivate_toolbar: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -6961,12 +7530,15 @@ class InstrumentOperations:
                 "deactivate_toolbar": deactivate_toolbar,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def add_new_instrument(
         self,
         instrument_type: InstrumentTypeName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionInstrumentId:
         return cast(
             CollectionInstrumentId,
@@ -6978,6 +7550,7 @@ class InstrumentOperations:
                     "instrument_type": instrument_type,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -6993,6 +7566,7 @@ class InstrumentOperations:
         covar_xy: float = 0.0,
         covar_xz: float = 0.0,
         covar_yz: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7010,6 +7584,7 @@ class InstrumentOperations:
                 "covar_yz": covar_yz,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7021,6 +7596,7 @@ class InstrumentOperations:
         maximum_coarse_cad_mesh_edge_length: float = 0.0,
         use_fine_cad_mesh: bool = False,
         execute_alignment: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CloudToCadAlignmentResult:
         return cast(
             CloudToCadAlignmentResult,
@@ -7036,6 +7612,7 @@ class InstrumentOperations:
                     "execute_alignment": execute_alignment,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7043,6 +7620,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         group: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7053,6 +7632,7 @@ class InstrumentOperations:
                 "group": group,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7064,6 +7644,7 @@ class InstrumentOperations:
         initial_measured_group: CollectionObjectName,
         *,
         rotational_tolerance: ToleranceVectorOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7077,6 +7658,7 @@ class InstrumentOperations:
                 "rotational_tolerance": rotational_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7084,6 +7666,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         objects: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7094,6 +7678,7 @@ class InstrumentOperations:
                 "objects": objects,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7104,6 +7689,7 @@ class InstrumentOperations:
         actuals_group: CollectionObjectName,
         *,
         wait_for_completion: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7116,6 +7702,7 @@ class InstrumentOperations:
                 "wait_for_completion": wait_for_completion,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7130,9 +7717,10 @@ class InstrumentOperations:
         project_results_to_nominal_vector: bool = False,
         warbler_ramp_start_distance: float = 12.0,
         show_watch_window: bool = False,
-        deviation_vector_group_name: str | None = None,
+        deviation_vector_group_name: str,
         make_unmeasured_group: bool = False,
         measure_each_point_only_once: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7152,6 +7740,7 @@ class InstrumentOperations:
                 "measure_each_point_only_once": measure_each_point_only_once,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7161,6 +7750,7 @@ class InstrumentOperations:
         features: Iterable[CollectionItemName],
         *,
         wait_for_complete: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7172,6 +7762,7 @@ class InstrumentOperations:
                 "wait_for_complete": wait_for_complete,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7184,7 +7775,8 @@ class InstrumentOperations:
         force_existing_group: bool = False,
         show_complete_dialog: bool = False,
         wait_for_completion: bool = True,
-        auto_start: bool = False,
+        auto_start: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7200,6 +7792,7 @@ class InstrumentOperations:
                 "auto_start": auto_start,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7209,7 +7802,8 @@ class InstrumentOperations:
         geometry: CollectionObjectName,
         mode_profile: str,
         *,
-        wait_for_complete: bool = False,
+        wait_for_complete: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7222,6 +7816,7 @@ class InstrumentOperations:
                 "wait_for_complete": wait_for_complete,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7232,6 +7827,7 @@ class InstrumentOperations:
         resultant_group: CollectionObjectName,
         *,
         wait_for_complete: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7244,6 +7840,7 @@ class InstrumentOperations:
                 "wait_for_complete": wait_for_complete,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7257,6 +7854,7 @@ class InstrumentOperations:
         angle_tolerance: float = 0.0,
         high_tolerance: float = 0.0,
         low_tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7272,6 +7870,7 @@ class InstrumentOperations:
                 "low_tolerance": low_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7280,9 +7879,10 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         output_target_name: PointName,
         nominal_point: PointName,
+        tolerance: ToleranceVectorOptions,
         *,
-        tolerance: ToleranceVectorOptions | None = None,
         html_prompt_file: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7296,6 +7896,7 @@ class InstrumentOperations:
                 "html_prompt_file": html_prompt_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7304,7 +7905,8 @@ class InstrumentOperations:
         tcp_fixture: CollectionObjectName,
         tcp_measurements: Iterable[PointName],
         *,
-        tcp_in_working: Transform | None = None,
+        tcp_in_working: Transform,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> TcpFixtureUncertainties:
         return cast(
             TcpFixtureUncertainties,
@@ -7318,12 +7920,15 @@ class InstrumentOperations:
                     "tcp_measurements": tcp_measurements,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def clear_cloud_viewer(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7333,12 +7938,15 @@ class InstrumentOperations:
                 "instrument": instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def close_auto_correspond_closest_point_dialog(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7348,6 +7956,7 @@ class InstrumentOperations:
                 "instrument": instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7358,13 +7967,14 @@ class InstrumentOperations:
         collimation_point: PointName,
         *,
         zero_moving_instrument: bool = False,
-        tilt_mode: CollimationTiltMode = CollimationTiltMode.FULL_COLLIMATION,
-        baseline_method: CollimationBaselineMethod = CollimationBaselineMethod.DETERMINED_BY_VALUE,
+        tilt_mode: CollimationTiltMode,
+        baseline_method: CollimationBaselineMethod,
         baseline_distance: float = 0.0,
-        scale_point_1: PointName | None = None,
-        scale_point_2: PointName | None = None,
-        not_measured_by_moving_instrument: PointName | None = None,
-        as_measured_by_moving_instrument: PointName | None = None,
+        scale_point_1: PointName,
+        scale_point_2: PointName,
+        not_measured_by_moving_instrument: PointName,
+        as_measured_by_moving_instrument: PointName,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7384,6 +7994,7 @@ class InstrumentOperations:
                 "as_measured_by_moving_instrument": as_measured_by_moving_instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7391,6 +8002,8 @@ class InstrumentOperations:
         self,
         groups_to_combine: Iterable[CollectionObjectName],
         combined_point_group: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7401,6 +8014,7 @@ class InstrumentOperations:
                 "combined_point_group": combined_point_group,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7410,6 +8024,7 @@ class InstrumentOperations:
         material_cte: float = 0.0,
         initial_temperature: float = 0.0,
         final_temperature: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         """MP argument notes.
 
@@ -7429,6 +8044,7 @@ class InstrumentOperations:
                     "final_temperature": final_temperature,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7438,9 +8054,10 @@ class InstrumentOperations:
         target: PointName,
         measurement_mode: str,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         wait_for_completion: bool = True,
         timeout_seconds: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -7459,12 +8076,15 @@ class InstrumentOperations:
                 "timeout_seconds": timeout_seconds,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def construct_measured_point_uncertainty_ellipsoids(
         self,
         measurements: Iterable[PointName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7474,6 +8094,7 @@ class InstrumentOperations:
                 "measurements": measurements,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7482,6 +8103,8 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         mirror_name: str,
         plane: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7493,6 +8116,7 @@ class InstrumentOperations:
                 "plane": plane,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7504,6 +8128,7 @@ class InstrumentOperations:
         point_measured_through_mirror: PointName,
         *,
         send_mirror_to_instrument: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -7519,12 +8144,15 @@ class InstrumentOperations:
                     "send_mirror_to_instrument": send_mirror_to_instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def construct_perimeters_from_surface_face_list(
         self,
         surface_faces: SurfaceFaceList,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PerimeterLists:
         return cast(
             PerimeterLists,
@@ -7536,6 +8164,7 @@ class InstrumentOperations:
                     "surface_faces": surface_faces,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7545,6 +8174,7 @@ class InstrumentOperations:
         *,
         point_match_threshold: float = 0.0,
         replace_existing_tcp_fixture: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionObjectName:
         return cast(
             CollectionObjectName,
@@ -7558,6 +8188,7 @@ class InstrumentOperations:
                     "replace_existing_tcp_fixture": replace_existing_tcp_fixture,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7566,6 +8197,8 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         points_defining_dynamic_reference: Iterable[PointName],
         dynamic_reference_name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7577,6 +8210,7 @@ class InstrumentOperations:
                 "dynamic_reference_name": dynamic_reference_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7598,6 +8232,7 @@ class InstrumentOperations:
         component_1_weight: float = 1.0,
         component_2_weight: float = 1.0,
         component_3_weight: float = 1.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -7627,6 +8262,7 @@ class InstrumentOperations:
                 "component_3_weight": component_3_weight,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7636,6 +8272,7 @@ class InstrumentOperations:
         *,
         prompt_user_to_confirm: bool = False,
         keep_resulting_points: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7647,15 +8284,17 @@ class InstrumentOperations:
                 "keep_resulting_points": keep_resulting_points,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_measurement_observation(
         self,
         point_name: PointName,
+        observation_index: int,
         *,
-        observation_index: int = 0,
         delete_point_if_no_measurements_remain: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7667,6 +8306,7 @@ class InstrumentOperations:
                 "delete_point_if_no_measurements_remain": delete_point_if_no_measurements_remain,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7676,6 +8316,7 @@ class InstrumentOperations:
         point_name: PointName,
         *,
         delete_point_if_no_measurements_remain: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7687,12 +8328,15 @@ class InstrumentOperations:
                 "delete_point_if_no_measurements_remain": delete_point_if_no_measurements_remain,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def disassociate_objects_from_instrument(
         self,
         objects: Iterable[CollectionObjectName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7702,6 +8346,7 @@ class InstrumentOperations:
                 "objects": objects,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7709,6 +8354,8 @@ class InstrumentOperations:
         self,
         group_to_dissect: CollectionObjectName,
         base_name_for_dissected_groups: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7719,6 +8366,7 @@ class InstrumentOperations:
                 "base_name_for_dissected_groups": base_name_for_dissected_groups,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7727,6 +8375,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         *,
         dock_interface: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7737,6 +8386,7 @@ class InstrumentOperations:
                 "dock_interface": dock_interface,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7749,6 +8399,7 @@ class InstrumentOperations:
         tolerance: float = 0.0,
         minimum_point_count: int = 0,
         use_closest_reference_point: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> DriftCheckResult:
         return cast(
             DriftCheckResult,
@@ -7765,6 +8416,7 @@ class InstrumentOperations:
                     "use_closest_reference_point": use_closest_reference_point,
                 },
                 DriftCheckResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7776,6 +8428,8 @@ class InstrumentOperations:
         parameter_set_name: str,
         point_group: CollectionObjectName,
         target_name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7790,6 +8444,7 @@ class InstrumentOperations:
                 "target_name": target_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7797,6 +8452,7 @@ class InstrumentOperations:
         self,
         *,
         enable_frame_set_scan_mode: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7806,6 +8462,7 @@ class InstrumentOperations:
                 "enable_frame_set_scan_mode": enable_frame_set_scan_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7814,6 +8471,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         *,
         enable_frame_set_scan_mode: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7824,6 +8482,7 @@ class InstrumentOperations:
                 "enable_frame_set_scan_mode": enable_frame_set_scan_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7832,6 +8491,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         *,
         enable_point_set_scan_mode: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7842,6 +8502,7 @@ class InstrumentOperations:
                 "enable_point_set_scan_mode": enable_point_set_scan_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7849,6 +8510,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         file_path: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7859,6 +8522,7 @@ class InstrumentOperations:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7871,6 +8535,7 @@ class InstrumentOperations:
         limit_distance: bool = False,
         minimum_distance: float = 0.0,
         maximum_distance: float = 1000000.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -7885,6 +8550,7 @@ class InstrumentOperations:
                 "maximum_distance": maximum_distance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -7894,6 +8560,7 @@ class InstrumentOperations:
         *,
         reporting_frame: InstrumentPositionReportingFrame = InstrumentPositionReportingFrame.INSTRUMENT_BASE,
         polar_coordinates: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentPositionUpdate:
         return cast(
             InstrumentPositionUpdate,
@@ -7907,11 +8574,14 @@ class InstrumentOperations:
                     "polar_coordinates": polar_coordinates,
                 },
                 InstrumentPositionUpdate,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_current_trapping_status(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CurrentTrappingStatus:
         return cast(
             CurrentTrappingStatus,
@@ -7921,6 +8591,7 @@ class InstrumentOperations:
                 "instrument_operations.get_current_trapping_status",
                 {},
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -7928,6 +8599,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         profile_name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -7940,12 +8613,15 @@ class InstrumentOperations:
                     "profile_name": profile_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_base_uncertainty_covariance_matrix_wrt_world(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> UncertaintyCovarianceMatrix:
         return cast(
             UncertaintyCovarianceMatrix,
@@ -7957,12 +8633,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_id_from_name(
         self,
         name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CollectionInstrumentId:
         return cast(
             CollectionInstrumentId,
@@ -7974,12 +8653,15 @@ class InstrumentOperations:
                     "name": name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_interface_response_timeout(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -7991,12 +8673,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_model(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentModelResult:
         return cast(
             InstrumentModelResult,
@@ -8008,12 +8693,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 InstrumentModelResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_part_temperature(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -8025,12 +8713,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_scale_factor(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -8042,12 +8733,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_target_status(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentTargetStatus:
         return cast(
             InstrumentTargetStatus,
@@ -8059,12 +8753,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_targets_and_mode_profiles(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentTargetsAndModeProfiles:
         return cast(
             InstrumentTargetsAndModeProfiles,
@@ -8076,6 +8773,7 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 InstrumentTargetsAndModeProfiles,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8083,6 +8781,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         reference_frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -8095,12 +8795,15 @@ class InstrumentOperations:
                     "reference_frame": reference_frame,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instrument_weather_setting(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentWeatherSetting:
         return cast(
             InstrumentWeatherSetting,
@@ -8112,12 +8815,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 InstrumentWeatherSetting,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_instruments_with_observations_on_target(
         self,
         point: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionInstrumentId]:
         return cast(
             list[CollectionInstrumentId],
@@ -8129,11 +8835,14 @@ class InstrumentOperations:
                     "point": point,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_last_instrument_index(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> LastInstrumentIndexResult:
         return cast(
             LastInstrumentIndexResult,
@@ -8143,12 +8852,15 @@ class InstrumentOperations:
                 "instrument_operations.get_last_instrument_index",
                 {},
                 LastInstrumentIndexResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_last_solved_tcp_fixture_uncertainty_covariance_matrix(
         self,
         tcp_fixture: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> UncertaintyCovarianceMatrix:
         return cast(
             UncertaintyCovarianceMatrix,
@@ -8160,12 +8872,15 @@ class InstrumentOperations:
                     "tcp_fixture": tcp_fixture,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_number_of_observations_on_target(
         self,
         point: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -8177,6 +8892,7 @@ class InstrumentOperations:
                     "point": point,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8186,6 +8902,7 @@ class InstrumentOperations:
         candidate_points: Sequence[PointName],
         *,
         show_obscured_shots: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -8199,6 +8916,7 @@ class InstrumentOperations:
                     "show_obscured_shots": show_obscured_shots,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8207,6 +8925,7 @@ class InstrumentOperations:
         point: PointName,
         *,
         observation_index: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> ObservationInfo:
         return cast(
             ObservationInfo,
@@ -8219,12 +8938,15 @@ class InstrumentOperations:
                     "observation_index": observation_index,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_pcmm_instrument_xyz_uncertainties(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentXyzUncertainties:
         return cast(
             InstrumentXyzUncertainties,
@@ -8236,12 +8958,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 InstrumentXyzUncertainties,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_targets_measured_by_instrument(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[PointName]:
         return cast(
             list[PointName],
@@ -8253,12 +8978,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_tracker_edm_theodolite_uncertainties(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> TrackerEdmTheodoliteUncertainties:
         return cast(
             TrackerEdmTheodoliteUncertainties,
@@ -8270,12 +8998,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 TrackerEdmTheodoliteUncertainties,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_wrtl_channel_and_status(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> WrtlChannelStatus:
         return cast(
             WrtlChannelStatus,
@@ -8287,12 +9018,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_xyz_instrument_uncertainties(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentXyzUncertainties:
         return cast(
             InstrumentXyzUncertainties,
@@ -8304,6 +9038,7 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 InstrumentXyzUncertainties,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8317,6 +9052,7 @@ class InstrumentOperations:
         initial_survey_group: CollectionObjectName | None = None,
         positional_tolerance: ToleranceVectorOptions | None = None,
         rotational_tolerance: ToleranceVectorOptions | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8332,6 +9068,7 @@ class InstrumentOperations:
                 "rotational_tolerance": rotational_tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8343,6 +9080,7 @@ class InstrumentOperations:
         group_name_suffix: str = "",
         target_name_suffix: str = "",
         tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8356,6 +9094,7 @@ class InstrumentOperations:
                 "tolerance": tolerance,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8363,6 +9102,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         check_type: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8373,6 +9114,7 @@ class InstrumentOperations:
                 "check_type": check_type,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8380,6 +9122,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         command: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8390,6 +9134,7 @@ class InstrumentOperations:
                 "command": command,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8398,6 +9143,7 @@ class InstrumentOperations:
         live_instrument: CollectionInstrumentId,
         *,
         hide_previous_instrument: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8408,6 +9154,7 @@ class InstrumentOperations:
                 "hide_previous_instrument": hide_previous_instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8415,6 +9162,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         file_path: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8425,6 +9174,7 @@ class InstrumentOperations:
                 "file_path": file_path,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8432,6 +9182,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         configuration_file: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8442,6 +9194,7 @@ class InstrumentOperations:
                 "configuration_file": configuration_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8463,6 +9216,7 @@ class InstrumentOperations:
         lock_degrees_of_freedom: bool = False,
         generate_event: bool = False,
         csv_report: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentBestFitResult:
         return cast(
             InstrumentBestFitResult,
@@ -8488,6 +9242,7 @@ class InstrumentOperations:
                     "csv_report": csv_report,
                 },
                 InstrumentBestFitResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8509,6 +9264,7 @@ class InstrumentOperations:
         lock_degrees_of_freedom: bool = False,
         generate_event: bool = False,
         csv_report: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> InstrumentBestFitResult:
         return cast(
             InstrumentBestFitResult,
@@ -8534,6 +9290,7 @@ class InstrumentOperations:
                     "csv_report": csv_report,
                 },
                 InstrumentBestFitResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8543,10 +9300,11 @@ class InstrumentOperations:
         measured_group: CollectionObjectName,
         surface_points_group: CollectionObjectName,
         surface_to_fit: CollectionObjectName,
+        other_objects_to_transform: Iterable[CollectionObjectName],
         *,
-        other_objects_to_transform: Sequence[CollectionObjectName] = (),
         rms_tolerance: float = 0.0,
         maximum_absolute_tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> FitErrorResult:
         return cast(
             FitErrorResult,
@@ -8564,6 +9322,7 @@ class InstrumentOperations:
                     "maximum_absolute_tolerance": maximum_absolute_tolerance,
                 },
                 FitErrorResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8575,6 +9334,7 @@ class InstrumentOperations:
         *,
         tolerance: float = 0.0,
         auto_survey: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8588,6 +9348,7 @@ class InstrumentOperations:
                 "auto_survey": auto_survey,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8599,7 +9360,7 @@ class InstrumentOperations:
         nominals_group: CollectionObjectName | None = None,
         move_in_working_frame: bool = False,
         auto_reject_outliers_and_resolve: bool = False,
-        show_usmn_dialog: ShowUsmnDialog = ShowUsmnDialog.NO,
+        show_usmn_dialog: ShowUsmnDialog,
         maximum_acceptable_rms_error: float = 0.0,
         maximum_acceptable_error: float = 0.0,
         excluded_groups: Sequence[CollectionObjectName] = (),
@@ -8607,6 +9368,7 @@ class InstrumentOperations:
         run_uncertainty_field_analysis: bool = False,
         analysis_samples: int = 300,
         analysis_time_limit: float = 4.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> FitErrorResult:
         """MP argument notes.
 
@@ -8634,6 +9396,7 @@ class InstrumentOperations:
                     "analysis_time_limit": analysis_time_limit,
                 },
                 FitErrorResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8643,6 +9406,7 @@ class InstrumentOperations:
         *,
         calibration_name: str = "",
         calibration_id: int = -1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -8656,12 +9420,15 @@ class InstrumentOperations:
                     "calibration_id": calibration_id,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def lr_apdis_get_active_mcm_calibration(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> str:
         return cast(
             str,
@@ -8673,6 +9440,7 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8683,6 +9451,7 @@ class InstrumentOperations:
         *,
         use_matte_tooling_ball: bool = True,
         new_calibration_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8695,12 +9464,15 @@ class InstrumentOperations:
                 "new_calibration_name": new_calibration_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def lr_get_most_recent_snr_info(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> LrSnrInfo:
         return cast(
             LrSnrInfo,
@@ -8712,6 +9484,7 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8720,6 +9493,8 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         host: str,
         port: int,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8731,12 +9506,15 @@ class InstrumentOperations:
                 "port": port,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def lr_hardware_disconnect(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8746,12 +9524,15 @@ class InstrumentOperations:
                 "instrument": instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def lr_self_test(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> LrSelfTestResult:
         return cast(
             LrSelfTestResult,
@@ -8763,12 +9544,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 LrSelfTestResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def lr_self_test_flip_test(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> LrFlipTestResult:
         return cast(
             LrFlipTestResult,
@@ -8780,12 +9564,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def lr_self_test_linearization(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -8797,6 +9584,7 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8806,6 +9594,7 @@ class InstrumentOperations:
         *,
         region: int = 0,
         num_range_measurements: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> LrLoSeparationTestResult:
         return cast(
             LrLoSeparationTestResult,
@@ -8819,6 +9608,7 @@ class InstrumentOperations:
                     "num_range_measurements": num_range_measurements,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8827,6 +9617,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         *,
         intensity: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8837,12 +9628,15 @@ class InstrumentOperations:
                 "intensity": intensity,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def lr_verify_hardware_connection(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> bool:
         return cast(
             bool,
@@ -8854,12 +9648,15 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_collection_object_name_ref_list_from_objects_associated_with_instruments(
         self,
         instruments: Iterable[CollectionInstrumentId],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[CollectionObjectName]:
         return cast(
             list[CollectionObjectName],
@@ -8871,12 +9668,15 @@ class InstrumentOperations:
                     "instruments": instruments,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def make_surface_face_list_from_point_proximity(
         self,
         measured_points: Sequence[PointName],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> SurfaceFaceList:
         return cast(
             SurfaceFaceList,
@@ -8888,12 +9688,15 @@ class InstrumentOperations:
                     "measured_points": measured_points,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def measure(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -8903,6 +9706,7 @@ class InstrumentOperations:
                 "instrument": instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -8912,8 +9716,9 @@ class InstrumentOperations:
         existing_target_id: PointName,
         group_name_for_new_point: CollectionObjectName,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         html_prompt_file: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -8929,6 +9734,7 @@ class InstrumentOperations:
                     "html_prompt_file": html_prompt_file,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8938,9 +9744,10 @@ class InstrumentOperations:
         existing_target_id: PointName,
         group_name_for_new_point: CollectionObjectName,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         html_prompt_file: FileReference | None = None,
         tolerance: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointComparisonResult:
         return cast(
             PointComparisonResult,
@@ -8957,6 +9764,7 @@ class InstrumentOperations:
                     "tolerance": tolerance,
                 },
                 PointComparisonResult,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8966,8 +9774,9 @@ class InstrumentOperations:
         existing_target_id: PointName,
         group_name_for_new_point: CollectionObjectName,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         html_prompt_file: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> PointName:
         return cast(
             PointName,
@@ -8983,6 +9792,7 @@ class InstrumentOperations:
                     "html_prompt_file": html_prompt_file,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -8991,6 +9801,8 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         feature: CollectionObjectName,
         resulting_point: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9002,6 +9814,7 @@ class InstrumentOperations:
                 "resulting_point": resulting_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9010,8 +9823,9 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         target_id: PointName,
         *,
-        measure_immediately: bool = False,
+        measure_immediately: bool = True,
         html_prompt_file: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9024,6 +9838,7 @@ class InstrumentOperations:
                 "html_prompt_file": html_prompt_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9031,6 +9846,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         collection_name: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9041,6 +9858,7 @@ class InstrumentOperations:
                 "collection_name": collection_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9048,10 +9866,11 @@ class InstrumentOperations:
         self,
         source_point_name: PointName,
         destination_point_name: PointName,
+        observation_index: int,
         *,
-        observation_index: int = 0,
         delete_point_if_no_measurements_remain: bool = False,
         force_observation_active: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9065,6 +9884,7 @@ class InstrumentOperations:
                 "force_observation_active": force_observation_active,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9073,6 +9893,8 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         objects_to_move: Iterable[CollectionObjectName],
         measurement_mode: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9084,6 +9906,7 @@ class InstrumentOperations:
                 "measurement_mode": measurement_mode,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9093,6 +9916,7 @@ class InstrumentOperations:
         measurement_mode: str,
         *,
         wait_for_completion: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9104,12 +9928,15 @@ class InstrumentOperations:
                 "wait_for_completion": wait_for_completion,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def multi_measurement_stop(
         self,
         instruments: Sequence[CollectionInstrumentId],
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9119,6 +9946,7 @@ class InstrumentOperations:
                 "instruments": instruments,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9128,6 +9956,7 @@ class InstrumentOperations:
         target_id: PointName,
         *,
         html_prompt_file: FileReference | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9139,6 +9968,7 @@ class InstrumentOperations:
                 "html_prompt_file": html_prompt_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9150,6 +9980,7 @@ class InstrumentOperations:
         nominal_points: Iterable[PointName] | None = None,
         nominal_point_of_view_names: Iterable[str] | None = None,
         align_to_individual_faces_only: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9158,11 +9989,14 @@ class InstrumentOperations:
             {
                 "instruments": instruments,
                 "objects": objects,
-                "nominal_points": nominal_points,
-                "nominal_point_of_view_names": nominal_point_of_view_names,
+                "nominal_points": () if nominal_points is None else nominal_points,
+                "nominal_point_of_view_names": ()
+                if nominal_point_of_view_names is None
+                else nominal_point_of_view_names,
                 "align_to_individual_faces_only": align_to_individual_faces_only,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9170,6 +10004,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         new_name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9180,6 +10016,7 @@ class InstrumentOperations:
                 "new_name": new_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9189,6 +10026,7 @@ class InstrumentOperations:
         file_path: str,
         *,
         save_as_ascii: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9200,6 +10038,7 @@ class InstrumentOperations:
                 "save_as_ascii": save_as_ascii,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9207,6 +10046,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         configuration_file: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9217,6 +10058,7 @@ class InstrumentOperations:
                 "configuration_file": configuration_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9224,6 +10066,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         cloud_name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9234,14 +10078,16 @@ class InstrumentOperations:
                 "cloud_name": cloud_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_absolute_instrument_scale_factor(
         self,
         instrument: CollectionInstrumentId,
+        scale_factor: float,
         *,
-        scale_factor: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9252,6 +10098,7 @@ class InstrumentOperations:
                 "scale_factor": scale_factor,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9261,6 +10108,7 @@ class InstrumentOperations:
         projector_profile: str,
         *,
         user_prompt: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9272,6 +10120,7 @@ class InstrumentOperations:
                 "user_prompt": user_prompt,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9280,6 +10129,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         *,
         filter_value: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9290,6 +10140,7 @@ class InstrumentOperations:
                 "filter_value": filter_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9299,6 +10150,7 @@ class InstrumentOperations:
         axis_values: Iterable[float],
         *,
         number_of_steps: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9310,6 +10162,7 @@ class InstrumentOperations:
                 "number_of_steps": number_of_steps,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9317,6 +10170,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         covariance_matrix: UncertaintyCovarianceMatrix,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9327,6 +10182,7 @@ class InstrumentOperations:
                 "covariance_matrix": covariance_matrix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9334,6 +10190,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         covariance_matrix: UncertaintyCovarianceMatrix,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9344,6 +10202,7 @@ class InstrumentOperations:
                 "covariance_matrix": covariance_matrix,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9351,6 +10210,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         point: PointName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9361,6 +10222,7 @@ class InstrumentOperations:
                 "point": point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9369,6 +10231,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         *,
         timeout: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -9383,6 +10246,7 @@ class InstrumentOperations:
                 "timeout": timeout,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9390,6 +10254,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         mode_profile: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9400,6 +10266,7 @@ class InstrumentOperations:
                 "mode_profile": mode_profile,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9407,6 +10274,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         targeting_name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9417,6 +10286,7 @@ class InstrumentOperations:
                 "targeting_name": targeting_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9427,6 +10297,7 @@ class InstrumentOperations:
         reference_frame: CollectionObjectName,
         *,
         number_of_steps: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9439,6 +10310,7 @@ class InstrumentOperations:
                 "number_of_steps": number_of_steps,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9446,10 +10318,11 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         *,
-        temperature: float = 0.0,
-        pressure: float = 0.0,
-        relative_humidity: float = 0.0,
-        set_automatically: bool = False,
+        temperature: float | None = None,
+        pressure: float | None = None,
+        relative_humidity: float | None = None,
+        set_automatically: bool,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -9469,14 +10342,16 @@ class InstrumentOperations:
                 "set_automatically": set_automatically,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_multiply_instrument_scale_factor(
         self,
         instrument: CollectionInstrumentId,
+        scale_factor: float,
         *,
-        scale_factor: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9487,6 +10362,7 @@ class InstrumentOperations:
                 "scale_factor": scale_factor,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9496,7 +10372,8 @@ class InstrumentOperations:
         *,
         observation_index: int = 0,
         is_collimation_shot: bool = False,
-        targeted_instrument: CollectionInstrumentId | None = None,
+        targeted_instrument: CollectionInstrumentId,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9509,6 +10386,7 @@ class InstrumentOperations:
                 "targeted_instrument": targeted_instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9519,6 +10397,7 @@ class InstrumentOperations:
         observation_index: int = 0,
         is_mirror_cube_shot: bool = False,
         mirror_cube_shot_face: int = 1,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9531,6 +10410,7 @@ class InstrumentOperations:
                 "mirror_cube_shot_face": mirror_cube_shot_face,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9540,6 +10420,7 @@ class InstrumentOperations:
         *,
         observation_index: int = 0,
         active: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9551,6 +10432,7 @@ class InstrumentOperations:
                 "active": active,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9561,6 +10443,7 @@ class InstrumentOperations:
         x_uncertainty: float = 0.001,
         y_uncertainty: float = 0.001,
         z_uncertainty: float = 0.001,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9573,6 +10456,7 @@ class InstrumentOperations:
                 "z_uncertainty": z_uncertainty,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9584,6 +10468,7 @@ class InstrumentOperations:
         offset_frame: CollectionObjectName,
         *,
         face_id: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9597,6 +10482,7 @@ class InstrumentOperations:
                 "offset_frame": offset_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9609,6 +10495,7 @@ class InstrumentOperations:
         face_id: int = 0,
         measure_profile_name: str = "",
         timeout_seconds: float = 15.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9623,12 +10510,15 @@ class InstrumentOperations:
                 "offset_frame": offset_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_remeasure_failed_checks_only(
         self,
         collection: CollectionName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9638,14 +10528,16 @@ class InstrumentOperations:
                 "collection": collection,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_target_computation_options(
         self,
+        computation_method: TargetComputationMethod,
         *,
-        computation_method: TargetComputationMethod = TargetComputationMethod.USE_MOST_RECENT_SHOT_FROM_EACH_FACE,
         ignore_distance_measurements: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9656,6 +10548,7 @@ class InstrumentOperations:
                 "ignore_distance_measurements": ignore_distance_measurements,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9669,6 +10562,7 @@ class InstrumentOperations:
         phi_threshold: float = 0.001,
         distance: float = 2.5,
         distance_threshold: float = 0.0003,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -9690,6 +10584,7 @@ class InstrumentOperations:
                 "distance_threshold": distance_threshold,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9698,6 +10593,7 @@ class InstrumentOperations:
         instrument: CollectionInstrumentId,
         *,
         channel: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9708,6 +10604,7 @@ class InstrumentOperations:
                 "channel": channel,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9718,6 +10615,7 @@ class InstrumentOperations:
         x_uncertainty: float = 0.0005,
         y_uncertainty: float = 0.0005,
         z_uncertainty: float = 0.0005,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9730,6 +10628,7 @@ class InstrumentOperations:
                 "z_uncertainty": z_uncertainty,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9737,6 +10636,8 @@ class InstrumentOperations:
         self,
         instrument: CollectionInstrumentId,
         anchor_frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9747,6 +10648,7 @@ class InstrumentOperations:
                 "anchor_frame": anchor_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9756,6 +10658,7 @@ class InstrumentOperations:
         collection: CollectionName,
         *,
         filter: InspectionFilter = InspectionFilter.ALL,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9767,6 +10670,7 @@ class InstrumentOperations:
                 "filter": filter,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9775,6 +10679,7 @@ class InstrumentOperations:
         collection: CollectionName,
         *,
         filter: InspectionFilter = InspectionFilter.ALL,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9785,6 +10690,7 @@ class InstrumentOperations:
                 "filter": filter,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9793,6 +10699,7 @@ class InstrumentOperations:
         collection: CollectionName,
         *,
         filter: InspectionFilter = InspectionFilter.ALL,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9803,6 +10710,7 @@ class InstrumentOperations:
                 "filter": filter,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9815,6 +10723,7 @@ class InstrumentOperations:
         interface_type: int = 0,
         run_in_simulation: bool = False,
         allow_start_without_initialization_requirements: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9829,6 +10738,7 @@ class InstrumentOperations:
                 "allow_start_without_initialization_requirements": allow_start_without_initialization_requirements,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9840,6 +10750,7 @@ class InstrumentOperations:
         comm_port: int = 0,
         device_ip_address: str | None = None,
         simulation: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9853,12 +10764,15 @@ class InstrumentOperations:
                 "simulation": simulation,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def stop_active_measurement_mode(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9868,12 +10782,15 @@ class InstrumentOperations:
                 "instrument": instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def stop_instrument_interface(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9883,6 +10800,7 @@ class InstrumentOperations:
                 "instrument": instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9895,6 +10813,7 @@ class InstrumentOperations:
         locate_one_of_the_instruments: bool = True,
         locate_master: bool = False,
         wait_for_completion: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9909,6 +10828,7 @@ class InstrumentOperations:
                 "wait_for_completion": wait_for_completion,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9922,6 +10842,8 @@ class InstrumentOperations:
         parameter_set_name: str,
         point_group: CollectionObjectName,
         initial_target_name: str,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9938,6 +10860,7 @@ class InstrumentOperations:
                 "initial_target_name": initial_target_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9947,6 +10870,7 @@ class InstrumentOperations:
         delta_transform: WorldTransform,
         *,
         apply_scale_to_instrument: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9958,6 +10882,7 @@ class InstrumentOperations:
                 "apply_scale_to_instrument": apply_scale_to_instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9968,6 +10893,7 @@ class InstrumentOperations:
         destination_frame: CollectionObjectName,
         *,
         number_of_steps: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -9980,6 +10906,7 @@ class InstrumentOperations:
                 "number_of_steps": number_of_steps,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -9989,6 +10916,7 @@ class InstrumentOperations:
         delta_transform: WorldTransform,
         *,
         apply_scale_to_instruments: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -10000,12 +10928,15 @@ class InstrumentOperations:
                 "apply_scale_to_instruments": apply_scale_to_instruments,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def verify_instrument_connection(
         self,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> bool:
         return cast(
             bool,
@@ -10017,11 +10948,14 @@ class InstrumentOperations:
                     "instrument": instrument,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def wait_for_trapping_to_complete(
         self,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -10029,6 +10963,7 @@ class InstrumentOperations:
             "instrument_operations.wait_for_trapping_to_complete",
             {},
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10044,6 +10979,7 @@ class InstrumentOperations:
         window_top_left_y: int = 0,
         window_width: int = 0,
         window_height: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -10061,6 +10997,7 @@ class InstrumentOperations:
                 "window_height": window_height,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10074,6 +11011,7 @@ class InstrumentOperations:
         window_top_left_y: int = 0,
         window_width: int = 0,
         window_height: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -10089,6 +11027,7 @@ class InstrumentOperations:
                 "window_height": window_height,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10106,6 +11045,7 @@ class InstrumentOperations:
         window_top_left_y: int = 0,
         window_width: int = 0,
         window_height: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -10125,6 +11065,7 @@ class InstrumentOperations:
                 "window_height": window_height,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10141,6 +11082,7 @@ class InstrumentOperations:
         window_top_left_y: int = 0,
         window_width: int = 0,
         window_height: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -10159,6 +11101,7 @@ class InstrumentOperations:
                 "window_height": window_height,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10174,6 +11117,7 @@ class InstrumentOperations:
         window_top_left_y: int = 0,
         window_width: int = 0,
         window_height: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -10191,6 +11135,7 @@ class InstrumentOperations:
                 "window_height": window_height,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10200,6 +11145,7 @@ class InstrumentOperations:
         reference_point: PointName,
         *,
         update: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.InstrumentOperations",
@@ -10211,6 +11157,7 @@ class InstrumentOperations:
                 "update": update,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10222,6 +11169,8 @@ class RobotCalibrationApplianceNodeOperations:
     async def add_calibration_appliance_node(
         self,
         calibration_appliance_node_to_add: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10231,12 +11180,15 @@ class RobotCalibrationApplianceNodeOperations:
                 "calibration_appliance_node_to_add": calibration_appliance_node_to_add,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def clear_calibration_appliance_node_trap_manager_requests(
         self,
         calibration_appliance_node: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10246,6 +11198,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "calibration_appliance_node": calibration_appliance_node,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10254,6 +11207,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         connect: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10264,12 +11218,15 @@ class RobotCalibrationApplianceNodeOperations:
                 "connect": connect,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_calibration_appliance_node(
         self,
         calibration_appliance_node_to_delete: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10279,6 +11236,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "calibration_appliance_node_to_delete": calibration_appliance_node_to_delete,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10287,6 +11245,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         enable_instrument_auto_point: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10297,6 +11256,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "enable_instrument_auto_point": enable_instrument_auto_point,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10305,6 +11265,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         enable: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10315,6 +11276,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "enable": enable,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10322,6 +11284,8 @@ class RobotCalibrationApplianceNodeOperations:
         self,
         calibration_appliance_node: CollectionObjectName,
         real_value_count: int,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[float]:
         return cast(
             list[float],
@@ -10334,6 +11298,7 @@ class RobotCalibrationApplianceNodeOperations:
                     "real_value_count": real_value_count,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -10342,6 +11307,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         index_offset: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -10354,6 +11320,7 @@ class RobotCalibrationApplianceNodeOperations:
                     "index_offset": index_offset,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -10362,6 +11329,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         index_offset: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -10374,12 +11342,15 @@ class RobotCalibrationApplianceNodeOperations:
                     "index_offset": index_offset,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def get_calibration_appliance_node_status(
         self,
         calibration_appliance_node: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> CalibrationApplianceNodeStatus:
         return cast(
             CalibrationApplianceNodeStatus,
@@ -10391,6 +11362,7 @@ class RobotCalibrationApplianceNodeOperations:
                     "calibration_appliance_node": calibration_appliance_node,
                 },
                 CalibrationApplianceNodeStatus,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -10399,6 +11371,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         calibration_appliance_ip_address: str = "0.0.0.0",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10409,6 +11382,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "calibration_appliance_ip_address": calibration_appliance_ip_address,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10416,6 +11390,8 @@ class RobotCalibrationApplianceNodeOperations:
         self,
         calibration_appliance_node: CollectionObjectName,
         machine_id: CollectionMachineId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10426,6 +11402,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "machine_id": machine_id,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10433,6 +11410,8 @@ class RobotCalibrationApplianceNodeOperations:
         self,
         calibration_appliance_node: CollectionObjectName,
         instrument: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10443,6 +11422,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "instrument": instrument,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10451,6 +11431,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         measurement_dwell_time: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -10465,6 +11446,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "measurement_dwell_time": measurement_dwell_time,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10474,6 +11456,7 @@ class RobotCalibrationApplianceNodeOperations:
         *,
         index_offset: int = 0,
         integer_value: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10485,6 +11468,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "integer_value": integer_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10492,6 +11476,8 @@ class RobotCalibrationApplianceNodeOperations:
         self,
         calibration_appliance_node: CollectionObjectName,
         measurement_reference_frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10502,14 +11488,16 @@ class RobotCalibrationApplianceNodeOperations:
                 "measurement_reference_frame": measurement_reference_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_calibration_appliance_node_measurement_offset_transform(
         self,
         calibration_appliance_node: CollectionObjectName,
+        measurement_offset_transform: Transform,
         *,
-        measurement_offset_transform: Transform | None = None,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10520,6 +11508,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "measurement_offset_transform": measurement_offset_transform,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10527,6 +11516,8 @@ class RobotCalibrationApplianceNodeOperations:
         self,
         calibration_appliance_node: CollectionObjectName,
         point_group_name: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10537,6 +11528,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "point_group_name": point_group_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10545,6 +11537,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         measurement_profile: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10555,6 +11548,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "measurement_profile": measurement_profile,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10563,6 +11557,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         measurement_target: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10573,6 +11568,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "measurement_target": measurement_target,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10582,6 +11578,7 @@ class RobotCalibrationApplianceNodeOperations:
         *,
         index_offset: int = 0,
         real_value: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10593,6 +11590,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "real_value": real_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10601,6 +11599,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         trapping_node_id: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10611,12 +11610,15 @@ class RobotCalibrationApplianceNodeOperations:
                 "trapping_node_id": trapping_node_id,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def skip_calibration_appliance_node_measurement(
         self,
         calibration_appliance_node: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10626,6 +11628,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "calibration_appliance_node": calibration_appliance_node,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10634,6 +11637,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         enable_display_robot_joint_updates: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10644,6 +11648,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "enable_display_robot_joint_updates": enable_display_robot_joint_updates,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10652,6 +11657,7 @@ class RobotCalibrationApplianceNodeOperations:
         calibration_appliance_node: CollectionObjectName,
         *,
         real_values: Iterable[float] = (),
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotCalibrationApplianceNodeOperations",
@@ -10662,6 +11668,7 @@ class RobotCalibrationApplianceNodeOperations:
                 "real_values": real_values,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10673,6 +11680,8 @@ class RobotOperations:
     async def add_robot_machine_manip_kin(
         self,
         manip_kin_file: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10682,12 +11691,15 @@ class RobotOperations:
                 "manip_kin_file": manip_kin_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def add_robot_machine_sa_machine(
         self,
         sa_machine_file: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10697,6 +11709,7 @@ class RobotOperations:
                 "sa_machine_file": sa_machine_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10706,6 +11719,8 @@ class RobotOperations:
         last_adjusted_goal_frame: CollectionObjectName,
         actual_measured_frame: CollectionObjectName,
         modified_goal_frame: CollectionObjectName,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -10720,6 +11735,7 @@ class RobotOperations:
                     "modified_goal_frame": modified_goal_frame,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -10728,6 +11744,7 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         calibration_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10738,14 +11755,16 @@ class RobotOperations:
                 "calibration_name": calibration_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_robot_calibration(
         self,
         machine_id: CollectionMachineId,
+        calibration_name: str,
         *,
-        calibration_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10756,12 +11775,15 @@ class RobotOperations:
                 "calibration_name": calibration_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def delete_robot_machine(
         self,
         machine_id: CollectionMachineId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10771,12 +11793,15 @@ class RobotOperations:
                 "machine_id": machine_id,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def get_calibration_appliance_data(
         self,
         real_value_count: int,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[float]:
         return cast(
             list[float],
@@ -10788,6 +11813,7 @@ class RobotOperations:
                     "real_value_count": real_value_count,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -10795,6 +11821,7 @@ class RobotOperations:
         self,
         *,
         index_offset: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> int:
         return cast(
             int,
@@ -10806,6 +11833,7 @@ class RobotOperations:
                     "index_offset": index_offset,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -10813,6 +11841,7 @@ class RobotOperations:
         self,
         *,
         index_offset: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -10824,6 +11853,7 @@ class RobotOperations:
                     "index_offset": index_offset,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -10832,19 +11862,28 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         link_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> RobotModelLinkParameters:
-        return cast(
-            RobotModelLinkParameters,
-            await self._client._invoke_mp_operation(
-                "briosa.RobotOperations",
-                "GetRobotMachineModelLinkParameters",
-                "robot_operations.get_robot_machine_model_link_parameters",
-                {
-                    "machine_id": machine_id,
-                    "link_name": link_name,
-                },
-                RobotModelLinkParameters,
+        # The wire result is flat; the public result nests the configuration.
+        wire: Any = await self._client._invoke_mp_operation(
+            "briosa.RobotOperations",
+            "GetRobotMachineModelLinkParameters",
+            "robot_operations.get_robot_machine_model_link_parameters",
+            {
+                "machine_id": machine_id,
+                "link_name": link_name,
+            },
+            _RobotModelLinkParametersWire,
+            on_mp_completion=on_mp_completion,
+        )
+        return RobotModelLinkParameters(
+            configuration=RobotModelLinkConfiguration(
+                **{
+                    item.name: getattr(wire, item.name)
+                    for item in fields(RobotModelLinkConfiguration)
+                }
             ),
+            encoder_value=wire.encoder_value,
         )
 
     async def get_robot_machine_parameter(
@@ -10852,6 +11891,7 @@ class RobotOperations:
         machine_id: CollectionInstrumentId,
         *,
         parameter_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> float:
         return cast(
             float,
@@ -10864,6 +11904,7 @@ class RobotOperations:
                     "parameter_name": parameter_name,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -10874,6 +11915,7 @@ class RobotOperations:
         csv_joint_set_file: FileReference,
         *,
         calibration_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10886,6 +11928,7 @@ class RobotOperations:
                 "csv_joint_set_file": csv_joint_set_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10896,6 +11939,7 @@ class RobotOperations:
         csv_joint_set_file: FileReference,
         *,
         calibration_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10908,6 +11952,7 @@ class RobotOperations:
                 "csv_joint_set_file": csv_joint_set_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10919,6 +11964,7 @@ class RobotOperations:
         use_sa_kinematics: bool = True,
         linear_segments: bool = False,
         acknowledge_arrival: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10932,6 +11978,7 @@ class RobotOperations:
                 "acknowledge_arrival": acknowledge_arrival,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10941,7 +11988,8 @@ class RobotOperations:
         destination_frame: CollectionObjectName,
         *,
         use_sa_kinematics: bool = False,
-        acknowledge_arrival: bool = False,
+        acknowledge_arrival: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -10956,19 +12004,21 @@ class RobotOperations:
                     "acknowledge_arrival": acknowledge_arrival,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
     async def move_robot_machine_to_joint_pose_six_dof(
         self,
         machine_id: CollectionMachineId,
+        joint_1: float,
+        joint_2: float,
+        joint_3: float,
+        joint_4: float,
+        joint_5: float,
+        joint_6: float,
         *,
-        joint_1: float = 0.0,
-        joint_2: float = 0.0,
-        joint_3: float = 0.0,
-        joint_4: float = 0.0,
-        joint_5: float = 0.0,
-        joint_6: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -10984,6 +12034,7 @@ class RobotOperations:
                 "joint_6": joint_6,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -10992,7 +12043,8 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         destination_name: str = "",
-        acknowledge_arrival: bool = False,
+        acknowledge_arrival: bool = True,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> Transform:
         return cast(
             Transform,
@@ -11006,6 +12058,7 @@ class RobotOperations:
                     "acknowledge_arrival": acknowledge_arrival,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -11022,6 +12075,7 @@ class RobotOperations:
         allowed_outlier_rejection_count: int = 0,
         allowable_maximum_error: float = 0.0,
         allowable_average_error: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> RobotCalibrationMetrics:
         return cast(
             RobotCalibrationMetrics,
@@ -11042,6 +12096,7 @@ class RobotOperations:
                     "allowable_average_error": allowable_average_error,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -11050,6 +12105,7 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         calibration_name: str = "",
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11060,6 +12116,7 @@ class RobotOperations:
                 "calibration_name": calibration_name,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11068,6 +12125,7 @@ class RobotOperations:
         *,
         index_offset: int = 0,
         integer_value: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11078,6 +12136,7 @@ class RobotOperations:
                 "integer_value": integer_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11086,6 +12145,7 @@ class RobotOperations:
         *,
         index_offset: int = 0,
         real_value: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11096,6 +12156,7 @@ class RobotOperations:
                 "real_value": real_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11104,7 +12165,8 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         calibration_name: str = "",
-        measurement_frame: Transform | None = None,
+        measurement_frame: Transform,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -11120,6 +12182,7 @@ class RobotOperations:
                 "measurement_frame": measurement_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11128,7 +12191,8 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         calibration_name: str = "",
-        tool_frame: Transform | None = None,
+        tool_frame: Transform,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         """MP argument notes.
 
@@ -11144,6 +12208,7 @@ class RobotOperations:
                 "tool_frame": tool_frame,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11152,8 +12217,9 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         reference_frame: CollectionObjectName,
         *,
-        destination_transform: Transform | None = None,
+        destination_transform: Transform,
         number_of_steps: int = 0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11166,6 +12232,7 @@ class RobotOperations:
                 "number_of_steps": number_of_steps,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11174,9 +12241,9 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         *,
         link_name: str = "",
-        configuration: RobotModelLinkConfiguration | None = None,
+        configuration: RobotModelLinkConfiguration,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
-        configuration = configuration or RobotModelLinkConfiguration()
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
             "SetRobotMachineModelLinkParameters",
@@ -11211,15 +12278,17 @@ class RobotOperations:
                 "segment_cg_in_segment": configuration.segment_cg_in_segment,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def set_robot_machine_parameter(
         self,
         machine_id: CollectionMachineId,
+        parameter_name: str,
         *,
-        parameter_name: str = "",
-        parameter_value: float = 0.0,
+        parameter_value: float,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11231,6 +12300,7 @@ class RobotOperations:
                 "parameter_value": parameter_value,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11239,6 +12309,8 @@ class RobotOperations:
         machine_id: CollectionMachineId,
         path_frames: Iterable[CollectionObjectName],
         output_csv_file: FileReference,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11250,6 +12322,7 @@ class RobotOperations:
                 "output_csv_file": output_csv_file,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11259,6 +12332,7 @@ class RobotOperations:
         *,
         interface_type: int = 0,
         run_in_simulation: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11270,6 +12344,7 @@ class RobotOperations:
                 "run_in_simulation": run_in_simulation,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11280,6 +12355,7 @@ class RobotOperations:
         *,
         calibration_name: str = "",
         start_trapping: bool = False,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11292,12 +12368,15 @@ class RobotOperations:
                 "start_trapping": start_trapping,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
     async def stop_robot_machine_interface(
         self,
         machine_id: CollectionInstrumentId,
+        *,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11307,6 +12386,7 @@ class RobotOperations:
                 "machine_id": machine_id,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11317,6 +12397,7 @@ class RobotOperations:
         goal_pose_count: int,
         *,
         reference_pose: Iterable[float] = (),
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> list[float]:
         return cast(
             list[float],
@@ -11331,6 +12412,7 @@ class RobotOperations:
                     "goal_pose_count": goal_pose_count,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -11344,6 +12426,7 @@ class RobotOperations:
         allowed_outlier_rejection_count: int = 0,
         allowable_maximum_error: float = 0.0,
         allowable_average_error: float = 0.0,
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> RobotCalibrationMetrics:
         return cast(
             RobotCalibrationMetrics,
@@ -11361,6 +12444,7 @@ class RobotOperations:
                     "allowable_average_error": allowable_average_error,
                 },
                 None,
+                on_mp_completion=on_mp_completion,
             ),
         )
 
@@ -11368,6 +12452,7 @@ class RobotOperations:
         self,
         *,
         real_values: Iterable[float] = (),
+        on_mp_completion: MpCompletionObserver | None = None,
     ) -> None:
         await self._client._invoke_mp_operation(
             "briosa.RobotOperations",
@@ -11377,6 +12462,7 @@ class RobotOperations:
                 "real_values": real_values,
             },
             None,
+            on_mp_completion=on_mp_completion,
         )
         return None
 
@@ -11403,7 +12489,6 @@ WAVE_B_OPERATIONS = (
     "cloud_and_mesh_operations.filter_clouds_to_vector_groups_resolve_points",
     "cloud_and_mesh_operations.rgb_cloud_point_filter",
     "cloud_and_mesh_operations.delete_cloud_points_by_radial_distance_from_points",
-    "cloud_and_mesh_operations.delete_cloud_points_by_xyz_range",
     "cloud_and_mesh_operations.generate_general_mesh",
     "cloud_and_mesh_operations.mesh_volume",
     "construction_operations.add_surface_to_mesh_offset_along_reference_direction",
@@ -11420,7 +12505,6 @@ WAVE_B_OPERATIONS = (
     "construction_operations.construct_boundary_points_from_cloud",
     "construction_operations.construct_circle",
     "construction_operations.construct_circles_from_surface_faces_runtime_select",
-    "construction_operations.construct_circles_lines_from_surfaces",
     "construction_operations.construct_collection",
     "construction_operations.construct_cone",
     "construction_operations.construct_cones_from_surface_faces_runtime_select",
@@ -11573,7 +12657,6 @@ WAVE_B_OPERATIONS = (
     "construction_operations.make_collection_object_name_ref_list_runtime_select",
     "construction_operations.make_collection_object_name_ref_list_wildcard_selection",
     "construction_operations.make_collection_object_name_runtime_select",
-    "construction_operations.make_collection_vector_group_name_ref_list_runtime_select",
     "construction_operations.make_event_ref_list_wildcard_selection",
     "construction_operations.make_picture_name_ref_list_runtime_select",
     "construction_operations.make_point_name_ref_list_from_group",
@@ -11586,9 +12669,7 @@ WAVE_B_OPERATIONS = (
     "construction_operations.make_transform_from_doubles_euler_parameters",
     "construction_operations.make_transform_from_doubles_fixed_xyz",
     "construction_operations.make_vector_name_ref_list_from_vector_group",
-    "construction_operations.make_vector_name_ref_list_runtime_select",
     "construction_operations.make_vector_names_unique_in_vector_group",
-    "construction_operations.mirror_objects",
     "construction_operations.move_objects_point_to_point_delta",
     "construction_operations.move_objects_to_a_collection",
     "construction_operations.rename_callout_view",
@@ -11603,21 +12684,17 @@ WAVE_B_OPERATIONS = (
     "construction_operations.set_point_position_in_working_coordinates",
     "construction_operations.shift_plane",
     "construction_operations.transform_points_by_delta_about_working_frame",
-    "construction_operations.add_collection_instruments_to_ref_list_wildcard_selection",
     "construction_operations.average_set_of_groups",
     "construction_operations.construct_geometry_from_surfaces",
     "construction_operations.construct_objects_from_surface_faces_runtime_select",
     "construction_operations.construct_point_at_object_origin",
     "construction_operations.get_gradient_at_projected_point_on_surface",
     "construction_operations.get_gradient_at_projected_point_on_surface_edge",
-    "construction_operations.make_callout_view_ref_list_wildcard_selection",
     "construction_operations.make_collection_object_name_ensure_unique",
     "construction_operations.make_point_name_ensure_unique",
     "construction_operations.make_relationship_ref_list_runtime_select",
     "construction_operations.make_relationship_ref_list_wildcard_selection",
     "construction_operations.set_default_callout_view_properties",
-    "construction_operations.set_callout_view_properties",
-    "construction_operations.construct_polygonized_surface_from_point_clouds",
     "construction_operations.construct_scale_bar",
     "gdt_operations.datum_alignment",
     "gdt_operations.delete_feature_checks",

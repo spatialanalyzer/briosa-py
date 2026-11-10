@@ -226,6 +226,12 @@ class RecordingTransport:
         await self._record("snapshot", timeout)
         return snapshot(self._connected)
 
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> discovery_pb2.ListCapabilitiesResponse:
+        await self._record("list-capabilities", timeout)
+        return snapshot(self._connected)[1]
+
     async def get_application_state(
         self, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
@@ -286,9 +292,6 @@ class RecordingTransport:
         self._sdk_generation += 1
         self._connected = False
         return self._sdk_state()
-
-    async def get_working_directory(self, timeout: float | None = None) -> str:
-        raise NotImplementedError
 
     async def invoke_operation(
         self,
@@ -371,7 +374,7 @@ def snapshot(
         ),
         ready_for_mp=ready,
         target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
-        compatibility=discovery_pb2.CompatibilityContract(major=2),
+        compatibility=discovery_pb2.CompatibilityContract(major=3),
     )
     capabilities = discovery_pb2.ListCapabilitiesResponse(
         protocol_package=PROTOCOL_PACKAGE,

@@ -8,7 +8,7 @@ toolchain, file-list, or generated-byte drift.
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.9.0-dev.1-sa-2026.1.0529.7.zip `
+  C:\path\to\briosa-protocol-0.10.0-dev.1-sa-2026.1.0529.7.zip `
   --update --source-channel source_commit_bootstrap
 ```
 
@@ -37,10 +37,12 @@ The importer also copies the server-owned installation selection fixtures.
 Runtime compatibility is independent of the generation artifact build.
 `Test-Conformance.ps1 -LockPath <lock> -EvidencePath <new-report.json>` runs
 another exact, hash-verified server fixture and retains portable evidence.
-The default lock retains Server 0.6.1 for rejection coverage. Use -ExpectIncompatible with that lock; a contract-major mismatch must fail before launch.
+The default lock retains Server 0.9.2, the newest major-2 server, for rejection
+coverage. Use -ExpectIncompatible with that lock; a contract-major mismatch
+must fail before launch.
 
 `Test-CurrentServerConformance.ps1` builds the exact generation source and writes
-its own conformance lock; the legacy lock remains independently pinned to 0.6.1.
+its own conformance lock; the legacy lock remains independently pinned to 0.9.2.
 `Test-PackageCompatibility.ps1` exercises the actual packed client against both
 server generations. `Test-PublishedClientConformance.ps1` is also used by the
 server's retained published-client gate: it verifies the package digest and

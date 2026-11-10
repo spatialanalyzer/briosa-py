@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -112,6 +113,26 @@ class OperationFailureKind(_StrEnum):
     MP_RESULT_RETRIEVAL_FAILURE = "mp_result_retrieval_failure"
     SDK_ARGUMENT_REJECTED = "sdk_argument_rejected"
     OVERLOADED = "overloaded"
+    SDK_CALL_FAULTED = "sdk_call_faulted"
+
+
+class MpExecutionState(_StrEnum):
+    """What happened to the MP command itself (MP execution details)."""
+
+    UNSPECIFIED = "unspecified"
+    SUCCEEDED = "succeeded"
+    EXECUTE_STEP_REJECTED = "execute_step_rejected"
+    FAILED = "failed"
+    RESULT_UNAVAILABLE = "result_unavailable"
+    ARGUMENT_REJECTED = "argument_rejected"
+    PARTIAL_SUCCESS = "partial_success"
+
+
+class OutputRetrievalState(_StrEnum):
+    UNSPECIFIED = "unspecified"
+    RETRIEVED = "retrieved"
+    NOT_ATTEMPTED = "not_attempted"
+    FAILED = "failed"
 
 
 class RecoveryGuidance(_StrEnum):
@@ -167,6 +188,8 @@ class SpatialAnalyzerLifecycleFailureKind(_StrEnum):
     SDK_NOT_STOPPED = "sdk_not_stopped"
     TIMEOUT = "timeout"
     INTERNAL = "internal"
+    CALLER_CANCELLED = "caller_cancelled"
+    CALLER_DEADLINE_EXCEEDED = "caller_deadline_exceeded"
 
 
 class SpatialAnalyzerSdkLifecycleFailureKind(_StrEnum):
@@ -189,6 +212,8 @@ class SpatialAnalyzerSdkLifecycleFailureKind(_StrEnum):
     SDK_CONNECTION_FAILED = "sdk_connection_failed"
     RECONNECT_NOT_REQUIRED = "reconnect_not_required"
     SDK_RECOVERY_REQUIRED = "sdk_recovery_required"
+    CALLER_CANCELLED = "caller_cancelled"
+    CALLER_DEADLINE_EXCEEDED = "caller_deadline_exceeded"
 
 
 class LifecycleRecoveryGuidance(_StrEnum):
@@ -200,6 +225,61 @@ class LifecycleRecoveryGuidance(_StrEnum):
     STOP_SDK_FIRST = "stop_sdk_first"
     RECOVER_SDK_WITHOUT_REPLAY = "recover_sdk_without_replay"
     OPERATOR_ACTION_REQUIRED = "operator_action_required"
+
+
+class OperationRiskFlag(_StrEnum):
+    """A reviewed risk on an operation's classification row (#242)."""
+
+    UNSPECIFIED = "unspecified"
+    FILESYSTEM_METADATA = "filesystem_metadata"
+    FILESYSTEM_READ = "filesystem_read"
+    FILESYSTEM_WRITE = "filesystem_write"
+    FILESYSTEM_DELETE = "filesystem_delete"
+    DESTRUCTIVE = "destructive"
+    CODE_EXECUTION = "code_execution"
+    PHYSICAL_MOTION = "physical_motion"
+    DEVICE_SESSION = "device_session"
+    DEVICE_CONFIG = "device_config"
+    INTERACTIVE_UI = "interactive_ui"
+    EXTERNAL_IO = "external_io"
+    UNKNOWN = "unknown"
+    """A value from a later 3.x revision that this client doesn't know."""
+
+
+class OperationDurationClass(_StrEnum):
+    """The reviewed duration class, which selects the server execution budget."""
+
+    UNSPECIFIED = "unspecified"
+    QUICK = "quick"
+    LONG_RUNNING = "long_running"
+    INTERACTIVE = "interactive"
+    UNKNOWN = "unknown"
+    """A value from a later 3.x revision that this client doesn't know."""
+
+
+class OperationValidationStatus(_StrEnum):
+    """The recorded validation gap. It is informational and never gates a call."""
+
+    UNSPECIFIED = "unspecified"
+    NO_RECORDED_GAP = "no_recorded_gap"
+    FIXTURE_PENDING = "fixture_pending"
+    AT_RISK_UNVALIDATED = "at_risk_unvalidated"
+    UNKNOWN = "unknown"
+    """A value from a later 3.x revision that this client doesn't know."""
+
+
+class OperationAdmission(_StrEnum):
+    """The active policy's decision for an operation, as the server reports it."""
+
+    UNSPECIFIED = "unspecified"
+    ADMITTED = "admitted"
+    DENIED_PROFILE = "denied_profile"
+    DENIED_FLAG = "denied_flag"
+    DENIED_OVERRIDE = "denied_override"
+    DENIED_EXCLUSIVE = "denied_exclusive"
+    DENIED_UNREVIEWED = "denied_unreviewed"
+    UNKNOWN = "unknown"
+    """A value from a later 3.x revision; it never admits the operation."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -258,10 +338,9 @@ class BriosaStartOptions:
     association 60 s) plus 20 seconds for server host startup, process
     observation, and round trips. Raise it when the server's lifecycle bounds are
     raised. Expiry during an in-flight RPC is reported the same way; cancelling the
-    caller's task only stops that caller from waiting. A server that includes
-    spatialanalyzer/briosa#315 finishes an SDK start or connection it has accepted
-    after the client stops waiting; older servers, including released 0.9 builds,
-    cancel it, which can leave the SDK stopped or faulted.
+    caller's task only stops that caller from waiting. The server finishes an SDK
+    start or connection it has accepted after the client stops waiting
+    (spatialanalyzer/briosa#315), so refresh SDK state before retrying.
     """
 
     server_selection: BriosaServerSelection = field(
@@ -292,6 +371,53 @@ class BriosaStartOptions:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class OutputRetrievalDetails:
+    """Retrieval of one result field, named by its public result field name."""
+
+    field_name: str
+    state: OutputRetrievalState
+    diagnostic_code: str | None = None
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class MpExecutionDetails:
+    """What the server proved about the MP command inside a typed failure.
+
+    ``state`` keeps ``PARTIAL_SUCCESS`` (MP code 4) distinct from
+    ``SUCCEEDED``. ``mp_result_code`` is the raw MP code when SpatialAnalyzer
+    returned one.
+    """
+
+    state: MpExecutionState
+    mp_result_code: int | None = None
+    output_retrievals: tuple[OutputRetrievalDetails, ...] = ()
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class MpCompletion:
+    """How one successful MP call completed.
+
+    ``state`` is ``SUCCEEDED`` with ``mp_result_code`` 2, or ``PARTIAL_SUCCESS``
+    with code 4. A partial success did its work and returned its outputs, but did
+    not have its full intended effect; it is still a success, so the call neither
+    raises nor retries. The client checks every MP success this way, observed or
+    not: a success without valid execution details is ``BriosaProtocolError``
+    (``mp-completion-invalid``).
+    """
+
+    state: MpExecutionState
+    mp_result_code: int
+
+
+MpCompletionObserver = Callable[[MpCompletion], object]
+"""A per-call callback that receives the call's ``MpCompletion``.
+
+The client calls it once, after checking the completion and before mapping the
+outputs, so it hears of a success even when the outputs then fail to map.
+"""
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class OperationFailure:
     operation_id: str
     kind: OperationFailureKind
@@ -300,6 +426,8 @@ class OperationFailure:
     recovery_guidance: RecoveryGuidance
     replay_guidance: ReplayGuidance
     replay_safety: ReplaySafety
+    mp_execution: MpExecutionDetails | None = None
+    worker_generation: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -336,23 +464,73 @@ class SpatialAnalyzerSdkLifecycleState:
 
 @dataclass(frozen=True, slots=True)
 class BriosaOperationCapability:
+    """One operation's reviewed classification row and its admission.
+
+    ``risk_flags`` is an ordered set; empty means no reviewed risk applies. A
+    request option can still open operator UI or leave work running, and the
+    server can deny that request; the client doesn't pre-validate it.
+    """
+
     operation_id: str
     grpc_service: str
     rpc: str
     fully_qualified_method: str
+    risk_flags: tuple[OperationRiskFlag, ...] = ()
+    duration_class: OperationDurationClass = OperationDurationClass.UNSPECIFIED
+    validation_status: OperationValidationStatus = OperationValidationStatus.UNSPECIFIED
+    admission: OperationAdmission = OperationAdmission.UNSPECIFIED
 
 
 @dataclass(frozen=True, slots=True)
 class BriosaServerSnapshot:
+    """The verified server identity and the generation's admitted operations.
+
+    ``operations`` holds only capabilities the server admitted.
+    ``policy_fingerprint`` is opaque: compare it only for equality, for example
+    to tell whether a replacement generation runs under the same policy.
+    """
+
     briosa_version: str
     source_revision: str
     protocol_package: str
     spatial_analyzer_target: str
     ready_for_mp: bool
     operations: tuple[BriosaOperationCapability, ...]
+    admission_profile: str
+    policy_fingerprint: str
 
     def supports(self, fully_qualified_method: str) -> bool:
         return any(
             operation.fully_qualified_method == fully_qualified_method
+            and operation.admission is OperationAdmission.ADMITTED
             for operation in self.operations
+        )
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class BriosaCapabilityListing:
+    """A diagnostic capability listing, optionally with denied operations.
+
+    Denied entries carry their denial reason in ``admission``. They never
+    enter the generation's admitted set and never make an operation callable.
+    """
+
+    admission_profile: str
+    policy_fingerprint: str
+    operations: tuple[BriosaOperationCapability, ...]
+
+    @property
+    def admitted(self) -> tuple[BriosaOperationCapability, ...]:
+        return tuple(
+            item
+            for item in self.operations
+            if item.admission is OperationAdmission.ADMITTED
+        )
+
+    @property
+    def denied(self) -> tuple[BriosaOperationCapability, ...]:
+        return tuple(
+            item
+            for item in self.operations
+            if item.admission is not OperationAdmission.ADMITTED
         )

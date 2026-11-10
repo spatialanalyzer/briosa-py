@@ -15,6 +15,7 @@ class MpExecutionState(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     MP_EXECUTION_STATE_FAILED: _ClassVar[MpExecutionState]
     MP_EXECUTION_STATE_RESULT_UNAVAILABLE: _ClassVar[MpExecutionState]
     MP_EXECUTION_STATE_ARGUMENT_REJECTED: _ClassVar[MpExecutionState]
+    MP_EXECUTION_STATE_PARTIAL_SUCCESS: _ClassVar[MpExecutionState]
 
 class OutputRetrievalState(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -71,12 +72,14 @@ class OperationFailureKind(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     OPERATION_FAILURE_KIND_MP_RESULT_RETRIEVAL_FAILURE: _ClassVar[OperationFailureKind]
     OPERATION_FAILURE_KIND_SDK_ARGUMENT_REJECTED: _ClassVar[OperationFailureKind]
     OPERATION_FAILURE_KIND_OVERLOADED: _ClassVar[OperationFailureKind]
+    OPERATION_FAILURE_KIND_SDK_CALL_FAULTED: _ClassVar[OperationFailureKind]
 MP_EXECUTION_STATE_UNSPECIFIED: MpExecutionState
 MP_EXECUTION_STATE_SUCCEEDED: MpExecutionState
 MP_EXECUTION_STATE_EXECUTE_STEP_REJECTED: MpExecutionState
 MP_EXECUTION_STATE_FAILED: MpExecutionState
 MP_EXECUTION_STATE_RESULT_UNAVAILABLE: MpExecutionState
 MP_EXECUTION_STATE_ARGUMENT_REJECTED: MpExecutionState
+MP_EXECUTION_STATE_PARTIAL_SUCCESS: MpExecutionState
 OUTPUT_RETRIEVAL_STATE_UNSPECIFIED: OutputRetrievalState
 OUTPUT_RETRIEVAL_STATE_RETRIEVED: OutputRetrievalState
 OUTPUT_RETRIEVAL_STATE_NOT_ATTEMPTED: OutputRetrievalState
@@ -115,6 +118,7 @@ OPERATION_FAILURE_KIND_POLICY_DENIED: OperationFailureKind
 OPERATION_FAILURE_KIND_MP_RESULT_RETRIEVAL_FAILURE: OperationFailureKind
 OPERATION_FAILURE_KIND_SDK_ARGUMENT_REJECTED: OperationFailureKind
 OPERATION_FAILURE_KIND_OVERLOADED: OperationFailureKind
+OPERATION_FAILURE_KIND_SDK_CALL_FAULTED: OperationFailureKind
 
 class OutputRetrievalDetails(_message.Message):
     __slots__ = ("field_name", "state", "diagnostic_code")

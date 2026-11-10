@@ -12,8 +12,6 @@ from google.protobuf.message import DecodeError, Message
 from briosa import (
     discovery_pb2,
     discovery_pb2_grpc,
-    file_operations_pb2,
-    file_operations_pb2_grpc,
     lifecycle_pb2,
     lifecycle_pb2_grpc,
     operation_outcomes_pb2,
@@ -29,12 +27,21 @@ from briosa.errors import (
 )
 from briosa.installation_models import BriosaInstallation, valid_version
 from briosa.models import (
+    BriosaCapabilityListing,
     BriosaOperationCapability,
     BriosaServerSnapshot,
     ExecutionDisposition,
     LifecycleRecoveryGuidance,
+    MpExecutionDetails,
+    MpExecutionState,
+    OperationAdmission,
+    OperationDurationClass,
     OperationFailure,
     OperationFailureKind,
+    OperationRiskFlag,
+    OperationValidationStatus,
+    OutputRetrievalDetails,
+    OutputRetrievalState,
     RecoveryGuidance,
     ReplayGuidance,
     ReplaySafety,
@@ -72,6 +79,10 @@ class ClientTransport(Protocol):
         discovery_pb2.GetServerInfoResponse,
         discovery_pb2.ListCapabilitiesResponse,
     ]: ...
+
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> discovery_pb2.ListCapabilitiesResponse: ...
 
     async def get_application_state(
         self, timeout: float | None = None
@@ -111,8 +122,6 @@ class ClientTransport(Protocol):
         self, expected_generation: int, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState: ...
 
-    async def get_working_directory(self, timeout: float | None = None) -> str: ...
-
     async def invoke_operation(
         self,
         path: str,
@@ -136,9 +145,6 @@ class GrpcClientTransport:
         self._sdk = lifecycle_pb2_grpc.SpatialAnalyzerSdkLifecycleStub(  # type: ignore[no-untyped-call]
             self._channel
         )
-        self._file_operations = file_operations_pb2_grpc.FileOperationsStub(
-            self._channel  # type: ignore[no-untyped-call]
-        )
 
     async def get_server_snapshot(
         self, timeout: float | None = None
@@ -149,12 +155,17 @@ class GrpcClientTransport:
         server = await self._discovery.GetServerInfo(
             discovery_pb2.GetServerInfoRequest(), timeout=timeout
         )
-        capabilities = await self._discovery.ListCapabilities(
-            discovery_pb2.ListCapabilitiesRequest(), timeout=timeout
+        capabilities = await self.list_capabilities(timeout=timeout)
+        return cast(discovery_pb2.GetServerInfoResponse, server), capabilities
+
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> discovery_pb2.ListCapabilitiesResponse:
+        response = await self._discovery.ListCapabilities(
+            discovery_pb2.ListCapabilitiesRequest(include_denied=include_denied),
+            timeout=timeout,
         )
-        return cast(discovery_pb2.GetServerInfoResponse, server), cast(
-            discovery_pb2.ListCapabilitiesResponse, capabilities
-        )
+        return cast(discovery_pb2.ListCapabilitiesResponse, response)
 
     async def get_application_state(
         self, timeout: float | None = None
@@ -256,17 +267,6 @@ class GrpcClientTransport:
         )
         return cast(lifecycle_pb2.RecoverSpatialAnalyzerSdkResponse, response).state
 
-    async def get_working_directory(self, timeout: float | None = None) -> str:
-        response = cast(
-            file_operations_pb2.GetWorkingDirectoryResult,
-            await self._file_operations.GetWorkingDirectory(
-                file_operations_pb2.GetWorkingDirectoryRequest(), timeout=timeout
-            ),
-        )
-        if not response.HasField("directory"):
-            raise BriosaProtocolError("working-directory-missing")
-        return response.directory
-
     async def invoke_operation(
         self,
         path: str,
@@ -291,18 +291,59 @@ def map_snapshot(
 ) -> BriosaServerSnapshot:
     _validate_compatibility(server, capabilities)
     version = server.version
+    listing = map_capability_listing(capabilities)
     return BriosaServerSnapshot(
         briosa_version=version.briosa_version,
         source_revision=version.source_revision,
         protocol_package=version.protocol_package,
         spatial_analyzer_target=version.spatial_analyzer_target,
         ready_for_mp=server.ready_for_mp,
+        operations=listing.admitted,
+        admission_profile=listing.admission_profile,
+        policy_fingerprint=listing.policy_fingerprint,
+    )
+
+
+def map_capability_listing(
+    capabilities: discovery_pb2.ListCapabilitiesResponse,
+) -> BriosaCapabilityListing:
+    """Map a capability listing; unknown classification values map to UNKNOWN."""
+    for actual, expected, diagnostic_code in (
+        (
+            capabilities.protocol_package,
+            PROTOCOL_PACKAGE,
+            "capability-protocol-package-mismatch",
+        ),
+        (
+            capabilities.spatial_analyzer_target,
+            SPATIAL_ANALYZER_TARGET,
+            "capability-sa-target-mismatch",
+        ),
+    ):
+        if actual != expected:
+            raise BriosaCompatibilityError(diagnostic_code)
+    return BriosaCapabilityListing(
+        admission_profile=capabilities.admission_profile,
+        policy_fingerprint=capabilities.policy_fingerprint,
         operations=tuple(
             BriosaOperationCapability(
                 operation_id=item.operation_id,
                 grpc_service=item.grpc_service,
                 rpc=item.rpc,
                 fully_qualified_method=item.fully_qualified_method,
+                risk_flags=tuple(
+                    dict.fromkeys(
+                        _open_enum_at(OperationRiskFlag, flag)
+                        for flag in item.risk_flags
+                    )
+                ),
+                duration_class=_open_enum_at(
+                    OperationDurationClass, item.duration_class
+                ),
+                validation_status=_open_enum_at(
+                    OperationValidationStatus, item.validation_status
+                ),
+                admission=_open_enum_at(OperationAdmission, item.admission),
             )
             for item in capabilities.operations
         ),
@@ -463,6 +504,16 @@ def map_rpc_error(
                     tuple(ReplayGuidance), operation.replay_guidance
                 ),
                 replay_safety=_enum_at(tuple(ReplaySafety), operation.replay_safety),
+                mp_execution=(
+                    map_mp_execution(operation.mp_execution)
+                    if operation.HasField("mp_execution")
+                    else None
+                ),
+                worker_generation=(
+                    operation.worker_generation
+                    if operation.HasField("worker_generation")
+                    else None
+                ),
             )
         except BriosaProtocolError:
             return BriosaTransportError(status_code, "typed-error-malformed")
@@ -472,6 +523,28 @@ def map_rpc_error(
         return asyncio.CancelledError()
     return BriosaTransportError(
         status_code, f"transport-{status_code.value.replace('_', '-')}"
+    )
+
+
+def map_mp_execution(
+    execution: operation_outcomes_pb2.MpExecutionDetails,
+) -> MpExecutionDetails:
+    """Map MP execution details; an unknown state is a protocol failure."""
+    return MpExecutionDetails(
+        state=_enum_at(tuple(MpExecutionState), execution.state),
+        mp_result_code=(
+            execution.mp_result_code if execution.HasField("mp_result_code") else None
+        ),
+        output_retrievals=tuple(
+            OutputRetrievalDetails(
+                field_name=item.field_name,
+                state=_enum_at(tuple(OutputRetrievalState), item.state),
+                diagnostic_code=(
+                    item.diagnostic_code if item.HasField("diagnostic_code") else None
+                ),
+            )
+            for item in execution.output_retrievals
+        ),
     )
 
 
@@ -593,7 +666,26 @@ def _require_generation(value: int, diagnostic_code: str) -> int:
 
 
 def _enum_at(values: tuple[_EnumValue, ...], number: int) -> _EnumValue:
-    try:
-        return values[number]
-    except IndexError as error:
-        raise BriosaProtocolError("unknown-enum-value") from error
+    """Map a wire number by position; a number outside the enum is a protocol failure.
+
+    The range check comes first: protobuf keeps unknown negative numbers, and
+    a negative index would pick a member from the end of the tuple.
+    """
+    if not 0 <= number < len(values):
+        raise BriosaProtocolError("unknown-enum-value")
+    return values[number]
+
+
+_OpenEnum = TypeVar(
+    "_OpenEnum",
+    OperationAdmission,
+    OperationDurationClass,
+    OperationRiskFlag,
+    OperationValidationStatus,
+)
+
+
+def _open_enum_at(enum_type: type[_OpenEnum], number: int) -> _OpenEnum:
+    """Map a wire number by position; a number this client doesn't know is UNKNOWN."""
+    known = tuple(member for member in enum_type if member.name != "UNKNOWN")
+    return known[number] if 0 <= number < len(known) else enum_type["UNKNOWN"]

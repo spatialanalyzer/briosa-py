@@ -36,6 +36,7 @@ from briosa import (
 from briosa import operation_values as public_values
 from briosa import wave_b_operation_values as wave_b_public_values
 from briosa.errors import BriosaProtocolError
+from briosa.models import MpCompletion, MpExecutionState
 
 # Imports above intentionally register every Wave A descriptor in the default pool.
 _REGISTERED_MODULES = (
@@ -61,6 +62,16 @@ _REGISTERED_MODULES = (
     view_control_pb2,
 )
 _DESCRIPTORS = descriptor_pool.Default()  # type: ignore[no-untyped-call]
+
+
+# Result fields whose public name differs from the wire name. The quick fit
+# returns FitErrorResult like USMN, but its wire field is maximum_absolute_error
+# (briosa-py#45).
+_RESULT_FIELD_NAMES = {
+    "briosa.LocateInstrumentGroupToSurfaceQuickFitResult": {
+        "maximum_absolute_error": "maximum_error",
+    },
+}
 
 
 def operation_method(service: str, rpc: str) -> MethodDescriptor:
@@ -94,28 +105,61 @@ def map_response(
         field for field in method.output_type.fields if field.name != "execution"
     ]
     result_fields = (
-        {item.name: item for item in fields(result_type)}
+        {item.name: item for item in fields(result_type) if item.init}
         if result_type is not None and is_dataclass(result_type)
         else {}
     )
-    mapped = {
-        field.name: _read_field(
+    names = _RESULT_FIELD_NAMES.get(method.output_type.full_name, {})
+    mapped = {}
+    for field in outputs:
+        name = names.get(field.name, field.name)
+        mapped[name] = _read_field(
             response,
             field,
-            allow_absent=(
-                field.name in result_fields
-                and result_fields[field.name].default is None
-            ),
+            allow_absent=name in result_fields and result_fields[name].default is None,
         )
-        for field in outputs
-    }
     if not mapped:
         return None
     if len(mapped) == 1:
         return next(iter(mapped.values()))
     if result_type is None:
         raise BriosaProtocolError("operation-result-type-missing")
-    return result_type(**mapped)
+    if set(mapped) != set(result_fields):
+        raise BriosaProtocolError("operation-result-field-drift")
+    try:
+        return result_type(**mapped)
+    except (TypeError, ValueError) as error:
+        raise BriosaProtocolError("operation-result-invalid") from error
+
+
+# The states a successful MP result may carry, by wire number, with the only MP
+# code each may report: SUCCEEDED with 2 (SUCCESS), PARTIAL_SUCCESS with 4.
+_COMPLETION_STATES = {
+    1: (MpExecutionState.SUCCEEDED, 2),
+    6: (MpExecutionState.PARTIAL_SUCCESS, 4),
+}
+
+
+def map_mp_completion(response: Message) -> MpCompletion:
+    """Check and read how a successful MP result completed (C1).
+
+    Every MP success carries execution details whose state is SUCCEEDED with MP
+    code 2 or PARTIAL_SUCCESS with code 4. Anything else, including a missing
+    code, is a protocol failure.
+    """
+    if "execution" not in response.DESCRIPTOR.fields_by_name or not response.HasField(
+        "execution"
+    ):
+        raise BriosaProtocolError("mp-completion-invalid")
+    execution = cast(Any, response).execution
+    completion = _COMPLETION_STATES.get(execution.state)
+    if (
+        completion is None
+        or not execution.HasField("mp_result_code")
+        or execution.mp_result_code != completion[1]
+    ):
+        raise BriosaProtocolError("mp-completion-invalid")
+    return MpCompletion(state=completion[0], mp_result_code=execution.mp_result_code)
 
 
 def _assign_field(message: Message, field: FieldDescriptor, value: object) -> None:
@@ -283,4 +327,10 @@ def re_sub_pascal(value: str) -> str:
     return re.sub(r"(?<!^)(?=[A-Z])", "_", value)
 
 
-__all__ = ["build_request", "map_response", "operation_method", "response_type"]
+__all__ = [
+    "build_request",
+    "map_mp_completion",
+    "map_response",
+    "operation_method",
+    "response_type",
+]

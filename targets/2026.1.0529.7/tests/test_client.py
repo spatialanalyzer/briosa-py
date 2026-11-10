@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import cast
+from typing import Any, cast
 
 import grpc
 import pytest
@@ -25,6 +25,7 @@ from briosa import (
     Color,
     ExecutionDisposition,
     ObjectType,
+    OffsetDirectionType,
     OperationFailureKind,
     PointName,
     RecoveryGuidance,
@@ -38,6 +39,7 @@ from briosa import (
     cloud_and_mesh_operations_pb2,
     construction_operations_pb2,
     discovery_pb2,
+    file_operations_pb2,
     lifecycle_pb2,
     operation_outcomes_pb2,
     relationship_operations_pb2,
@@ -75,6 +77,18 @@ class FakeRpcError(grpc.RpcError):
         self,
     ) -> tuple[tuple[str, str | bytes], ...]:
         return self._metadata
+
+
+def succeeded(response: Message) -> Message:
+    """Give a hand-built MP result the execution details every success carries."""
+    if not response.HasField("execution"):
+        cast(Any, response).execution.CopyFrom(
+            operation_outcomes_pb2.MpExecutionDetails(
+                state=operation_outcomes_pb2.MP_EXECUTION_STATE_SUCCEEDED,
+                mp_result_code=2,
+            )
+        )
+    return response
 
 
 class FakeOwnedServer:
@@ -169,6 +183,12 @@ class FakeTransport:
         self.calls.append("snapshot")
         return matching_snapshot(self.connected and self.publish_ready_snapshot)
 
+    async def list_capabilities(
+        self, *, include_denied: bool = False, timeout: float | None = None
+    ) -> discovery_pb2.ListCapabilitiesResponse:
+        self.calls.append("list-capabilities")
+        return matching_snapshot(self.connected and self.publish_ready_snapshot)[1]
+
     async def get_application_state(
         self, timeout: float | None = None
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
@@ -241,10 +261,6 @@ class FakeTransport:
         self.connected = False
         return self._sdk_state()
 
-    async def get_working_directory(self, timeout: float | None = None) -> str:
-        self.calls.append("get-working-directory")
-        return r"C:\Working"
-
     async def invoke_operation(
         self,
         path: str,
@@ -252,13 +268,20 @@ class FakeTransport:
         response_type: type[Message],
         timeout: float | None = None,
     ) -> Message:
+        if path == "/briosa.FileOperations/GetWorkingDirectory":
+            self.calls.append("get-working-directory")
+            return succeeded(
+                file_operations_pb2.GetWorkingDirectoryResult(directory=r"C:\Working")
+            )
         self.calls.append(path)
         self.operation_requests.append((path, request))
         if path in self.operation_responses:
-            return self.operation_responses[path]
+            return succeeded(self.operation_responses[path])
         if path == "/briosa.AnalysisOperations/GetNumberOfCollections":
-            return analysis_operations_pb2.GetNumberOfCollectionsResult(total_count=3)
-        return response_type()
+            return succeeded(
+                analysis_operations_pb2.GetNumberOfCollectionsResult(total_count=3)
+            )
+        return succeeded(response_type())
 
     async def close(self) -> None:
         self.calls.append("close-transport")
@@ -337,7 +360,7 @@ def matching_snapshot(
         ),
         ready_for_mp=ready,
         target_isolation_mode=discovery_pb2.TARGET_ISOLATION_MODE_SINGLE_TENANT,
-        compatibility=discovery_pb2.CompatibilityContract(major=2),
+        compatibility=discovery_pb2.CompatibilityContract(major=3),
     )
     capabilities = discovery_pb2.ListCapabilitiesResponse(
         protocol_package=PROTOCOL_PACKAGE,
@@ -370,8 +393,8 @@ def application_lifecycle_failure() -> FakeRpcError:
 
 
 def test_protocol_identity_matches_reviewed_compatibility_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.9.0-dev.1-sa-2026.1.0529.7"
-    assert SOURCE_REVISION == "89b59aa0ddd05ea868d94c4e4a4f89ee0fbcbccb"
+    assert ARTIFACT_NAME == "briosa-protocol-0.10.0-dev.1-sa-2026.1.0529.7"
+    assert SOURCE_REVISION == "2960705eb3152646513dca2b5d2043cd7cfffb75"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2026.1.0529.7"
@@ -384,9 +407,9 @@ def test_wave_a_surface_matches_the_published_capability_set() -> None:
 
 
 def test_wave_b_surface_matches_the_published_capability_set() -> None:
-    assert len(WAVE_B_OPERATIONS) == 557
-    assert len(set(WAVE_B_OPERATIONS)) == 557
-    assert len(WAVE_A_OPERATIONS) + len(WAVE_B_OPERATIONS) + 1 == 1027
+    assert len(WAVE_B_OPERATIONS) == 548
+    assert len(set(WAVE_B_OPERATIONS)) == 548
+    assert len(WAVE_A_OPERATIONS) + len(WAVE_B_OPERATIONS) + 1 == 1018
     client = create_client(FakeServerLauncher(), FakeTransport())
     grouped_surfaces = (
         client.construction_operations,
@@ -397,8 +420,6 @@ def test_wave_b_surface_matches_the_published_capability_set() -> None:
     )
     for operation_id in WAVE_B_OPERATIONS:
         method_name = operation_id.split(".", maxsplit=1)[1]
-        if method_name == "delete_cloud_points_by_xyz_range":
-            method_name = "delete_cloud_points_by_x_y_z_range"
         assert hasattr(BriosaClient, method_name) or any(
             hasattr(surface, method_name) for surface in grouped_surfaces
         )
@@ -465,6 +486,21 @@ async def test_wave_b_defaults_results_groups_and_optional_list_wrappers() -> No
                 target_name="P1",
             )
         ],
+        groups=[
+            CollectionObjectName(
+                collection_name="Points",
+                object_name="Measured",
+                object_type=ObjectType.POINT_GROUP,
+            )
+        ],
+        clouds=[
+            CollectionObjectName(
+                collection_name="Clouds",
+                object_name="Scan 1",
+                object_type=ObjectType.CLOUD,
+            )
+        ],
+        offset_direction=OffsetDirectionType.BOTH,
     )
     _, raw_filter_request = transport.operation_requests[-1]
     filter_request = cast(
@@ -473,8 +509,9 @@ async def test_wave_b_defaults_results_groups_and_optional_list_wrappers() -> No
     )
     assert len(filter_request.points.values) == 1
     assert filter_request.points.values[0].target_name == "P1"
-    assert not filter_request.HasField("groups")
-    assert not filter_request.HasField("clouds")
+    assert filter_request.groups.values[0].object_name == "Measured"
+    assert filter_request.clouds.values[0].object_name == "Scan 1"
+    assert filter_request.HasField("offset_direction")
 
     await client.aclose()
 
