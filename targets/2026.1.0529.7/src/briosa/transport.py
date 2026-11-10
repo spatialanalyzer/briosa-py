@@ -666,10 +666,14 @@ def _require_generation(value: int, diagnostic_code: str) -> int:
 
 
 def _enum_at(values: tuple[_EnumValue, ...], number: int) -> _EnumValue:
-    try:
-        return values[number]
-    except IndexError as error:
-        raise BriosaProtocolError("unknown-enum-value") from error
+    """Map a wire number by position; a number outside the enum is a protocol failure.
+
+    The range check comes first: protobuf keeps unknown negative numbers, and
+    a negative index would pick a member from the end of the tuple.
+    """
+    if not 0 <= number < len(values):
+        raise BriosaProtocolError("unknown-enum-value")
+    return values[number]
 
 
 _OpenEnum = TypeVar(
