@@ -153,7 +153,7 @@ are authoritative; this section lists what changes for Python callers.
   `admission`. It never makes an operation callable.
 - The packaged `standard` profile no longer admits device sessions, device
   configuration, motion, code execution, external IO, file deletion or
-  operator UI. The seven `device_config` operations need `Profile=device` or
+  operator UI. The seven device-configuration setters need `Profile=device` or
   `full`, `Flags:device_config=allow`, or a per-operation `allow` override;
   interactive operations need the explicit opt-in, `Flags:interactive_ui=allow`
   or a per-operation `allow` override. Facades for denied and exclusive
