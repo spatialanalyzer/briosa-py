@@ -104,9 +104,15 @@ are authoritative; this section lists what changes for Python callers.
   A failed call reports no completion. Its `BriosaOperationError.failure`
   carries `mp_execution` (an `MpExecutionDetails`), which keeps
   `PARTIAL_SUCCESS` distinct, for example when code 4 came without an output.
-  Four operations document code 4 as leaving the work undone, and report it as
-  an ordinary `MP_FAILURE` with code 4: `construct_point_from_survey_target_center`,
-  `open_sa_file`, `open_template_file` and `set_report_options_for_object`.
+  Four operations report code 4 as an ordinary `MP_FAILURE` with code 4:
+  `construct_point_from_survey_target_center`, `open_sa_file`,
+  `open_template_file` and `set_report_options_for_object`. The SA 2024
+  documentation says code 4 leaves the work undone for
+  `construct_point_from_survey_target_center` and
+  `set_report_options_for_object`. It doesn't list code 4 for the two open-file
+  operations, which report it as a failure by maintainer decision
+  (spatialanalyzer/briosa#351): reporting a discarded open job as a success
+  would be worse than a false failure.
 - **SDK call faults.** `OperationFailureKind.SDK_CALL_FAULTED` reports that an
   SDK call threw during the MP sequence. The execution disposition gives the
   phase: `NOT_STARTED` (nothing ran), `STARTED_OUTCOME_UNKNOWN` (reconcile
