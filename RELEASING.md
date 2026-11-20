@@ -33,6 +33,12 @@ publishes the draft GitHub release.
 
 1. Update both targets' package versions together, review the PR, and merge with
    all CI checks passing. Keep target-specific package names and stable imports.
+   In the same PR, check that the compatibility paragraph under "Server
+   selection" in each target README describes the release: its package version,
+   behavioral contract, protocol checkpoint or release, and the servers it
+   rejects, with no development-checkout wording. Each README is that package's
+   PyPI description, which can't be changed once published; 0.4.0 and 0.5.0
+   both shipped calling themselves a development checkout.
 2. Optional dry run: dispatch `release.yml` on `main`, or on a branch, with
    `version=<version>` and `publish=false`. It runs the release checks and the
    complete CI matrix (protocol drift, conformance, tests, formatting, packaging,
