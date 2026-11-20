@@ -359,14 +359,13 @@ canonical stores, explicit search roots, and supported local layouts. It validat
 receipts and manifests, filters the exact SA target and compatibility contract,
 and selects the highest compatible stable release. No internet access is needed.
 
-This development checkout prepares client 0.5.0 for behavioral contract **3.0**
-(major 3, revision at least 0), built against the frozen protocol checkpoint
-`0.10.0-dev.1` (spatialanalyzer/briosa `2960705e`). It is not a published
-compatibility claim. The planned server release is 0.10.0. Major-2 servers,
-including every released 0.9 server, major-1 servers, and servers without
-contract metadata, including Server 0.6.1, are rejected before launch. Protocol
-and source pins remain exact build inputs; startup verifies the running server
-against its selected installation.
+Client 0.5.0 selects only servers that declare behavioral contract **3.0**
+(major 3, revision at least 0), which starts with Server 0.10.0. It is built
+against the frozen protocol checkpoint `0.10.0-dev.1` (spatialanalyzer/briosa
+`2960705e`). Major-2 servers, including every released 0.9 server, major-1
+servers, and servers without contract metadata, including Server 0.6.1, are
+rejected before launch. Protocol and source pins remain exact build inputs;
+startup verifies the running server against its selected installation.
 
 The three robot methods Get Robot Machine Parameter, Start Robot Machine
 Interface, and Stop Robot Machine Interface now take a collection/instrument
