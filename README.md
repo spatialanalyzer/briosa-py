@@ -6,8 +6,8 @@ Independent exact-target clients for the [Briosa SpatialAnalyzer bridge](https:/
 
 | SpatialAnalyzer target | Product and development guide | Client version |
 | --- | --- | --- |
-| 2024.1.0508.5 | [SA 2024](targets/2024.1.0508.5/README.md) | 0.5.0 (unreleased) |
-| 2026.1.0529.7 | [SA 2026](targets/2026.1.0529.7/README.md) | 0.5.0 (unreleased) |
+| 2024.1.0508.5 | [SA 2024](targets/2024.1.0508.5/README.md) | 0.5.0 |
+| 2026.1.0529.7 | [SA 2026](targets/2026.1.0529.7/README.md) | 0.5.0 |
 
 Choose the package for your exact SA installation. Each product pins its own
 generation artifact and retains Server 0.9.2, the newest major-2 server, as the
