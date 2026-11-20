@@ -153,10 +153,12 @@ are authoritative; this section lists what changes for Python callers.
   `admission`. It never makes an operation callable.
 - The packaged `standard` profile no longer admits device sessions, device
   configuration, motion, code execution, external IO, file deletion or
-  operator UI. The seven `device_config` operations need `Profile=device`,
-  `full`, or an override; interactive operations need the explicit opt-in
-  `Flags:interactive_ui=allow`. Facades for denied and exclusive operations
-  remain, and a denied call fails with `POLICY_DENIED` and `NOT_STARTED`. See the
+  operator UI. The seven `device_config` operations need `Profile=device` or
+  `full`, `Flags:device_config=allow`, or a per-operation `allow` override;
+  interactive operations need the explicit opt-in, `Flags:interactive_ui=allow`
+  or a per-operation `allow` override. Facades for denied and exclusive
+  operations remain, and a denied call fails with `POLICY_DENIED` and
+  `NOT_STARTED`. See the
   [admission profile migration](https://github.com/spatialanalyzer/briosa/blob/main/docs/development/admission-profile-migration.md).
 
 ### Request defaults and arguments
@@ -294,7 +296,8 @@ with their value types:
 
 - `mirror_objects` (with `MirrorFramePlane`) and
   `delete_cloud_points_by_x_y_z_range`. There is no X Y Z box delete; the radial
-  delete has different semantics and isn't licensed-validated yet.
+  delete has different semantics, and a licensed session validated it on both
+  targets for one cloud and one point.
 - `construct_circles_lines_from_surfaces` (with `CircleLineMode`),
   `add_collection_instruments_to_ref_list_wildcard_selection`,
   `make_callout_view_ref_list_wildcard_selection` and
