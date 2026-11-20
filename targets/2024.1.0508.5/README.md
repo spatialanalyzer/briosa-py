@@ -84,11 +84,11 @@ are authoritative; this section lists what changes for Python callers.
 
 - **Partial success.** An MP that returns code 4 (PARTIAL SUCCESS) did its
   work, but not all of its intended effect. The method returns its outputs as
-  usual and never raises or retries. To see how a call completed, pass the
-  keyword-only `on_mp_completion` that every MP method takes. It receives one
-  `MpCompletion` with `state` (`MpExecutionState.SUCCEEDED` or
-  `PARTIAL_SUCCESS`) and its `mp_result_code` (2 or 4), before the method
-  returns:
+  usual when all of them are retrieved, and never retries. To see how a call
+  completed, pass the keyword-only `on_mp_completion` that every MP method
+  takes. It receives one `MpCompletion` with `state`
+  (`MpExecutionState.SUCCEEDED` or `PARTIAL_SUCCESS`) and its `mp_result_code`
+  (2 or 4), before the method returns:
 
   ```python
   completions: list[MpCompletion] = []
@@ -106,7 +106,18 @@ are authoritative; this section lists what changes for Python callers.
 
   A failed call reports no completion. Its `BriosaOperationError.failure`
   carries `mp_execution` (an `MpExecutionDetails`), which keeps
-  `PARTIAL_SUCCESS` distinct, for example when code 4 came without an output.
+  `PARTIAL_SUCCESS` distinct. After code 4, the call fails when an output can't
+  be retrieved, and `mp_execution` keeps `PARTIAL_SUCCESS` with code 4:
+
+  - `OUTPUT_RETRIEVAL_FAILURE` when a getter returned no usable value, or when
+    the worker couldn't deliver the result, for example an oversized value;
+  - `SDK_CALL_FAULTED` when a getter raised.
+
+  Both have disposition `COMPLETED` and replay guidance `DO_NOT_REPLAY`.
+  `mp_execution.output_retrievals` gives each output's state as the server
+  reports it. It doesn't always identify the getter: an undeliverable result, or
+  a getter fault without per-output evidence, marks every output `FAILED`.
+
   Four operations report code 4 as an ordinary `MP_FAILURE` with code 4:
   `construct_point_from_survey_target_center`, `open_sa_file`,
   `open_template_file` and `set_report_options_for_object`. The SA 2024
