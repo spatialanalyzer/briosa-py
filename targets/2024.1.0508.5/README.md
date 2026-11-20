@@ -19,7 +19,10 @@ python -m pip install briosa-2024-1-0508-5==0.5.0
 ```
 
 To try a local build instead, build it as shown under Development and install
-the wheel from its `dist` folder.
+the wheel from its `dist` folder into a fresh virtual environment. pip skips a
+wheel whose version is already installed, so to replace the installed package
+in an environment that already has its dependencies, run
+`python -m pip install --force-reinstall --no-deps <path-to-wheel>`.
 
 Each exact SpatialAnalyzer target will have a separate distribution name. Two
 target distributions intentionally provide the same `briosa` import package,
