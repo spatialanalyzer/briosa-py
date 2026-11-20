@@ -11,15 +11,15 @@ complete protocol identity is pinned in [`protocol.lock.json`](protocol.lock.jso
 
 ## Package Identity
 
-The next version is not published yet. Build the candidate locally and use its
-package path or feed in the installation command below.
-
 The distribution is named `briosa-2024-1-0508-5`, while application code keeps
 the stable `briosa` import package. Install the distribution with:
 
 ```powershell
-python -m pip install C:\path\to\dist\briosa_2024_1_0508_5-0.5.0-py3-none-any.whl
+python -m pip install briosa-2024-1-0508-5==0.5.0
 ```
+
+To try a local build instead, build it as shown under Development and install
+the wheel from its `dist` folder.
 
 Each exact SpatialAnalyzer target will have a separate distribution name. Two
 target distributions intentionally provide the same `briosa` import package,
