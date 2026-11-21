@@ -398,11 +398,13 @@ class MpCompletion:
     """How one successful MP call completed.
 
     ``state`` is ``SUCCEEDED`` with ``mp_result_code`` 2, or ``PARTIAL_SUCCESS``
-    with code 4. A partial success did its work and returned its outputs, but did
-    not have its full intended effect; it is still a success, so the call neither
-    raises nor retries. The client checks every MP success this way, observed or
-    not: a success without valid execution details is ``BriosaProtocolError``
-    (``mp-completion-invalid``).
+    with code 4. A partial success did its work, but did not have its full
+    intended effect. It is still a success, so the call returns its outputs when
+    all of them are retrieved, and never retries. If an output can't be
+    retrieved, the call raises ``BriosaOperationError`` instead and reports no
+    completion. The client checks the state and code of every MP success,
+    observed or not: a success without valid execution details is
+    ``BriosaProtocolError`` (``mp-completion-invalid``).
     """
 
     state: MpExecutionState

@@ -84,9 +84,13 @@ target selector.
   (`mp-completion-invalid`). The client then calls the observer once with that
   `MpCompletion`, before it maps the outputs, so the observer also hears of a
   success whose outputs fail to map. A partial success (MP code 4) is a
-  success: the method returns its outputs and never raises or retries. A failed
-  call reports no completion; its typed failure carries the MP execution
-  details instead. Return types never change.
+  success: the method returns its outputs when all of them are retrieved, and
+  never retries. A failed call reports no completion; its typed failure carries
+  the MP execution details instead. After code 4, a call whose output can't be
+  retrieved fails with `OUTPUT_RETRIEVAL_FAILURE`, or `SDK_CALL_FAULTED` when a
+  getter raised, and its details keep `PARTIAL_SUCCESS` with code 4. Their
+  output retrievals are the per-output states the server reports, which don't
+  always identify the getter. Return types never change.
 
 ### Errors
 

@@ -1,6 +1,6 @@
 # Releasing PyPI clients
 
-Each release publishes two independent exact-SA products. The next package
+Each release publishes two independent exact-SA products. The current package
 version is `0.5.0`, for behavioral contract major 3. It is independent of the
 Briosa Server version (`0.10.0`, built here from the protocol checkpoint
 `0.10.0-dev.1`).
@@ -33,6 +33,22 @@ publishes the draft GitHub release.
 
 1. Update both targets' package versions together, review the PR, and merge with
    all CI checks passing. Keep target-specific package names and stable imports.
+   Each target README is also that package's PyPI description, which can't be
+   changed once published, so in the same PR check that both describe the
+   release:
+   - the Package Identity command installs the release version from PyPI, with
+     no local wheel path;
+   - the compatibility paragraph under "Server selection" gives the package
+     version, behavioral contract, protocol checkpoint or release, and the
+     servers it rejects, with no development-checkout wording.
+
+   In the same PR, give the release version in the root README's "Client
+   version" column and in this guide's opening paragraph, with no "unreleased"
+   or "next version" wording.
+
+   0.4.0 and 0.5.0 both shipped development-checkout wording in the target
+   READMEs. At 0.4.0 the root README and this guide still gave 0.3.0, and at
+   0.5.0 they called it unreleased and the next version.
 2. Optional dry run: dispatch `release.yml` on `main`, or on a branch, with
    `version=<version>` and `publish=false`. It runs the release checks and the
    complete CI matrix (protocol drift, conformance, tests, formatting, packaging,

@@ -11,15 +11,18 @@ complete protocol identity is pinned in [`protocol.lock.json`](protocol.lock.jso
 
 ## Package Identity
 
-The next version is not published yet. Build the candidate locally and use its
-package path or feed in the installation command below.
-
 The distribution is named `briosa-2026-1-0529-7`, while application code keeps
 the stable `briosa` import package. Install the distribution with:
 
 ```powershell
-python -m pip install C:\path\to\dist\briosa_2026_1_0529_7-0.5.0-py3-none-any.whl
+python -m pip install briosa-2026-1-0529-7==0.5.0
 ```
+
+To try a local build instead, build it as shown under Development and install
+the wheel from its `dist` folder into a fresh virtual environment. pip skips a
+wheel whose version is already installed, so to replace the installed package
+in an environment that already has its dependencies, run
+`python -m pip install --force-reinstall --no-deps <path-to-wheel>`.
 
 Each exact SpatialAnalyzer target will have a separate distribution name. Two
 target distributions intentionally provide the same `briosa` import package,
@@ -81,11 +84,11 @@ are authoritative; this section lists what changes for Python callers.
 
 - **Partial success.** An MP that returns code 4 (PARTIAL SUCCESS) did its
   work, but not all of its intended effect. The method returns its outputs as
-  usual and never raises or retries. To see how a call completed, pass the
-  keyword-only `on_mp_completion` that every MP method takes. It receives one
-  `MpCompletion` with `state` (`MpExecutionState.SUCCEEDED` or
-  `PARTIAL_SUCCESS`) and its `mp_result_code` (2 or 4), before the method
-  returns:
+  usual when all of them are retrieved, and never retries. To see how a call
+  completed, pass the keyword-only `on_mp_completion` that every MP method
+  takes. It receives one `MpCompletion` with `state`
+  (`MpExecutionState.SUCCEEDED` or `PARTIAL_SUCCESS`) and its `mp_result_code`
+  (2 or 4), before the method returns:
 
   ```python
   completions: list[MpCompletion] = []
@@ -103,7 +106,18 @@ are authoritative; this section lists what changes for Python callers.
 
   A failed call reports no completion. Its `BriosaOperationError.failure`
   carries `mp_execution` (an `MpExecutionDetails`), which keeps
-  `PARTIAL_SUCCESS` distinct, for example when code 4 came without an output.
+  `PARTIAL_SUCCESS` distinct. After code 4, the call fails when an output can't
+  be retrieved, and `mp_execution` keeps `PARTIAL_SUCCESS` with code 4:
+
+  - `OUTPUT_RETRIEVAL_FAILURE` when a getter returned no usable value, or when
+    the worker couldn't deliver the result, for example an oversized value;
+  - `SDK_CALL_FAULTED` when a getter raised.
+
+  Both have disposition `COMPLETED` and replay guidance `DO_NOT_REPLAY`.
+  `mp_execution.output_retrievals` gives each output's state as the server
+  reports it. It doesn't always identify the getter: an undeliverable result, or
+  a getter fault without per-output evidence, marks every output `FAILED`.
+
   Four operations document code 4 as leaving the work undone, and report it as
   an ordinary `MP_FAILURE` with code 4: `construct_point_from_survey_target_center`,
   `open_sa_file`, `open_template_file` and `set_report_options_for_object`.
@@ -144,10 +158,12 @@ are authoritative; this section lists what changes for Python callers.
   `admission`. It never makes an operation callable.
 - The packaged `standard` profile no longer admits device sessions, device
   configuration, motion, code execution, external IO, file deletion or
-  operator UI. The seven `device_config` operations need `Profile=device`,
-  `full`, or an override; interactive operations need the explicit opt-in
-  `Flags:interactive_ui=allow`. Facades for denied and exclusive operations
-  remain, and a denied call fails with `POLICY_DENIED` and `NOT_STARTED`. See the
+  operator UI. The seven device-configuration setters need `Profile=device` or
+  `full`, `Flags:device_config=allow`, or a per-operation `allow` override;
+  interactive operations need the explicit opt-in, `Flags:interactive_ui=allow`
+  or a per-operation `allow` override. Facades for denied and exclusive
+  operations remain, and a denied call fails with `POLICY_DENIED` and
+  `NOT_STARTED`. See the
   [admission profile migration](https://github.com/spatialanalyzer/briosa/blob/main/docs/development/admission-profile-migration.md).
 
 ### Request defaults and arguments
@@ -290,7 +306,8 @@ with their value types:
 
 - `mirror_objects` (with `MirrorFramePlane`) and
   `delete_cloud_points_by_x_y_z_range`. There is no X Y Z box delete; the radial
-  delete has different semantics and isn't licensed-validated yet.
+  delete has different semantics, and a licensed session validated it on both
+  targets for one cloud and one point.
 - `construct_circles_lines_from_surfaces` (with `CircleLineMode`),
   `add_collection_instruments_to_ref_list_wildcard_selection`,
   `make_callout_view_ref_list_wildcard_selection` and
@@ -359,14 +376,13 @@ canonical stores, explicit search roots, and supported local layouts. It validat
 receipts and manifests, filters the exact SA target and compatibility contract,
 and selects the highest compatible stable release. No internet access is needed.
 
-This development checkout prepares client 0.5.0 for behavioral contract **3.0**
-(major 3, revision at least 0), built against the frozen protocol checkpoint
-`0.10.0-dev.1` (spatialanalyzer/briosa `2960705e`). It is not a published
-compatibility claim. The planned server release is 0.10.0. Major-2 servers,
-including every released 0.9 server, major-1 servers, and servers without
-contract metadata, including Server 0.6.1, are rejected before launch. Protocol
-and source pins remain exact build inputs; startup verifies the running server
-against its selected installation.
+Client 0.5.0 selects only servers that declare behavioral contract **3.0**
+(major 3, revision at least 0), which starts with Server 0.10.0. It is built
+against the frozen protocol checkpoint `0.10.0-dev.1` (spatialanalyzer/briosa
+`2960705e`). Major-2 servers, including every released 0.9 server, major-1
+servers, and servers without contract metadata, including Server 0.6.1, are
+rejected before launch. Protocol and source pins remain exact build inputs;
+startup verifies the running server against its selected installation.
 
 The three robot methods Get Robot Machine Parameter, Start Robot Machine
 Interface, and Stop Robot Machine Interface now take a collection/instrument
