@@ -301,26 +301,33 @@ are authoritative; this section lists what changes for Python callers.
 
 ### Removed operations
 
-SpatialAnalyzer rejects the first eight on both exact targets, so they are gone
-with their value types:
+Nine operations are gone with their value types. The first eight failed on both
+exact targets in licensed probe sessions:
 
-- `mirror_objects` (with `MirrorFramePlane`) and
-  `delete_cloud_points_by_x_y_z_range`. There is no X Y Z box delete; the radial
-  delete has different semantics, and a licensed session validated it on both
-  targets for one cloud and one point.
-- `construct_circles_lines_from_surfaces` (with `CircleLineMode`),
-  `add_collection_instruments_to_ref_list_wildcard_selection`,
-  `make_callout_view_ref_list_wildcard_selection` and
-  `set_callout_view_properties`. Callout-view selection moves to the
-  collection-item wildcard selection.
-- `construct_polygonized_surface_from_point_clouds` (with
-  `MeshOrientationType`) and
-  `make_collection_vector_group_name_ref_list_runtime_select`. Nothing replaces
-  them.
-- `make_vector_name_ref_list_runtime_select` is the exception: SA never
-  rejected it, but no operator could complete the selection on either target in
-  licensed probe session 3. It can return in a 3.x revision once a licensed
-  session verifies it.
+- **Returned MP code -1** (each depends on an SDK argument the exporter marks
+  `NOT_SUPPORTED`): `mirror_objects` (with `MirrorFramePlane`),
+  `delete_cloud_points_by_x_y_z_range`, `construct_circles_lines_from_surfaces`
+  (with `CircleLineMode`) and `set_callout_view_properties`. Nothing replaces
+  them. There is no X Y Z box delete; the radial delete has different
+  semantics, and a licensed session validated it on both targets for one cloud
+  and one point.
+- **Reached MP success (code 2) but returned no usable list:**
+  `make_callout_view_ref_list_wildcard_selection` (its result is marked
+  `NOT_SUPPORTED` and the list getter returned nothing),
+  `add_collection_instruments_to_ref_list_wildcard_selection` (reading the
+  input list back returned nothing, and the MP documents no return argument)
+  and `make_collection_vector_group_name_ref_list_runtime_select` (its getter
+  returned nothing). Callout-view selection moves to the collection-item
+  wildcard selection; callers can build an instrument list directly, and
+  nothing replaces the vector-group runtime select.
+- **Stalled the worker with no MP result:**
+  `construct_polygonized_surface_from_point_clouds` (with
+  `MeshOrientationType`); its mesh-orientation setter is absent from the
+  committed interop. Nothing replaces it.
+- `make_vector_name_ref_list_runtime_select` is the exception: it was removed
+  unverified rather than shown not to work, because no operator could complete
+  the selection on either target in licensed probe session 3. It can return in
+  a 3.x revision once a licensed session verifies it.
 
 ### Lifecycle
 

@@ -20,8 +20,10 @@ from briosa.wave_b_operations import (
 )
 
 # Retired at contract major 3 (spatialanalyzer/briosa#320, #357 and #363):
-# SA rejects the first eight on both exact targets, and no operator could
-# complete the vector-name-list runtime select in licensed session 3.
+# the first eight failed on both exact targets in licensed probe sessions
+# (four MP code -1, three MP code 2 with no usable list, one worker stall),
+# and no operator could complete the vector-name-list runtime select in
+# licensed session 3.
 RETIRED_OPERATIONS = (
     ("mirror_objects", "construction_operations.mirror_objects"),
     (
