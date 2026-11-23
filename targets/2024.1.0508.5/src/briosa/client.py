@@ -408,7 +408,8 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
 
         With ``include_denied``, the listing also reports every registered
         operation the active policy denies, each with its denial reason in
-        ``admission``. The listing never changes the generation's admitted set.
+        ``admission`` and, with Server 0.10.1 and later, its denial detail in
+        ``policy_denial``. The listing never changes the generation's admitted set.
         """
 
         async def operation(session: _Session) -> BriosaCapabilityListing:

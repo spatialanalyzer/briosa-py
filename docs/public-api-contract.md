@@ -159,6 +159,32 @@ Cancelling the task that awaits `start()` only stops that caller from waiting an
 raises `asyncio.CancelledError`; the start continues until it completes or its
 budget expires.
 
+From client 0.5.1, an omitted `startup_timeout` follows the server's published
+lifecycle bounds, which Server 0.10.1 and later report in
+`BriosaServerSnapshot.lifecycle_bounds`. The budget runs on the event loop's
+monotonic clock from one start instant, before the server is launched, and the
+client adopts the allowance once, at the first verified server snapshot:
+
+- the allowance is `startup_with_launch` for Start SDK, Launch, and Connect;
+  `startup_without_launch` for Start SDK and Connect; `start_sdk` plus
+  `launch_spatial_analyzer` for Start SDK and Launch; `start_sdk` or
+  `launch_spatial_analyzer` alone for one phase; and none for a control-plane
+  start. If any allowance the selection needs is unavailable, the budget stays
+  at two minutes; a partial budget is never summed;
+- the deadline becomes the start instant plus the larger of two minutes and
+  the allowance plus 20 seconds, so adoption only ever lengthens the budget and
+  the time already spent counts;
+- a budget that has already run out when the snapshot arrives is never
+  extended, and no further phase starts; the client keeps the current deadline
+  when the new one cannot be scheduled; and
+- no budget restarts at the snapshot after Connect, and caller cancellation
+  stays independent.
+
+An explicit `startup_timeout`, including `120.0`, is always used as given: the
+default is a distinct `float` equal to `120.0`, so the client can tell it from
+a caller's value. Against Server 0.10.0, which publishes no bounds, an omitted
+budget stays at two minutes, as in client 0.5.0.
+
 The default follows the server's default lifecycle bounds
 ([spatialanalyzer/briosa#298](https://github.com/spatialanalyzer/briosa/pull/298),
 [#315](https://github.com/spatialanalyzer/briosa/pull/315)) for the ordinary
@@ -179,8 +205,9 @@ observation further until
 [spatialanalyzer/briosa#317](https://github.com/spatialanalyzer/briosa/issues/317)
 lands.
 
-When the server's lifecycle bounds are raised, size the client budget to at
-least three times `StartupTimeout`, plus `ReadinessProbeTimeout`, plus
+When the lifecycle bounds of a server that publishes none, such as Server
+0.10.0, are raised, or when you pass an explicit budget, size the client budget
+to at least three times `StartupTimeout`, plus `ReadinessProbeTimeout`, plus
 `ApplicationStartupTimeout` when launching, plus 10 s, plus a margin. For
 example, a server `StartupTimeout` of 30 s and `ReadinessProbeTimeout` of 60 s
 with the default 30 s application startup need at least 90 + 60 + 30 + 10 =

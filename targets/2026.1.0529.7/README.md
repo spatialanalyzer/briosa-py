@@ -15,7 +15,7 @@ The distribution is named `briosa-2026-1-0529-7`, while application code keeps
 the stable `briosa` import package. Install the distribution with:
 
 ```powershell
-python -m pip install briosa-2026-1-0529-7==0.5.0
+python -m pip install briosa-2026-1-0529-7==0.5.1
 ```
 
 To try a local build instead, build it as shown under Development and install
@@ -50,16 +50,27 @@ Application and SDK state, launch, connect, stop, and recovery methods remain
 available for diagnosis and explicit control. `stop()`, `aclose()`, and async
 context exit stop the owned server and SDK but never close SpatialAnalyzer.
 
-`BriosaStartOptions.startup_timeout` bounds the whole `start()` and defaults to
-`120.0` seconds. That covers the server's default worst case of about 100 seconds
-for a start that launches SpatialAnalyzer, with a 20-second margin. If you raise
-the server's `Briosa:Worker:StartupTimeout`, `Briosa:Worker:ReadinessProbeTimeout`,
-or `Briosa:SpatialAnalyzer:ApplicationStartupTimeout`, raise the client budget
-too; the [public API contract](docs/public-api-contract.md#startup-and-lifecycle-time-budgets)
-shows how to size it. Lifecycle methods send no deadline unless you pass
-`timeout`. If the budget expires while the server is starting or connecting the
-SDK, read the SDK state before retrying: the server finishes a step it has
-accepted, so the abandoned start may still produce a ready generation.
+`BriosaStartOptions.startup_timeout` bounds the whole `start()`. Omitted, it is
+`120.0` seconds, which covers the server's default worst case of about 100
+seconds for a start that launches SpatialAnalyzer, with a 20-second margin.
+
+With Server 0.10.1 and later, an omitted budget follows the server's own
+lifecycle settings. Once the client has verified the server, the budget becomes
+the server's published startup allowance for the phases you selected plus 20
+seconds, counted from the start of `start()` and never less than 120 seconds. A
+server whose bounds are raised therefore raises the client budget with them.
+Against Server 0.10.0, which publishes no allowance, the budget stays at 120
+seconds: if you raise that server's `Briosa:Worker:StartupTimeout`,
+`Briosa:Worker:ReadinessProbeTimeout`, or
+`Briosa:SpatialAnalyzer:ApplicationStartupTimeout`, raise the client budget too;
+the [public API contract](docs/public-api-contract.md#startup-and-lifecycle-time-budgets)
+shows how to size it. An explicit `startup_timeout`, even `120.0`, is always
+used as given.
+
+Lifecycle methods send no deadline unless you pass `timeout`. If the budget
+expires while the server is starting or connecting the SDK, read the SDK state
+before retrying: the server finishes a step it has accepted, so the abandoned
+start may still produce a ready generation.
 
 The client retains lifecycle generations and supplies guards automatically.
 Typed lifecycle failures, compatibility failures, task cancellation, ambiguous
@@ -69,6 +80,75 @@ automatically replayed.
 See the [Briosa documentation](https://spatialanalyzer.github.io/briosa-docs/api/python/)
 for the client API overview. The target-specific source and locked protocol define
 this package's exact API.
+
+## New in 0.5.1 (Server 0.10.1)
+
+Client 0.5.1 adds the values below, which arrive with Server 0.10.1. Every
+addition is a new type or a new attribute with a default, so an application
+written for 0.5.0 runs and behaves the same. Against Server 0.10.0, which sends
+none of these values, each one is `None` or `UNKNOWN`, and the client behaves as
+0.5.0 does.
+
+- **Typed denial detail.** A `POLICY_DENIED` failure carries
+  `BriosaOperationError.failure.policy_denial`, a `PolicyDenialDetails` that
+  says which policy step denied the call: `rule` (`PolicyDenialRule`), the
+  `denied_flag` for a flag denial (an `OperationRiskFlag`, `UNKNOWN` for a flag
+  this client doesn't know), the `admission_profile` for a profile denial, and
+  the `request_option_field` the server attributed the denial to. That field is
+  the protobuf field name of the request option, never a value you sent. The
+  detail never changes the failure's kind, disposition, or guidance. It is
+  `None` against Server 0.10.0.
+
+  ```python
+  try:
+      await briosa.save_as(job_file)
+  except BriosaOperationError as error:
+      denial = error.failure.policy_denial
+      if denial is not None and denial.rule is PolicyDenialRule.FLAG:
+          print(f"Denied by the {denial.denied_flag} flag")
+  ```
+
+- **Denied capabilities.** In `list_capabilities(include_denied=True)`, each
+  denied `BriosaOperationCapability` carries the same detail in
+  `policy_denial`. It never changes `admission`.
+- **Request options.** Each `BriosaOperationCapability` has `request_options`:
+  `None` when the server doesn't describe them (Server 0.10.0), and an empty
+  tuple when none apply. Each `OperationRequestOption` gives the protobuf
+  `field_name`, its `effect` (operator UI or work left running), the
+  `condition` that turns it on, the `enabling_enum_values`, what `omission`
+  does, and the `admission` and `policy_denial` for a request that turns on
+  that option alone. The server still decides every actual call, and the client
+  never pre-validates a request from this description.
+- **Unknown values.** A rule, effect, condition, or omission that this client
+  doesn't recognize is `UNKNOWN`. It is metadata only: it never admits anything
+  and never fails discovery.
+- **Lifecycle bounds.** `BriosaServerSnapshot.lifecycle_bounds` is a
+  `BriosaLifecycleBounds` with the server's published wait allowances, each a
+  `datetime.timedelta` or `None` when unavailable: `start_sdk`,
+  `launch_spatial_analyzer`, `connect_spatial_analyzer`, `recover_sdk`,
+  `stop_sdk`, `close_owned_spatial_analyzer`, `startup_with_launch` and
+  `startup_without_launch`. `host_graceful_shutdown` is a
+  `GracefulShutdownBound` whose `kind` is `UNAVAILABLE`, `FINITE` (with a
+  `duration`), or `UNBOUNDED`; a missing bound is unavailable, never unbounded.
+  Each allowance covers only the server's own work, and none promises that a
+  response arrives or a process exits within it. `lifecycle_bounds` is `None`
+  against Server 0.10.0.
+- **Configured interaction mode.** `BriosaServerSnapshot.configured_interaction_mode`
+  is the SpatialAnalyzer interaction mode the server is configured to set after
+  each Connect (`Briosa:SpatialAnalyzer:InteractionMode`), as a
+  `ConfiguredSpatialAnalyzerInteractionMode`. It is the server's configuration,
+  never SpatialAnalyzer's live mode, which has no getter and can change at any
+  time. It is `UNKNOWN` against Server 0.10.0.
+- **Startup budget.** An omitted `startup_timeout` follows the server's
+  published startup allowance, as described under Usage. An explicit value is
+  always used as given.
+- **Server selection.** Client 0.5.1 selects and accepts Server 0.10.0 and
+  Server 0.10.1 alike, and still checks the running server against the
+  installation it selected.
+- **Fixed on Python 3.10.** When the startup budget ran out, client 0.5.0
+  raised a bare `asyncio.TimeoutError` on Python 3.10, which isn't the built-in
+  `TimeoutError` there. Client 0.5.1 raises `BriosaStartupError` with
+  `startup-timeout` on every supported Python version, as documented.
 
 <a name="contract-major-3-050"></a>
 ## Upgrading to 0.5.0 (Server 0.10.x)
@@ -390,10 +470,11 @@ canonical stores, explicit search roots, and supported local layouts. It validat
 receipts and manifests, filters by exact SA target and server compatibility,
 and selects the highest compatible stable release. No internet access is needed.
 
-Client 0.5.x works with Server 0.10.x (Client 0.5.0 is built against protocol
-checkpoint `0.10.0-dev.1`, spatialanalyzer/briosa `2960705e`). Before launch,
-it checks that the installation matches the exact SA target and declares
-support for this client. It rejects installations with missing compatibility
+Client 0.5.x works with Server 0.10.x. Client 0.5.1 is built against protocol
+checkpoint `0.10.1-dev.1` (spatialanalyzer/briosa `d4057790`), which carries
+the Server 0.10.1 additions, and works with Server 0.10.0 unchanged. Before
+launch, it checks that the installation matches the exact SA target and
+declares support for this client. It rejects installations with missing compatibility
 information as well as Server 0.9.x and earlier (including every released 0.9,
 0.8, 0.7, and 0.6 server); clients 0.4.x and earlier do not work with Server
 0.10.x. For server releases after 0.10.0, a patch update keeps the same clients
@@ -472,6 +553,10 @@ python -m venv .venv
   -ArtifactPath C:\path\to\briosa-client-conformance-0.9.2-sa-2026.1.0529.7-win-x64.zip `
   -ExpectIncompatible `
   -PythonExecutable ./.venv/Scripts/python.exe
+./eng/Test-Conformance.ps1 `
+  -ArtifactPath C:\path\to\briosa-client-conformance-0.10.0-sa-2026.1.0529.7-win-x64.zip `
+  -LockPath published-server-conformance.lock.json `
+  -PythonExecutable ./.venv/Scripts/python.exe
 ./.venv/Scripts/python -m build
 ./.venv/Scripts/python eng/test_package_identity.py
 ./.venv/Scripts/python eng/test_package_consumer.py
@@ -479,17 +564,20 @@ python -m venv .venv
 
 Unit tests use fake server/transport boundaries. The shared conformance suite
 runs the real client and server against a portable fake SDK/application host.
-Neither path requires SpatialAnalyzer nor a license.
+Neither path requires SpatialAnalyzer nor a license. Set
+`BRIOSA_CONFORMANCE_DIAGNOSTICS_DIRECTORY` to a folder to keep a failed
+scenario's diagnostics, including its server logs; the Server 0.9.2 runner
+ignores it.
 
 ## Protocol regeneration
 
 ```powershell
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.10.0-dev.1-sa-2026.1.0529.7.zip `
+  C:\path\to\briosa-protocol-0.10.1-dev.1-sa-2026.1.0529.7.zip `
   --update --source-channel source_commit_bootstrap
 
 ./.venv/Scripts/python eng/import_protocol_artifact.py `
-  C:\path\to\briosa-protocol-0.10.0-dev.1-sa-2026.1.0529.7.zip
+  C:\path\to\briosa-protocol-0.10.1-dev.1-sa-2026.1.0529.7.zip
 ```
 
 Never edit generated `*_pb2.py`, `*_pb2.pyi`, `*_pb2_grpc.py`,
@@ -521,14 +609,19 @@ and [server observability guide](https://github.com/spatialanalyzer/briosa/blob/
 
 This package pins its generation artifact and tests server compatibility
 against packaged servers. Client 0.5.x works with Server 0.10.x and must reject
-the retained Server 0.9.2 baseline (the latest 0.9.x server) before launch.
-Exact SA target, runtime identity, capabilities, and readiness still gate MP
-calls.
+the retained Server 0.9.2 baseline (the latest 0.9.x server) before launch. CI
+runs the packed client against that baseline, against the published Server
+0.10.0, and against the server built from the pinned protocol source. Exact SA
+target, runtime identity, capabilities, and readiness still gate MP calls.
 
 Portable conformance covers lifecycle, identity mismatch, denied capabilities
 with the admission profile and denial reasons, typed MP and output failure, SDK
 call faults, partial success, deadlines, cancellation, an abandoned lifecycle
-Connect, watchdog recovery, SDK loss, and owned-process cleanup. Unit tests also
+Connect, watchdog recovery, SDK loss, and owned-process cleanup. With Server
+0.10.1 and later it also covers the typed denial detail, request options,
+published lifecycle bounds, and a result at the server's 1 MiB worker response
+budget, which the fixture checks by the UTF-8 length and SHA-256 of the text it
+received. Unit tests also
 check every changed default, omission and requiredness rule on the built
 request, and map a fully populated response for every operation. Its harness disables Control Center auto-launch and
 restores the prior setting afterward. These checks use a fake SDK, without a
