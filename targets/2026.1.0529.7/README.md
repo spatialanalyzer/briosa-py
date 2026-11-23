@@ -70,14 +70,18 @@ See the [Briosa documentation](https://spatialanalyzer.github.io/briosa-docs/api
 for the client API overview. The target-specific source and locked protocol define
 this package's exact API.
 
-## Contract major 3 (0.5.0)
+<a name="contract-major-3-050"></a>
+## Upgrading to 0.5.0 (Server 0.10.x)
 
-0.5.0 is a breaking release. It selects only servers that declare behavioral
-contract major 3 (Server 0.10.0, built here against the frozen checkpoint
-`0.10.0-dev.1`). The
-[contract major 3 record](https://github.com/spatialanalyzer/briosa/blob/main/docs/development/contract-major-3.md)
+0.5.0 is a breaking release. Client 0.5.x works with Server 0.10.x (starting
+with Server 0.10.0; Client 0.5.0 is built against protocol checkpoint
+`0.10.0-dev.1`) and does not work with Server 0.9.x and earlier; clients 0.4.x
+and earlier do not work with Server 0.10.x. If you must stay on Server 0.9.x,
+use Client 0.4.0. For server releases after 0.10.0, a patch update keeps the
+same clients working; a minor update may require a client upgrade. The
+[Server 0.10.0 change record](https://github.com/spatialanalyzer/briosa/blob/main/docs/development/contract-major-3.md)
 and the
-[client behavioral contract](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md)
+[shared client behavior specification](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md)
 are authoritative; this section lists what changes for Python callers.
 
 ### Results and typed failures
@@ -149,7 +153,8 @@ are authoritative; this section lists what changes for Python callers.
   `policy_fingerprint`; compare the fingerprint only for equality.
 - Each `BriosaOperationCapability` carries `risk_flags` (an ordered set; empty
   means no reviewed risk), `duration_class`, `validation_status` and
-  `admission`. A value that a later 3.x revision adds maps to `UNKNOWN`.
+  `admission`. A value added by a later compatible server release maps to
+  `UNKNOWN`.
 - The snapshot's operations are the admitted ones only. The client takes
   admission from the server and never pre-validates a call or its options; the
   server decides. Validation status is informational.
@@ -317,9 +322,11 @@ exact targets in licensed probe sessions:
   `add_collection_instruments_to_ref_list_wildcard_selection` (reading the
   input list back returned nothing, and the MP documents no return argument)
   and `make_collection_vector_group_name_ref_list_runtime_select` (its getter
-  returned nothing). Callout-view selection moves to the collection-item
-  wildcard selection; callers can build an instrument list directly, and
-  nothing replaces the vector-group runtime select.
+  returned nothing). To select callout views,
+  `make_collection_item_name_ref_list_wildcard_selection` with the callout-view
+  item type uses a different MP step, and that item type has not been observed
+  on a licensed run. Callers can build an instrument list directly, and nothing
+  replaces the vector-group runtime select.
 - **Stalled the worker with no MP result:**
   `construct_polygonized_surface_from_point_clouds` (with
   `MeshOrientationType`); its mesh-orientation setter is absent from the
@@ -327,7 +334,7 @@ exact targets in licensed probe sessions:
 - `make_vector_name_ref_list_runtime_select` is the exception: it was removed
   unverified rather than shown not to work, because no operator could complete
   the selection on either target in licensed probe session 3. It can return in
-  a 3.x revision once a licensed session verifies it.
+  a later compatible server release once a licensed session verifies it.
 
 ### Lifecycle
 
@@ -380,16 +387,19 @@ exact targets in licensed probe sessions:
 Applications select a server independently of their protocol generation pin.
 On Windows x64, discovery reads Registry64 installation hints, committed
 canonical stores, explicit search roots, and supported local layouts. It validates
-receipts and manifests, filters the exact SA target and compatibility contract,
+receipts and manifests, filters by exact SA target and server compatibility,
 and selects the highest compatible stable release. No internet access is needed.
 
-Client 0.5.0 selects only servers that declare behavioral contract **3.0**
-(major 3, revision at least 0), which starts with Server 0.10.0. It is built
-against the frozen protocol checkpoint `0.10.0-dev.1` (spatialanalyzer/briosa
-`2960705e`). Major-2 servers, including every released 0.9 server, major-1
-servers, and servers without contract metadata, including Server 0.6.1, are
-rejected before launch. Protocol and source pins remain exact build inputs;
-startup verifies the running server against its selected installation.
+Client 0.5.x works with Server 0.10.x (Client 0.5.0 is built against protocol
+checkpoint `0.10.0-dev.1`, spatialanalyzer/briosa `2960705e`). Before launch,
+it checks that the installation matches the exact SA target and declares
+support for this client. It rejects installations with missing compatibility
+information as well as Server 0.9.x and earlier (including every released 0.9,
+0.8, 0.7, and 0.6 server); clients 0.4.x and earlier do not work with Server
+0.10.x. For server releases after 0.10.0, a patch update keeps the same clients
+working; a minor update may require a client upgrade. Protocol and source pins
+remain exact build inputs; startup verifies the running server against its
+selected installation.
 
 The three robot methods Get Robot Machine Parameter, Start Robot Machine
 Interface, and Stop Robot Machine Interface now take a collection/instrument
@@ -509,10 +519,11 @@ and [server observability guide](https://github.com/spatialanalyzer/briosa/blob/
 
 ## Compatibility and validation
 
-This package pins its generation artifact and tests the declared compatibility
-contract against packaged servers. The retained Server 0.9.2 baseline, the
-newest major-2 server, must be rejected. Exact SA target, runtime identity,
-capabilities, and readiness still gate MP calls.
+This package pins its generation artifact and tests server compatibility
+against packaged servers. Client 0.5.x works with Server 0.10.x and must reject
+the retained Server 0.9.2 baseline (the latest 0.9.x server) before launch.
+Exact SA target, runtime identity, capabilities, and readiness still gate MP
+calls.
 
 Portable conformance covers lifecycle, identity mismatch, denied capabilities
 with the admission profile and denial reasons, typed MP and output failure, SDK
