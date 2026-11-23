@@ -39,3 +39,37 @@ products. It is sized from the server's default lifecycle bounds. With Server
 allowance and is never less than 120 seconds; against Server 0.10.0 it stays at
 120 seconds. An explicit value is always used as given. See
 [startup and lifecycle time budgets](docs/public-api-contract.md#startup-and-lifecycle-time-budgets).
+
+**Compatibility with client 0.5.0.** Guaranteed for an application written for
+client 0.5.0:
+
+- Every public name and signature of 0.5.0 is still there; client 0.5.1 only
+  adds names, and keyword-only parameters with defaults.
+- Against Server 0.10.0, ordinary use behaves as with 0.5.0, with two
+  differences, both on Python 3.10 only: a startup timeout is now a
+  `BriosaStartupError` that is also an `asyncio.TimeoutError`, so
+  `type(e) is asyncio.TimeoutError` is no longer true; and a `stop()` during a
+  hung startup now closes the client's resources on the first call.
+- Objects of Briosa's own value types that 0.5.0 pickled load in 0.5.1.
+- `repr()`, equality and hashing of those types are unchanged.
+- Subclasses of `BriosaStartOptions` behave as in 0.5.0: a subclass's startup
+  always uses its own `startup_timeout`, never the server's published startup
+  allowance.
+
+Not guaranteed; known differences from 0.5.0:
+
+- `dataclasses.fields()`, `astuple()` and `asdict()` on `OperationFailure`,
+  `BriosaOperationCapability` and `BriosaServerSnapshot` include the fields
+  0.5.1 added, so code that unpacks an exact number of values needs updating.
+- Your own subclass of one of those three types that adds fields, or that
+  declares a field or property with the name of a field 0.5.1 added, may need
+  changes, and pickles of such subclasses written by 0.5.0 are not guaranteed
+  to load correctly.
+- A subclass of one of those three types that defines a read-only property with
+  the name of a field 0.5.1 added can no longer be created.
+- A pickle written by 0.5.0 of a subclass of one of those three types that was
+  declared with `@dataclass(slots=True)` and adds a field loads with that
+  field's value in a field 0.5.1 added and the subclass's own field missing.
+- Client 0.5.0 can't load a `BriosaServerSnapshot` pickled by 0.5.1, or an
+  `OperationFailure` or `BriosaOperationCapability` pickled by 0.5.1 that
+  carries a policy denial detail or request options.

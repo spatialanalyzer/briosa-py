@@ -76,7 +76,9 @@ default gives a plain `float`, `120.0`; a value you pass reads back as you
 passed it, so an explicit `120` reads back as the `int` `120`, as in 0.5.0.
 `dataclasses.replace()` and `copy.replace()` pass every current value, so their
 result has an explicit budget; build new options to keep the automatic one.
-Copies and pickles keep the choice, for subclasses too. Equality and hashing
+Copies and pickles keep the choice. Subclasses of `BriosaStartOptions` keep
+the 0.5.0 behaviour and do not take the server's published startup
+allowance. Equality and hashing
 compare values as in 0.5.0, so omitted options equal, and hash like, options
 with an explicit `120.0`; a cache keyed only by an options object can therefore
 return the result computed for the other.
@@ -113,20 +115,12 @@ this package's exact API.
 
 ## New in 0.5.1 (Server 0.10.1)
 
-Client 0.5.1 adds the values below, which arrive with Server 0.10.1. Every
-addition is a new type or a new attribute with a default, so an application
-written for 0.5.0 runs and behaves the same. Against Server 0.10.0, which sends
-none of these values, each one is `None` or `UNKNOWN`, and the client behaves as
-0.5.0 does, with two exceptions, both on Python 3.10 only: a startup timeout is
-now a `BriosaStartupError` that is also an `asyncio.TimeoutError`, so
-`type(e) is asyncio.TimeoutError` is no longer true; and a `stop()` during a
-hung startup now closes the client's resources on the first call. The
-attributes added to `OperationFailure`, `BriosaOperationCapability` and
-`BriosaServerSnapshot` stay out of `repr()`, equality and hashing, so those
-values print, compare and hash as in 0.5.0. They are keyword-only, so
-positional construction, `__match_args__` and a subclass's own fields keep
-their 0.5.0 positions. Values pickled by 0.5.0, of these classes or of your
-subclasses of them, load with the new attributes at their defaults.
+Client 0.5.1 adds the values below, which arrive with Server 0.10.1. Against
+Server 0.10.0, which sends none of these values, each one is `None` or
+`UNKNOWN`. The attributes added to `OperationFailure`,
+`BriosaOperationCapability` and `BriosaServerSnapshot` are keyword-only and stay
+out of `repr()`, equality and hashing. What 0.5.1 guarantees an application
+written for 0.5.0, and the known differences, follow the list.
 
 - **Typed denial detail.** A `POLICY_DENIED` failure carries
   `BriosaOperationError.failure.policy_denial`, a `PolicyDenialDetails` that
@@ -190,6 +184,40 @@ subclasses of them, load with the new attributes at their defaults.
   `asyncio.TimeoutError`, preserving the handler used with client 0.5.0. It
   pickles and copies with the same message and code; a pickle of it loads on
   Python 3.11 and later as plain `BriosaStartupError`.
+
+**Compatibility with client 0.5.0.** Guaranteed for an application written for
+client 0.5.0:
+
+- Every public name and signature of 0.5.0 is still there; client 0.5.1 only
+  adds names, and keyword-only parameters with defaults.
+- Against Server 0.10.0, ordinary use behaves as with 0.5.0, with two
+  differences, both on Python 3.10 only: a startup timeout is now a
+  `BriosaStartupError` that is also an `asyncio.TimeoutError`, so
+  `type(e) is asyncio.TimeoutError` is no longer true; and a `stop()` during a
+  hung startup now closes the client's resources on the first call.
+- Objects of Briosa's own value types that 0.5.0 pickled load in 0.5.1.
+- `repr()`, equality and hashing of those types are unchanged.
+- Subclasses of `BriosaStartOptions` behave as in 0.5.0: a subclass's startup
+  always uses its own `startup_timeout`, never the server's published startup
+  allowance.
+
+Not guaranteed; known differences from 0.5.0:
+
+- `dataclasses.fields()`, `astuple()` and `asdict()` on `OperationFailure`,
+  `BriosaOperationCapability` and `BriosaServerSnapshot` include the fields
+  0.5.1 added, so code that unpacks an exact number of values needs updating.
+- Your own subclass of one of those three types that adds fields, or that
+  declares a field or property with the name of a field 0.5.1 added, may need
+  changes, and pickles of such subclasses written by 0.5.0 are not guaranteed
+  to load correctly.
+- A subclass of one of those three types that defines a read-only property with
+  the name of a field 0.5.1 added can no longer be created.
+- A pickle written by 0.5.0 of a subclass of one of those three types that was
+  declared with `@dataclass(slots=True)` and adds a field loads with that
+  field's value in a field 0.5.1 added and the subclass's own field missing.
+- Client 0.5.0 can't load a `BriosaServerSnapshot` pickled by 0.5.1, or an
+  `OperationFailure` or `BriosaOperationCapability` pickled by 0.5.1 that
+  carries a policy denial detail or request options.
 
 <a name="contract-major-3-050"></a>
 ## Upgrading to 0.5.0 (Server 0.10.x)

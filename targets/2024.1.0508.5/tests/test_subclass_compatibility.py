@@ -1,11 +1,16 @@
-"""Subclasses of the dataclasses 0.5.1 grew, and of BriosaStartOptions, keep working.
+"""Applications' own subclasses, against the stated 0.5.0 compatibility guarantee.
+
+Subclasses of ``BriosaStartOptions`` behave as in 0.5.0, which is guaranteed.
+For subclasses of ``OperationFailure``, ``BriosaOperationCapability`` and
+``BriosaServerSnapshot``, and for reflection on those three types, the README
+lists known differences from 0.5.0. Each has one test here, named
+``test_documented_difference_...``, that pins the current behaviour so that a
+later change to it is noticed.
 
 ``fixtures/pickled-0.5.0-subclasses.json`` holds values of the subclasses in
 ``pickled_subclasses.py`` as the published 0.5.0 wheel of this target pickled
 them, with protocol 4, on Python 3.10 and on Python 3.14, and the startup-timeout
-exception that 0.5.0 raised on each. Each type has an ordinary and a slotted
-subclass, so both the base's pickle hooks and the ones dataclasses generates
-for a slotted subclass are covered.
+exception that 0.5.0 raised on each.
 """
 
 from __future__ import annotations
@@ -16,7 +21,9 @@ import copy
 import dataclasses
 import json
 import pickle
+import pickletools
 import sys
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
@@ -39,6 +46,10 @@ from briosa import (
     OperationDurationClass,
     OperationFailure,
     OperationFailureKind,
+    OperationRequestOption,
+    OperationRequestOptionCondition,
+    OperationRequestOptionEffect,
+    OperationRequestOptionOmission,
     OperationRiskFlag,
     OperationValidationStatus,
     PolicyDenialDetails,
@@ -182,9 +193,12 @@ def test_the_fixture_was_written_by_the_published_0_5_0_wheel() -> None:
         assert set(run["values"]) == set(FRESH)
 
 
-@pytest.mark.parametrize("name", sorted(FRESH))
+START_OPTIONS_PICKLES = ["ordinary_start_options", "slotted_start_options"]
+
+
+@pytest.mark.parametrize("name", START_OPTIONS_PICKLES)
 @pytest.mark.parametrize("run", RUNS, ids=run_id)
-def test_a_0_5_0_subclass_pickle_loads_into_its_0_5_0_fields(
+def test_a_0_5_0_pickle_of_a_start_options_subclass_loads_as_in_0_5_0(
     run: dict[str, Any], name: str
 ) -> None:
     value = loaded(run, name)
@@ -193,8 +207,7 @@ def test_a_0_5_0_subclass_pickle_loads_into_its_0_5_0_fields(
     assert repr(value) == run["values"][name]["repr"]
     assert value == FRESH[name]
     assert hash(value) == hash(FRESH[name])
-    for field_name, default in added_defaults(value).items():
-        assert getattr(value, field_name) == default, field_name
+    assert not _startup_timeout_omitted(value)
     again = pickle.loads(pickle.dumps(value))
     assert again == value
     assert again.tag == "tagged"
@@ -208,9 +221,41 @@ def test_0_5_0_subclassed_start_options_keep_their_fixed_budget(
     slotted = loaded(run, "slotted_start_options")
     assert ordinary.startup_timeout == 300.0
     assert slotted.startup_timeout == 120.0
-    # Client 0.5.0 had no automatic budget, so its options load as explicit.
     assert not _startup_timeout_omitted(ordinary)
     assert not _startup_timeout_omitted(slotted)
+
+
+GROWN_SUBCLASSES = [name for name in sorted(FRESH) if name not in START_OPTIONS_PICKLES]
+
+
+@pytest.mark.parametrize("name", GROWN_SUBCLASSES)
+@pytest.mark.parametrize("run", RUNS, ids=run_id)
+def test_documented_difference_0_5_0_pickles_of_subclasses_of_grown_types(
+    run: dict[str, Any], name: str
+) -> None:
+    """Documented difference from 0.5.0: these pickles are not guaranteed to load.
+
+    Today a subclass declared without ``slots=True`` loads correctly, with the
+    0.5.1 fields at their defaults. One declared with ``slots=True`` restores its
+    saved values by position: the subclass's own value lands in the first field
+    0.5.1 added, and the subclass's field is left unset.
+    """
+    value = loaded(run, name)
+    assert type(value) is type(FRESH[name])
+    added = list(added_defaults(value))
+    if name.startswith("ordinary_"):
+        assert value == FRESH[name]
+        assert value.tag == "tagged"
+        assert repr(value) == run["values"][name]["repr"]
+        for field_name, default in added_defaults(value).items():
+            assert getattr(value, field_name) == default, field_name
+        return
+    assert getattr(value, added[0]) == "tagged"
+    for field_name in ("tag", *added[1:]):
+        with pytest.raises(AttributeError):
+            getattr(value, field_name)
+    with pytest.raises(AttributeError):
+        repr(value)
 
 
 @pytest.mark.parametrize("name", sorted(FRESH))
@@ -319,39 +364,40 @@ class PlainStartOptions(BriosaStartOptions):
     [*START_OPTIONS_SUBCLASSES, PlainStartOptions],
     ids=["ordinary", "slotted", "plain"],
 )
-def test_subclassed_start_options_record_the_omission(
+def test_subclassed_start_options_behave_as_in_0_5_0(
     cls: type[BriosaStartOptions],
 ) -> None:
-    omitted = cls()
-    assert _startup_timeout_omitted(omitted)
-    assert omitted.startup_timeout == 120.0
-    for clone in clones(omitted):
-        assert _startup_timeout_omitted(clone)
+    # A subclass's budget is always explicit, as every budget was with 0.5.0.
+    left_out = cls()
+    assert not _startup_timeout_omitted(left_out)
+    assert left_out.startup_timeout == 120.0
+    assert type(left_out.startup_timeout) is float
     positional = cls(
-        BriosaServerSelection(), True, True, True, SpatialAnalyzerLaunchOptions(), 120.0
+        BriosaServerSelection(), True, True, True, SpatialAnalyzerLaunchOptions(), 120
     )
-    for explicit in (
-        cls(startup_timeout=120.0),
-        cls(startup_timeout=omitted.startup_timeout),
-        positional,
-        dataclasses.replace(omitted),
-    ):
-        assert not _startup_timeout_omitted(explicit)
-        for clone in clones(explicit):
+    assert positional.startup_timeout == 120
+    assert type(positional.startup_timeout) is int
+    for value in (left_out, cls(startup_timeout=300.0), dataclasses.replace(left_out)):
+        assert not _startup_timeout_omitted(value)
+        for clone in clones(value):
+            assert type(clone) is cls
+            assert clone == value
             assert not _startup_timeout_omitted(clone)
-    assert omitted == cls(startup_timeout=120.0)
-    assert hash(omitted) == hash(cls(startup_timeout=120.0))
+    assert left_out == cls(startup_timeout=120.0)
+    assert hash(left_out) == hash(cls(startup_timeout=120.0))
 
 
 @pytest.mark.parametrize("cls", START_OPTIONS_SUBCLASSES, ids=["ordinary", "slotted"])
-def test_subclassed_start_options_adopt_like_the_base(
+def test_a_subclass_startup_uses_its_own_budget(
     cls: type[BriosaStartOptions],
 ) -> None:
+    # Never the server's published allowance.
     published = bounds(startup_with_launch=300_000)
-    assert expiry(published=published, options=cls())[0] == 320.0
-    assert expiry(published=published, options=copy.copy(cls()))[0] == 320.0
-    explicit = cls(startup_timeout=120.0)
-    assert expiry(published=published, options=explicit)[0] == 120.0
+    assert expiry(published=published, options=cls())[0] == 120.0
+    assert expiry(published=published, options=copy.copy(cls()))[0] == 120.0
+    assert expiry(published=published, options=cls(startup_timeout=200.0))[0] == 200.0
+    # The exact class adopts it.
+    assert expiry(published=published, options=BriosaStartOptions())[0] == 320.0
 
 
 def test_a_subclass_constructor_without_the_parameter_gives_an_explicit_budget() -> (
@@ -367,6 +413,75 @@ def test_a_subclass_constructor_without_the_parameter_gives_an_explicit_budget()
     assert not _startup_timeout_omitted(Budgeted())
     assert not _startup_timeout_omitted(Budgeted(300.0))
     assert Budgeted(300.0).startup_timeout == 300.0
+
+
+class DelegatingNew(BriosaStartOptions):
+    def __new__(cls, *args: Any, **kwargs: Any) -> DelegatingNew:
+        return super().__new__(cls)
+
+
+@dataclasses.dataclass(frozen=True, slots=True)
+class FieldNamedLikeAPrivateOne(BriosaStartOptions):
+    _briosa_startup_timeout_omission: str = "mine"
+
+
+@dataclasses.dataclass(frozen=True)
+class OwnPostInit(BriosaStartOptions):
+    tag: str = "untagged"
+
+    def __post_init__(self) -> None:
+        # Never calls the base, so the base's checks are skipped, as in 0.5.0.
+        pass
+
+
+@dataclasses.dataclass(frozen=True, slots=True)
+class NewArguments(BriosaStartOptions):
+    tag: str = dataclasses.field(kw_only=True)
+
+    def __new__(cls, *args: Any, tag: str, **kwargs: Any) -> NewArguments:
+        # Named explicitly: Python 3.10 can't use a bare super() in a slotted
+        # dataclass, with 0.5.0 too.
+        return BriosaStartOptions.__new__(cls)
+
+    def __getnewargs_ex__(self) -> tuple[tuple[Any, ...], dict[str, Any]]:
+        return (), {"tag": self.tag}
+
+
+SUBCLASS_SHAPES: dict[str, Callable[[], BriosaStartOptions]] = {
+    "delegating-new": lambda: DelegatingNew(startup_timeout=120.0),
+    "field-named-like-a-private-one": lambda: FieldNamedLikeAPrivateOne(
+        _briosa_startup_timeout_omission="x"
+    ),
+    "own-post-init": lambda: OwnPostInit(start_spatial_analyzer_sdk=False),
+    "new-arguments": lambda: NewArguments(tag="x"),
+}
+
+
+@pytest.mark.parametrize("shape", sorted(SUBCLASS_SHAPES))
+def test_options_subclass_shapes_construct_copy_and_pickle_as_in_0_5_0(
+    shape: str,
+) -> None:
+    value = SUBCLASS_SHAPES[shape]()
+    assert value.startup_timeout == 120.0
+    assert not _startup_timeout_omitted(value)
+    if shape == "own-post-init":
+        # The base's checks never ran, as in 0.5.0.
+        assert value.connect_to_spatial_analyzer
+        assert not value.start_spatial_analyzer_sdk
+    for clone in (
+        copy.copy(value),
+        copy.deepcopy(value),
+        pickle.loads(pickle.dumps(value)),
+    ):
+        assert type(clone) is type(value)
+        assert clone == value
+        assert repr(clone) == repr(value)
+        assert not _startup_timeout_omitted(clone)
+    assert expiry(
+        published=bounds(startup_with_launch=300_000),
+        options=value,
+        hang_at="launch-sa" if shape == "own-post-init" else "connect-sdk",
+    )[0] == (120.0)
 
 
 def exceptions(run: dict[str, Any]) -> dict[str, Any]:
@@ -412,4 +527,107 @@ def test_a_0_5_0_startup_error_loads_as_it_did(run: dict[str, Any]) -> None:
     # BriosaStartupError pickles as in 0.5.0, so 0.5.1 writes the same bytes.
     assert pickle.dumps(BriosaStartupError("startup-timeout"), protocol=4) == (
         base64.b64decode(written["pickle"])
+    )
+
+
+def test_documented_difference_reflection_includes_the_new_fields() -> None:
+    """Documented difference from 0.5.0: fields(), astuple() and asdict().
+
+    They include the fields 0.5.1 added, on the three types and on their
+    subclasses, so code that unpacks an exact number of values needs updating.
+    """
+    expected = {
+        OperationFailure: (9, ["policy_denial"]),
+        BriosaOperationCapability: (8, ["policy_denial", "request_options"]),
+        BriosaServerSnapshot: (
+            8,
+            ["lifecycle_bounds", "configured_interaction_mode"],
+        ),
+    }
+    values: list[Any] = [
+        OperationFailure(**FAILURE),
+        BriosaOperationCapability(*CAPABILITY),
+        BriosaServerSnapshot(*SNAPSHOT),
+        *(FRESH[name] for name in GROWN_SUBCLASSES),
+    ]
+    for value in values:
+        base = next(cls for cls in expected if isinstance(value, cls))
+        count_0_5_0, added = expected[base]
+        own = 1 if type(value) is not base else 0
+        names = [item.name for item in dataclasses.fields(value)]
+        assert len(names) == count_0_5_0 + len(added) + own
+        assert names[count_0_5_0 : count_0_5_0 + len(added)] == added
+        assert len(dataclasses.astuple(value)) == len(names)
+        assert list(dataclasses.asdict(value)) == names
+
+
+def test_documented_difference_a_name_of_a_new_field_in_a_subclass() -> None:
+    """Documented difference from 0.5.0: a subclass that uses a new field's name.
+
+    A read-only property with that name makes construction fail, because the
+    class sets the field. A field with that name replaces the new one and keeps
+    the position it had with 0.5.0.
+    """
+
+    class Reads(BriosaServerSnapshot):
+        @property
+        def lifecycle_bounds(self) -> str:  # type: ignore[override]
+            return "mine"
+
+    with pytest.raises(AttributeError):
+        Reads(*SNAPSHOT)
+
+    @dataclasses.dataclass(frozen=True)
+    class Declares(BriosaServerSnapshot):
+        lifecycle_bounds: str = "mine"  # type: ignore[assignment]
+
+    declared = Declares(*SNAPSHOT, "positional")
+    assert declared.lifecycle_bounds == "positional"
+    assert Declares.__match_args__[-1] == "lifecycle_bounds"
+    assert [item.name for item in dataclasses.fields(Declares)][-1] == (
+        "configured_interaction_mode"
+    )
+
+
+def global_names(value: object) -> set[str]:
+    return {
+        str(argument)
+        for opcode, argument, _ in pickletools.genops(pickle.dumps(value, protocol=4))
+        if opcode.name in {"SHORT_BINUNICODE", "BINUNICODE"}
+    }
+
+
+def test_documented_difference_0_5_1_pickles_and_client_0_5_0() -> None:
+    """Documented difference from 0.5.0: 0.5.1 pickles may not load in 0.5.0.
+
+    A pickle names every class it holds, and client 0.5.0 has none of the
+    classes 0.5.1 added: a ``BriosaServerSnapshot`` always holds one, and the
+    other two types do once a 0.5.1 field is set.
+    """
+    added = {
+        "ConfiguredSpatialAnalyzerInteractionMode",
+        "PolicyDenialDetails",
+        "PolicyDenialRule",
+        "BriosaLifecycleBounds",
+    }
+    assert "ConfiguredSpatialAnalyzerInteractionMode" in global_names(
+        BriosaServerSnapshot(*SNAPSHOT)
+    )
+    assert not added & global_names(OperationFailure(**FAILURE))
+    assert not added & global_names(BriosaOperationCapability(*CAPABILITY))
+    denial = PolicyDenialDetails(rule=PolicyDenialRule.OVERRIDE)
+    assert "PolicyDenialDetails" in global_names(
+        OperationFailure(**FAILURE, policy_denial=denial)
+    )
+    capability = BriosaOperationCapability(*CAPABILITY)
+    assert not added & global_names(dataclasses.replace(capability, request_options=()))
+    option = OperationRequestOption(
+        field_name="show_results_dialog",
+        effect=OperationRequestOptionEffect.INTERACTIVE_UI,
+        condition=OperationRequestOptionCondition.WHEN_TRUE,
+        omission=OperationRequestOptionOmission.DOES_NOT_ACTIVATE,
+        admission=OperationAdmission.ADMITTED,
+    )
+    assert "OperationRequestOption" in global_names(
+        dataclasses.replace(capability, request_options=(option,))
     )

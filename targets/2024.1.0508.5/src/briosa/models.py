@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import functools
-import inspect
 from collections.abc import Callable
 from dataclasses import MISSING, dataclass, field, fields
 from datetime import timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any, SupportsIndex, cast
+from typing import Any, cast
 
 from briosa.installation_models import BriosaServerSelection
 from briosa.logging_options import BriosaLoggingOptions
@@ -52,40 +51,6 @@ def _restore_dataclass_state(self: Any, state: list[Any]) -> None:
             object.__setattr__(self, item.name, item.default)
         elif item.default_factory is not MISSING:
             object.__setattr__(self, item.name, item.default_factory())
-
-
-@dataclass(frozen=True, slots=True)
-class _SlottedProbe:
-    pass
-
-
-# The restore that dataclasses gives every frozen slotted dataclass, and so
-# every slotted subclass. It assigns saved values by position.
-_GENERATED_SETSTATE = vars(_SlottedProbe)["__setstate__"]
-del _SlottedProbe
-
-
-def _getattribute_restoring_0_5_0_state(self: Any, name: str) -> Any:
-    """Attribute lookup for a slotted subclass of a dataclass that 0.5.1 grew.
-
-    Pickling and copying look ``__setstate__`` up on the value. Where that is
-    still the positional restore dataclasses generated, they get the base's
-    restore, which places a 0.5.0 pickle's values in their 0.5.0 fields.
-    """
-    if name == "__setstate__" and type(self).__setstate__ is _GENERATED_SETSTATE:
-        return functools.partial(_restore_dataclass_state, self)
-    return object.__getattribute__(self, name)
-
-
-def _restore_slotted_subclasses(owner: type[Any]) -> Any:
-    def init_subclass(cls: type[Any], /, **kwargs: Any) -> None:
-        super(owner, cls).__init_subclass__(**kwargs)
-        # dataclasses gives a slotted subclass its own pickle hooks after this
-        # runs, so the lookup, not the hook, is what can be routed.
-        if "__slots__" in vars(cls) and "__getattribute__" not in vars(cls):
-            cls.__getattribute__ = _getattribute_restoring_0_5_0_state  # type: ignore[assignment]
-
-    return classmethod(init_subclass)
 
 
 class _StrEnum(str, Enum):
@@ -598,93 +563,58 @@ class SpatialAnalyzerLaunchOptions:
         )
 
 
-# Where BriosaStartOptions records that its constructor received no
-# startup_timeout: True once __post_init__ confirms it; _OMISSION_PENDING until
-# then; unset for an explicit value.
-_OMISSION_SLOT = "_briosa_startup_timeout_omission"
-_OMISSION_PENDING = object()
+class _OmittedStartupTimeout(float):
+    """What an omitted ``startup_timeout`` holds in its slot; it reads as 120.0."""
+
+    __slots__ = ()
+
+
+# The one value that marks an omitted budget. Reading the field never returns
+# it, so no value a caller can pass is the marker.
+_OMITTED_STARTUP_TIMEOUT = _OmittedStartupTimeout(120.0)
 # What a pickle of options that omitted the budget appends to the field values.
 # Client 0.5.0 restores only the field values and ignores it.
 _OMITTED_STARTUP_TIMEOUT_STATE = "startup_timeout-omitted"
 
 
-def _receives_startup_timeout(
-    cls: type[Any], args: tuple[Any, ...], kwargs: dict[str, Any]
-) -> bool:
-    """Whether a constructor call passes ``startup_timeout``, by keyword or position.
+class _StartupTimeoutValue:
+    """``startup_timeout`` as callers read it: an omitted budget reads as 120.0.
 
-    A constructor that takes no ``startup_timeout`` parameter, or a call that
-    doesn't bind, counts as passing one, so the budget is never mistaken for
-    omitted.
-    """
-    if "startup_timeout" in kwargs:
-        return True
-    try:
-        signature = inspect.signature(cls.__init__)
-        bound = signature.bind_partial(None, *args, **kwargs)
-    except (TypeError, ValueError):
-        return True
-    return (
-        "startup_timeout" in bound.arguments
-        or "startup_timeout" not in signature.parameters
-    )
-
-
-def _construct_start_options(cls: type[Any], *args: Any, **kwargs: Any) -> Any:
-    following = super(_StartupTimeoutOmission, cls).__new__
-    if following is object.__new__:
-        options = following(cls)
-    else:
-        options = following(cls, *args, **kwargs)
-    if not _receives_startup_timeout(cls, args, kwargs):
-        object.__setattr__(options, _OMISSION_SLOT, _OMISSION_PENDING)
-    return options
-
-
-def _omitted_start_options(cls: type[Any]) -> Any:
-    """Recreate copied or pickled options that omitted ``startup_timeout``."""
-    options = cast(Any, cls).__new__(cls)
-    object.__setattr__(options, _OMISSION_SLOT, True)
-    return options
-
-
-class _StartupTimeoutOmission:
-    """Records whether the options constructor received ``startup_timeout``.
-
-    The record is made where construction starts, from the arguments passed,
-    never from the value, and lives in this base's own slot. A subclass's fields
-    never shadow that slot, so the record works for every subclass, slotted or
-    not.
+    Only values of ``BriosaStartOptions`` itself ever hold the marker, so values
+    of subclasses read exactly as with 0.5.0.
     """
 
-    __slots__ = (_OMISSION_SLOT,)
+    def __init__(self, slot: Any) -> None:
+        self.slot = slot
 
-    # A C-level callable. inspect.signature() on Python 3.10 reads a Python-level
-    # __new__ ahead of an inherited __init__; this keeps the signature of every
-    # subclass the dataclass __init__'s, as in 0.5.0.
-    __new__ = staticmethod(functools.partial(_construct_start_options).__call__)
+    def __get__(self, instance: Any, owner: Any = None) -> Any:
+        if instance is None:
+            return self.slot
+        value = self.slot.__get__(instance, owner)
+        return 120.0 if value is _OMITTED_STARTUP_TIMEOUT else value
 
-    def __reduce_ex__(self, protocol: SupportsIndex) -> str | tuple[Any, ...]:
-        cls = type(self)
-        if (
-            _startup_timeout_omitted(self)
-            and cls.__reduce__ is object.__reduce__
-            and cls.__setstate__ is not _restore_start_options_state  # type: ignore[attr-defined]
-        ):
-            # dataclasses gives a slotted subclass its own __setstate__, which
-            # restores only the fields, so the omission travels in the call that
-            # recreates the value.
-            return (_omitted_start_options, (cls,), cast(Any, self).__getstate__())
-        return object.__reduce_ex__(self, protocol)
+    def __set__(self, instance: Any, value: Any) -> None:
+        self.slot.__set__(instance, value)
+
+    def __delete__(self, instance: Any) -> None:
+        self.slot.__delete__(instance)
 
 
 def _startup_timeout_omitted(options: object) -> bool:
-    """Whether ``options`` was constructed without a ``startup_timeout``."""
-    return getattr(options, _OMISSION_SLOT, None) is True
+    """Whether ``options`` is a ``BriosaStartOptions`` built without a budget.
+
+    Only the exact class records an omission; every subclass has an explicit
+    budget, as all options did with client 0.5.0.
+    """
+    return (
+        type(options) is BriosaStartOptions
+        and _STARTUP_TIMEOUT.slot.__get__(options, BriosaStartOptions)
+        is _OMITTED_STARTUP_TIMEOUT
+    )
 
 
 @dataclass(frozen=True, slots=True)
-class BriosaStartOptions(_StartupTimeoutOmission):
+class BriosaStartOptions:
     """Selects the phases of one client-owned server startup.
 
     ``startup_timeout`` is one overall budget, in seconds, for the whole
@@ -701,17 +631,18 @@ class BriosaStartOptions(_StartupTimeoutOmission):
     at two minutes, so raise it when you raise that server's lifecycle bounds. An
     explicit value, including ``120.0``, is always used as given.
 
-    Only constructing the options without passing ``startup_timeout`` omits it;
-    the client records that from the constructor's arguments, never from the
-    value. Any value you pass is explicit, however you obtained it, including
-    ``BriosaStartOptions().startup_timeout``, the signature's default and the
-    field's default, each a plain ``120.0``. ``dataclasses.replace()`` and
-    ``copy.replace()`` pass every field's current value, so their result has an
-    explicit budget; build new options without ``startup_timeout`` to keep the
-    automatic one. Copying and pickling keep the omission, for subclasses too. A
-    subclass whose constructor has no ``startup_timeout`` parameter gives an
-    explicit budget. Equality and hashing compare values, as in 0.5.0, so omitted
-    options equal options with an explicit ``120.0``.
+    Only constructing ``BriosaStartOptions`` itself without passing
+    ``startup_timeout`` omits it; the client records that from the constructor's
+    arguments, never from the value. Any value you pass is explicit, however you
+    obtained it, including ``BriosaStartOptions().startup_timeout``, the
+    signature's default and the field's default, each a plain ``120.0``.
+    ``dataclasses.replace()`` and ``copy.replace()`` pass every field's current
+    value, so their result has an explicit budget; build new options without
+    ``startup_timeout`` to keep the automatic one. Copying and pickling keep the
+    omission. Equality and hashing compare values, as in 0.5.0, so omitted options
+    equal options with an explicit ``120.0``. Subclasses keep the 0.5.0
+    behaviour: a subclass's startup always uses its own ``startup_timeout``, never
+    the server's published allowance.
 
     Expiry during an in-flight RPC is reported the same way; cancelling the
     caller's task only stops that caller from waiting. The server finishes an SDK
@@ -732,9 +663,6 @@ class BriosaStartOptions(_StartupTimeoutOmission):
     logging: BriosaLoggingOptions | None = None
 
     def __post_init__(self) -> None:
-        # Construction, not unpickling, confirms the omission that __new__ saw.
-        if getattr(self, _OMISSION_SLOT, None) is _OMISSION_PENDING:
-            object.__setattr__(self, _OMISSION_SLOT, True)
         if self.logging is not None:
             self.logging.to_arguments()
         if self.startup_timeout <= 0:
@@ -750,21 +678,53 @@ class BriosaStartOptions(_StartupTimeoutOmission):
 
 
 def _start_options_state(self: BriosaStartOptions) -> list[Any]:
-    # The values client 0.5.0 pickles, then a marker that 0.5.0 ignores.
-    state = _dataclass_state(self)
+    # The values pickled as dataclasses writes them, then, for options that
+    # omitted the budget, a marker that client 0.5.0 ignores.
+    state = [getattr(self, item.name) for item in fields(self)]
     if _startup_timeout_omitted(self):
         state.append(_OMITTED_STARTUP_TIMEOUT_STATE)
     return state
 
 
 def _restore_start_options_state(self: BriosaStartOptions, state: list[Any]) -> None:
-    # A value pickled by 0.5.0 has no marker, so its budget stays explicit.
-    count = len(fields(self))
-    _restore_dataclass_state(self, state[:count])
-    if state[count:] == [_OMITTED_STARTUP_TIMEOUT_STATE]:
-        object.__setattr__(self, _OMISSION_SLOT, True)
-    elif hasattr(self, _OMISSION_SLOT):
-        object.__delattr__(self, _OMISSION_SLOT)
+    # Restored as dataclasses restores it, so subclasses load as with 0.5.0. A
+    # value pickled by 0.5.0 has no marker, so its budget stays explicit.
+    declared = fields(self)
+    for item, value in zip(declared, state, strict=False):
+        object.__setattr__(self, item.name, value)
+    if type(self) is BriosaStartOptions and state[len(declared) :] == [
+        _OMITTED_STARTUP_TIMEOUT_STATE
+    ]:
+        _STARTUP_TIMEOUT.slot.__set__(self, _OMITTED_STARTUP_TIMEOUT)
+
+
+_STARTUP_TIMEOUT = _StartupTimeoutValue(vars(BriosaStartOptions)["startup_timeout"])
+setattr(BriosaStartOptions, "startup_timeout", _STARTUP_TIMEOUT)  # noqa: B010
+_GENERATED_INIT = BriosaStartOptions.__init__
+_STARTUP_TIMEOUT_POSITION = [item.name for item in fields(BriosaStartOptions)].index(
+    "startup_timeout"
+)
+
+
+@functools.wraps(_GENERATED_INIT)
+def _start_options_init(self: BriosaStartOptions, *args: Any, **kwargs: Any) -> None:
+    _GENERATED_INIT(self, *args, **kwargs)
+    # Only the exact class, built without the argument, has an omitted budget.
+    if (
+        type(self) is BriosaStartOptions
+        and "startup_timeout" not in kwargs
+        and len(args) <= _STARTUP_TIMEOUT_POSITION
+    ):
+        _STARTUP_TIMEOUT.slot.__set__(self, _OMITTED_STARTUP_TIMEOUT)
+
+
+# The signature (through __wrapped__) and the defaults stay the dataclass
+# __init__'s, so both show a plain 120.0, as in 0.5.0.
+_init = cast(Any, _start_options_init)
+_init.__defaults__ = _GENERATED_INIT.__defaults__
+_init.__kwdefaults__ = _GENERATED_INIT.__kwdefaults__
+del _init
+setattr(BriosaStartOptions, "__init__", _start_options_init)  # noqa: B010
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -828,8 +788,10 @@ class OperationFailure:
     Like 0.5.0, ``repr()``, equality, hashing and positional construction and
     ``match`` cover only the fields that 0.5.0 had: the 0.5.1 fields are
     keyword-only, so a subclass's own fields keep their 0.5.0 positions. Read the
-    0.5.1 fields directly. A value pickled by 0.5.0, of this class or a subclass,
-    loads with those fields at their defaults.
+    0.5.1 fields directly. A value of this class pickled by 0.5.0 loads with those
+    fields at their defaults. ``dataclasses.fields()``, ``astuple()`` and
+    ``asdict()`` include them, and pickles of subclasses written by 0.5.0 are not
+    guaranteed to load correctly: see the README's known differences from 0.5.0.
     """
 
     operation_id: str
@@ -895,8 +857,10 @@ class BriosaOperationCapability:
     Like 0.5.0, ``repr()``, equality, hashing and positional construction and
     ``match`` cover only the fields that 0.5.0 had: the 0.5.1 fields are
     keyword-only, so a subclass's own fields keep their 0.5.0 positions. Read the
-    0.5.1 fields directly. A value pickled by 0.5.0, of this class or a subclass,
-    loads with those fields at their defaults.
+    0.5.1 fields directly. A value of this class pickled by 0.5.0 loads with those
+    fields at their defaults. ``dataclasses.fields()``, ``astuple()`` and
+    ``asdict()`` include them, and pickles of subclasses written by 0.5.0 are not
+    guaranteed to load correctly: see the README's known differences from 0.5.0.
     """
 
     operation_id: str
@@ -932,8 +896,10 @@ class BriosaServerSnapshot:
     Like 0.5.0, ``repr()``, equality, hashing and positional construction and
     ``match`` cover only the fields that 0.5.0 had: the 0.5.1 fields are
     keyword-only, so a subclass's own fields keep their 0.5.0 positions. Read the
-    0.5.1 fields directly. A value pickled by 0.5.0, of this class or a subclass,
-    loads with those fields at their defaults.
+    0.5.1 fields directly. A value of this class pickled by 0.5.0 loads with those
+    fields at their defaults. ``dataclasses.fields()``, ``astuple()`` and
+    ``asdict()`` include them, and pickles of subclasses written by 0.5.0 are not
+    guaranteed to load correctly: see the README's known differences from 0.5.0.
     """
 
     briosa_version: str
@@ -1006,5 +972,4 @@ _FIELDS_ADDED_IN_0_5_1.update(
 for _grown in _FIELDS_ADDED_IN_0_5_1:
     setattr(_grown, "__getstate__", _dataclass_state)  # noqa: B010
     setattr(_grown, "__setstate__", _restore_dataclass_state)  # noqa: B010
-    setattr(_grown, "__init_subclass__", _restore_slotted_subclasses(_grown))  # noqa: B010
 del _grown

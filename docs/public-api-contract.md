@@ -184,8 +184,10 @@ An explicit `startup_timeout`, including `120.0`, is always used as given.
 Only constructing the options without the argument omits it: the field reads as
 a plain `float`, so a value passed back, however obtained, is explicit, and
 `dataclasses.replace()` passes the budget explicitly. Copies and pickles keep
-the omission, and equality and hashing compare values as in 0.5.0. Against
-Server 0.10.0, which publishes no bounds, an omitted budget stays at two minutes
+the omission, and equality and hashing compare values as in 0.5.0. Subclasses
+of `BriosaStartOptions` keep the 0.5.0 behaviour and do not take the server's
+published startup allowance. Against Server 0.10.0, which publishes no bounds,
+an omitted budget stays at two minutes
 and every startup step runs as in client 0.5.0. With a server that publishes
 bounds, the client reads the clock and the startup's cancellation before it
 takes ownership of the session, before it reports success, and for each startup

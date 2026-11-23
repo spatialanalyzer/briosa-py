@@ -154,7 +154,15 @@ def test_the_field_list_and_signature_are_unchanged_from_0_5_0() -> None:
     parameter = inspect.signature(BriosaStartOptions).parameters["startup_timeout"]
     assert parameter.default == 120.0
     assert repr(parameter.default) == "120.0"
+    assert type(parameter.default) is float
+    defaults = BriosaStartOptions.__init__.__defaults__
+    assert defaults is not None
+    assert defaults[5] == 120.0
+    assert type(defaults[5]) is float
+    assert BriosaStartOptions.__init__.__kwdefaults__ is None
     assert type(asdict(BriosaStartOptions())["startup_timeout"]) is float
+    # No private base class, as in 0.5.0.
+    assert BriosaStartOptions.__mro__ == (BriosaStartOptions, object)
 
 
 def test_default_startup_budget_covers_server_worst_case_with_margin() -> None:
