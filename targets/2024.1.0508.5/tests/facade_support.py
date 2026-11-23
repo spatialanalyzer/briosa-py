@@ -129,6 +129,11 @@ class RecordingTransport:
     ]:
         return self.server_info(), await self.list_capabilities(timeout=timeout)
 
+    async def get_server_info(
+        self, timeout: float | None = None
+    ) -> discovery_pb2.GetServerInfoResponse:
+        return self.server_info()
+
     async def list_capabilities(
         self, *, include_denied: bool = False, timeout: float | None = None
     ) -> discovery_pb2.ListCapabilitiesResponse:

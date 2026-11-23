@@ -23,6 +23,10 @@ class VirtualClockLoop(asyncio.SelectorEventLoop):
         self.now = now
         # A loop whose timers have a limited range, as Qt's do under qasync.
         self.timer_limit = timer_limit
+        # Runs before each timer registration; it may raise, as a loop that
+        # cannot arm the timer does, or move the clock.
+        self.on_call_at: Callable[[float], None] | None = None
+        self.registrations = 0
 
     def time(self) -> float:
         return self.now
@@ -30,6 +34,9 @@ class VirtualClockLoop(asyncio.SelectorEventLoop):
     def call_at(  # type: ignore[override]
         self, when: float, callback: Callable[..., object], *args: Any, **kwargs: Any
     ) -> asyncio.TimerHandle:
+        self.registrations += 1
+        if self.on_call_at is not None:
+            self.on_call_at(when)
         if self.timer_limit is not None and when - self.now > self.timer_limit:
             raise OverflowError("timer delay out of range")
         return super().call_at(when, callback, *args, **kwargs)

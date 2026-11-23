@@ -78,6 +78,20 @@ _STARTUP_BUDGET_MARGIN_SECONDS = 20.0
 _TIMER_REJECTIONS = (OverflowError, ValueError, OSError)
 
 
+def _startup_timeout_error(
+    diagnostic_code: str = "startup-timeout",
+) -> BriosaStartupError:
+    """The startup-budget expiry this Python version raises.
+
+    Pickles of the Python 3.10 class load through this function, so they load
+    on every version: as that class on Python 3.10, and as plain
+    ``BriosaStartupError`` from Python 3.11.
+    """
+    if sys.version_info < (3, 11):
+        return _StartupBudgetTimeout(diagnostic_code)
+    return BriosaStartupError(diagnostic_code)
+
+
 if sys.version_info < (3, 11):
 
     class _StartupBudgetTimeout(BriosaStartupError, asyncio.TimeoutError):
@@ -88,19 +102,12 @@ if sys.version_info < (3, 11):
         on Python 3.10.
         """
 
+        def __reduce__(self) -> tuple[Any, ...]:
+            return (_startup_timeout_error, (self.diagnostic_code,), self.__dict__)
+
 
 class _StartupBudgetExpired(Exception):
     """A budget check found the startup budget spent before its timer ran."""
-
-
-def _budget_expired_error() -> BriosaStartupError:
-    if sys.version_info < (3, 11):
-        return _StartupBudgetTimeout("startup-timeout")
-    return BriosaStartupError("startup-timeout")
-
-
-def _noop() -> None:
-    return None
 
 
 def _published_startup_allowance(
@@ -135,6 +142,23 @@ def _published_startup_allowance(
     return sum(part.total_seconds() for part in parts if part is not None)
 
 
+def _resolved_launch_options(
+    options: SpatialAnalyzerLaunchOptions,
+) -> SpatialAnalyzerLaunchOptions:
+    """Read every launch option once, before a guarded startup's last check.
+
+    The exact type holds plain values. A subclass's attributes are read here, so
+    nothing they run can act after that check.
+    """
+    if type(options) is SpatialAnalyzerLaunchOptions:
+        return options
+    return SpatialAnalyzerLaunchOptions(
+        job_file_path=options.job_file_path,
+        quick_start_instrument_name=options.quick_start_instrument_name,
+        start_minimized=options.start_minimized,
+    )
+
+
 class _Deadline(Protocol):
     @property
     def when(self) -> float: ...
@@ -144,43 +168,60 @@ class _Deadline(Protocol):
 
     def replace(self, when: float) -> bool: ...
 
-    def expire_now(self) -> None: ...
+    def cancel(self) -> None: ...
 
 
 class _NativeDeadline:
-    """The deadline of an ``asyncio.timeout`` (Python 3.12 and later)."""
+    """The deadline of an ``asyncio.timeout`` (Python 3.12 and later).
 
-    def __init__(self, loop: asyncio.AbstractEventLoop, timeout: Any) -> None:
+    The timeout's own timer is the bootstrap deadline. An adopted deadline runs
+    on a timer of this object's, registered while the bootstrap timer is still
+    armed; when it runs, it expires the timeout as the timeout's own timer would.
+    """
+
+    def __init__(
+        self, loop: asyncio.AbstractEventLoop, timeout: Any, when: float
+    ) -> None:
         self._loop = loop
         self._timeout = timeout
+        self._when = when
+        self._handle: asyncio.TimerHandle | None = None
 
     @property
     def when(self) -> float:
-        return cast(float, self._timeout.when())
+        return self._when
 
     @property
     def expired(self) -> bool:
         return cast(bool, self._timeout.expired())
 
     def replace(self, when: float) -> bool:
-        current = self.when
+        original = self._when
         try:
-            # Prove that the loop can arm the new deadline while the current
-            # timer is still armed.
-            probe = self._loop.call_at(when, _noop)
+            handle = self._loop.call_at(when, self._expire)
         except _TIMER_REJECTIONS:
             return False
-        try:
-            self._timeout.reschedule(when)
-        except _TIMER_REJECTIONS:
-            self._timeout.reschedule(current)
+        if self._loop.time() >= original:
+            # The budget ran out while the timer was registered: never revive it.
+            handle.cancel()
             return False
-        finally:
-            probe.cancel()
+        # Only now that the new timer is armed does the bootstrap timer go;
+        # reschedule(None) registers nothing.
+        self._timeout.reschedule(None)
+        self._handle = handle
+        self._when = when
         return True
 
-    def expire_now(self) -> None:
+    def _expire(self) -> None:
+        self._handle = None
+        # A deadline already due runs the timeout's expiry on the next turn,
+        # without registering a timer.
         self._timeout.reschedule(self._loop.time())
+
+    def cancel(self) -> None:
+        if self._handle is not None:
+            self._handle.cancel()
+            self._handle = None
 
 
 class _LoopDeadline:
@@ -212,18 +253,19 @@ class _LoopDeadline:
             self._on_expire()
 
     def replace(self, when: float) -> bool:
+        original = self._when
         try:
             handle = self._loop.call_at(when, self._expire)
         except _TIMER_REJECTIONS:
+            return False
+        if self._loop.time() >= original:
+            # The budget ran out while the timer was registered: never revive it.
+            handle.cancel()
             return False
         self._handle.cancel()
         self._handle = handle
         self._when = when
         return True
-
-    def expire_now(self) -> None:
-        self._handle.cancel()
-        self._expire()
 
     def cancel(self) -> None:
         self._handle.cancel()
@@ -233,10 +275,13 @@ class _StartupBudget:
     """Apply the shared startup-budget rule to one ``start()``'s deadline.
 
     The budget runs on the loop's monotonic clock from one start instant. With a
-    server that publishes lifecycle bounds, every later step first checks the
-    budget, so a startup whose budget ran out never submits another phase, even
-    if its timer has not run yet. With a server that publishes none, such as
-    Server 0.10.0, the startup proceeds exactly as client 0.5.0's did.
+    server that publishes lifecycle bounds, the startup is guarded: before it
+    takes ownership of the session, before each request it hands to the
+    transport and before it reports success, it reads the clock and the startup
+    task's cancellation, so a startup whose budget ran out or that was cancelled
+    stops there, even if its timer or cancellation has not been delivered yet.
+    With a server that publishes none, such as Server 0.10.0, the startup
+    proceeds exactly as client 0.5.0's did.
     """
 
     def __init__(
@@ -244,20 +289,21 @@ class _StartupBudget:
         loop: asyncio.AbstractEventLoop,
         started_at: float,
         deadline: _Deadline,
+        cancel_requested: Callable[[], bool],
     ) -> None:
         self._loop = loop
         self.started_at = started_at
         self._deadline = deadline
-        self._guarded = False
+        self._cancel_requested = cancel_requested
+        self.guarded = False
         self._adopted = False
 
     def guard(self) -> None:
-        self._guarded = True
+        self.guarded = True
 
-    @staticmethod
-    def _cancel_pending() -> bool:
-        cancelling = getattr(asyncio.current_task(), "cancelling", None)
-        return cancelling is not None and cancelling() > 0
+    def spent(self) -> bool:
+        """Whether the deadline has passed, read from the clock."""
+        return self._deadline.expired or self._loop.time() >= self._deadline.when
 
     def adopt(self, allowance: float | None) -> None:
         """Lengthen the omitted budget once from the server's published allowance.
@@ -269,12 +315,10 @@ class _StartupBudget:
         if self._adopted:
             return
         self._adopted = True
-        if allowance is None or self._deadline.expired or self._cancel_pending():
+        if allowance is None or self._cancel_requested() or self.spent():
             return
         now = self._loop.time()
         current = self._deadline.when
-        if now >= current:
-            return
         deadline = self.started_at + max(
             _STARTUP_BUDGET_FLOOR_SECONDS, allowance + _STARTUP_BUDGET_MARGIN_SECONDS
         )
@@ -283,21 +327,17 @@ class _StartupBudget:
         self._deadline.replace(deadline)
 
     async def check(self) -> None:
-        """Stop a guarded startup whose budget ran out or that was cancelled."""
-        if not self._guarded:
+        """Stop a guarded startup that was cancelled or whose budget is spent."""
+        if not self.guarded:
             return
-        if self._deadline.expired:
+        if self._cancel_requested():
+            # A cancellation of this task arrives at this yield. On Python 3.10
+            # and 3.11 the cancelled task is the one waiting on this startup, so
+            # stop here whether or not it has cancelled this one yet.
             await asyncio.sleep(0)
-        elif self._loop.time() >= self._deadline.when:
-            self._deadline.expire_now()
-            await asyncio.sleep(0)
-        elif self._cancel_pending():
-            await asyncio.sleep(0)
-            return
-        else:
-            return
-        # The expiry is delivered at the sleep above; never continue past it.
-        raise _StartupBudgetExpired
+            raise asyncio.CancelledError
+        if self.spent():
+            raise _StartupBudgetExpired
 
 
 async def _cancel_and_wait(
@@ -725,21 +765,27 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         started_at = loop.time()
         try:
             if sys.version_info >= (3, 12):
-                async with asyncio.timeout_at(
-                    started_at + options.startup_timeout
-                ) as timeout:
-                    await self._start_inner(
-                        options,
-                        _StartupBudget(
-                            loop, started_at, _NativeDeadline(loop, timeout)
-                        ),
-                    )
+                task = asyncio.current_task()
+                assert task is not None
+                when = started_at + options.startup_timeout
+                async with asyncio.timeout_at(when) as timeout:
+                    deadline = _NativeDeadline(loop, timeout, when)
+                    try:
+                        await self._start_inner(
+                            options,
+                            _StartupBudget(
+                                loop,
+                                started_at,
+                                deadline,
+                                lambda: task.cancelling() > 0,
+                            ),
+                        )
+                    finally:
+                        deadline.cancel()
             else:
                 await self._run_start_with_waiter(options, loop, started_at)
         except TimeoutError as error:
             raise BriosaStartupError("startup-timeout") from error
-        except _StartupBudgetExpired as error:
-            raise _budget_expired_error() from error
 
     async def _run_start_with_waiter(
         self,
@@ -751,7 +797,9 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
 
         The startup runs in its own task while this one waits on a future that
         the deadline or the startup's completion resolves. Cancelling this task
-        therefore stays a cancellation, distinct from the budget's expiry.
+        therefore stays a cancellation, distinct from the budget's expiry. It
+        cancels that future at once, which is how a guarded startup sees the
+        cancellation before this task has run to pass it on.
         """
         waiter: asyncio.Future[None] = loop.create_future()
 
@@ -761,7 +809,10 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
 
         deadline = _LoopDeadline(loop, started_at + options.startup_timeout, release)
         startup = loop.create_task(
-            self._start_inner(options, _StartupBudget(loop, started_at, deadline))
+            self._start_inner(
+                options,
+                _StartupBudget(loop, started_at, deadline, waiter.cancelled),
+            )
         )
         startup.add_done_callback(release)
         try:
@@ -781,7 +832,7 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                 return startup.result()
             except asyncio.CancelledError as cancelled:
                 if sys.version_info < (3, 11):
-                    raise _StartupBudgetTimeout("startup-timeout") from cancelled
+                    raise _startup_timeout_error() from cancelled
                 raise TimeoutError from cancelled
         finally:
             deadline.cancel()
@@ -793,69 +844,117 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         transport: ClientTransport | None = None
         session: _Session | None = None
         try:
-            server = await self._server_launcher.launch(
-                options.logging, options.server_selection
-            )
-            transport = self._transport_factory(server.target)
-            snapshot = await self._wait_for_server(server, transport)
-            # A server that publishes lifecycle bounds (Server 0.10.1 and later)
-            # has its budget checked before each later step. The first validated
-            # snapshot is the only adoption point, and an explicit
-            # startup_timeout always wins.
-            if snapshot.lifecycle_bounds is not None:
-                budget.guard()
-            if _startup_timeout_omitted(options):
-                budget.adopt(
-                    _published_startup_allowance(snapshot.lifecycle_bounds, options)
+            try:
+                server = await self._server_launcher.launch(
+                    options.logging, options.server_selection
                 )
-            await budget.check()
-            session = _Session(server, transport, snapshot)
-            lock = self._required_lock()
-            async with lock:
-                self._ensure_open()
-                self._session = session
-            server = None
-            transport = None
-
-            if options.start_spatial_analyzer_sdk:
+                transport = self._transport_factory(server.target)
+                snapshot = await self._wait_for_server(server, transport)
+                # A server that publishes lifecycle bounds (Server 0.10.1 and
+                # later) guards the rest of the startup. The first validated
+                # snapshot is the only adoption point, and an explicit
+                # startup_timeout always wins.
+                if snapshot.lifecycle_bounds is not None:
+                    budget.guard()
+                if _startup_timeout_omitted(options):
+                    budget.adopt(
+                        _published_startup_allowance(snapshot.lifecycle_bounds, options)
+                    )
                 await budget.check()
-                session.update_sdk_state(
-                    map_sdk_state(await session.transport.start_sdk())
-                )
-            if options.launch_spatial_analyzer:
+                candidate = _Session(server, transport, snapshot)
+                if not budget.guarded:
+                    # As client 0.5.0: the session owns the server from here.
+                    session = candidate
+                lock = self._required_lock()
+                async with lock:
+                    self._ensure_open()
+                    # The last check before the client takes ownership: until
+                    # then, a failure closes the transport and the server.
+                    await budget.check()
+                    self._session = candidate
+                    session = candidate
+                server = None
+                transport = None
+                await self._start_phases(options, session, budget)
                 await budget.check()
-                session.application_state = map_application_state(
-                    await session.transport.launch_application(options.launch_options)
-                )
-            if options.connect_to_spatial_analyzer:
-                sdk = await self._ensure_sdk_state(session, None)
-                generation = _require_generation(
-                    sdk.sdk_generation, "sdk-generation-unavailable"
-                )
-                await budget.check()
-                connected_state = map_sdk_state(
-                    await session.transport.connect_sdk(generation, reconnect=False)
-                )
-                session.update_sdk_state(connected_state)
-                session.update_snapshot(
-                    map_snapshot(*(await session.transport.get_server_snapshot()))
-                )
-                if (
-                    not session.snapshot.ready_for_mp
-                    or not connected_state.ready_for_mp
-                ):
-                    raise BriosaLifecycleError("startup-readiness-not-established")
-            session.publish_startup()
-        except grpc.RpcError as error:
-            raise map_rpc_error(
-                error, session.application_state if session is not None else None
-            ) from error
+                session.publish_startup()
+            except grpc.RpcError as error:
+                raise map_rpc_error(
+                    error, session.application_state if session is not None else None
+                ) from error
+        except _StartupBudgetExpired:
+            self._close_admission(session, budget)
+            raise _startup_timeout_error() from None
+        except Exception as failure:
+            self._close_admission(session, budget)
+            if budget.guarded and budget.spent():
+                # A phase that fails once the budget has run out, even before
+                # its timer runs, ends the startup as a timeout.
+                raise _startup_timeout_error() from failure
+            raise
+        except BaseException:
+            self._close_admission(session, budget)
+            raise
         finally:
             if session is None:
                 if transport is not None:
                     await transport.close()
                 if server is not None:
                     await server.close()
+
+    async def _start_phases(
+        self, options: BriosaStartOptions, session: _Session, budget: _StartupBudget
+    ) -> None:
+        """Run the selected startup phases; a guarded startup checks each handoff.
+
+        A guarded startup reads every argument of a request before its last
+        check, so nothing it calls can spend the budget or cancel the startup
+        after that check. Unguarded, the phases run as client 0.5.0's did.
+        """
+        if options.start_spatial_analyzer_sdk:
+            await budget.check()
+            session.update_sdk_state(map_sdk_state(await session.transport.start_sdk()))
+        if options.launch_spatial_analyzer:
+            launch_options = options.launch_options
+            if budget.guarded:
+                launch_options = _resolved_launch_options(launch_options)
+                await budget.check()
+            session.application_state = map_application_state(
+                await session.transport.launch_application(launch_options)
+            )
+        if options.connect_to_spatial_analyzer:
+            if session.sdk_state is None:
+                await budget.check()
+            sdk = await self._ensure_sdk_state(session, None)
+            generation = _require_generation(
+                sdk.sdk_generation, "sdk-generation-unavailable"
+            )
+            await budget.check()
+            connected_state = map_sdk_state(
+                await session.transport.connect_sdk(generation, reconnect=False)
+            )
+            session.update_sdk_state(connected_state)
+            if budget.guarded:
+                await budget.check()
+                server = await session.transport.get_server_info()
+                await budget.check()
+                refreshed = map_snapshot(
+                    server, await session.transport.list_capabilities()
+                )
+            else:
+                refreshed = map_snapshot(
+                    *(await session.transport.get_server_snapshot())
+                )
+            session.update_snapshot(refreshed)
+            if not session.snapshot.ready_for_mp or not connected_state.ready_for_mp:
+                raise BriosaLifecycleError("startup-readiness-not-established")
+
+    @staticmethod
+    def _close_admission(session: _Session | None, budget: _StartupBudget) -> None:
+        # A guarded startup that fails after taking ownership admits no MP
+        # command until a later lifecycle call refreshes the session's state.
+        if session is not None and budget.guarded:
+            session.command_admission_open = False
 
     async def _wait_for_server(
         self, server: OwnedServer, transport: ClientTransport

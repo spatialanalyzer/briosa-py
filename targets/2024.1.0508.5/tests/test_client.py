@@ -183,6 +183,12 @@ class FakeTransport:
         self.calls.append("snapshot")
         return matching_snapshot(self.connected and self.publish_ready_snapshot)
 
+    async def get_server_info(
+        self, timeout: float | None = None
+    ) -> discovery_pb2.GetServerInfoResponse:
+        self.calls.append("server-info")
+        return matching_snapshot(self.connected and self.publish_ready_snapshot)[0]
+
     async def list_capabilities(
         self, *, include_denied: bool = False, timeout: float | None = None
     ) -> discovery_pb2.ListCapabilitiesResponse:

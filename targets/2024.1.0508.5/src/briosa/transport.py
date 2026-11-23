@@ -91,6 +91,10 @@ class ClientTransport(Protocol):
         discovery_pb2.ListCapabilitiesResponse,
     ]: ...
 
+    async def get_server_info(
+        self, timeout: float | None = None
+    ) -> discovery_pb2.GetServerInfoResponse: ...
+
     async def list_capabilities(
         self, *, include_denied: bool = False, timeout: float | None = None
     ) -> discovery_pb2.ListCapabilitiesResponse: ...
@@ -163,11 +167,17 @@ class GrpcClientTransport:
         discovery_pb2.GetServerInfoResponse,
         discovery_pb2.ListCapabilitiesResponse,
     ]:
+        server = await self.get_server_info(timeout)
+        capabilities = await self.list_capabilities(timeout=timeout)
+        return server, capabilities
+
+    async def get_server_info(
+        self, timeout: float | None = None
+    ) -> discovery_pb2.GetServerInfoResponse:
         server = await self._discovery.GetServerInfo(
             discovery_pb2.GetServerInfoRequest(), timeout=timeout
         )
-        capabilities = await self.list_capabilities(timeout=timeout)
-        return cast(discovery_pb2.GetServerInfoResponse, server), capabilities
+        return cast(discovery_pb2.GetServerInfoResponse, server)
 
     async def list_capabilities(
         self, *, include_denied: bool = False, timeout: float | None = None

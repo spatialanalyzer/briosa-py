@@ -16,14 +16,16 @@ from __future__ import annotations
 
 import asyncio
 import copy
+import dataclasses
 import inspect
 import pickle
 import sys
 import time
 from collections.abc import Callable
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from typing import Any, cast
 
+import grpc
 import pytest
 from google.protobuf.message import Message
 from virtual_clock import VirtualClockLoop, run_virtual
@@ -41,7 +43,11 @@ from briosa import (
     discovery_pb2,
     lifecycle_pb2,
 )
-from briosa.client import OwnedServer, _published_startup_allowance
+from briosa.client import (
+    OwnedServer,
+    _published_startup_allowance,
+    _startup_timeout_error,
+)
 from briosa.models import _startup_timeout_omitted
 from briosa.protocol_identity import (
     BRIOSA_VERSION,
@@ -304,6 +310,12 @@ class RecordingTransport:
         await self._record("snapshot", timeout)
         return snapshot(self._connected)
 
+    async def get_server_info(
+        self, timeout: float | None = None
+    ) -> discovery_pb2.GetServerInfoResponse:
+        await self._record("server-info", timeout)
+        return snapshot(self._connected)[0]
+
     async def list_capabilities(
         self, *, include_denied: bool = False, timeout: float | None = None
     ) -> discovery_pb2.ListCapabilitiesResponse:
@@ -536,6 +548,17 @@ class ClockedTransport(RecordingTransport):
             await asyncio.Event().wait()
         published = self._published if self._snapshots == 1 else self._later
         return snapshot(self._connected, published, self._revision)
+
+    async def get_server_info(
+        self, timeout: float | None = None
+    ) -> discovery_pb2.GetServerInfoResponse:
+        # A guarded startup's post-Connect discovery, which it checks before
+        # each of its two calls.
+        self._snapshots += 1
+        await self._record("server-info", timeout)
+        if self._snapshots == self._hang_snapshot:
+            await asyncio.Event().wait()
+        return snapshot(self._connected, self._later, self._revision)[0]
 
     async def close(self) -> None:
         self.closed = True
@@ -879,7 +902,7 @@ def test_adoption_happens_once_and_not_at_the_post_connect_refresh() -> None:
         hang_snapshot=2,
     )
     assert elapsed == 320.0
-    assert calls == ["snapshot", "start-sdk", "launch-sa", "connect-sdk", "snapshot"]
+    assert calls == ["snapshot", "start-sdk", "launch-sa", "connect-sdk", "server-info"]
 
 
 def test_a_completed_startup_leaves_no_timer_armed() -> None:
@@ -1072,3 +1095,584 @@ def test_real_loop_blocked_discovery_submits_no_phase_after_expiry() -> None:
     assert asyncio.run(body(bounds(startup_with_launch=300_000))) == ["snapshot"]
     # Server 0.10.0: as client 0.5.0, the next phase is sent before the timer runs.
     assert asyncio.run(body(None))[:2] == ["snapshot", "start-sdk"]
+
+
+# --- Every handoff of a guarded startup checks the budget ----------------------
+#
+# A server that publishes lifecycle bounds guards the startup: the client reads
+# the clock and the startup task's cancellation before it takes ownership of the
+# session, before each request it hands to the transport and before it reports
+# success. Against Server 0.10.0 the same sequences run as client 0.5.0's did.
+
+EMPTY = bounds()
+
+
+class FakeRpcError(grpc.RpcError):
+    def __init__(self, status_code: grpc.StatusCode) -> None:
+        super().__init__()
+        self._status_code = status_code
+
+    def code(self) -> grpc.StatusCode:
+        return self._status_code
+
+    def trailing_metadata(self) -> tuple[()]:
+        return ()
+
+
+class GuardedTransport(ClockedTransport):
+    """A clocked fake that can reply malformed, stay silent, or count MP calls."""
+
+    def __init__(
+        self,
+        loop: VirtualClockLoop,
+        *,
+        silent: frozenset[str] = frozenset(),
+        malformed: frozenset[str] = frozenset(),
+        **options: Any,
+    ) -> None:
+        super().__init__(loop, **options)
+        # These RPCs return right after their action, without yielding.
+        self._silent = silent
+        self._malformed = malformed
+        self.invocations = 0
+
+    async def _record(self, name: str, timeout: float | None) -> None:
+        if name not in self._silent:
+            await super()._record(name, timeout)
+            return
+        self.calls.append((name, timeout))
+        action = self._on.pop(name, None)
+        if action is not None:
+            action()
+
+    async def launch_application(
+        self,
+        options: SpatialAnalyzerLaunchOptions,
+        timeout: float | None = None,
+    ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
+        state = await super().launch_application(options, timeout)
+        if "launch-sa" in self._malformed:
+            state.application_generation = 0
+        return state
+
+    async def invoke_operation(
+        self,
+        path: str,
+        request: Message,
+        response_type: type[Message],
+        timeout: float | None = None,
+    ) -> Message:
+        self.invocations += 1
+        raise NotImplementedError
+
+
+def at(loop: VirtualClockLoop, seconds: float) -> Callable[[], None]:
+    return lambda: setattr(loop, "now", T0 + seconds)
+
+
+GUARDED_ORDER = [
+    "snapshot",
+    "start-sdk",
+    "launch-sa",
+    "connect-sdk",
+    "server-info",
+    "list-capabilities",
+]
+
+
+@pytest.mark.parametrize("returns_late", GUARDED_ORDER[1:])
+def test_no_request_follows_one_that_returns_after_the_deadline(
+    returns_late: str,
+) -> None:
+    async def body(loop: VirtualClockLoop) -> tuple[list[str], bool, int]:
+        fake = GuardedTransport(
+            loop,
+            published=EMPTY,
+            silent=frozenset({returns_late}),
+            on={returns_late: at(loop, 121.0)},
+        )
+        client = create_client(fake)
+        try:
+            await expect_startup_timeout(client)
+            session = client._session
+            completed = session is not None and session.startup_completed
+            # An MP command right after the rejected start never reaches the
+            # transport.
+            with pytest.raises(briosa.BriosaLifecycleError) as refused:
+                await client.get_active_collection_name()
+            assert refused.value.diagnostic_code == "mp-command-admission-closed"
+            return names(fake), completed, fake.invocations
+        finally:
+            await client.stop()
+
+    calls, completed, invocations = run_virtual(body, now=T0)
+    assert calls == GUARDED_ORDER[: GUARDED_ORDER.index(returns_late) + 1]
+    assert not completed
+    assert invocations == 0
+
+
+def test_server_0_10_0_continues_after_a_late_reply_as_0_5_0() -> None:
+    async def body(loop: VirtualClockLoop) -> list[str]:
+        fake = GuardedTransport(
+            loop,
+            published=None,
+            revision=0,
+            silent=frozenset({"connect-sdk", "snapshot"}),
+            on={"connect-sdk": at(loop, 121.0)},
+        )
+        client = create_client(fake)
+        try:
+            # Client 0.5.0 sends the post-Connect discovery and reports success.
+            await client.start()
+            session = client._session
+            assert session is not None
+            assert session.startup_completed
+            return names(fake)
+        finally:
+            await client.stop()
+
+    calls = run_virtual(body, now=T0)
+    assert calls[:5] == [
+        "snapshot",
+        "start-sdk",
+        "launch-sa",
+        "connect-sdk",
+        "snapshot",
+    ]
+
+
+def test_real_loop_final_request_blocking_past_the_budget_is_a_timeout() -> None:
+    async def body() -> bool:
+        loop = cast(VirtualClockLoop, asyncio.get_running_loop())
+        fake = GuardedTransport(
+            loop,
+            published=EMPTY,
+            silent=frozenset({"list-capabilities"}),
+            on={"list-capabilities": lambda: time.sleep(0.05)},
+        )
+        client = create_client(fake)
+        try:
+            await expect_startup_timeout(
+                client, BriosaStartOptions(startup_timeout=0.01)
+            )
+            session = client._session
+            return session is not None and session.startup_completed
+        finally:
+            await client.stop()
+
+    assert not asyncio.run(body())
+
+
+@pytest.mark.parametrize("published", [EMPTY, None], ids=["guarded", "0.10.0"])
+def test_a_lock_released_after_the_deadline_never_takes_ownership(
+    published: discovery_pb2.LifecycleBounds | None,
+) -> None:
+    options = BriosaStartOptions(
+        start_spatial_analyzer_sdk=False,
+        launch_spatial_analyzer=False,
+        connect_to_spatial_analyzer=False,
+        startup_timeout=10.0,
+    )
+
+    async def body(loop: VirtualClockLoop) -> tuple[str, bool, bool]:
+        holder: list[BriosaClient] = []
+        holders: list[asyncio.Future[None]] = []
+
+        async def hold_lock_past_the_deadline() -> None:
+            lock = holder[0]._required_lock()
+            await lock.acquire()
+            for _ in range(3):
+                await asyncio.sleep(0)
+            # Released after the deadline, before its timer runs.
+            loop.now = T0 + 11.0
+            lock.release()
+
+        def hold() -> None:
+            holders.append(asyncio.ensure_future(hold_lock_past_the_deadline()))
+
+        fake = GuardedTransport(
+            loop,
+            published=published,
+            revision=0 if published is None else 1,
+            on={"snapshot": hold},
+        )
+        client = create_client(fake)
+        holder.append(client)
+        try:
+            try:
+                await client.start(options)
+                outcome = "started"
+            except BriosaStartupError as error:
+                outcome = error.diagnostic_code
+            return outcome, client._session is not None, fake.closed
+        finally:
+            await client.stop()
+
+    outcome, owned, closed = run_virtual(body, now=T0)
+    if published is None:
+        # Client 0.5.0 published the session and reported success.
+        assert (outcome, owned) == ("started", True)
+    else:
+        # The transport and the owned server close; the client never owned them.
+        assert (outcome, owned, closed) == ("startup-timeout", False, True)
+
+
+@pytest.mark.parametrize("seconds", [181.0, 179.0], ids=["after", "before"])
+@pytest.mark.parametrize("failure", ["unavailable", "malformed"])
+def test_a_phase_failing_after_the_deadline_is_a_startup_timeout(
+    failure: str, seconds: float
+) -> None:
+    async def body(loop: VirtualClockLoop) -> BaseException:
+        def fail() -> None:
+            loop.now = T0 + seconds
+            if failure == "unavailable":
+                raise FakeRpcError(grpc.StatusCode.UNAVAILABLE)
+
+        malformed = frozenset({"launch-sa"} if failure == "malformed" else set())
+        fake = GuardedTransport(
+            loop,
+            published=bounds(startup_with_launch=160_000),
+            silent=frozenset({"launch-sa"}),
+            malformed=malformed,
+            on={"launch-sa": fail},
+        )
+        client = create_client(fake)
+        try:
+            with pytest.raises(briosa.BriosaError) as raised:
+                await client.start()
+            assert names(fake) == ["snapshot", "start-sdk", "launch-sa"]
+            return raised.value
+        finally:
+            await client.stop()
+
+    error = run_virtual(body, now=T0)
+    own: type[BaseException] = (
+        briosa.BriosaTransportError
+        if failure == "unavailable"
+        else briosa.BriosaProtocolError
+    )
+    cause = error
+    if seconds < 180.0:
+        # Before the adopted 180 s deadline, the failure keeps its own error.
+        assert type(error) is own
+    else:
+        assert isinstance(error, BriosaStartupError)
+        assert error.diagnostic_code == "startup-timeout"
+        assert error.__cause__ is not None
+        cause = error.__cause__
+        assert type(cause) is own
+    if failure == "unavailable":
+        assert isinstance(cause.__cause__, FakeRpcError)
+
+
+def cancel_start(client: BriosaClient) -> None:
+    task = client._start_task
+    assert task is not None
+    task.cancel()
+
+
+@pytest.mark.parametrize("published", [EMPTY, None], ids=["guarded", "0.10.0"])
+def test_a_cancellation_queued_before_discovery_resumes(
+    published: discovery_pb2.LifecycleBounds | None,
+) -> None:
+    async def body(loop: VirtualClockLoop) -> tuple[list[str], bool]:
+        holder: list[BriosaClient] = []
+
+        def queue() -> None:
+            # Queued now, so it runs once discovery's reply is due.
+            loop.call_soon(cancel_start, holder[0])
+
+        fake = GuardedTransport(
+            loop,
+            published=published,
+            revision=0 if published is None else 1,
+            hang_at="connect-sdk",
+            on={"snapshot": queue},
+        )
+        client = create_client(fake)
+        holder.append(client)
+        try:
+            with pytest.raises(asyncio.CancelledError):
+                await client.start()
+            return names(fake), client._session is not None
+        finally:
+            await client.stop()
+
+    calls, owned = run_virtual(body, now=T0)
+    if published is not None or sys.version_info >= (3, 12):
+        assert (calls, owned) == (["snapshot"], False)
+    else:
+        # Client 0.5.0 on Python 3.10 and 3.11 sent Start SDK first.
+        assert (calls, owned) == (["snapshot", "start-sdk"], True)
+
+
+@pytest.mark.parametrize("effect", ["cancel", "clock"])
+@pytest.mark.parametrize("published", [EMPTY, None], ids=["guarded", "0.10.0"])
+def test_reading_the_launch_options_cannot_act_after_the_last_check(
+    published: discovery_pb2.LifecycleBounds | None, effect: str
+) -> None:
+    async def body(loop: VirtualClockLoop) -> list[str]:
+        holder: list[BriosaClient] = []
+        armed: list[bool] = []
+
+        class Options(BriosaStartOptions):
+            @property
+            def launch_options(self) -> SpatialAnalyzerLaunchOptions:
+                if armed:
+                    armed.clear()
+                    if effect == "cancel":
+                        cancel_start(holder[0])
+                    else:
+                        loop.now = T0 + 121.0
+                return cast(SpatialAnalyzerLaunchOptions, self.__dict__["launch"])
+
+            @launch_options.setter
+            def launch_options(self, value: SpatialAnalyzerLaunchOptions) -> None:
+                self.__dict__["launch"] = value
+
+        options = Options()
+        armed.append(True)
+        fake = GuardedTransport(
+            loop,
+            published=published,
+            revision=0 if published is None else 1,
+            hang_at="connect-sdk",
+        )
+        client = create_client(fake)
+        holder.append(client)
+        try:
+            with pytest.raises((asyncio.CancelledError, BriosaStartupError)):
+                await client.start(options)
+            return names(fake)
+        finally:
+            await client.stop()
+
+    calls = run_virtual(body, now=T0)
+    if published is None:
+        assert "launch-sa" in calls
+    else:
+        assert calls == ["snapshot", "start-sdk"]
+
+
+LAUNCH_FIELDS = ["job_file_path", "quick_start_instrument_name", "start_minimized"]
+
+
+def test_subclassed_launch_options_are_read_once_before_the_check() -> None:
+    reads: list[str] = []
+
+    @dataclass(frozen=True)
+    class Counted(SpatialAnalyzerLaunchOptions):
+        def __getattribute__(self, name: str) -> Any:
+            if name in LAUNCH_FIELDS:
+                reads.append(name)
+            return super().__getattribute__(name)
+
+    received: list[SpatialAnalyzerLaunchOptions] = []
+
+    class Receiving(GuardedTransport):
+        async def launch_application(
+            self,
+            options: SpatialAnalyzerLaunchOptions,
+            timeout: float | None = None,
+        ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
+            received.append(options)
+            return await super().launch_application(options, timeout)
+
+    async def body(loop: VirtualClockLoop) -> None:
+        client = create_client(Receiving(loop, published=EMPTY))
+        try:
+            launch = Counted(start_minimized=True)
+            reads.clear()
+            await client.start(BriosaStartOptions(launch_options=launch))
+        finally:
+            await client.stop()
+
+    run_virtual(body, now=T0)
+    assert sorted(reads) == sorted(LAUNCH_FIELDS)
+    assert type(received[0]) is SpatialAnalyzerLaunchOptions
+    assert received[0] == SpatialAnalyzerLaunchOptions(start_minimized=True)
+
+
+def test_a_reflected_default_is_an_explicit_timeout() -> None:
+    reflected = inspect.signature(BriosaStartOptions).parameters["startup_timeout"]
+    field_default = next(
+        item.default
+        for item in dataclasses.fields(BriosaStartOptions)
+        if item.name == "startup_timeout"
+    )
+    for value in (reflected.default, field_default):
+        assert type(value) is float
+        assert value == 120.0
+        elapsed, _ = expiry(
+            published=bounds(startup_with_launch=300_000),
+            options=BriosaStartOptions(startup_timeout=value),
+        )
+        assert elapsed == 120.0
+
+
+def fail_registrations(loop: VirtualClockLoop, which: str) -> Callable[[], None]:
+    """From discovery on, make the chosen timer registrations raise."""
+
+    def arm() -> None:
+        count = [0]
+
+        def hook(when: float) -> None:
+            count[0] += 1
+            if which == "every" or str(count[0]) == which:
+                raise OSError("the loop cannot arm this timer")
+
+        loop.on_call_at = hook
+
+    return arm
+
+
+@pytest.mark.parametrize(
+    ("which", "deadline"), [("1", 120.0), ("2", 320.0), ("every", 120.0)]
+)
+def test_a_failed_registration_keeps_the_bootstrap_deadline(
+    which: str, deadline: float
+) -> None:
+    async def body(loop: VirtualClockLoop) -> tuple[float, list[float]]:
+        fake = ClockedTransport(
+            loop,
+            published=bounds(startup_with_launch=300_000),
+            hang_at="connect-sdk",
+            on={"snapshot": fail_registrations(loop, which)},
+        )
+        client = create_client(fake)
+        try:
+            await expect_startup_timeout(client)
+            return loop.time() - T0, loop.armed()
+        finally:
+            loop.on_call_at = None
+            await client.stop()
+
+    elapsed, armed = run_virtual(body, now=T0)
+    assert elapsed == deadline
+    assert armed == []
+
+
+def test_adoption_registers_one_timer_and_then_drops_the_bootstrap() -> None:
+    async def body(loop: VirtualClockLoop) -> tuple[int, list[float]]:
+        registered: list[int] = []
+
+        def count() -> None:
+            registered.append(loop.registrations)
+
+        fake = ClockedTransport(
+            loop,
+            published=bounds(startup_with_launch=300_000),
+            hang_at="connect-sdk",
+            on={"snapshot": count, "start-sdk": count},
+        )
+        client = create_client(fake)
+        caller = asyncio.ensure_future(client.start())
+        while names(fake)[-1:] != ["connect-sdk"]:
+            await asyncio.sleep(0)
+        armed = loop.armed()
+        with pytest.raises(BriosaStartupError):
+            await caller
+        await client.stop()
+        return registered[1] - registered[0], armed
+
+    added, armed = run_virtual(body, now=T0)
+    # One registration, for the adopted deadline; the bootstrap timer is gone.
+    assert added == 1
+    assert armed == [T0 + 320.0]
+
+
+def test_a_clock_that_passes_the_deadline_during_registration_never_revives() -> None:
+    async def body(loop: VirtualClockLoop) -> tuple[float, list[str], bool, bool]:
+        def arm() -> None:
+            loop.on_call_at = lambda when: setattr(loop, "now", T0 + 121.0)
+
+        fake = ClockedTransport(
+            loop,
+            published=bounds(startup_with_launch=300_000),
+            hang_at="connect-sdk",
+            on={"snapshot": arm},
+        )
+        client = create_client(fake)
+        try:
+            await expect_startup_timeout(client)
+            loop.on_call_at = None
+            return loop.time() - T0, names(fake), client._session is None, fake.closed
+        finally:
+            loop.on_call_at = None
+            await client.stop()
+
+    elapsed, calls, unowned, closed = run_virtual(body, now=T0)
+    assert elapsed == 121.0
+    assert calls == ["snapshot"]
+    assert unowned
+    assert closed
+
+
+@pytest.mark.parametrize("end", ["success", "timeout", "stop"])
+def test_no_timer_is_left_armed_after_an_adopted_startup(end: str) -> None:
+    async def body(loop: VirtualClockLoop) -> list[float]:
+        fake = ClockedTransport(
+            loop,
+            published=bounds(startup_with_launch=300_000),
+            hang_at=None if end == "success" else "connect-sdk",
+        )
+        client = create_client(fake)
+        if end == "success":
+            await client.start()
+        elif end == "timeout":
+            await expect_startup_timeout(client)
+        else:
+            caller = asyncio.ensure_future(client.start())
+            while names(fake)[-1:] != ["connect-sdk"]:
+                await asyncio.sleep(0)
+            await client.stop()
+            with pytest.raises(BriosaStartupError):
+                await caller
+        await client.stop()
+        return loop.armed()
+
+    assert run_virtual(body, now=T0) == []
+
+
+class WrittenOnPython310:
+    """Reduces as the Python 3.10 startup-timeout error does."""
+
+    def __reduce__(self) -> tuple[Any, ...]:
+        return (
+            _startup_timeout_error,
+            ("startup-timeout",),
+            {"diagnostic_code": "startup-timeout"},
+        )
+
+
+def test_a_python_3_10_expiry_pickle_loads_on_every_version() -> None:
+    loaded = pickle.loads(pickle.dumps(WrittenOnPython310(), protocol=4))
+    assert isinstance(loaded, BriosaStartupError)
+    assert str(loaded) == "Briosa startup failed (startup-timeout)."
+    assert loaded.args == ("Briosa startup failed (startup-timeout).",)
+    assert loaded.diagnostic_code == "startup-timeout"
+    assert loaded.__cause__ is None
+    if sys.version_info >= (3, 11):
+        assert type(loaded) is BriosaStartupError
+    else:
+        assert isinstance(loaded, asyncio.TimeoutError)
+
+
+@pytest.mark.skipif(sys.version_info >= (3, 11), reason="Python 3.10 only")
+def test_python_3_10_expiry_round_trips_through_pickle_and_copy() -> None:
+    error = startup_expiry_error()
+    assert pickle.dumps(error, protocol=4) == pickle.dumps(
+        WrittenOnPython310(), protocol=4
+    )
+    clones: tuple[BriosaStartupError, ...] = (
+        pickle.loads(pickle.dumps(error)),
+        copy.copy(error),
+        copy.deepcopy(error),
+    )
+    for clone in clones:
+        assert type(clone) is type(error)
+        assert isinstance(cast(object, clone), asyncio.TimeoutError)
+        assert str(clone) == str(error) == "Briosa startup failed (startup-timeout)."
+        assert clone.args == error.args
+        assert clone.diagnostic_code == "startup-timeout"
+        assert clone.__cause__ is None
