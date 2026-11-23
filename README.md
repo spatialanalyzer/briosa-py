@@ -9,11 +9,14 @@ Independent exact-target clients for the [Briosa SpatialAnalyzer bridge](https:/
 | 2024.1.0508.5 | [SA 2024](targets/2024.1.0508.5/README.md) | 0.5.0 |
 | 2026.1.0529.7 | [SA 2026](targets/2026.1.0529.7/README.md) | 0.5.0 |
 
-Choose the package for your exact SA installation. Each product pins its own
-generation artifact and retains Server 0.9.2, the newest major-2 server, as the
-rejection baseline. The 0.5 client line selects side-by-side servers that
-declare behavioral contract major 3 (Server 0.10.0); each product guide lists
-its breaking changes under "Contract major 3". Client package versions are
+Choose the package for your exact SA installation. Client 0.5.x works with
+Server 0.10.x (starting with Server 0.10.0, published with Client 0.5.0 on
+2026-11-21) and does not work with Server 0.9.x and earlier; clients 0.4.x and
+earlier do not work with Server 0.10.x. Patch releases stay compatible with the
+same counterparts, while a minor release may break compatibility. Each product
+pins its own generation artifact and retains Server 0.9.2, the latest 0.9.x
+server, as the rejection baseline. Each product guide lists the 0.5.0 breaking
+changes under "Upgrading to 0.5.0 (Server 0.10.x)". Client package versions are
 independent of the Briosa server version. See [Releasing](RELEASING.md) for
 registry publishing and validation.
 

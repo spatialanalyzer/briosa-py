@@ -243,7 +243,7 @@ class OperationRiskFlag(_StrEnum):
     INTERACTIVE_UI = "interactive_ui"
     EXTERNAL_IO = "external_io"
     UNKNOWN = "unknown"
-    """A value from a later 3.x revision that this client doesn't know."""
+    """A value from a later Server 0.10.x release that this client doesn't know."""
 
 
 class OperationDurationClass(_StrEnum):
@@ -254,7 +254,7 @@ class OperationDurationClass(_StrEnum):
     LONG_RUNNING = "long_running"
     INTERACTIVE = "interactive"
     UNKNOWN = "unknown"
-    """A value from a later 3.x revision that this client doesn't know."""
+    """A value from a later Server 0.10.x release that this client doesn't know."""
 
 
 class OperationValidationStatus(_StrEnum):
@@ -265,7 +265,7 @@ class OperationValidationStatus(_StrEnum):
     FIXTURE_PENDING = "fixture_pending"
     AT_RISK_UNVALIDATED = "at_risk_unvalidated"
     UNKNOWN = "unknown"
-    """A value from a later 3.x revision that this client doesn't know."""
+    """A value from a later Server 0.10.x release that this client doesn't know."""
 
 
 class OperationAdmission(_StrEnum):
@@ -279,7 +279,7 @@ class OperationAdmission(_StrEnum):
     DENIED_EXCLUSIVE = "denied_exclusive"
     DENIED_UNREVIEWED = "denied_unreviewed"
     UNKNOWN = "unknown"
-    """A value from a later 3.x revision; it never admits the operation."""
+    """A value from a later Server 0.10.x release; it never admits the operation."""
 
 
 @dataclass(frozen=True, slots=True)

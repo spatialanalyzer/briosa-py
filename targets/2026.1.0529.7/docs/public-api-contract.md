@@ -5,7 +5,7 @@
 
 ## Authority and scope
 
-The [first-party client behavioral contract](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md)
+The [shared client behavior specification](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md)
 is authoritative for behavior shared by the .NET, Python, and JavaScript/TypeScript
 clients. The Briosa server, its public protocol, and the exact target-qualified
 protocol artifact recorded in [`protocol.lock.json`](../protocol.lock.json) remain
@@ -77,7 +77,8 @@ target selector.
   with `TypeError` before any call. An input stays optional only when the server
   accepts it absent.
 - Every MP method takes the keyword-only call control
-  `on_mp_completion: MpCompletionObserver | None = None` (contract major 3). The
+  `on_mp_completion: MpCompletionObserver | None = None` (added in Client 0.5.0
+  for Server 0.10.x). The
   client checks every MP success, observed or not: its execution details must
   pair `SUCCEEDED` with MP code 2 or `PARTIAL_SUCCESS` with code 4, and anything
   else, including a missing code, is `BriosaProtocolError`
@@ -190,7 +191,7 @@ Each lifecycle method takes a keyword-only `timeout: float | None = None`. The
 client sends a gRPC deadline only when the caller supplies one, and
 `command_timeout` applies only to MP commands.
 
-A contract-major-3 server finishes an SDK start, connection, or recovery it
+Server 0.10.x finishes an SDK start, connection, or recovery it
 has accepted under its own bounds
 ([spatialanalyzer/briosa#315](https://github.com/spatialanalyzer/briosa/pull/315)),
 whether the caller stopped waiting through the startup budget, a `timeout`, or
