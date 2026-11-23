@@ -70,13 +70,15 @@ See the [Briosa documentation](https://spatialanalyzer.github.io/briosa-docs/api
 for the client API overview. The target-specific source and locked protocol define
 this package's exact API.
 
+<a name="contract-major-3-050"></a>
 ## Upgrading to 0.5.0 (Server 0.10.x)
 
 0.5.0 is a breaking release. Client 0.5.x works with Server 0.10.x (starting
 with Server 0.10.0; Client 0.5.0 is built against protocol checkpoint
 `0.10.0-dev.1`) and does not work with Server 0.9.x and earlier; clients 0.4.x
-and earlier do not work with Server 0.10.x. Patch releases stay compatible with
-the same counterparts, while a minor release may break compatibility. The
+and earlier do not work with Server 0.10.x. If you must stay on Server 0.9.x,
+use Client 0.4.0. For server releases after 0.10.0, a patch update keeps the
+same clients working; a minor update may require a client upgrade. The
 [Server 0.10.0 change record](https://github.com/spatialanalyzer/briosa/blob/main/docs/development/contract-major-3.md)
 and the
 [shared client behavior specification](https://github.com/spatialanalyzer/briosa/blob/main/docs/architecture/client-library-behavioral-contract.md)
@@ -157,7 +159,7 @@ are authoritative; this section lists what changes for Python callers.
   `policy_fingerprint`; compare the fingerprint only for equality.
 - Each `BriosaOperationCapability` carries `risk_flags` (an ordered set; empty
   means no reviewed risk), `duration_class`, `validation_status` and
-  `admission`. A value added by a later compatible Server 0.10.x release maps to
+  `admission`. A value added by a later compatible server release maps to
   `UNKNOWN`.
 - The snapshot's operations are the admitted ones only. The client takes
   admission from the server and never pre-validates a call or its options; the
@@ -333,7 +335,7 @@ exact targets in licensed probe sessions:
 - `make_vector_name_ref_list_runtime_select` is the exception: it was removed
   unverified rather than shown not to work, because no operator could complete
   the selection on either target in licensed probe session 3. It can return in
-  a later compatible Server 0.10.x release once a licensed session verifies it.
+  a later compatible server release once a licensed session verifies it.
 
 ### Lifecycle
 
@@ -389,14 +391,16 @@ canonical stores, explicit search roots, and supported local layouts. It validat
 receipts and manifests, filters by exact SA target and server compatibility,
 and selects the highest compatible stable release. No internet access is needed.
 
-Client 0.5.x works with Server 0.10.x (starting with Server 0.10.0; Client
-0.5.0 is built against protocol checkpoint `0.10.0-dev.1`,
-spatialanalyzer/briosa `2960705e`). Server 0.9.x and earlier (including every
-released 0.9, 0.8, 0.7, and 0.6 server) are rejected before launch, and clients
-0.4.x and earlier do not work with Server 0.10.x. Patch releases stay
-compatible with the same counterparts, while a minor release may break
-compatibility. Protocol and source pins remain exact build inputs; startup
-verifies the running server against its selected installation.
+Client 0.5.x works with Server 0.10.x (Client 0.5.0 is built against protocol
+checkpoint `0.10.0-dev.1`, spatialanalyzer/briosa `2960705e`). Before launch,
+it checks that the installation matches the exact SA target and declares
+support for this client. It rejects installations with missing compatibility
+information as well as Server 0.9.x and earlier (including every released 0.9,
+0.8, 0.7, and 0.6 server); clients 0.4.x and earlier do not work with Server
+0.10.x. For server releases after 0.10.0, a patch update keeps the same clients
+working; a minor update may require a client upgrade. Protocol and source pins
+remain exact build inputs; startup verifies the running server against its
+selected installation.
 
 The three robot methods Get Robot Machine Parameter, Start Robot Machine
 Interface, and Stop Robot Machine Interface now take a collection/instrument
