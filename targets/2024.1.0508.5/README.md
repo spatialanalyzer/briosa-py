@@ -67,18 +67,30 @@ the [public API contract](docs/public-api-contract.md#startup-and-lifecycle-time
 shows how to size it. An explicit `startup_timeout`, even `120.0`, is always
 used as given.
 
-Only constructing `BriosaStartOptions` without `startup_timeout` leaves the
-budget automatic. A value you pass is explicit however you obtained it,
-including `BriosaStartOptions().startup_timeout`, which reads as a plain
-`120.0`. `dataclasses.replace()` passes every current value, so its result has
-an explicit budget; build new options to keep the automatic one. Copies and
-pickles keep the choice. Equality and hashing compare values as in 0.5.0, so
-omitted options equal options with an explicit `120.0`.
+Only constructing `BriosaStartOptions` without passing `startup_timeout`
+leaves the budget automatic: the client records which arguments the constructor
+received, never which value it holds. A value you pass is explicit however you
+obtained it, including `BriosaStartOptions().startup_timeout` and the default
+that `inspect.signature()` and `dataclasses.fields()` show. Reading the omitted
+default gives a plain `float`, `120.0`; a value you pass reads back as you
+passed it, so an explicit `120` reads back as the `int` `120`, as in 0.5.0.
+`dataclasses.replace()` and `copy.replace()` pass every current value, so their
+result has an explicit budget; build new options to keep the automatic one.
+Copies and pickles keep the choice, for subclasses too. Equality and hashing
+compare values as in 0.5.0, so omitted options equal, and hash like, options
+with an explicit `120.0`; a cache keyed only by an options object can therefore
+return the result computed for the other.
 
-With a server that publishes lifecycle bounds, the client also checks the
-budget before each later startup step, so a startup whose budget has run out
-sends no further request, even if the event loop was too busy to run its timer.
-Against Server 0.10.0 each step runs as with client 0.5.0.
+With a server that publishes lifecycle bounds, the client also reads the clock
+and the startup's cancellation before it takes ownership of the session, before
+each request it sends during startup, and before it reports success. A startup
+whose budget has run out, or that was cancelled, therefore sends no further
+request and never reports success, even if the event loop was too busy to run
+its timer. A request that fails once the budget has run out raises
+`BriosaStartupError` with `startup-timeout`, with that failure as its
+`__cause__`. After a startup fails that way, the client admits no MP command
+until a lifecycle call refreshes the session's state. Against Server 0.10.0
+each step runs as with client 0.5.0.
 
 Lifecycle methods send no deadline unless you pass `timeout`. If the budget
 expires while the server is starting or connecting the SDK, read the SDK state
@@ -100,10 +112,16 @@ Client 0.5.1 adds the values below, which arrive with Server 0.10.1. Every
 addition is a new type or a new attribute with a default, so an application
 written for 0.5.0 runs and behaves the same. Against Server 0.10.0, which sends
 none of these values, each one is `None` or `UNKNOWN`, and the client behaves as
-0.5.0 does. The attributes added to `OperationFailure`,
-`BriosaOperationCapability` and `BriosaServerSnapshot` stay out of `repr()`,
-equality and hashing, so those values print, compare and hash as in 0.5.0, and
-values pickled by 0.5.0 load with the new attributes at their defaults.
+0.5.0 does, with two exceptions, both on Python 3.10 only: a startup timeout is
+now a `BriosaStartupError` that is also an `asyncio.TimeoutError`, so
+`type(e) is asyncio.TimeoutError` is no longer true; and a `stop()` during a
+hung startup now closes the client's resources on the first call. The
+attributes added to `OperationFailure`, `BriosaOperationCapability` and
+`BriosaServerSnapshot` stay out of `repr()`, equality and hashing, so those
+values print, compare and hash as in 0.5.0. They are keyword-only, so
+positional construction, `__match_args__` and a subclass's own fields keep
+their 0.5.0 positions. Values pickled by 0.5.0, of these classes or of your
+subclasses of them, load with the new attributes at their defaults.
 
 - **Typed denial detail.** A `POLICY_DENIED` failure carries
   `BriosaOperationError.failure.policy_denial`, a `PolicyDenialDetails` that
@@ -164,7 +182,9 @@ values pickled by 0.5.0 load with the new attributes at their defaults.
 - **Startup-budget expiry on Python 3.10.** Startup-budget expiry raises
   `BriosaStartupError` with diagnostic code `startup-timeout` on every supported
   Python version. On Python 3.10, this exception also derives from
-  `asyncio.TimeoutError`, preserving the handler used with client 0.5.0.
+  `asyncio.TimeoutError`, preserving the handler used with client 0.5.0. It
+  pickles and copies with the same message and code; a pickle of it loads on
+  Python 3.11 and later as plain `BriosaStartupError`.
 
 <a name="contract-major-3-050"></a>
 ## Upgrading to 0.5.0 (Server 0.10.x)
