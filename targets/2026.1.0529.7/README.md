@@ -67,6 +67,19 @@ the [public API contract](docs/public-api-contract.md#startup-and-lifecycle-time
 shows how to size it. An explicit `startup_timeout`, even `120.0`, is always
 used as given.
 
+Only constructing `BriosaStartOptions` without `startup_timeout` leaves the
+budget automatic. A value you pass is explicit however you obtained it,
+including `BriosaStartOptions().startup_timeout`, which reads as a plain
+`120.0`. `dataclasses.replace()` passes every current value, so its result has
+an explicit budget; build new options to keep the automatic one. Copies and
+pickles keep the choice. Equality and hashing compare values as in 0.5.0, so
+omitted options equal options with an explicit `120.0`.
+
+With a server that publishes lifecycle bounds, the client also checks the
+budget before each later startup step, so a startup whose budget has run out
+sends no further request, even if the event loop was too busy to run its timer.
+Against Server 0.10.0 each step runs as with client 0.5.0.
+
 Lifecycle methods send no deadline unless you pass `timeout`. If the budget
 expires while the server is starting or connecting the SDK, read the SDK state
 before retrying: the server finishes a step it has accepted, so the abandoned
@@ -87,7 +100,10 @@ Client 0.5.1 adds the values below, which arrive with Server 0.10.1. Every
 addition is a new type or a new attribute with a default, so an application
 written for 0.5.0 runs and behaves the same. Against Server 0.10.0, which sends
 none of these values, each one is `None` or `UNKNOWN`, and the client behaves as
-0.5.0 does.
+0.5.0 does. The attributes added to `OperationFailure`,
+`BriosaOperationCapability` and `BriosaServerSnapshot` stay out of `repr()`,
+equality and hashing, so those values print, compare and hash as in 0.5.0, and
+values pickled by 0.5.0 load with the new attributes at their defaults.
 
 - **Typed denial detail.** A `POLICY_DENIED` failure carries
   `BriosaOperationError.failure.policy_denial`, a `PolicyDenialDetails` that
@@ -96,8 +112,8 @@ none of these values, each one is `None` or `UNKNOWN`, and the client behaves as
   this client doesn't know), the `admission_profile` for a profile denial, and
   the `request_option_field` the server attributed the denial to. That field is
   the protobuf field name of the request option, never a value you sent. The
-  detail never changes the failure's kind, disposition, or guidance. It is
-  `None` against Server 0.10.0.
+  detail is present only on policy denials, never changes the failure's kind,
+  disposition, or guidance, and is `None` against Server 0.10.0.
 
   ```python
   try:
@@ -145,10 +161,10 @@ none of these values, each one is `None` or `UNKNOWN`, and the client behaves as
 - **Server selection.** Client 0.5.1 selects and accepts Server 0.10.0 and
   Server 0.10.1 alike, and still checks the running server against the
   installation it selected.
-- **Fixed on Python 3.10.** When the startup budget ran out, client 0.5.0
-  raised a bare `asyncio.TimeoutError` on Python 3.10, which isn't the built-in
-  `TimeoutError` there. Client 0.5.1 raises `BriosaStartupError` with
-  `startup-timeout` on every supported Python version, as documented.
+- **Startup-budget expiry on Python 3.10.** Startup-budget expiry raises
+  `BriosaStartupError` with diagnostic code `startup-timeout` on every supported
+  Python version. On Python 3.10, this exception also derives from
+  `asyncio.TimeoutError`, preserving the handler used with client 0.5.0.
 
 <a name="contract-major-3-050"></a>
 ## Upgrading to 0.5.0 (Server 0.10.x)

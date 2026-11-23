@@ -1,7 +1,7 @@
 # Releasing PyPI clients
 
 Each release publishes two independent exact-SA products. The current package
-version is `0.5.1`, for behavioral contract major 3. It is independent of the
+version is `0.5.1`, which works with Server 0.10.x. It is independent of the
 Briosa Server version: it is built here from the protocol checkpoint
 `0.10.1-dev.1` of Server 0.10.1 and works with Server 0.10.0.
 This procedure does not establish licensed runtime or enterprise Artifactory

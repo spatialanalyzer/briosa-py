@@ -180,10 +180,19 @@ client adopts the allowance once, at the first verified server snapshot:
 - no budget restarts at the snapshot after Connect, and caller cancellation
   stays independent.
 
-An explicit `startup_timeout`, including `120.0`, is always used as given: the
-default is a distinct `float` equal to `120.0`, so the client can tell it from
-a caller's value. Against Server 0.10.0, which publishes no bounds, an omitted
-budget stays at two minutes, as in client 0.5.0.
+An explicit `startup_timeout`, including `120.0`, is always used as given.
+Only constructing the options without the argument omits it: the field reads as
+a plain `float`, so a value passed back, however obtained, is explicit, and
+`dataclasses.replace()` passes the budget explicitly. Copies and pickles keep
+the omission, and equality and hashing compare values as in 0.5.0. Against
+Server 0.10.0, which publishes no bounds, an omitted budget stays at two minutes
+and every startup step runs as in client 0.5.0. With a server that publishes
+bounds, the client checks the budget before each later step, so a startup whose
+budget ran out sends no further request even when its timer has not yet run.
+Expiry raises `BriosaStartupError` (`startup-timeout`) chained to the same
+`TimeoutError` as with client 0.5.0, because each Python version times the
+startup as its `asyncio.wait_for` did for 0.5.0; on Python 3.10 the error also
+derives from `asyncio.TimeoutError`.
 
 The default follows the server's default lifecycle bounds
 ([spatialanalyzer/briosa#298](https://github.com/spatialanalyzer/briosa/pull/298),
