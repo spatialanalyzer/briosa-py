@@ -3,14 +3,36 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import MISSING, dataclass, field, fields
 from datetime import timedelta
 from enum import Enum
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 from briosa.installation_models import BriosaServerSelection
 from briosa.logging_options import BriosaLoggingOptions
+
+
+def _dataclass_state(self: Any) -> list[Any]:
+    """The pickle state of a frozen slotted dataclass, as ``dataclasses`` writes it."""
+    return [getattr(self, item.name) for item in fields(self)]
+
+
+def _restore_dataclass_state(self: Any, state: list[Any]) -> None:
+    """Restore a pickle state, giving fields it predates their defaults.
+
+    A value pickled by client 0.5.0 lacks the fields 0.5.1 appended, so those
+    take their defaults instead of being left unset.
+    """
+    declared = fields(self)
+    # A 0.5.0 state can be shorter than the 0.5.1 fields.
+    for item, value in zip(declared, state, strict=False):
+        object.__setattr__(self, item.name, value)
+    for item in declared[len(state) :]:
+        if item.default is not MISSING:
+            object.__setattr__(self, item.name, item.default)
+        elif item.default_factory is not MISSING:
+            object.__setattr__(self, item.name, item.default_factory())
 
 
 class _StrEnum(str, Enum):
@@ -524,18 +546,45 @@ class SpatialAnalyzerLaunchOptions:
 
 
 class _DefaultStartupTimeout(float):
-    """The omitted ``startup_timeout``: 120 seconds that may adopt the server's
-    published startup allowance. An explicit number, even 120, never does."""
+    """The marker ``BriosaStartOptions`` stores when ``startup_timeout`` is omitted.
+
+    It is the field's default, so the signature still shows ``120.0``. Reading
+    the field returns a plain ``float``, so a caller never receives the marker,
+    and any value a caller passes is explicit.
+    """
 
     __slots__ = ()
 
 
 _DEFAULT_STARTUP_TIMEOUT: float = _DefaultStartupTimeout(120.0)
+_OMITTED_STARTUP_TIMEOUT_STATE = "startup_timeout-omitted"
+
+
+class _StartupTimeoutField:
+    """Expose ``startup_timeout`` as a plain value over the slot that holds it."""
+
+    def __init__(self, slot: Any) -> None:
+        self._slot = slot
+
+    def __get__(self, instance: Any, owner: Any = None) -> Any:
+        if instance is None:
+            return self
+        value = self._slot.__get__(instance, owner)
+        return 120.0 if value is _DEFAULT_STARTUP_TIMEOUT else value
+
+    def __set__(self, instance: Any, value: Any) -> None:
+        self._slot.__set__(instance, value)
+
+    def __delete__(self, instance: Any) -> None:
+        self._slot.__delete__(instance)
+
+    def omitted(self, instance: Any) -> bool:
+        return self._slot.__get__(instance, type(instance)) is _DEFAULT_STARTUP_TIMEOUT
 
 
 def _startup_timeout_omitted(options: BriosaStartOptions) -> bool:
-    """Whether ``options`` left ``startup_timeout`` at its default."""
-    return type(options.startup_timeout) is _DefaultStartupTimeout
+    """Whether ``options`` was constructed without a ``startup_timeout``."""
+    return _STARTUP_TIMEOUT_FIELD.omitted(options)
 
 
 @dataclass(frozen=True, slots=True)
@@ -555,6 +604,15 @@ class BriosaStartOptions:
     than two minutes. Against Server 0.10.0, which publishes no allowance, it stays
     at two minutes, so raise it when you raise that server's lifecycle bounds. An
     explicit value, including ``120.0``, is always used as given.
+
+    Only constructing the options without ``startup_timeout`` omits it. Any value
+    you pass is explicit, however you obtained it, including
+    ``BriosaStartOptions().startup_timeout``, which reads as a plain ``120.0``.
+    ``dataclasses.replace()`` passes every field's current value, so its result
+    has an explicit budget; build new options without ``startup_timeout`` to
+    keep the automatic one. Copying and pickling keep the omission. Equality and
+    hashing compare values, as in 0.5.0, so omitted options equal options with an
+    explicit ``120.0``.
 
     Expiry during an in-flight RPC is reported the same way; cancelling the
     caller's task only stops that caller from waiting. The server finishes an SDK
@@ -587,6 +645,27 @@ class BriosaStartOptions:
             raise ValueError(
                 "launch_options must be default when launch_spatial_analyzer is false"
             )
+
+
+def _start_options_state(self: BriosaStartOptions) -> list[Any]:
+    # The values client 0.5.0 pickles, then a marker that 0.5.0 ignores.
+    state = _dataclass_state(self)
+    if _startup_timeout_omitted(self):
+        state.append(_OMITTED_STARTUP_TIMEOUT_STATE)
+    return state
+
+
+def _restore_start_options_state(self: BriosaStartOptions, state: list[Any]) -> None:
+    count = len(fields(self))
+    _restore_dataclass_state(self, state[:count])
+    if state[count:] == [_OMITTED_STARTUP_TIMEOUT_STATE]:
+        object.__setattr__(self, "startup_timeout", _DEFAULT_STARTUP_TIMEOUT)
+
+
+_STARTUP_TIMEOUT_FIELD = _StartupTimeoutField(
+    BriosaStartOptions.__dict__["startup_timeout"]
+)
+setattr(BriosaStartOptions, "startup_timeout", _STARTUP_TIMEOUT_FIELD)  # noqa: B010
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -643,8 +722,13 @@ class OperationFailure:
     """A typed operation failure as the server reported it.
 
     ``policy_denial`` is the denial detail of a ``POLICY_DENIED`` failure, sent
-    by Server 0.10.1 and later. It is ``None`` against Server 0.10.0 and never
-    changes the other fields.
+    by Server 0.10.1 and later. It is present only on policy denials: ``None``
+    for every other failure kind and against Server 0.10.0. It never changes the
+    other fields.
+
+    Like 0.5.0, ``repr()``, equality and hashing cover only the fields that
+    0.5.0 had; read the 0.5.1 fields directly. A value pickled by 0.5.0 loads
+    with those fields at their defaults.
     """
 
     operation_id: str
@@ -656,7 +740,9 @@ class OperationFailure:
     replay_safety: ReplaySafety
     mp_execution: MpExecutionDetails | None = None
     worker_generation: int | None = None
-    policy_denial: PolicyDenialDetails | None = None
+    policy_denial: PolicyDenialDetails | None = field(
+        default=None, repr=False, compare=False
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -704,6 +790,10 @@ class BriosaOperationCapability:
     reviewed request options; an empty tuple means none apply. Against Server
     0.10.0 both are ``None``: the server doesn't describe them. Neither changes
     ``admission``.
+
+    Like 0.5.0, ``repr()``, equality and hashing cover only the fields that
+    0.5.0 had; read the 0.5.1 fields directly. A value pickled by 0.5.0 loads
+    with those fields at their defaults.
     """
 
     operation_id: str
@@ -714,8 +804,12 @@ class BriosaOperationCapability:
     duration_class: OperationDurationClass = OperationDurationClass.UNSPECIFIED
     validation_status: OperationValidationStatus = OperationValidationStatus.UNSPECIFIED
     admission: OperationAdmission = OperationAdmission.UNSPECIFIED
-    policy_denial: PolicyDenialDetails | None = None
-    request_options: tuple[OperationRequestOption, ...] | None = None
+    policy_denial: PolicyDenialDetails | None = field(
+        default=None, repr=False, compare=False
+    )
+    request_options: tuple[OperationRequestOption, ...] | None = field(
+        default=None, repr=False, compare=False
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -731,6 +825,10 @@ class BriosaServerSnapshot:
     server is configured to set after each Connect, never SpatialAnalyzer's live
     mode. Server 0.10.1 and later report both; against Server 0.10.0
     ``lifecycle_bounds`` is ``None`` and the mode is ``UNKNOWN``.
+
+    Like 0.5.0, ``repr()``, equality and hashing cover only the fields that
+    0.5.0 had; read the 0.5.1 fields directly. A value pickled by 0.5.0 loads
+    with those fields at their defaults.
     """
 
     briosa_version: str
@@ -741,9 +839,13 @@ class BriosaServerSnapshot:
     operations: tuple[BriosaOperationCapability, ...]
     admission_profile: str
     policy_fingerprint: str
-    lifecycle_bounds: BriosaLifecycleBounds | None = None
-    configured_interaction_mode: ConfiguredSpatialAnalyzerInteractionMode = (
-        ConfiguredSpatialAnalyzerInteractionMode.UNKNOWN
+    lifecycle_bounds: BriosaLifecycleBounds | None = field(
+        default=None, repr=False, compare=False
+    )
+    configured_interaction_mode: ConfiguredSpatialAnalyzerInteractionMode = field(
+        default=ConfiguredSpatialAnalyzerInteractionMode.UNKNOWN,
+        repr=False,
+        compare=False,
     )
 
     def supports(self, fully_qualified_method: str) -> bool:
@@ -782,3 +884,13 @@ class BriosaCapabilityListing:
             for item in self.operations
             if item.admission is not OperationAdmission.ADMITTED
         )
+
+
+# Python 3.10's dataclass(slots=True) replaces a frozen class's own
+# __getstate__ and __setstate__, so they are attached after decoration.
+setattr(BriosaStartOptions, "__getstate__", _start_options_state)  # noqa: B010
+setattr(BriosaStartOptions, "__setstate__", _restore_start_options_state)  # noqa: B010
+for _grown in (OperationFailure, BriosaOperationCapability, BriosaServerSnapshot):
+    setattr(_grown, "__getstate__", _dataclass_state)  # noqa: B010
+    setattr(_grown, "__setstate__", _restore_dataclass_state)  # noqa: B010
+del _grown

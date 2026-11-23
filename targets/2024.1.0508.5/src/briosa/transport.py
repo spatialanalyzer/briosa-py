@@ -719,9 +719,10 @@ def map_rpc_error(
         if not operation.operation_id.strip() or not operation.diagnostic_code.strip():
             return BriosaTransportError(status_code, "typed-error-malformed")
         try:
+            failure_kind = _enum_at(tuple(OperationFailureKind), operation.kind)
             failure = OperationFailure(
                 operation_id=operation.operation_id,
-                kind=_enum_at(tuple(OperationFailureKind), operation.kind),
+                kind=failure_kind,
                 diagnostic_code=operation.diagnostic_code,
                 execution_disposition=_enum_at(
                     tuple(ExecutionDisposition), operation.execution_disposition
@@ -743,9 +744,12 @@ def map_rpc_error(
                     if operation.HasField("worker_generation")
                     else None
                 ),
+                # Only a policy denial names a policy step; detail on any other
+                # kind is dropped, and the kind itself is unchanged either way.
                 policy_denial=(
                     map_policy_denial(operation.policy_denial)
-                    if operation.HasField("policy_denial")
+                    if failure_kind is OperationFailureKind.POLICY_DENIED
+                    and operation.HasField("policy_denial")
                     else None
                 ),
             )

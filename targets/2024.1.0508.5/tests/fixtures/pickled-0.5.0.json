@@ -1,0 +1,74 @@
+{
+ "generated_by": "briosa 0.5.0, Python 3.12.1, pickle protocol 4",
+ "values": {
+  "failure": {
+   "pickle": "gASVeAEAAAAAAACMDWJyaW9zYS5tb2RlbHOUjBBPcGVyYXRpb25GYWlsdXJllJOUKYGUXZQojCVmaWxlX29wZXJhdGlvbnMuZ2V0X3dvcmtpbmdfZGlyZWN0b3J5lGgAjBRPcGVyYXRpb25GYWlsdXJlS2luZJSTlIwNcG9saWN5X2RlbmllZJSFlFKUjA1wb2xpY3ktZGVuaWVklGgAjBRFeGVjdXRpb25EaXNwb3NpdGlvbpSTlIwLbm90X3N0YXJ0ZWSUhZRSlGgAjBBSZWNvdmVyeUd1aWRhbmNllJOUjARub25llIWUUpRoAIwOUmVwbGF5R3VpZGFuY2WUk5SMDWRvX25vdF9yZXBsYXmUhZRSlGgAjAxSZXBsYXlTYWZldHmUk5SMBHNhZmWUhZRSlGgAjBJNcEV4ZWN1dGlvbkRldGFpbHOUk5QpgZRdlChoAIwQTXBFeGVjdXRpb25TdGF0ZZSTlIwJc3VjY2VlZGVklIWUUpRLAillYksDZWIu",
+   "repr": "OperationFailure(operation_id='file_operations.get_working_directory', kind=<OperationFailureKind.POLICY_DENIED: 'policy_denied'>, diagnostic_code='policy-denied', execution_disposition=<ExecutionDisposition.NOT_STARTED: 'not_started'>, recovery_guidance=<RecoveryGuidance.NONE: 'none'>, replay_guidance=<ReplayGuidance.DO_NOT_REPLAY: 'do_not_replay'>, replay_safety=<ReplaySafety.SAFE: 'safe'>, mp_execution=MpExecutionDetails(state=<MpExecutionState.SUCCEEDED: 'succeeded'>, mp_result_code=2, output_retrievals=()), worker_generation=3)",
+   "fields": [
+    "operation_id",
+    "kind",
+    "diagnostic_code",
+    "execution_disposition",
+    "recovery_guidance",
+    "replay_guidance",
+    "replay_safety",
+    "mp_execution",
+    "worker_generation"
+   ]
+  },
+  "capability": {
+   "pickle": "gASVfAEAAAAAAACMDWJyaW9zYS5tb2RlbHOUjBlCcmlvc2FPcGVyYXRpb25DYXBhYmlsaXR5lJOUKYGUXZQojCVmaWxlX29wZXJhdGlvbnMuZ2V0X3dvcmtpbmdfZGlyZWN0b3J5lIwVYnJpb3NhLkZpbGVPcGVyYXRpb25zlIwTR2V0V29ya2luZ0RpcmVjdG9yeZSMKi9icmlvc2EuRmlsZU9wZXJhdGlvbnMvR2V0V29ya2luZ0RpcmVjdG9yeZRoAIwRT3BlcmF0aW9uUmlza0ZsYWeUk5SME2ZpbGVzeXN0ZW1fbWV0YWRhdGGUhZRSlIWUaACMFk9wZXJhdGlvbkR1cmF0aW9uQ2xhc3OUk5SMBXF1aWNrlIWUUpRoAIwZT3BlcmF0aW9uVmFsaWRhdGlvblN0YXR1c5STlIwPbm9fcmVjb3JkZWRfZ2FwlIWUUpRoAIwST3BlcmF0aW9uQWRtaXNzaW9ulJOUjA9kZW5pZWRfb3ZlcnJpZGWUhZRSlGViLg==",
+   "repr": "BriosaOperationCapability(operation_id='file_operations.get_working_directory', grpc_service='briosa.FileOperations', rpc='GetWorkingDirectory', fully_qualified_method='/briosa.FileOperations/GetWorkingDirectory', risk_flags=(<OperationRiskFlag.FILESYSTEM_METADATA: 'filesystem_metadata'>,), duration_class=<OperationDurationClass.QUICK: 'quick'>, validation_status=<OperationValidationStatus.NO_RECORDED_GAP: 'no_recorded_gap'>, admission=<OperationAdmission.DENIED_OVERRIDE: 'denied_override'>)",
+   "fields": [
+    "operation_id",
+    "grpc_service",
+    "rpc",
+    "fully_qualified_method",
+    "risk_flags",
+    "duration_class",
+    "validation_status",
+    "admission"
+   ]
+  },
+  "snapshot": {
+   "pickle": "gASVRAIAAAAAAACMDWJyaW9zYS5tb2RlbHOUjBRCcmlvc2FTZXJ2ZXJTbmFwc2hvdJSTlCmBlF2UKIwGMC4xMC4wlIwoYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYZSMBmJyaW9zYZSMDTIwMjQuMS4wNTA4LjWUiGgAjBlCcmlvc2FPcGVyYXRpb25DYXBhYmlsaXR5lJOUKYGUXZQojCVmaWxlX29wZXJhdGlvbnMuZ2V0X3dvcmtpbmdfZGlyZWN0b3J5lIwVYnJpb3NhLkZpbGVPcGVyYXRpb25zlIwTR2V0V29ya2luZ0RpcmVjdG9yeZSMKi9icmlvc2EuRmlsZU9wZXJhdGlvbnMvR2V0V29ya2luZ0RpcmVjdG9yeZRoAIwRT3BlcmF0aW9uUmlza0ZsYWeUk5SME2ZpbGVzeXN0ZW1fbWV0YWRhdGGUhZRSlIWUaACMFk9wZXJhdGlvbkR1cmF0aW9uQ2xhc3OUk5SMBXF1aWNrlIWUUpRoAIwZT3BlcmF0aW9uVmFsaWRhdGlvblN0YXR1c5STlIwPbm9fcmVjb3JkZWRfZ2FwlIWUUpRoAIwST3BlcmF0aW9uQWRtaXNzaW9ulJOUjA9kZW5pZWRfb3ZlcnJpZGWUhZRSlGVihZSMCHN0YW5kYXJklIxHc2hhMjU2OmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWKUZWIu",
+   "repr": "BriosaServerSnapshot(briosa_version='0.10.0', source_revision='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', protocol_package='briosa', spatial_analyzer_target='2024.1.0508.5', ready_for_mp=True, operations=(BriosaOperationCapability(operation_id='file_operations.get_working_directory', grpc_service='briosa.FileOperations', rpc='GetWorkingDirectory', fully_qualified_method='/briosa.FileOperations/GetWorkingDirectory', risk_flags=(<OperationRiskFlag.FILESYSTEM_METADATA: 'filesystem_metadata'>,), duration_class=<OperationDurationClass.QUICK: 'quick'>, validation_status=<OperationValidationStatus.NO_RECORDED_GAP: 'no_recorded_gap'>, admission=<OperationAdmission.DENIED_OVERRIDE: 'denied_override'>),), admission_profile='standard', policy_fingerprint='sha256:abababababababababababababababababababababababababababababababab')",
+   "fields": [
+    "briosa_version",
+    "source_revision",
+    "protocol_package",
+    "spatial_analyzer_target",
+    "ready_for_mp",
+    "operations",
+    "admission_profile",
+    "policy_fingerprint"
+   ]
+  },
+  "start_options": {
+   "pickle": "gASV0gAAAAAAAACMDWJyaW9zYS5tb2RlbHOUjBJCcmlvc2FTdGFydE9wdGlvbnOUk5QpgZRdlCiMGmJyaW9zYS5pbnN0YWxsYXRpb25fbW9kZWxzlIwVQnJpb3NhU2VydmVyU2VsZWN0aW9ulJOUKYGUXZQoTk5OTk4pKYwHbWFjaGluZZSMBHVzZXKUjAhwb3J0YWJsZZSHlImJTmViiIiIaACMHFNwYXRpYWxBbmFseXplckxhdW5jaE9wdGlvbnOUk5QpgZRdlChOTollYkdAXgAAAAAAAE5lYi4=",
+   "repr": "BriosaStartOptions(server_selection=BriosaServerSelection(executable_path=None, installation_id=None, version=None, minimum_version=None, maximum_version_exclusive=None, excluded_versions=(), search_roots=(), allowed_scopes=('machine', 'user', 'portable'), allow_prerelease=False, use_legacy_environment_override=False, spatial_analyzer_executable_path=None), start_spatial_analyzer_sdk=True, launch_spatial_analyzer=True, connect_to_spatial_analyzer=True, launch_options=SpatialAnalyzerLaunchOptions(job_file_path=None, quick_start_instrument_name=None, start_minimized=False), startup_timeout=120.0, logging=None)",
+   "fields": [
+    "server_selection",
+    "start_spatial_analyzer_sdk",
+    "launch_spatial_analyzer",
+    "connect_to_spatial_analyzer",
+    "launch_options",
+    "startup_timeout",
+    "logging"
+   ]
+  },
+  "start_options_explicit": {
+   "pickle": "gASV0gAAAAAAAACMDWJyaW9zYS5tb2RlbHOUjBJCcmlvc2FTdGFydE9wdGlvbnOUk5QpgZRdlCiMGmJyaW9zYS5pbnN0YWxsYXRpb25fbW9kZWxzlIwVQnJpb3NhU2VydmVyU2VsZWN0aW9ulJOUKYGUXZQoTk5OTk4pKYwHbWFjaGluZZSMBHVzZXKUjAhwb3J0YWJsZZSHlImJTmViiIiIaACMHFNwYXRpYWxBbmFseXplckxhdW5jaE9wdGlvbnOUk5QpgZRdlChOTollYkdAXgAAAAAAAE5lYi4=",
+   "repr": "BriosaStartOptions(server_selection=BriosaServerSelection(executable_path=None, installation_id=None, version=None, minimum_version=None, maximum_version_exclusive=None, excluded_versions=(), search_roots=(), allowed_scopes=('machine', 'user', 'portable'), allow_prerelease=False, use_legacy_environment_override=False, spatial_analyzer_executable_path=None), start_spatial_analyzer_sdk=True, launch_spatial_analyzer=True, connect_to_spatial_analyzer=True, launch_options=SpatialAnalyzerLaunchOptions(job_file_path=None, quick_start_instrument_name=None, start_minimized=False), startup_timeout=120.0, logging=None)",
+   "fields": [
+    "server_selection",
+    "start_spatial_analyzer_sdk",
+    "launch_spatial_analyzer",
+    "connect_to_spatial_analyzer",
+    "launch_options",
+    "startup_timeout",
+    "logging"
+   ]
+  }
+ }
+}

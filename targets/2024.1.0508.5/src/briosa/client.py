@@ -7,12 +7,13 @@ import math
 import os
 import socket
 import subprocess
+import sys
 from collections.abc import Awaitable, Callable
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import timedelta
 from types import TracebackType
-from typing import Any, NoReturn, Protocol, TypeVar, cast
+from typing import Any, Protocol, TypeVar, cast
 
 import grpc
 
@@ -72,41 +73,34 @@ _Result = TypeVar("_Result")
 # discovery, and round trips.
 _STARTUP_BUDGET_FLOOR_SECONDS = 120.0
 _STARTUP_BUDGET_MARGIN_SECONDS = 20.0
+# What an event loop raises for a timer it cannot arm, for example qasync's
+# OverflowError for a delay beyond Qt's timer range.
+_TIMER_REJECTIONS = (OverflowError, ValueError, OSError)
 
 
-class _TimerHandle(Protocol):
-    def cancel(self) -> None: ...
+if sys.version_info < (3, 11):
 
+    class _StartupBudgetTimeout(BriosaStartupError, asyncio.TimeoutError):
+        """Startup-budget expiry on Python 3.10.
 
-class _StartupClock(Protocol):
-    """The monotonic clock and timer of one startup: the event loop's."""
-
-    def time(self) -> float: ...
-
-    def call_at(self, when: float, callback: Callable[[], None]) -> _TimerHandle: ...
-
-
-class _EventLoopClock:
-    def __init__(self, loop: asyncio.AbstractEventLoop) -> None:
-        self._loop = loop
-
-    def time(self) -> float:
-        return self._loop.time()
-
-    def call_at(self, when: float, callback: Callable[[], None]) -> _TimerHandle:
-        return self._loop.call_at(when, callback)
+        It is ``BriosaStartupError`` with ``startup-timeout``, as on every
+        version, and also ``asyncio.TimeoutError``, which client 0.5.0 raised
+        on Python 3.10.
+        """
 
 
 class _StartupBudgetExpired(Exception):
-    """Adoption found the startup budget already spent."""
+    """A budget check found the startup budget spent before its timer ran."""
 
 
-def _schedulable(delay: float) -> bool:
-    """Whether the event loop can schedule a timer ``delay`` seconds ahead.
+def _budget_expired_error() -> BriosaStartupError:
+    if sys.version_info < (3, 11):
+        return _StartupBudgetTimeout("startup-timeout")
+    return BriosaStartupError("startup-timeout")
 
-    asyncio schedules any finite loop time; a non-finite one would never fire.
-    """
-    return math.isfinite(delay)
+
+def _noop() -> None:
+    return None
 
 
 def _published_startup_allowance(
@@ -141,80 +135,186 @@ def _published_startup_allowance(
     return sum(part.total_seconds() for part in parts if part is not None)
 
 
-class _StartupDeadline:
-    """The deadline of one ``start()``, reschedulable in place.
+class _Deadline(Protocol):
+    @property
+    def when(self) -> float: ...
 
-    It runs on the event loop's monotonic clock, from one start instant, and
-    cancels the startup task when it expires. Lengthening it replaces only the
-    timer, so the startup is never cancelled and relaunched.
+    @property
+    def expired(self) -> bool: ...
+
+    def replace(self, when: float) -> bool: ...
+
+    def expire_now(self) -> None: ...
+
+
+class _NativeDeadline:
+    """The deadline of an ``asyncio.timeout`` (Python 3.12 and later)."""
+
+    def __init__(self, loop: asyncio.AbstractEventLoop, timeout: Any) -> None:
+        self._loop = loop
+        self._timeout = timeout
+
+    @property
+    def when(self) -> float:
+        return cast(float, self._timeout.when())
+
+    @property
+    def expired(self) -> bool:
+        return cast(bool, self._timeout.expired())
+
+    def replace(self, when: float) -> bool:
+        current = self.when
+        try:
+            # Prove that the loop can arm the new deadline while the current
+            # timer is still armed.
+            probe = self._loop.call_at(when, _noop)
+        except _TIMER_REJECTIONS:
+            return False
+        try:
+            self._timeout.reschedule(when)
+        except _TIMER_REJECTIONS:
+            self._timeout.reschedule(current)
+            return False
+        finally:
+            probe.cancel()
+        return True
+
+    def expire_now(self) -> None:
+        self._timeout.reschedule(self._loop.time())
+
+
+class _LoopDeadline:
+    """A deadline on one event loop timer (Python 3.10 and 3.11)."""
+
+    def __init__(
+        self,
+        loop: asyncio.AbstractEventLoop,
+        when: float,
+        on_expire: Callable[[], None],
+    ) -> None:
+        self._loop = loop
+        self._when = when
+        self._on_expire = on_expire
+        self._expired = False
+        self._handle = loop.call_at(when, self._expire)
+
+    @property
+    def when(self) -> float:
+        return self._when
+
+    @property
+    def expired(self) -> bool:
+        return self._expired
+
+    def _expire(self) -> None:
+        if not self._expired:
+            self._expired = True
+            self._on_expire()
+
+    def replace(self, when: float) -> bool:
+        try:
+            handle = self._loop.call_at(when, self._expire)
+        except _TIMER_REJECTIONS:
+            return False
+        self._handle.cancel()
+        self._handle = handle
+        self._when = when
+        return True
+
+    def expire_now(self) -> None:
+        self._handle.cancel()
+        self._expire()
+
+    def cancel(self) -> None:
+        self._handle.cancel()
+
+
+class _StartupBudget:
+    """Apply the shared startup-budget rule to one ``start()``'s deadline.
+
+    The budget runs on the loop's monotonic clock from one start instant. With a
+    server that publishes lifecycle bounds, every later step first checks the
+    budget, so a startup whose budget ran out never submits another phase, even
+    if its timer has not run yet. With a server that publishes none, such as
+    Server 0.10.0, the startup proceeds exactly as client 0.5.0's did.
     """
 
     def __init__(
-        self, clock: _StartupClock, task: asyncio.Task[Any], budget: float
+        self,
+        loop: asyncio.AbstractEventLoop,
+        started_at: float,
+        deadline: _Deadline,
     ) -> None:
-        self._clock = clock
-        self._task = task
-        self.started_at = clock.time()
-        self.deadline = self.started_at + budget
-        self.expired = False
-        self._finished = False
+        self._loop = loop
+        self.started_at = started_at
+        self._deadline = deadline
+        self._guarded = False
         self._adopted = False
-        self._handle = clock.call_at(self.deadline, self._expire)
 
-    def _expire(self) -> None:
-        if self._finished or self.expired:
-            return
-        self.expired = True
-        self._task.cancel()
+    def guard(self) -> None:
+        self._guarded = True
 
-    def _expire_now(self) -> NoReturn:
-        self.expired = True
-        self._handle.cancel()
-        raise _StartupBudgetExpired
-
-    def finish(self) -> None:
-        self._finished = True
-        self._handle.cancel()
+    @staticmethod
+    def _cancel_pending() -> bool:
+        cancelling = getattr(asyncio.current_task(), "cancelling", None)
+        return cancelling is not None and cancelling() > 0
 
     def adopt(self, allowance: float | None) -> None:
         """Lengthen the omitted budget once from the server's published allowance.
 
         Only the first validated snapshot counts. Adoption never revives a
-        startup that has expired, even if the timer has not fired yet, and keeps
-        the current deadline when the new one cannot be scheduled.
+        startup whose budget has run out, even if its timer has not run yet, and
+        keeps the current deadline when the loop cannot arm the new one.
         """
         if self._adopted:
             return
         self._adopted = True
-        if allowance is None or self._finished or self.expired:
+        if allowance is None or self._deadline.expired or self._cancel_pending():
             return
-        cancelling = getattr(self._task, "cancelling", None)
-        if cancelling is not None and cancelling() > 0:
+        now = self._loop.time()
+        current = self._deadline.when
+        if now >= current:
             return
-        now = self._clock.time()
-        if now >= self.deadline:
-            self._expire_now()
         deadline = self.started_at + max(
             _STARTUP_BUDGET_FLOOR_SECONDS, allowance + _STARTUP_BUDGET_MARGIN_SECONDS
         )
-        if deadline <= now:
-            self._expire_now()
-        if deadline <= self.deadline or not _schedulable(deadline - now):
+        if deadline <= current or not math.isfinite(deadline - now):
             return
-        handle = self._clock.call_at(deadline, self._expire)
-        self._handle.cancel()
-        self._handle = handle
-        self.deadline = deadline
+        self._deadline.replace(deadline)
+
+    async def check(self) -> None:
+        """Stop a guarded startup whose budget ran out or that was cancelled."""
+        if not self._guarded:
+            return
+        if self._deadline.expired:
+            await asyncio.sleep(0)
+        elif self._loop.time() >= self._deadline.when:
+            self._deadline.expire_now()
+            await asyncio.sleep(0)
+        elif self._cancel_pending():
+            await asyncio.sleep(0)
+            return
+        else:
+            return
+        # The expiry is delivered at the sleep above; never continue past it.
+        raise _StartupBudgetExpired
 
 
-def _withdraw_budget_cancellation(task: asyncio.Task[Any]) -> bool:
-    """Withdraw the budget's own cancellation request from ``task``.
+async def _cancel_and_wait(
+    task: asyncio.Task[Any], loop: asyncio.AbstractEventLoop
+) -> None:
+    waiter = loop.create_future()
 
-    Returns whether no other cancellation is pending. Python 3.10 tasks don't
-    count cancellation requests, so there the budget's expiry decides alone.
-    """
-    uncancel = getattr(task, "uncancel", None)
-    return uncancel is None or uncancel() == 0
+    def release(_: object) -> None:
+        if not waiter.done():
+            waiter.set_result(None)
+
+    task.add_done_callback(release)
+    try:
+        task.cancel()
+        await waiter
+    finally:
+        task.remove_done_callback(release)
 
 
 class OwnedServer(Protocol):
@@ -332,13 +432,10 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         *,
         _server_launcher: ServerLauncher | None = None,
         _transport_factory: Callable[[str], ClientTransport] | None = None,
-        _startup_clock: Callable[[asyncio.AbstractEventLoop], _StartupClock]
-        | None = None,
     ) -> None:
         self._options = options or BriosaClientOptions()
         self._server_launcher = _server_launcher or _LocalServerLauncher()
         self._transport_factory = _transport_factory or GrpcClientTransport
-        self._startup_clock = _startup_clock or _EventLoopClock
         self._loop: asyncio.AbstractEventLoop | None = None
         self._lock: asyncio.Lock | None = None
         self._session: _Session | None = None
@@ -621,28 +718,76 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
 
     async def _run_start(self, options: BriosaStartOptions) -> None:
         # One start instant on the loop's monotonic clock, before host launch or
-        # discovery. The budget's timer cancels this task when it expires.
-        task = asyncio.current_task()
-        if task is None:  # pragma: no cover - start() always runs this in a task
-            raise BriosaLifecycleError("client-start-unavailable")
-        deadline = _StartupDeadline(
-            self._startup_clock(asyncio.get_running_loop()),
-            task,
-            options.startup_timeout,
-        )
+        # discovery. Each Python version times the startup the way its
+        # asyncio.wait_for timed it for client 0.5.0: asyncio.timeout from
+        # Python 3.12, and a waiter on Python 3.10 and 3.11.
+        loop = asyncio.get_running_loop()
+        started_at = loop.time()
         try:
-            await self._start_inner(options, deadline)
-        except _StartupBudgetExpired:
-            raise _startup_timeout(None)  # noqa: B904 - chained in the helper
-        except asyncio.CancelledError as cancelled:
-            if deadline.expired and _withdraw_budget_cancellation(task):
-                raise _startup_timeout(cancelled)  # noqa: B904 - chained in the helper
-            raise
+            if sys.version_info >= (3, 12):
+                async with asyncio.timeout_at(
+                    started_at + options.startup_timeout
+                ) as timeout:
+                    await self._start_inner(
+                        options,
+                        _StartupBudget(
+                            loop, started_at, _NativeDeadline(loop, timeout)
+                        ),
+                    )
+            else:
+                await self._run_start_with_waiter(options, loop, started_at)
+        except TimeoutError as error:
+            raise BriosaStartupError("startup-timeout") from error
+        except _StartupBudgetExpired as error:
+            raise _budget_expired_error() from error
+
+    async def _run_start_with_waiter(
+        self,
+        options: BriosaStartOptions,
+        loop: asyncio.AbstractEventLoop,
+        started_at: float,
+    ) -> None:
+        """Time the startup the way ``asyncio.wait_for`` does on Python 3.10-3.11.
+
+        The startup runs in its own task while this one waits on a future that
+        the deadline or the startup's completion resolves. Cancelling this task
+        therefore stays a cancellation, distinct from the budget's expiry.
+        """
+        waiter: asyncio.Future[None] = loop.create_future()
+
+        def release(_: object = None) -> None:
+            if not waiter.done():
+                waiter.set_result(None)
+
+        deadline = _LoopDeadline(loop, started_at + options.startup_timeout, release)
+        startup = loop.create_task(
+            self._start_inner(options, _StartupBudget(loop, started_at, deadline))
+        )
+        startup.add_done_callback(release)
+        try:
+            try:
+                await waiter
+            except asyncio.CancelledError:
+                if startup.done():
+                    return startup.result()
+                startup.remove_done_callback(release)
+                await _cancel_and_wait(startup, loop)
+                raise
+            if startup.done():
+                return startup.result()
+            startup.remove_done_callback(release)
+            await _cancel_and_wait(startup, loop)
+            try:
+                return startup.result()
+            except asyncio.CancelledError as cancelled:
+                if sys.version_info < (3, 11):
+                    raise _StartupBudgetTimeout("startup-timeout") from cancelled
+                raise TimeoutError from cancelled
         finally:
-            deadline.finish()
+            deadline.cancel()
 
     async def _start_inner(
-        self, options: BriosaStartOptions, deadline: _StartupDeadline
+        self, options: BriosaStartOptions, budget: _StartupBudget
     ) -> None:
         server: OwnedServer | None = None
         transport: ClientTransport | None = None
@@ -653,12 +798,17 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
             )
             transport = self._transport_factory(server.target)
             snapshot = await self._wait_for_server(server, transport)
-            # The first validated snapshot is the only adoption point; an
-            # explicit startup_timeout always wins.
+            # A server that publishes lifecycle bounds (Server 0.10.1 and later)
+            # has its budget checked before each later step. The first validated
+            # snapshot is the only adoption point, and an explicit
+            # startup_timeout always wins.
+            if snapshot.lifecycle_bounds is not None:
+                budget.guard()
             if _startup_timeout_omitted(options):
-                deadline.adopt(
+                budget.adopt(
                     _published_startup_allowance(snapshot.lifecycle_bounds, options)
                 )
+            await budget.check()
             session = _Session(server, transport, snapshot)
             lock = self._required_lock()
             async with lock:
@@ -668,10 +818,12 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
             transport = None
 
             if options.start_spatial_analyzer_sdk:
+                await budget.check()
                 session.update_sdk_state(
                     map_sdk_state(await session.transport.start_sdk())
                 )
             if options.launch_spatial_analyzer:
+                await budget.check()
                 session.application_state = map_application_state(
                     await session.transport.launch_application(options.launch_options)
                 )
@@ -680,6 +832,7 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                 generation = _require_generation(
                     sdk.sdk_generation, "sdk-generation-unavailable"
                 )
+                await budget.check()
                 connected_state = map_sdk_state(
                     await session.transport.connect_sdk(generation, reconnect=False)
                 )
@@ -893,16 +1046,6 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
     def _ensure_open(self) -> None:
         if self._finally_closed:
             raise BriosaLifecycleError("client-finally-closed")
-
-
-def _startup_timeout(cause: BaseException | None) -> BriosaStartupError:
-    """The startup timeout error, chained as 0.5.0 chained it to its timeout."""
-    timeout = TimeoutError()
-    timeout.__cause__ = cause
-    error = BriosaStartupError("startup-timeout")
-    error.__cause__ = timeout
-    error.__suppress_context__ = True
-    return error
 
 
 def _validate_timeout(timeout: float | None) -> float | None:

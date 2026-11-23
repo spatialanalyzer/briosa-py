@@ -251,14 +251,29 @@ def test_unknown_or_inconsistent_detail_never_changes_the_failure(
     assert mapped.failure == _with_detail(without.failure, expected)
 
 
-def test_detail_on_another_failure_kind_never_changes_that_failure() -> None:
+@pytest.mark.parametrize(
+    "kind",
+    [
+        value.number
+        for value in operation_outcomes_pb2.OperationFailureKind.DESCRIPTOR.values
+        if value.name != "OPERATION_FAILURE_KIND_POLICY_DENIED"
+    ],
+)
+def test_denial_detail_appears_only_on_a_policy_denial(kind: int) -> None:
+    # A validation or any other failure never appears to name a policy step,
+    # and its kind and status are unchanged by the detail it carried.
     wire = detail(operation_outcomes_pb2.POLICY_DENIAL_RULE_OVERRIDE)
-    call = denied_call(
-        wire, kind=operation_outcomes_pb2.OPERATION_FAILURE_KIND_MP_FAILURE
+    without = operation_error(
+        grpc.StatusCode.FAILED_PRECONDITION, denied_call(kind=kind)
     )
-    mapped = operation_error(grpc.StatusCode.FAILED_PRECONDITION, call)
-    assert mapped.failure.kind is OperationFailureKind.MP_FAILURE
+    mapped = operation_error(
+        grpc.StatusCode.FAILED_PRECONDITION, denied_call(wire, kind=kind)
+    )
+    assert mapped.failure.policy_denial is None
+    assert mapped.failure.kind is without.failure.kind
+    assert mapped.failure.kind is not OperationFailureKind.POLICY_DENIED
     assert mapped.status_code is RpcStatusCode.FAILED_PRECONDITION
+    assert mapped.failure == without.failure
 
 
 def test_an_undecodable_detail_keeps_the_existing_malformed_handling() -> None:
