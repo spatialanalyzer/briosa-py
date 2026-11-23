@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Iterable
+from datetime import timedelta
 from typing import Any, Protocol, TypeVar, cast
 
 import grpc
@@ -28,9 +29,13 @@ from briosa.errors import (
 from briosa.installation_models import BriosaInstallation, valid_version
 from briosa.models import (
     BriosaCapabilityListing,
+    BriosaLifecycleBounds,
     BriosaOperationCapability,
     BriosaServerSnapshot,
+    ConfiguredSpatialAnalyzerInteractionMode,
     ExecutionDisposition,
+    GracefulShutdownBound,
+    GracefulShutdownBoundKind,
     LifecycleRecoveryGuidance,
     MpExecutionDetails,
     MpExecutionState,
@@ -38,10 +43,16 @@ from briosa.models import (
     OperationDurationClass,
     OperationFailure,
     OperationFailureKind,
+    OperationRequestOption,
+    OperationRequestOptionCondition,
+    OperationRequestOptionEffect,
+    OperationRequestOptionOmission,
     OperationRiskFlag,
     OperationValidationStatus,
     OutputRetrievalDetails,
     OutputRetrievalState,
+    PolicyDenialDetails,
+    PolicyDenialRule,
     RecoveryGuidance,
     ReplayGuidance,
     ReplaySafety,
@@ -301,6 +312,218 @@ def map_snapshot(
         operations=listing.admitted,
         admission_profile=listing.admission_profile,
         policy_fingerprint=listing.policy_fingerprint,
+        lifecycle_bounds=map_lifecycle_bounds(server),
+        configured_interaction_mode=_INTERACTION_MODES.get(
+            server.configured_spatial_analyzer_interaction_mode,
+            ConfiguredSpatialAnalyzerInteractionMode.UNKNOWN,
+        ),
+    )
+
+
+# Each new discovery and denial enum maps by its generated name, never by number.
+# A value this client doesn't list, including a later release's, is UNKNOWN.
+_INTERACTION_MODES = {
+    discovery_pb2.CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_UNCHANGED: (
+        ConfiguredSpatialAnalyzerInteractionMode.UNCHANGED
+    ),
+    discovery_pb2.CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_SILENT: (
+        ConfiguredSpatialAnalyzerInteractionMode.SILENT
+    ),
+    discovery_pb2.CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_AUTOMATIC: (
+        ConfiguredSpatialAnalyzerInteractionMode.AUTOMATIC
+    ),
+    discovery_pb2.CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_MANUAL: (
+        ConfiguredSpatialAnalyzerInteractionMode.MANUAL
+    ),
+}
+_POLICY_DENIAL_RULES = {
+    operation_outcomes_pb2.POLICY_DENIAL_RULE_UNSPECIFIED: PolicyDenialRule.UNSPECIFIED,
+    operation_outcomes_pb2.POLICY_DENIAL_RULE_PROFILE: PolicyDenialRule.PROFILE,
+    operation_outcomes_pb2.POLICY_DENIAL_RULE_FLAG: PolicyDenialRule.FLAG,
+    operation_outcomes_pb2.POLICY_DENIAL_RULE_OVERRIDE: PolicyDenialRule.OVERRIDE,
+    operation_outcomes_pb2.POLICY_DENIAL_RULE_EXCLUSIVE: PolicyDenialRule.EXCLUSIVE,
+    operation_outcomes_pb2.POLICY_DENIAL_RULE_UNREVIEWED: PolicyDenialRule.UNREVIEWED,
+}
+_REQUEST_OPTION_EFFECTS = {
+    discovery_pb2.OPERATION_REQUEST_OPTION_EFFECT_UNSPECIFIED: (
+        OperationRequestOptionEffect.UNSPECIFIED
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_EFFECT_INTERACTIVE_UI: (
+        OperationRequestOptionEffect.INTERACTIVE_UI
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_EFFECT_BACKGROUND_WORK: (
+        OperationRequestOptionEffect.BACKGROUND_WORK
+    ),
+}
+_REQUEST_OPTION_CONDITIONS = {
+    discovery_pb2.OPERATION_REQUEST_OPTION_CONDITION_UNSPECIFIED: (
+        OperationRequestOptionCondition.UNSPECIFIED
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_CONDITION_WHEN_TRUE: (
+        OperationRequestOptionCondition.WHEN_TRUE
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_CONDITION_WHEN_FALSE: (
+        OperationRequestOptionCondition.WHEN_FALSE
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_CONDITION_WHEN_PRESENT: (
+        OperationRequestOptionCondition.WHEN_PRESENT
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_CONDITION_WHEN_NON_EMPTY: (
+        OperationRequestOptionCondition.WHEN_NON_EMPTY
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_CONDITION_WHEN_ONE_OF: (
+        OperationRequestOptionCondition.WHEN_ONE_OF
+    ),
+}
+_REQUEST_OPTION_OMISSIONS = {
+    discovery_pb2.OPERATION_REQUEST_OPTION_OMISSION_UNSPECIFIED: (
+        OperationRequestOptionOmission.UNSPECIFIED
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_OMISSION_DOES_NOT_ACTIVATE: (
+        OperationRequestOptionOmission.DOES_NOT_ACTIVATE
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_OMISSION_ACTIVATES: (
+        OperationRequestOptionOmission.ACTIVATES
+    ),
+    discovery_pb2.OPERATION_REQUEST_OPTION_OMISSION_REQUIRED: (
+        OperationRequestOptionOmission.REQUIRED
+    ),
+}
+# The canonical risk flag names are the lowercase OperationRiskFlag suffixes,
+# which are also this client's enum values, for example "physical_motion".
+_RISK_FLAGS_BY_NAME = {
+    flag.value: flag
+    for flag in OperationRiskFlag
+    if flag not in {OperationRiskFlag.UNSPECIFIED, OperationRiskFlag.UNKNOWN}
+}
+
+
+def risk_flag_from_name(name: str) -> OperationRiskFlag:
+    """Map a canonical risk flag name; a name this client doesn't know is UNKNOWN.
+
+    Every site that carries a flag by name uses this one mapping.
+    """
+    return _RISK_FLAGS_BY_NAME.get(name, OperationRiskFlag.UNKNOWN)
+
+
+def map_policy_denial(
+    detail: operation_outcomes_pb2.PolicyDenialDetails,
+) -> PolicyDenialDetails:
+    """Map denial detail as sent. It never fails, so it never changes an outcome."""
+    return PolicyDenialDetails(
+        rule=_POLICY_DENIAL_RULES.get(detail.rule, PolicyDenialRule.UNKNOWN),
+        denied_flag=(
+            risk_flag_from_name(detail.denied_flag)
+            if detail.HasField("denied_flag")
+            else None
+        ),
+        admission_profile=(
+            detail.admission_profile if detail.HasField("admission_profile") else None
+        ),
+        request_option_field=(
+            detail.request_option_field
+            if detail.HasField("request_option_field")
+            else None
+        ),
+    )
+
+
+def _map_request_options(
+    item: discovery_pb2.OperationCapability,
+) -> tuple[OperationRequestOption, ...] | None:
+    """Absent means the server didn't describe options; empty means none apply."""
+    if not item.HasField("request_options"):
+        return None
+    return tuple(
+        OperationRequestOption(
+            field_name=option.field_name,
+            effect=_REQUEST_OPTION_EFFECTS.get(
+                option.effect, OperationRequestOptionEffect.UNKNOWN
+            ),
+            condition=_REQUEST_OPTION_CONDITIONS.get(
+                option.condition, OperationRequestOptionCondition.UNKNOWN
+            ),
+            enabling_enum_values=tuple(option.enabling_enum_values),
+            omission=_REQUEST_OPTION_OMISSIONS.get(
+                option.omission, OperationRequestOptionOmission.UNKNOWN
+            ),
+            admission=_open_enum_at(OperationAdmission, option.admission),
+            policy_denial=(
+                map_policy_denial(option.policy_denial)
+                if option.HasField("policy_denial")
+                else None
+            ),
+        )
+        for option in item.request_options.options
+    )
+
+
+def _allowance(present: bool, milliseconds: int) -> timedelta | None:
+    """An absent or zero allowance is unavailable, never unbounded."""
+    return (
+        timedelta(milliseconds=milliseconds) if present and milliseconds > 0 else None
+    )
+
+
+def _map_host_graceful_shutdown(
+    bounds: discovery_pb2.LifecycleBounds,
+) -> GracefulShutdownBound:
+    """Read the bound from its ``limit`` case; anything unusable is UNAVAILABLE."""
+    if not bounds.HasField("host_graceful_shutdown"):
+        return GracefulShutdownBound()
+    bound = bounds.host_graceful_shutdown
+    case = bound.WhichOneof("limit")
+    if case == "unbounded":
+        return GracefulShutdownBound(kind=GracefulShutdownBoundKind.UNBOUNDED)
+    if case == "finite_milliseconds" and bound.finite_milliseconds > 0:
+        try:
+            duration = timedelta(milliseconds=bound.finite_milliseconds)
+        except OverflowError:
+            return GracefulShutdownBound()
+        return GracefulShutdownBound(
+            kind=GracefulShutdownBoundKind.FINITE, duration=duration
+        )
+    return GracefulShutdownBound()
+
+
+def map_lifecycle_bounds(
+    server: discovery_pb2.GetServerInfoResponse,
+) -> BriosaLifecycleBounds | None:
+    """Map the published lifecycle bounds; ``None`` when the server sent none."""
+    if not server.HasField("lifecycle_bounds"):
+        return None
+    raw = server.lifecycle_bounds
+    return BriosaLifecycleBounds(
+        start_sdk=_allowance(
+            raw.HasField("start_sdk_milliseconds"), raw.start_sdk_milliseconds
+        ),
+        launch_spatial_analyzer=_allowance(
+            raw.HasField("launch_spatial_analyzer_milliseconds"),
+            raw.launch_spatial_analyzer_milliseconds,
+        ),
+        connect_spatial_analyzer=_allowance(
+            raw.HasField("connect_spatial_analyzer_milliseconds"),
+            raw.connect_spatial_analyzer_milliseconds,
+        ),
+        recover_sdk=_allowance(
+            raw.HasField("recover_sdk_milliseconds"), raw.recover_sdk_milliseconds
+        ),
+        stop_sdk=_allowance(
+            raw.HasField("stop_sdk_milliseconds"), raw.stop_sdk_milliseconds
+        ),
+        close_owned_spatial_analyzer=_allowance(
+            raw.HasField("close_owned_spatial_analyzer_milliseconds"),
+            raw.close_owned_spatial_analyzer_milliseconds,
+        ),
+        startup_with_launch=_allowance(
+            raw.HasField("startup_with_launch_milliseconds"),
+            raw.startup_with_launch_milliseconds,
+        ),
+        startup_without_launch=_allowance(
+            raw.HasField("startup_without_launch_milliseconds"),
+            raw.startup_without_launch_milliseconds,
+        ),
+        host_graceful_shutdown=_map_host_graceful_shutdown(raw),
     )
 
 
@@ -344,6 +567,12 @@ def map_capability_listing(
                     OperationValidationStatus, item.validation_status
                 ),
                 admission=_open_enum_at(OperationAdmission, item.admission),
+                policy_denial=(
+                    map_policy_denial(item.policy_denial)
+                    if item.HasField("policy_denial")
+                    else None
+                ),
+                request_options=_map_request_options(item),
             )
             for item in capabilities.operations
         ),
@@ -512,6 +741,11 @@ def map_rpc_error(
                 worker_generation=(
                     operation.worker_generation
                     if operation.HasField("worker_generation")
+                    else None
+                ),
+                policy_denial=(
+                    map_policy_denial(operation.policy_denial)
+                    if operation.HasField("policy_denial")
                     else None
                 ),
             )
