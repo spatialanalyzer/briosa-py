@@ -5,11 +5,11 @@ from __future__ import annotations
 import argparse
 import asyncio
 import hashlib
+import importlib.metadata
 import inspect
 import json
 import os
 from collections.abc import Awaitable, Callable
-from dataclasses import replace
 from pathlib import Path
 from typing import Any, TypeVar, cast
 
@@ -56,9 +56,13 @@ WORKING_DIRECTORY_OPERATION = "file_operations.get_working_directory"
 INTERRUPTED_CONNECT_DEADLINE = 1.0
 DETACHED_CONNECT_READINESS_LIMIT = 20.0
 _Error = TypeVar("_Error", bound=BaseException)
-# Server 0.10.1 is the first release that publishes lifecycle bounds, typed
-# denial detail, and request options.
-FIRST_DESCRIBING_SERVER = (0, 10, 1)
+# Servers that declare compatibility revision 1 or later (Server 0.10.1 and
+# later) publish lifecycle bounds, typed denial detail, and request options, and
+# clients from 0.5.1 expose them.
+FIRST_DESCRIBING_REVISION = 1
+FIRST_DESCRIBING_CLIENT = (0, 5, 1)
+# Filled in by _main from the contract and the installed client distribution.
+_SURFACE: dict[str, bool] = {}
 
 
 def _parse_arguments() -> argparse.Namespace:
@@ -84,13 +88,34 @@ async def _expect_raises(
 
 
 def _release(version: str) -> tuple[int, ...]:
-    """The numeric release of a server version, without prerelease or build."""
+    """The numeric release of a version, without prerelease or build."""
     core = version.split("+", 1)[0].split("-", 1)[0]
     return tuple(int(part) for part in core.split("."))
 
 
-def _describes_0_10_1_features(version: str) -> bool:
-    return _release(version) >= FIRST_DESCRIBING_SERVER
+def _server_declared_revision() -> int:
+    """The compatibility revision the selected server's manifest declares."""
+    manifest_path = Path(os.environ["BRIOSA_SERVER_PATH"]).parent / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    compatibility = (
+        manifest.get("compatibility") if isinstance(manifest, dict) else None
+    )
+    revision = (
+        compatibility.get("revision") if isinstance(compatibility, dict) else None
+    )
+    _require(type(revision) is int, "The server manifest declares no revision.")
+    return cast(int, revision)
+
+
+def _client_release(target: str) -> tuple[int, ...]:
+    """The version of the installed client distribution for ``target``."""
+    distribution = "briosa-" + target.replace(".", "-")
+    return _release(importlib.metadata.version(distribution))
+
+
+def _expects_new_values() -> bool:
+    """Whether this client exposes, and this server sends, the 0.10.1 values."""
+    return _SURFACE["server"]
 
 
 async def _run_scenario(
@@ -138,24 +163,25 @@ async def _run_scenario(
     startup_succeeded = False
     additions: dict[str, Any] | None = None
     try:
+        # The options are built without startup_timeout, so a client that
+        # follows the server's published allowance does so here.
+        selection = BriosaServerSelection(
+            executable_path=Path(os.environ["BRIOSA_SERVER_PATH"]),
+            allow_prerelease=True,
+        )
         if scenario in {"control-plane-only", "lifecycle-cancellation"}:
             start_options = BriosaStartOptions(
+                server_selection=selection,
                 start_spatial_analyzer_sdk=False,
                 launch_spatial_analyzer=False,
                 connect_to_spatial_analyzer=False,
             )
         elif scenario == "attach-existing":
-            start_options = BriosaStartOptions(launch_spatial_analyzer=False)
+            start_options = BriosaStartOptions(
+                server_selection=selection, launch_spatial_analyzer=False
+            )
         else:
-            start_options = BriosaStartOptions()
-
-        start_options = replace(
-            start_options,
-            server_selection=BriosaServerSelection(
-                executable_path=Path(os.environ["BRIOSA_SERVER_PATH"]),
-                allow_prerelease=True,
-            ),
-        )
+            start_options = BriosaStartOptions(server_selection=selection)
 
         if scenario == "identity-mismatch":
             await _expect_raises(
@@ -259,14 +285,14 @@ async def _assert_default_ready(briosa: BriosaClient) -> None:
 def _assert_lifecycle_bounds(snapshot: Any) -> None:
     # Client 0.5.1 and later expose the bounds; the published 0.5.0 package,
     # which the server's retained-client gate runs this fixture with, doesn't.
-    if not hasattr(snapshot, "lifecycle_bounds"):
+    if not _SURFACE["client"]:
         return
     bounds = snapshot.lifecycle_bounds
     mode = snapshot.configured_interaction_mode
-    if not _describes_0_10_1_features(snapshot.briosa_version):
+    if not _expects_new_values():
         _require(
             bounds is None and mode.name == "UNKNOWN",
-            "A server before 0.10.1 reported lifecycle bounds or a configured mode.",
+            "A server declaring revision 0 reported lifecycle bounds or a mode.",
         )
         return
     _require(
@@ -276,11 +302,11 @@ def _assert_lifecycle_bounds(snapshot: Any) -> None:
         and bounds.start_sdk is not None
         and bounds.launch_spatial_analyzer is not None
         and bounds.connect_spatial_analyzer is not None,
-        "Server 0.10.1 or later did not publish its startup allowances.",
+        "A server declaring revision 1 did not publish its startup allowances.",
     )
     _require(
         mode.name != "UNKNOWN",
-        "Server 0.10.1 or later did not report its configured interaction mode.",
+        "A server declaring revision 1 did not report its configured mode.",
     )
 
 
@@ -387,15 +413,15 @@ async def _assert_capability_denied(briosa: BriosaClient) -> None:
 def _assert_denial_detail(snapshot: Any, capability: Any, failure: Any) -> None:
     # Client 0.5.1 and later expose the detail; the published 0.5.0 package
     # doesn't, so its run checks what 0.5.0 checked.
-    if not hasattr(failure, "policy_denial"):
+    if not _SURFACE["client"]:
         return
-    if not _describes_0_10_1_features(snapshot.briosa_version):
+    if not _expects_new_values():
         _require(
             failure.policy_denial is None
             and capability.policy_denial is None
             and capability.request_options is None
             and all(item.request_options is None for item in snapshot.operations),
-            "A server before 0.10.1 reported denial detail or request options.",
+            "A server declaring revision 0 reported denial detail or request options.",
         )
         return
     for detail, where in (
@@ -413,7 +439,7 @@ def _assert_denial_detail(snapshot: Any, capability: Any, failure: Any) -> None:
     _require(
         capability.request_options is not None
         and all(item.request_options is not None for item in snapshot.operations),
-        "Server 0.10.1 or later did not describe request options.",
+        "A server declaring revision 1 did not describe request options.",
     )
 
 
@@ -746,6 +772,13 @@ async def _main() -> int:
         contract.get("contract_id") == CONTRACT_ID,
         "The fixture received an unsupported conformance contract.",
     )
+    # What to expect comes from declarations, never from version labels: the
+    # installed client's version, and the revision the server's manifest
+    # declares beside BRIOSA_SERVER_PATH. A rejection run never reaches them.
+    target = cast(str, contract.get("spatial_analyzer_target"))
+    _SURFACE["client"] = _client_release(target) >= FIRST_DESCRIBING_CLIENT
+    if os.environ.get("BRIOSA_CONFORMANCE_EXPECT_INCOMPATIBLE") != "1":
+        _SURFACE["server"] = _server_declared_revision() >= FIRST_DESCRIBING_REVISION
     # A scenario is in "scenarios" or, run only on request, "optional_scenarios".
     definitions = [
         *cast(list[dict[str, Any]], contract.get("scenarios", [])),

@@ -15,6 +15,10 @@ param(
 
     [ValidateRange(1, 1000)][int]$RequiredContractMajor = 3,
 
+    # Longer than the 180 s an omitted startup budget can reach against a
+    # conformance server, which sets a 30 s worker start bound.
+    [ValidateRange(5, 600)][int]$FixtureTimeoutSeconds = 240,
+
     [string]$PythonExecutable = "python"
 )
 
@@ -92,6 +96,12 @@ try {
         FixtureArguments = @($fixture)
     }
     if ($optionalScenarios.Count -gt 0) { $runnerArguments.OptionalScenario = $optionalScenarios }
+    # Every runner from 0.9.2 accepts -FixtureTimeoutSeconds; record what was used.
+    $fixtureTimeout = $null
+    if ((Get-Command -Name $runner).Parameters.ContainsKey('FixtureTimeoutSeconds')) {
+        $fixtureTimeout = $FixtureTimeoutSeconds
+        $runnerArguments.FixtureTimeoutSeconds = $fixtureTimeout
+    }
     & $runner @runnerArguments
     if (-not [string]::IsNullOrWhiteSpace($EvidencePath)) {
         $protocol = Get-Content (Join-Path $repositoryRoot "protocol.lock.json") -Raw | ConvertFrom-Json
@@ -109,7 +119,8 @@ try {
             licensedSpatialAnalyzer = $false
             client = @{
                 repository = "https://github.com/spatialanalyzer/briosa-py"
-                version = ([regex]::Match((Get-Content (Join-Path $repositoryRoot "pyproject.toml") -Raw), '(?m)^version = "([^"]+)"')).Groups[1].Value
+                # A package run records the package tested; a source run, the project.
+                version = $(if ($ClientPackage) { [string]$ClientPackage.version } else { ([regex]::Match((Get-Content (Join-Path $repositoryRoot "pyproject.toml") -Raw), '(?m)^version = "([^"]+)"')).Groups[1].Value })
                 sourceRevision = $(if ($ClientPackage) { $ClientPackage.sourceRevision } else { $clientRevision })
                 uncommittedChanges = $(if (-not $ClientPackage) { $dirty } else { $null })
                 fixtureSourceRevision = $clientRevision
@@ -124,6 +135,7 @@ try {
             scenarioContract = $lock.contract
             scenarios = $(if ($ExpectIncompatible) { @('installation-contract-rejected') } else { @($scenarios.scenarios.id) + $optionalScenarios })
             optionalScenarios = @($optionalScenarios)
+            fixtureTimeoutSeconds = $fixtureTimeout
         }
         $destination = [IO.Path]::GetFullPath($EvidencePath, $repositoryRoot)
         [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($destination)) | Out-Null
