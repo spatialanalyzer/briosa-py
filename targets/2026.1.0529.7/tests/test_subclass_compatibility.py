@@ -10,7 +10,9 @@ later change to it is noticed.
 ``fixtures/pickled-0.5.0-subclasses.json`` holds values of the subclasses in
 ``pickled_subclasses.py`` as the published 0.5.0 wheel of this target pickled
 them, with protocol 4, on Python 3.10 and on Python 3.14, and the startup-timeout
-exception that 0.5.0 raised on each.
+exception that 0.5.0 raised on each. ``fixtures/options-reflection-0.5.0.json``
+holds what ``options_reflection.describe()`` returned with that wheel on each
+Python version from 3.10 to 3.14.
 """
 
 from __future__ import annotations
@@ -23,16 +25,19 @@ import json
 import pickle
 import pickletools
 import sys
+import typing
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
+import options_reflection
 import pickled_subclasses as sub
 import pytest
 from test_startup_budget import bounds, expiry, startup_expiry_error
 
 from briosa import (
     BriosaLifecycleBounds,
+    BriosaLoggingOptions,
     BriosaOperationCapability,
     BriosaServerSelection,
     BriosaServerSnapshot,
@@ -68,6 +73,11 @@ FIXTURE = json.loads(
     )
 )
 RUNS: list[dict[str, Any]] = FIXTURE["runs"]
+REFLECTION = json.loads(
+    (Path(__file__).parent / "fixtures/options-reflection-0.5.0.json").read_text(
+        encoding="utf-8"
+    )
+)
 
 FAILURE: dict[str, Any] = {
     "operation_id": "file_operations.get_working_directory",
@@ -482,6 +492,46 @@ def test_options_subclass_shapes_construct_copy_and_pickle_as_in_0_5_0(
         options=value,
         hang_at="launch-sa" if shape == "own-post-init" else "connect-sdk",
     )[0] == (120.0)
+
+
+def test_the_reflection_fixture_was_written_by_the_published_0_5_0_wheel() -> None:
+    assert [run["briosa"] for run in REFLECTION["runs"]] == ["0.5.0"] * 5
+    assert [run["python"].rsplit(".", 1)[0] for run in REFLECTION["runs"]] == [
+        "3.10",
+        "3.11",
+        "3.12",
+        "3.13",
+        "3.14",
+    ]
+
+
+def test_the_options_constructor_reflects_as_in_0_5_0() -> None:
+    """``inspect.signature``, ``inspect.getfullargspec``, ``typing.get_type_hints``
+    and the constructor's attributes, for ``BriosaStartOptions`` and a subclass
+    that inherits its constructor, against the published 0.5.0 wheel on the same
+    Python version."""
+    minor = ".".join(map(str, sys.version_info[:2]))
+    recorded = {
+        run["python"].rsplit(".", 1)[0]: run["reflection"] for run in REFLECTION["runs"]
+    }
+    if minor not in recorded:
+        pytest.skip(f"0.5.0 reflection was recorded on Python 3.10-3.14, not {minor}")
+    expected = copy.deepcopy(recorded[minor])
+    actual = options_reflection.describe()
+    if sys.version_info < (3, 11):
+        # Python 3.10's get_type_hints adds Optional for a None default that it
+        # finds through the function's own positional parameters. The
+        # constructor's are *args and **kwargs, so on 3.10 the hint keeps the
+        # annotation's spelling. Both hints are the same type and compare equal.
+        for name in expected:
+            hints = expected[name]["type-hints-init"]
+            assert hints["logging"] == (
+                "typing.Optional[briosa.logging_options.BriosaLoggingOptions]"
+            )
+            hints["logging"] = "briosa.logging_options.BriosaLoggingOptions | None"
+        logging = typing.get_type_hints(BriosaStartOptions.__init__)["logging"]
+        assert logging == typing.Optional[BriosaLoggingOptions]  # noqa: UP045
+    assert actual == expected
 
 
 def exceptions(run: dict[str, Any]) -> dict[str, Any]:

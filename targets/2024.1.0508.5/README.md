@@ -96,8 +96,12 @@ startup fails after the client took ownership of the session, that session
 admits no MP command for the rest of its life, whatever later state reads
 report; call `stop()` and then `start()` to begin a new one. If cleaning up
 after a failed startup also fails, the startup's error is still the one
-raised, with a note naming what could not be closed. Against Server 0.10.0
-each step runs as with client 0.5.0.
+raised, with a note naming what could not be closed. That cleanup runs after
+the startup budget has ended, so the budget never interrupts it, and finishes
+before `start()` returns. It gives each of the transport and the owned server
+up to 10 seconds to close; a close that takes longer is cancelled and left
+behind, with a note saying so. Against Server 0.10.0 each step runs as with
+client 0.5.0.
 
 Lifecycle methods send no deadline unless you pass `timeout`. If the budget
 expires while the server is starting or connecting the SDK, read the SDK state
@@ -205,7 +209,9 @@ Not guaranteed; known differences from 0.5.0:
 
 - `dataclasses.fields()`, `astuple()` and `asdict()` on `OperationFailure`,
   `BriosaOperationCapability` and `BriosaServerSnapshot` include the fields
-  0.5.1 added, so code that unpacks an exact number of values needs updating.
+  0.5.1 added: `OperationFailure` goes from 9 fields to 10,
+  `BriosaOperationCapability` from 8 to 10 and `BriosaServerSnapshot` from 8
+  to 10, so code that unpacks an exact number of values needs updating.
 - Your own subclass of one of those three types that adds fields, or that
   declares a field or property with the name of a field 0.5.1 added, may need
   changes, and pickles of such subclasses written by 0.5.0 are not guaranteed
@@ -214,7 +220,8 @@ Not guaranteed; known differences from 0.5.0:
   the name of a field 0.5.1 added can no longer be created.
 - A pickle written by 0.5.0 of a subclass of one of those three types that was
   declared with `@dataclass(slots=True)` and adds a field loads with that
-  field's value in a field 0.5.1 added and the subclass's own field missing.
+  field's value in a field 0.5.1 added and the subclass's own field missing;
+  reading the missing field raises `AttributeError`.
 - Client 0.5.0 can't load a `BriosaServerSnapshot` pickled by 0.5.1, or an
   `OperationFailure` or `BriosaOperationCapability` pickled by 0.5.1 that
   carries a policy denial detail or request options.

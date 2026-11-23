@@ -1593,21 +1593,94 @@ def test_subclassed_launch_options_are_read_once_before_the_check() -> None:
     assert received[0] == SpatialAnalyzerLaunchOptions(start_minimized=True)
 
 
-def test_a_reflected_default_is_an_explicit_timeout() -> None:
-    reflected = inspect.signature(BriosaStartOptions).parameters["startup_timeout"]
-    field_default = next(
+def _options() -> Any:
+    return BriosaStartOptions()
+
+
+# Every way of obtaining the default budget from the class or from options that
+# omitted it. None of them yields anything but a plain 120.0.
+DEFAULT_READS: dict[str, Callable[[], Any]] = {
+    "attribute": lambda: BriosaStartOptions().startup_timeout,
+    "class-descriptor": lambda: cast(Any, BriosaStartOptions).startup_timeout.__get__(
+        BriosaStartOptions(), BriosaStartOptions
+    ),
+    "object-getattribute": lambda: object.__getattribute__(
+        BriosaStartOptions(), "startup_timeout"
+    ),
+    "field-default": lambda: next(
         item.default
         for item in dataclasses.fields(BriosaStartOptions)
         if item.name == "startup_timeout"
-    )
-    for value in (reflected.default, field_default):
-        assert type(value) is float
-        assert value == 120.0
+    ),
+    "signature-default": lambda: (
+        inspect.signature(BriosaStartOptions).parameters["startup_timeout"].default
+    ),
+    "init-defaults": lambda: cast(Any, BriosaStartOptions.__init__).__defaults__[5],
+    "astuple": lambda: dataclasses.astuple(BriosaStartOptions())[5],
+    "asdict": lambda: dataclasses.asdict(BriosaStartOptions())["startup_timeout"],
+    "pickle-state": lambda: _options().__getstate__()[5],
+    "reduce": lambda: _options().__reduce_ex__(4)[2][5],
+    "copy": lambda: copy.copy(BriosaStartOptions()).startup_timeout,
+    "unpickled": lambda: pickle.loads(
+        pickle.dumps(BriosaStartOptions())
+    ).startup_timeout,
+}
+
+
+@pytest.mark.parametrize("read", DEFAULT_READS)
+def test_every_way_of_reading_the_default_forwards_an_explicit_budget(
+    read: str,
+) -> None:
+    value = DEFAULT_READS[read]()
+    assert type(value) is float
+    assert value == 120.0
+    for forwarded in (
+        BriosaStartOptions(startup_timeout=value),
+        BriosaStartOptions(
+            BriosaServerSelection(),
+            True,
+            True,
+            True,
+            SpatialAnalyzerLaunchOptions(),
+            value,
+        ),
+    ):
+        assert not _startup_timeout_omitted(forwarded)
         elapsed, _ = expiry(
-            published=bounds(startup_with_launch=300_000),
-            options=BriosaStartOptions(startup_timeout=value),
+            published=bounds(startup_with_launch=300_000), options=forwarded
         )
+        # The forwarded value is explicit: no published allowance is adopted.
         assert elapsed == 120.0
+    # Leaving it out is what adopts the allowance.
+    elapsed, _ = expiry(
+        published=bounds(startup_with_launch=300_000), options=BriosaStartOptions()
+    )
+    assert elapsed == 320.0
+
+
+def test_the_field_holds_a_plain_value_and_the_omission_is_kept_apart() -> None:
+    omitted = BriosaStartOptions()
+    assert _startup_timeout_omitted(omitted)
+    # The field's own storage holds the plain value, read through the
+    # dataclass's own slot, as in 0.5.0.
+    descriptor = vars(BriosaStartOptions)["startup_timeout"]
+    assert type(descriptor).__name__ == "member_descriptor"
+    assert type(descriptor.__get__(omitted, BriosaStartOptions)) is float
+    assert BriosaStartOptions.__slots__ == tuple(
+        item.name for item in dataclasses.fields(BriosaStartOptions)
+    )
+    # Building the options again, or restoring a state, records anew.
+    rebuilt = BriosaStartOptions()
+    cast(Any, rebuilt).__init__(startup_timeout=120.0)
+    assert not _startup_timeout_omitted(rebuilt)
+    restored = BriosaStartOptions()
+    cast(Any, restored).__setstate__(cast(Any, BriosaStartOptions()).__getstate__()[:7])
+    assert not _startup_timeout_omitted(restored)
+    # The record holds only while the field holds the default it was given.
+    object.__setattr__(omitted, "startup_timeout", 5.0)
+    assert not _startup_timeout_omitted(omitted)
+    elapsed, _ = expiry(published=bounds(startup_with_launch=300_000), options=omitted)
+    assert elapsed == 5.0
 
 
 def fail_registrations(loop: VirtualClockLoop, which: str) -> Callable[[], None]:
@@ -2005,22 +2078,29 @@ def test_any_registration_failure_keeps_the_bootstrap_deadline(
 
 
 @pytest.mark.parametrize(
-    ("published", "seconds"),
+    ("published", "seconds", "queued"),
     [
-        (bounds(startup_with_launch=160_000), 0.0),
-        (bounds(startup_with_launch=160_000), 181.0),
-        (None, 0.0),
+        (bounds(startup_with_launch=160_000), 0.0, None),
+        (bounds(startup_with_launch=160_000), 179.0, 181.0),
+        (bounds(startup_with_launch=160_000), 181.0, None),
+        (None, 0.0, None),
     ],
-    ids=["guarded-before", "guarded-after", "0.10.0"],
+    ids=["guarded-before", "guarded-before-a-queued-expiry", "guarded-after", "0.10.0"],
 )
 def test_a_phase_timeout_is_a_startup_timeout_only_once_the_budget_ran_out(
-    published: discovery_pb2.LifecycleBounds | None, seconds: float
+    published: discovery_pb2.LifecycleBounds | None,
+    seconds: float,
+    queued: float | None,
 ) -> None:
     raised = TimeoutError("raised by the launch transport")
 
     async def body(loop: VirtualClockLoop) -> BaseException:
         def fail() -> None:
             loop.now = T0 + seconds
+            if queued is not None:
+                # The clock passes the deadline before the task waiting on
+                # the startup resumes: the failure is already classified.
+                loop.call_soon(at(loop, queued))
             raise raised
 
         fake = GuardedTransport(
@@ -2048,3 +2128,203 @@ def test_a_phase_timeout_is_a_startup_timeout_only_once_the_budget_ran_out(
         assert isinstance(error, BriosaStartupError)
         assert error.diagnostic_code == "startup-timeout"
         assert error.__cause__ is raised
+
+
+class SlowClosingServer(RecordingServer):
+    """An owned server whose close suspends, never finishes, or fails."""
+
+    def __init__(self, record: list[str], close: str) -> None:
+        self.record = record
+        self.close_as = close
+
+    async def close(self) -> None:
+        await slow_close(self.record, "server", self.close_as)
+
+
+async def slow_close(record: list[str], resource: str, close: str) -> None:
+    """Close as ``close`` says: ``quick``, ``suspends``, ``fails``, ``never``,
+    or ``ignores-cancellation`` (finishing 100 s after it is cancelled)."""
+    record.append(f"{resource}-close")
+    if close == "never":
+        await asyncio.Event().wait()
+    if close == "ignores-cancellation":
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            await asyncio.sleep(100.0)
+            record.append(f"{resource}-closed-late")
+            return
+    if close in ("suspends", "fails"):
+        for _ in range(5):
+            await asyncio.sleep(0)
+        await asyncio.sleep(1.0)
+    record.append(f"{resource}-closed")
+    if close == "fails":
+        raise OSError(f"the {resource} could not be closed")
+
+
+FAILED = "Closing the {} after this startup failure also failed (OSError)."
+ABANDONED = (
+    "Closing the {} after this startup failure did not finish within 10 seconds "
+    "and was abandoned."
+)
+
+
+@pytest.mark.parametrize("expires_by", ["check", "timer"])
+@pytest.mark.parametrize(
+    ("transport_close", "server_close", "seconds", "notes"),
+    [
+        ("suspends", "quick", 1.0, []),
+        ("quick", "suspends", 1.0, []),
+        ("fails", "suspends", 2.0, [FAILED.format("transport")]),
+        ("suspends", "fails", 2.0, [FAILED.format("owned server")]),
+        ("never", "suspends", 11.0, [ABANDONED.format("transport")]),
+        (
+            "fails",
+            "never",
+            11.0,
+            [FAILED.format("transport"), ABANDONED.format("owned server")],
+        ),
+        ("quick", "ignores-cancellation", 10.0, [ABANDONED.format("owned server")]),
+    ],
+    ids=[
+        "transport-suspends",
+        "server-suspends",
+        "transport-fails-server-suspends",
+        "transport-suspends-server-fails",
+        "transport-never-closes",
+        "transport-fails-server-never-closes",
+        "server-ignores-cancellation",
+    ],
+)
+def test_cleanup_after_a_guarded_expiry_runs_outside_the_budget(
+    transport_close: str,
+    server_close: str,
+    seconds: float,
+    notes: list[str],
+    expires_by: str,
+) -> None:
+    """The budget the cleanup follows cannot cancel it; each close gets 10 s."""
+    record: list[str] = []
+
+    class Launcher:
+        async def launch(
+            self,
+            logging: BriosaLoggingOptions | None = None,
+            selection: BriosaServerSelection | None = None,
+        ) -> OwnedServer:
+            return SlowClosingServer(record, server_close)
+
+    class SlowTransport(GuardedTransport):
+        async def close(self) -> None:
+            await slow_close(record, "transport", transport_close)
+
+    async def body(loop: VirtualClockLoop) -> tuple[BaseException, float, bool]:
+        holder: list[BriosaClient] = []
+        held: list[asyncio.Future[None]] = []
+
+        async def hold_lock() -> None:
+            lock = holder[0]._required_lock()
+            async with lock:
+                await asyncio.sleep(500.0)
+
+        if expires_by == "check":
+            # Discovery returns after the deadline; a budget check finds it.
+            on = {"snapshot": at(loop, 121.0)}
+            silent = frozenset({"snapshot"})
+        else:
+            # The startup waits for the client's lock until its timer fires.
+            on = {"snapshot": lambda: held.append(asyncio.ensure_future(hold_lock()))}
+            silent = frozenset()
+        fake = SlowTransport(loop, published=EMPTY, silent=silent, on=on)
+        client = BriosaClient(
+            _server_launcher=Launcher(), _transport_factory=lambda _target: fake
+        )
+        holder.append(client)
+        error = await expect_startup_timeout(client)
+        returned = loop.time() - T0
+        unowned = client._session is None
+        for task in held:
+            await task
+        await client.stop()
+        if (
+            "server-closed-late" not in record
+            and server_close == "ignores-cancellation"
+        ):
+            await asyncio.sleep(200.0)
+        return error, returned, unowned
+
+    error, returned, unowned = run_virtual(body, now=T0)
+    deadline = 121.0 if expires_by == "check" else 120.0
+    # start() returns once the cleanup ends, a bounded time after the deadline.
+    assert returned == deadline + seconds
+    assert unowned
+    assert list(getattr(error, "__notes__", ())) == notes
+    assert record[:2] == ["transport-close"] + (
+        ["transport-closed"] if transport_close not in ("never",) else ["server-close"]
+    )
+    assert "server-close" in record
+    if server_close in ("suspends", "fails", "quick"):
+        # The server close finished, and before start() returned.
+        assert "server-closed" in record
+    if server_close == "ignores-cancellation":
+        # Abandoned without waiting for it: it ended long after start() returned.
+        assert record[-1] == "server-closed-late"
+
+
+@dataclass(frozen=True)
+class UnvalidatedStartOptions(BriosaStartOptions):
+    """A subclass whose own __post_init__ skips the base class's validation."""
+
+    def __post_init__(self) -> None:
+        pass
+
+
+@pytest.mark.parametrize("budget", [0.0, -1.0, 0])
+def test_a_nonpositive_budget_times_out_before_anything_is_launched(
+    budget: float,
+) -> None:
+    """As client 0.5.0's asyncio.wait_for did, on each Python version."""
+    launches: list[str] = []
+    transports: list[str] = []
+
+    class Launcher:
+        async def launch(
+            self,
+            logging: BriosaLoggingOptions | None = None,
+            selection: BriosaServerSelection | None = None,
+        ) -> OwnedServer:
+            launches.append("launch")
+            return RecordingServer()
+
+    def transport(target: str) -> RecordingTransport:
+        transports.append(target)
+        return RecordingTransport()
+
+    async def body(
+        loop: VirtualClockLoop,
+    ) -> tuple[BriosaStartupError, float, list[float]]:
+        client = BriosaClient(_server_launcher=Launcher(), _transport_factory=transport)
+        try:
+            with pytest.raises(BriosaStartupError) as raised:
+                await client.start(UnvalidatedStartOptions(startup_timeout=budget))
+            return raised.value, loop.time() - T0, loop.armed()
+        finally:
+            await client.stop()
+
+    error, elapsed, armed = run_virtual(body, now=T0)
+    assert launches == []
+    assert transports == []
+    assert elapsed == 0.0
+    assert armed == []
+    assert error.diagnostic_code == "startup-timeout"
+    if sys.version_info >= (3, 11):
+        # startup-timeout from wait_for's TimeoutError, from its cancellation.
+        assert type(error) is BriosaStartupError
+        assert type(error.__cause__) is TimeoutError
+        assert isinstance(error.__cause__.__cause__, asyncio.CancelledError)
+    else:
+        # 0.5.0 let wait_for's asyncio.TimeoutError through on Python 3.10; it
+        # is now the startup timeout of that version, from the same cancellation.
+        assert isinstance(error, asyncio.TimeoutError)
+        assert isinstance(error.__cause__, asyncio.CancelledError)

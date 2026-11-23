@@ -75,6 +75,10 @@ _Result = TypeVar("_Result")
 _STARTUP_BUDGET_FLOOR_SECONDS = 120.0
 _STARTUP_BUDGET_MARGIN_SECONDS = 20.0
 
+# After a guarded startup fails, closing each resource it still holds is given
+# this long, outside the startup budget; a close that takes longer is abandoned.
+_STARTUP_CLEANUP_CLOSE_SECONDS = 10.0
+
 
 def _startup_timeout_error(
     diagnostic_code: str = "startup-timeout",
@@ -299,6 +303,10 @@ class _StartupBudget:
         self._deadline = deadline
         self._cancel_requested = cancel_requested
         self.guarded = False
+        # A guarded phase's own failure before the deadline, classified once
+        # where it occurred: it is raised as it is, whatever the clock reads
+        # when the startup's waiter resumes.
+        self.kept_failure: BaseException | None = None
         self._adopted = False
 
     def guard(self) -> None:
@@ -367,41 +375,104 @@ class _StartupHold:
     session: _Session | None = None
 
 
-def _note_cleanup_failure(
-    primary: BaseException, resource: str, failure: Exception
-) -> None:
-    note = (
-        f"Closing the {resource} after this startup failure also failed "
-        f"({type(failure).__name__})."
-    )
+def _add_note(primary: BaseException, note: str) -> None:
     if sys.version_info >= (3, 11):
         primary.add_note(note)
     else:
         setattr(primary, "__notes__", [*getattr(primary, "__notes__", ()), note])  # noqa: B010
 
 
-async def _close_unowned(
-    transport: ClientTransport | None,
-    server: OwnedServer | None,
-    primary: BaseException,
-) -> None:
-    """Close what a guarded startup never handed to its session.
+# Closes abandoned after a guarded startup failure, kept referenced until they
+# end so that they are neither collected while pending nor logged.
+_ABANDONED_CLOSES: set[asyncio.Future[Any]] = set()
 
-    The server is closed even when closing the transport fails, and a cleanup
-    failure becomes a note on the startup's own failure instead of replacing it.
+
+def _forget_abandoned_close(closing: asyncio.Future[Any]) -> None:
+    _ABANDONED_CLOSES.discard(closing)
+    if not closing.cancelled():
+        closing.exception()
+
+
+async def _close_within(
+    close: Callable[[], Awaitable[None]], resource: str, primary: BaseException
+) -> None:
+    """Close one resource, for at most ``_STARTUP_CLEANUP_CLOSE_SECONDS``.
+
+    A close that has not finished by then is cancelled and abandoned, without
+    waiting for it. A close that fails or is abandoned becomes a note on
+    ``primary``.
     """
     try:
-        if transport is not None:
-            try:
-                await transport.close()
-            except Exception as failure:
-                _note_cleanup_failure(primary, "transport", failure)
-    finally:
-        if server is not None:
-            try:
-                await server.close()
-            except Exception as failure:
-                _note_cleanup_failure(primary, "owned server", failure)
+        closing = asyncio.ensure_future(close())
+    except Exception as failure:
+        failed: BaseException | None = failure
+    else:
+        abandoned = False
+        try:
+            await asyncio.wait({closing}, timeout=_STARTUP_CLEANUP_CLOSE_SECONDS)
+        finally:
+            if not closing.done():
+                abandoned = True
+                closing.cancel()
+                _ABANDONED_CLOSES.add(closing)
+                closing.add_done_callback(_forget_abandoned_close)
+        if abandoned:
+            _add_note(
+                primary,
+                f"Closing the {resource} after this startup failure did not "
+                f"finish within {_STARTUP_CLEANUP_CLOSE_SECONDS:g} seconds and "
+                "was abandoned.",
+            )
+            return
+        failed = (
+            asyncio.CancelledError() if closing.cancelled() else closing.exception()
+        )
+    if failed is not None:
+        _add_note(
+            primary,
+            f"Closing the {resource} after this startup failure also failed "
+            f"({type(failed).__name__}).",
+        )
+
+
+async def _close_unowned(held: _StartupHold, primary: BaseException) -> None:
+    """Close what a guarded startup never handed to its session.
+
+    This runs once the startup's timer has ended, so the budget it cleans up
+    after cannot cancel it, and its notes go on the exception the caller
+    receives. Each close is bounded by ``_STARTUP_CLEANUP_CLOSE_SECONDS``. The
+    server is closed even when closing the transport fails, and a cleanup
+    failure becomes a note instead of replacing ``primary``.
+    """
+    transport, server = held.transport, held.server
+    held.transport = None
+    held.server = None
+    if transport is not None:
+        await _close_within(transport.close, "transport", primary)
+    if server is not None:
+        await _close_within(server.close, "owned server", primary)
+
+
+async def _startup_not_begun() -> None:
+    """Stands for a startup that ``asyncio.wait_for`` cancels before it runs."""
+
+
+async def _run_spent_start(startup_timeout: Any) -> None:
+    """Time out a startup whose budget is nonpositive, before it begins.
+
+    ``asyncio.wait_for`` timed client 0.5.0's startup, and with a nonpositive
+    timeout it cancels the startup before it runs. This does the same through
+    ``asyncio.wait_for`` itself, so nothing is launched and each Python version
+    raises what its ``wait_for`` raised: ``startup-timeout`` from the
+    ``TimeoutError``, and on Python 3.10, where 0.5.0 let ``wait_for``'s
+    ``asyncio.TimeoutError`` through, the startup timeout of that version.
+    """
+    try:
+        await asyncio.wait_for(_startup_not_begun(), timeout=startup_timeout)
+    except asyncio.TimeoutError as error:
+        if sys.version_info < (3, 11):
+            raise _startup_timeout_error() from error.__cause__
+        raise BriosaStartupError("startup-timeout") from error
 
 
 async def _cancel_and_wait(
@@ -825,6 +896,11 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         await asyncio.shield(task)
 
     async def _run_start(self, options: BriosaStartOptions) -> None:
+        # The budget is read once, as client 0.5.0's asyncio.wait_for read it.
+        startup_timeout = options.startup_timeout
+        if startup_timeout is not None and startup_timeout <= 0:
+            await _run_spent_start(startup_timeout)
+            return
         # One start instant on the loop's monotonic clock, before host launch or
         # discovery. Each Python version times the startup the way its
         # asyncio.wait_for timed it for client 0.5.0: asyncio.timeout from
@@ -832,45 +908,53 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         loop = asyncio.get_running_loop()
         started_at = loop.time()
         budget: _StartupBudget | None = None
+        held = _StartupHold()
         try:
-            if sys.version_info >= (3, 12):
-                task = asyncio.current_task()
-                assert task is not None
-                when = started_at + options.startup_timeout
-                async with asyncio.timeout_at(when) as timeout:
-                    deadline = _NativeDeadline(loop, timeout, when)
-                    budget = _StartupBudget(
-                        loop, started_at, deadline, lambda: task.cancelling() > 0
+            try:
+                if sys.version_info >= (3, 12):
+                    task = asyncio.current_task()
+                    assert task is not None
+                    when = started_at + startup_timeout
+                    async with asyncio.timeout_at(when) as timeout:
+                        deadline = _NativeDeadline(loop, timeout, when)
+                        budget = _StartupBudget(
+                            loop, started_at, deadline, lambda: task.cancelling() > 0
+                        )
+                        try:
+                            await self._start_inner(options, budget, held)
+                        finally:
+                            deadline.cancel()
+                else:
+                    waiter: asyncio.Future[None] = loop.create_future()
+
+                    def release(_: object = None) -> None:
+                        if not waiter.done():
+                            waiter.set_result(None)
+
+                    waiting = _LoopDeadline(loop, started_at + startup_timeout, release)
+                    budget = _StartupBudget(loop, started_at, waiting, waiter.cancelled)
+                    await self._run_start_with_waiter(
+                        options, budget, held, waiter, release, waiting
                     )
-                    try:
-                        await self._start_inner(options, budget)
-                    finally:
-                        deadline.cancel()
-            else:
-                waiter: asyncio.Future[None] = loop.create_future()
-
-                def release(_: object = None) -> None:
-                    if not waiter.done():
-                        waiter.set_result(None)
-
-                waiting = _LoopDeadline(
-                    loop, started_at + options.startup_timeout, release
-                )
-                budget = _StartupBudget(loop, started_at, waiting, waiter.cancelled)
-                await self._run_start_with_waiter(
-                    options, budget, waiter, release, waiting
-                )
-        except TimeoutError as error:
-            if budget is not None and budget.guarded and not budget.spent():
-                # A phase's own TimeoutError before a guarded startup's
-                # deadline keeps its own error.
-                raise
-            raise BriosaStartupError("startup-timeout") from error
+            except TimeoutError as error:
+                if budget is not None and error is budget.kept_failure:
+                    # A guarded phase's own TimeoutError before the deadline
+                    # keeps its own error.
+                    raise
+                raise BriosaStartupError("startup-timeout") from error
+        except BaseException as failure:
+            if budget is not None and budget.guarded:
+                # The startup's timer has ended: what the guarded startup never
+                # handed to its session is closed now, and the notes go on the
+                # exception the caller receives.
+                await _close_unowned(held, failure)
+            raise
 
     async def _run_start_with_waiter(
         self,
         options: BriosaStartOptions,
         budget: _StartupBudget,
+        held: _StartupHold,
         waiter: asyncio.Future[None],
         release: Callable[[object], None],
         deadline: _LoopDeadline,
@@ -884,7 +968,7 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         cancellation before this task has run to pass it on.
         """
         loop = asyncio.get_running_loop()
-        startup = loop.create_task(self._start_inner(options, budget))
+        startup = loop.create_task(self._start_inner(options, budget, held))
         startup.add_done_callback(release)
         try:
             try:
@@ -909,17 +993,12 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
             deadline.cancel()
 
     async def _start_inner(
-        self, options: BriosaStartOptions, budget: _StartupBudget
+        self, options: BriosaStartOptions, budget: _StartupBudget, held: _StartupHold
     ) -> None:
-        held = _StartupHold()
+        # A guarded startup leaves what it never handed to its session in
+        # ``held``, for _run_start to close once the startup's timer has ended.
         try:
             await self._start_held(options, budget, held)
-        except BaseException as primary:
-            if held.session is None and budget.guarded:
-                # A guarded startup closes what it never handed to the session,
-                # and its own failure stays the one raised.
-                await _close_unowned(held.transport, held.server, primary)
-            raise
         finally:
             if held.session is None and not budget.guarded:
                 # As client 0.5.0.
@@ -978,10 +1057,13 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
             raise _startup_timeout_error() from None
         except Exception as failure:
             self._close_admission(held.session, budget)
-            if budget.guarded and budget.spent():
-                # A phase that fails once the budget has run out, even before
-                # its timer runs, ends the startup as a timeout.
-                raise _startup_timeout_error() from failure
+            if budget.guarded:
+                # Classified once, here: a phase that fails once the budget has
+                # run out, even before its timer runs, ends the startup as a
+                # timeout; one that fails before keeps its own failure.
+                if budget.spent():
+                    raise _startup_timeout_error() from failure
+                budget.kept_failure = failure
             raise
         except BaseException:
             self._close_admission(held.session, budget)

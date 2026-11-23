@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import functools
+import inspect
 from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import MISSING, dataclass, field, fields
 from datetime import timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, TypeVar, cast
 
 from briosa.installation_models import BriosaServerSelection
 from briosa.logging_options import BriosaLoggingOptions
+
+_T = TypeVar("_T")
 
 # The fields that 0.5.1 added to each 0.5.0 dataclass, filled in below. A value
 # pickled by 0.5.0 holds the 0.5.0 fields, then any subclass fields, in order.
@@ -563,56 +567,64 @@ class SpatialAnalyzerLaunchOptions:
         )
 
 
-class _OmittedStartupTimeout(float):
-    """What an omitted ``startup_timeout`` holds in its slot; it reads as 120.0."""
-
-    __slots__ = ()
-
-
-# The one value that marks an omitted budget. Reading the field never returns
-# it, so no value a caller can pass is the marker.
-_OMITTED_STARTUP_TIMEOUT = _OmittedStartupTimeout(120.0)
 # What a pickle of options that omitted the budget appends to the field values.
 # Client 0.5.0 restores only the field values and ignores it.
 _OMITTED_STARTUP_TIMEOUT_STATE = "startup_timeout-omitted"
+# The slot, apart from every field, that records that ``BriosaStartOptions``
+# itself was built without ``startup_timeout``. The field holds the plain value.
+_STARTUP_TIMEOUT_OMISSION_SLOT = "_briosa_startup_timeout_omitted"
+_STARTUP_TIMEOUT_OMISSION: Any = None
 
 
-class _StartupTimeoutValue:
-    """``startup_timeout`` as callers read it: an omitted budget reads as 120.0.
+def _with_startup_timeout_omission(cls: type[_T]) -> type[_T]:
+    """Rebuild a slotted dataclass with one more slot, outside its fields.
 
-    Only values of ``BriosaStartOptions`` itself ever hold the marker, so values
-    of subclasses read exactly as with 0.5.0.
+    The slot is reached only through ``_STARTUP_TIMEOUT_OMISSION``: the class's
+    namespace, ``__slots__`` and ``dir()`` stay as ``dataclasses`` made them.
+    Closures that refer to the class, such as a frozen dataclass's
+    ``__setattr__`` and, on Python 3.14, the generated ``__init__``'s
+    annotations, are pointed at the rebuilt class, as ``dataclasses`` does for
+    the class it rebuilds.
     """
-
-    def __init__(self, slot: Any) -> None:
-        self.slot = slot
-
-    def __get__(self, instance: Any, owner: Any = None) -> Any:
-        if instance is None:
-            return self.slot
-        value = self.slot.__get__(instance, owner)
-        return 120.0 if value is _OMITTED_STARTUP_TIMEOUT else value
-
-    def __set__(self, instance: Any, value: Any) -> None:
-        self.slot.__set__(instance, value)
-
-    def __delete__(self, instance: Any) -> None:
-        self.slot.__delete__(instance)
+    global _STARTUP_TIMEOUT_OMISSION
+    namespace = dict(vars(cls))
+    slots = namespace["__slots__"]
+    for name in slots:
+        del namespace[name]
+    namespace["__slots__"] = (*slots, _STARTUP_TIMEOUT_OMISSION_SLOT)
+    metaclass: Any = type(cls)
+    rebuilt: type[_T] = metaclass(cls.__name__, cls.__bases__, namespace)
+    rebuilt.__qualname__ = cls.__qualname__
+    for member in namespace.values():
+        for function in (member, inspect.unwrap(member)):
+            for candidate in (function, getattr(function, "__annotate__", None)):
+                for cell in getattr(candidate, "__closure__", None) or ():
+                    with suppress(ValueError):
+                        if cell.cell_contents is cls:
+                            cell.cell_contents = rebuilt
+    _STARTUP_TIMEOUT_OMISSION = vars(rebuilt)[_STARTUP_TIMEOUT_OMISSION_SLOT]
+    delattr(rebuilt, _STARTUP_TIMEOUT_OMISSION_SLOT)
+    setattr(rebuilt, "__slots__", slots)  # noqa: B010
+    return rebuilt
 
 
 def _startup_timeout_omitted(options: object) -> bool:
     """Whether ``options`` is a ``BriosaStartOptions`` built without a budget.
 
     Only the exact class records an omission; every subclass has an explicit
-    budget, as all options did with client 0.5.0.
+    budget, as all options did with client 0.5.0. The record holds only while
+    the field still holds the default it was given.
     """
-    return (
-        type(options) is BriosaStartOptions
-        and _STARTUP_TIMEOUT.slot.__get__(options, BriosaStartOptions)
-        is _OMITTED_STARTUP_TIMEOUT
-    )
+    if type(options) is not BriosaStartOptions:
+        return False
+    try:
+        omitted = _STARTUP_TIMEOUT_OMISSION.__get__(options, BriosaStartOptions)
+    except AttributeError:
+        return False
+    return omitted is True and options.startup_timeout == 120.0
 
 
+@_with_startup_timeout_omission
 @dataclass(frozen=True, slots=True)
 class BriosaStartOptions:
     """Selects the phases of one client-owned server startup.
@@ -692,14 +704,12 @@ def _restore_start_options_state(self: BriosaStartOptions, state: list[Any]) -> 
     declared = fields(self)
     for item, value in zip(declared, state, strict=False):
         object.__setattr__(self, item.name, value)
-    if type(self) is BriosaStartOptions and state[len(declared) :] == [
-        _OMITTED_STARTUP_TIMEOUT_STATE
-    ]:
-        _STARTUP_TIMEOUT.slot.__set__(self, _OMITTED_STARTUP_TIMEOUT)
+    if type(self) is BriosaStartOptions:
+        _STARTUP_TIMEOUT_OMISSION.__set__(
+            self, state[len(declared) :] == [_OMITTED_STARTUP_TIMEOUT_STATE]
+        )
 
 
-_STARTUP_TIMEOUT = _StartupTimeoutValue(vars(BriosaStartOptions)["startup_timeout"])
-setattr(BriosaStartOptions, "startup_timeout", _STARTUP_TIMEOUT)  # noqa: B010
 _GENERATED_INIT = BriosaStartOptions.__init__
 _STARTUP_TIMEOUT_POSITION = [item.name for item in fields(BriosaStartOptions)].index(
     "startup_timeout"
@@ -709,18 +719,19 @@ _STARTUP_TIMEOUT_POSITION = [item.name for item in fields(BriosaStartOptions)].i
 @functools.wraps(_GENERATED_INIT)
 def _start_options_init(self: BriosaStartOptions, *args: Any, **kwargs: Any) -> None:
     _GENERATED_INIT(self, *args, **kwargs)
-    # Only the exact class, built without the argument, has an omitted budget.
-    if (
-        type(self) is BriosaStartOptions
-        and "startup_timeout" not in kwargs
-        and len(args) <= _STARTUP_TIMEOUT_POSITION
-    ):
-        _STARTUP_TIMEOUT.slot.__set__(self, _OMITTED_STARTUP_TIMEOUT)
+    if type(self) is BriosaStartOptions:
+        # Only the exact class, built without the argument, has an omitted budget.
+        _STARTUP_TIMEOUT_OMISSION.__set__(
+            self,
+            "startup_timeout" not in kwargs and len(args) <= _STARTUP_TIMEOUT_POSITION,
+        )
 
 
-# The signature (through __wrapped__) and the defaults stay the dataclass
-# __init__'s, so both show a plain 120.0, as in 0.5.0.
+# The signature, name, qualified name, documentation, annotations and defaults
+# are the dataclass __init__'s, as in 0.5.0, so every way of reflecting on the
+# constructor shows its parameters and a plain 120.0.
 _init = cast(Any, _start_options_init)
+_init.__signature__ = inspect.signature(_GENERATED_INIT)
 _init.__defaults__ = _GENERATED_INIT.__defaults__
 _init.__kwdefaults__ = _GENERATED_INIT.__kwdefaults__
 del _init

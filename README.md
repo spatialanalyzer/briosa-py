@@ -37,7 +37,11 @@ The default `BriosaStartOptions.startup_timeout` is `120.0` seconds in both
 products. It is sized from the server's default lifecycle bounds. With Server
 0.10.1 and later, an omitted budget follows the server's published startup
 allowance and is never less than 120 seconds; against Server 0.10.0 it stays at
-120 seconds. An explicit value is always used as given. See
+120 seconds. An explicit value is always used as given. If a startup against
+a server that publishes lifecycle bounds fails after the client took ownership
+of the session, that session admits no MP command for the rest of its life,
+whatever later state reads report; call `stop()` and then `start()` to begin a
+new one. See
 [startup and lifecycle time budgets](docs/public-api-contract.md#startup-and-lifecycle-time-budgets).
 
 **Compatibility with client 0.5.0.** Guaranteed for an application written for
@@ -60,7 +64,9 @@ Not guaranteed; known differences from 0.5.0:
 
 - `dataclasses.fields()`, `astuple()` and `asdict()` on `OperationFailure`,
   `BriosaOperationCapability` and `BriosaServerSnapshot` include the fields
-  0.5.1 added, so code that unpacks an exact number of values needs updating.
+  0.5.1 added: `OperationFailure` goes from 9 fields to 10,
+  `BriosaOperationCapability` from 8 to 10 and `BriosaServerSnapshot` from 8
+  to 10, so code that unpacks an exact number of values needs updating.
 - Your own subclass of one of those three types that adds fields, or that
   declares a field or property with the name of a field 0.5.1 added, may need
   changes, and pickles of such subclasses written by 0.5.0 are not guaranteed
@@ -69,7 +75,8 @@ Not guaranteed; known differences from 0.5.0:
   the name of a field 0.5.1 added can no longer be created.
 - A pickle written by 0.5.0 of a subclass of one of those three types that was
   declared with `@dataclass(slots=True)` and adds a field loads with that
-  field's value in a field 0.5.1 added and the subclass's own field missing.
+  field's value in a field 0.5.1 added and the subclass's own field missing;
+  reading the missing field raises `AttributeError`.
 - Client 0.5.0 can't load a `BriosaServerSnapshot` pickled by 0.5.1, or an
   `OperationFailure` or `BriosaOperationCapability` pickled by 0.5.1 that
   carries a policy denial detail or request options.
