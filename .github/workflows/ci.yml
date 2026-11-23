@@ -55,7 +55,9 @@ jobs:
         run: |
           $lock = Get-Content protocol.lock.json -Raw | ConvertFrom-Json
           $conformance = Get-Content conformance.lock.json -Raw | ConvertFrom-Json
-          if ($conformance.target.spatial_analyzer -ne $lock.target.spatial_analyzer) {
+          $published = Get-Content published-server-conformance.lock.json -Raw | ConvertFrom-Json
+          if ($conformance.target.spatial_analyzer -ne $lock.target.spatial_analyzer -or
+              $published.target.spatial_analyzer -ne $lock.target.spatial_analyzer) {
             throw "Conformance and protocol artifacts must target the same exact SA release."
           }
           "source_revision=$($lock.artifact.source_revision)" | Out-File $env:GITHUB_OUTPUT -Append
@@ -63,6 +65,8 @@ jobs:
           "artifact_file_name=$($lock.artifact.file_name)" | Out-File $env:GITHUB_OUTPUT -Append
           "conformance_version=$($conformance.artifact.briosa_version)" | Out-File $env:GITHUB_OUTPUT -Append
           "conformance_file_name=$($conformance.artifact.file_name)" | Out-File $env:GITHUB_OUTPUT -Append
+          "published_version=$($published.artifact.briosa_version)" | Out-File $env:GITHUB_OUTPUT -Append
+          "published_file_name=$($published.artifact.file_name)" | Out-File $env:GITHUB_OUTPUT -Append
           "spatial_analyzer_target=$($lock.target.spatial_analyzer)" | Out-File $env:GITHUB_OUTPUT -Append
 
       - name: Check out pinned Briosa source
@@ -106,15 +110,22 @@ jobs:
           python eng/import_protocol_artifact.py
           "artifacts/protocol/${{ steps.protocol.outputs.artifact_file_name }}"
 
-      - name: Download pinned client conformance artifact
+      - name: Download pinned client conformance artifacts
         shell: pwsh
         run: |
-          $outputDirectory = Join-Path $PWD 'artifacts/conformance'
-          New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
-          $releaseBase = "https://github.com/spatialanalyzer/briosa/releases/download/v${{ steps.protocol.outputs.conformance_version }}"
-          $fileName = "${{ steps.protocol.outputs.conformance_file_name }}"
-          Invoke-WebRequest "$releaseBase/$fileName" -OutFile (Join-Path $outputDirectory $fileName)
-          Invoke-WebRequest "$releaseBase/$fileName.sha256" -OutFile (Join-Path $outputDirectory "$fileName.sha256")
+          # The retained Server 0.9.2 rejection baseline, and the published
+          # Server 0.10.0 that this client must keep working with unchanged.
+          foreach ($download in @(
+            @{ folder = 'artifacts/conformance'; version = '${{ steps.protocol.outputs.conformance_version }}'; fileName = '${{ steps.protocol.outputs.conformance_file_name }}' },
+            @{ folder = 'artifacts/published-conformance'; version = '${{ steps.protocol.outputs.published_version }}'; fileName = '${{ steps.protocol.outputs.published_file_name }}' }
+          )) {
+            $outputDirectory = Join-Path $PWD $download.folder
+            New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+            $releaseBase = "https://github.com/spatialanalyzer/briosa/releases/download/v$($download.version)"
+            $fileName = $download.fileName
+            Invoke-WebRequest "$releaseBase/$fileName" -OutFile (Join-Path $outputDirectory $fileName)
+            Invoke-WebRequest "$releaseBase/$fileName.sha256" -OutFile (Join-Path $outputDirectory "$fileName.sha256")
+          }
 
       - name: Verify formatting
         run: python -m ruff format --check .
@@ -128,8 +139,22 @@ jobs:
       - name: Test
         run: python -m pytest
 
+      # Conformance diagnostics: each conformance step names its own folder for
+      # the runner's failure diagnostics (scenario folder, server log digest and
+      # server logs), uploaded below when the job fails. Heap dumps on timeout
+      # (BRIOSA_CONFORMANCE_DUMP_ON_TIMEOUT) stay off: they hold process memory,
+      # and the upload would publish them. Briosa__Worker__StartupTimeout gives
+      # the fake worker the 30 s start the 0.10.1 runner sets itself; the 0.10.0
+      # runner doesn't. The legacy Server 0.9.2 legs (this step and the legacy
+      # half of the package step) are exempt from diagnostics: the 0.9.2 runner
+      # ignores the directory, and those legs run only control-plane-only, which
+      # must reject the server before it launches, so there is no server log to
+      # keep. The runner prints the fixture's stderr in full on a failure.
       - name: Run shared client conformance suite
         shell: pwsh
+        env:
+          BRIOSA_CONFORMANCE_DIAGNOSTICS_DIRECTORY: ${{ runner.temp }}/conformance-diagnostics/shared-suite
+          Briosa__Worker__StartupTimeout: '00:00:30'
         run: >
           ./eng/Test-Conformance.ps1
           -ArtifactPath "artifacts/conformance/${{ steps.protocol.outputs.conformance_file_name }}"
@@ -139,6 +164,9 @@ jobs:
 
       - name: Test the contract-aware server from pinned source
         shell: pwsh
+        env:
+          BRIOSA_CONFORMANCE_DIAGNOSTICS_DIRECTORY: ${{ runner.temp }}/conformance-diagnostics/current-server
+          Briosa__Worker__StartupTimeout: '00:00:30'
         run: >
           ./eng/Test-CurrentServerConformance.ps1
           -SourceTarget "${{ github.workspace }}/briosa-source/targets/${{ matrix.sa-target }}"
@@ -162,9 +190,21 @@ jobs:
       - name: Verify packed consumer import
         run: python eng/test_package_consumer.py
 
-      - name: Test actual client package against both server generations
+      - name: Test actual client package against each server generation
         shell: pwsh
+        env:
+          BRIOSA_CONFORMANCE_DIAGNOSTICS_DIRECTORY: ${{ runner.temp }}/conformance-diagnostics/package-compatibility
+          Briosa__Worker__StartupTimeout: '00:00:30'
         run: ./eng/Test-PackageCompatibility.ps1
+
+      - name: Retain conformance diagnostics
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: conformance-diagnostics-${{ matrix.sa-target }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/conformance-diagnostics
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Retain packaged cross-version compatibility evidence
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

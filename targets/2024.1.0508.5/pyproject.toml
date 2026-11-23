@@ -52,6 +52,7 @@ include = [
   "/LICENSE",
   "/protocol.lock.json",
   "/conformance.lock.json",
+  "/published-server-conformance.lock.json",
   "/pyproject.toml",
 ]
 

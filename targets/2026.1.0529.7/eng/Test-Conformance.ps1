@@ -73,13 +73,28 @@ try {
     $runner = Join-Path $packageRoot "runner\Invoke-BriosaClientConformance.ps1"
     $fixture = Join-Path $repositoryRoot "tools\client_conformance.py"
     if ($FixturePath) { $fixture = [IO.Path]::GetFullPath($FixturePath, $repositoryRoot) }
-    & $runner `
-        -Scenario $selectedScenarios `
-        -FixtureCommand $PythonExecutable `
-        -FixtureArguments @($fixture)
+    $scenarios = Get-Content (Join-Path $packageRoot "contract/scenarios.json") -Raw | ConvertFrom-Json
+    # Optional scenarios run only on request. Ask for the ones this fixture knows
+    # when the packaged runner accepts -OptionalScenario (Server 0.10.1 and later)
+    # and its contract lists them; the rejection path runs control-plane-only alone.
+    $fixtureOptionalScenarios = @('large-result')
+    $optionalScenarios = @()
+    if (-not $ExpectIncompatible -and
+        (Get-Command -Name $runner).Parameters.ContainsKey('OptionalScenario') -and
+        $scenarios.PSObject.Properties.Name -contains 'optional_scenarios') {
+        $optionalScenarios = @($scenarios.optional_scenarios |
+            ForEach-Object { [string]$_.id } |
+            Where-Object { $_ -in $fixtureOptionalScenarios })
+    }
+    $runnerArguments = @{
+        Scenario = $selectedScenarios
+        FixtureCommand = $PythonExecutable
+        FixtureArguments = @($fixture)
+    }
+    if ($optionalScenarios.Count -gt 0) { $runnerArguments.OptionalScenario = $optionalScenarios }
+    & $runner @runnerArguments
     if (-not [string]::IsNullOrWhiteSpace($EvidencePath)) {
         $protocol = Get-Content (Join-Path $repositoryRoot "protocol.lock.json") -Raw | ConvertFrom-Json
-        $scenarios = Get-Content (Join-Path $packageRoot "contract/scenarios.json") -Raw | ConvertFrom-Json
         $clientRoot = (Split-Path (Split-Path $repositoryRoot -Parent) -Parent).Replace('\', '/')
         $clientRevision = [string](& git -c "safe.directory=$clientRoot" -C $clientRoot rev-parse HEAD)
         if ($LASTEXITCODE -ne 0) { throw "Cannot identify client source for evidence." }
@@ -107,7 +122,8 @@ try {
             server = $lock.artifact
             target = $lock.target
             scenarioContract = $lock.contract
-            scenarios = $(if ($ExpectIncompatible) { @('installation-contract-rejected') } else { @($scenarios.scenarios.id) })
+            scenarios = $(if ($ExpectIncompatible) { @('installation-contract-rejected') } else { @($scenarios.scenarios.id) + $optionalScenarios })
+            optionalScenarios = @($optionalScenarios)
         }
         $destination = [IO.Path]::GetFullPath($EvidencePath, $repositoryRoot)
         [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($destination)) | Out-Null

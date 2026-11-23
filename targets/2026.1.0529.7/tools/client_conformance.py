@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import inspect
 import json
 import os
@@ -55,6 +56,9 @@ WORKING_DIRECTORY_OPERATION = "file_operations.get_working_directory"
 INTERRUPTED_CONNECT_DEADLINE = 1.0
 DETACHED_CONNECT_READINESS_LIMIT = 20.0
 _Error = TypeVar("_Error", bound=BaseException)
+# Server 0.10.1 is the first release that publishes lifecycle bounds, typed
+# denial detail, and request options.
+FIRST_DESCRIBING_SERVER = (0, 10, 1)
 
 
 def _parse_arguments() -> argparse.Namespace:
@@ -79,7 +83,20 @@ async def _expect_raises(
     raise RuntimeError(f"Expected {error_type.__name__}.")
 
 
-async def _run_scenario(scenario: str) -> None:
+def _release(version: str) -> tuple[int, ...]:
+    """The numeric release of a server version, without prerelease or build."""
+    core = version.split("+", 1)[0].split("-", 1)[0]
+    return tuple(int(part) for part in core.split("."))
+
+
+def _describes_0_10_1_features(version: str) -> bool:
+    return _release(version) >= FIRST_DESCRIBING_SERVER
+
+
+async def _run_scenario(
+    scenario: str, definition: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Run one scenario; return what it adds to the report, if anything."""
     if os.environ.get("BRIOSA_CONFORMANCE_EXPECT_INCOMPATIBLE") == "1":
         _require(
             scenario == "control-plane-only",
@@ -114,11 +131,12 @@ async def _run_scenario(scenario: str) -> None:
             )
         finally:
             await rejected.aclose()
-        return
+        return None
 
     command_timeout = 0.25 if scenario == "deadline" else None
     briosa = BriosaClient(BriosaClientOptions(command_timeout=command_timeout))
     startup_succeeded = False
+    additions: dict[str, Any] | None = None
     try:
         if scenario in {"control-plane-only", "lifecycle-cancellation"}:
             start_options = BriosaStartOptions(
@@ -144,7 +162,7 @@ async def _run_scenario(scenario: str) -> None:
                 BriosaCompatibilityError, lambda: briosa.start(start_options)
             )
             await _cleanup_application(briosa)
-            return
+            return None
 
         await briosa.start(start_options)
         startup_succeeded = True
@@ -185,6 +203,8 @@ async def _run_scenario(scenario: str) -> None:
             await _assert_sdk_loss_recovery(briosa)
         elif scenario == "owned-cleanup":
             await _assert_default_ready(briosa)
+        elif scenario == "large-result":
+            additions = await _assert_large_result(briosa, definition)
         else:
             raise RuntimeError(f"Unsupported conformance scenario '{scenario}'.")
 
@@ -192,6 +212,7 @@ async def _run_scenario(scenario: str) -> None:
     finally:
         if startup_succeeded or scenario == "identity-mismatch":
             await briosa.stop()
+    return additions
 
 
 async def _assert_control_plane_only(briosa: BriosaClient) -> None:
@@ -226,12 +247,71 @@ async def _assert_default_ready(briosa: BriosaClient) -> None:
         application.ownership is SpatialAnalyzerOwnership.SERVER_LAUNCHED,
         "Default startup did not launch an owned application.",
     )
+    _assert_lifecycle_bounds(snapshot)
     await briosa.get_working_directory()
     # Retained packages have the old keyword; test their actual public surface.
     parameters = inspect.signature(briosa.cloud_display_control).parameters
     key = "thin" if "thin" in parameters else "thin_draw_increment"
     arguments: dict[str, Any] = {key: 3, "point_size": 2}
     await briosa.cloud_display_control(**arguments)
+
+
+def _assert_lifecycle_bounds(snapshot: Any) -> None:
+    # Client 0.5.1 and later expose the bounds; the published 0.5.0 package,
+    # which the server's retained-client gate runs this fixture with, doesn't.
+    if not hasattr(snapshot, "lifecycle_bounds"):
+        return
+    bounds = snapshot.lifecycle_bounds
+    mode = snapshot.configured_interaction_mode
+    if not _describes_0_10_1_features(snapshot.briosa_version):
+        _require(
+            bounds is None and mode.name == "UNKNOWN",
+            "A server before 0.10.1 reported lifecycle bounds or a configured mode.",
+        )
+        return
+    _require(
+        bounds is not None
+        and bounds.startup_with_launch is not None
+        and bounds.startup_without_launch is not None
+        and bounds.start_sdk is not None
+        and bounds.launch_spatial_analyzer is not None
+        and bounds.connect_spatial_analyzer is not None,
+        "Server 0.10.1 or later did not publish its startup allowances.",
+    )
+    _require(
+        mode.name != "UNKNOWN",
+        "Server 0.10.1 or later did not report its configured interaction mode.",
+    )
+
+
+async def _assert_large_result(
+    briosa: BriosaClient, definition: dict[str, Any]
+) -> dict[str, Any]:
+    expected = definition.get("expected_working_directory")
+    _require(
+        isinstance(expected, dict)
+        and type(expected.get("utf8_length")) is int
+        and isinstance(expected.get("sha256"), str),
+        "The large-result scenario has no expected working directory.",
+    )
+    expected = cast(dict[str, Any], expected)
+    directory = await briosa.get_working_directory()
+    _require(isinstance(directory, str), "The large result is not a string.")
+    # Both values come from the text this client returned, never the contract.
+    encoded = directory.encode("utf-8")
+    received = {
+        "utf8_length": len(encoded),
+        "sha256": hashlib.sha256(encoded).hexdigest(),
+    }
+    _require(
+        received["utf8_length"] == expected["utf8_length"],
+        "The large result was not received at its full UTF-8 length.",
+    )
+    _require(
+        received["sha256"] == expected["sha256"],
+        "The large result's SHA-256 differs from the contract.",
+    )
+    return {"working_directory": received}
 
 
 async def _assert_attach_existing(briosa: BriosaClient) -> None:
@@ -300,6 +380,40 @@ async def _assert_capability_denied(briosa: BriosaClient) -> None:
     _require(
         error.failure.execution_disposition is ExecutionDisposition.NOT_STARTED,
         "Policy denial reported an invalid execution disposition.",
+    )
+    _assert_denial_detail(snapshot, denied[0], error.failure)
+
+
+def _assert_denial_detail(snapshot: Any, capability: Any, failure: Any) -> None:
+    # Client 0.5.1 and later expose the detail; the published 0.5.0 package
+    # doesn't, so its run checks what 0.5.0 checked.
+    if not hasattr(failure, "policy_denial"):
+        return
+    if not _describes_0_10_1_features(snapshot.briosa_version):
+        _require(
+            failure.policy_denial is None
+            and capability.policy_denial is None
+            and capability.request_options is None
+            and all(item.request_options is None for item in snapshot.operations),
+            "A server before 0.10.1 reported denial detail or request options.",
+        )
+        return
+    for detail, where in (
+        (failure.policy_denial, "denied call"),
+        (capability.policy_denial, "denied capability"),
+    ):
+        _require(
+            detail is not None
+            and detail.rule.name == "OVERRIDE"
+            and detail.denied_flag is None
+            and detail.admission_profile is None
+            and detail.request_option_field is None,
+            f"The {where} did not report the static override denial.",
+        )
+    _require(
+        capability.request_options is not None
+        and all(item.request_options is not None for item in snapshot.operations),
+        "Server 0.10.1 or later did not describe request options.",
     )
 
 
@@ -632,12 +746,17 @@ async def _main() -> int:
         contract.get("contract_id") == CONTRACT_ID,
         "The fixture received an unsupported conformance contract.",
     )
-    scenarios = cast(list[dict[str, Any]], contract.get("scenarios", []))
+    # A scenario is in "scenarios" or, run only on request, "optional_scenarios".
+    definitions = [
+        *cast(list[dict[str, Any]], contract.get("scenarios", [])),
+        *cast(list[dict[str, Any]], contract.get("optional_scenarios", [])),
+    ]
+    matching = [item for item in definitions if item.get("id") == arguments.scenario]
     _require(
-        any(item.get("id") == arguments.scenario for item in scenarios),
+        bool(matching),
         "The requested scenario is absent from the conformance contract.",
     )
-    await _run_scenario(cast(str, arguments.scenario))
+    extra = await _run_scenario(cast(str, arguments.scenario), matching[0])
     print(
         json.dumps(
             {
@@ -645,6 +764,7 @@ async def _main() -> int:
                 "contract_id": CONTRACT_ID,
                 "scenario": arguments.scenario,
                 "success": True,
+                **(extra or {}),
             },
             separators=(",", ":"),
         )
