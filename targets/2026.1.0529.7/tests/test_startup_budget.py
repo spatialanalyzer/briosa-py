@@ -1365,6 +1365,47 @@ def test_a_phase_failing_after_the_deadline_is_a_startup_timeout(
         assert isinstance(cause.__cause__, FakeRpcError)
 
 
+def test_a_failed_transfer_closes_the_transport_and_the_server() -> None:
+    class ClosingServer(RecordingServer):
+        closed = False
+
+        async def close(self) -> None:
+            ClosingServer.closed = True
+
+    class ClosingLauncher:
+        async def launch(
+            self,
+            logging: BriosaLoggingOptions | None = None,
+            selection: BriosaServerSelection | None = None,
+        ) -> OwnedServer:
+            return ClosingServer()
+
+    async def body(loop: VirtualClockLoop) -> tuple[str, bool, bool]:
+        closing: list[asyncio.Future[None]] = []
+        holder: list[BriosaClient] = []
+
+        def close_client() -> None:
+            # aclose() during discovery: the client is finally closed before
+            # the startup can take ownership.
+            closing.append(asyncio.ensure_future(holder[0].aclose()))
+
+        fake = GuardedTransport(loop, published=EMPTY, on={"snapshot": close_client})
+        client = BriosaClient(
+            _server_launcher=ClosingLauncher(), _transport_factory=lambda _target: fake
+        )
+        holder.append(client)
+        with pytest.raises(briosa.BriosaLifecycleError) as refused:
+            await client.start()
+        await closing[0]
+        return refused.value.diagnostic_code, fake.closed, client._session is None
+
+    code, transport_closed, unowned = run_virtual(body, now=T0)
+    assert code == "client-finally-closed"
+    assert transport_closed
+    assert unowned
+    assert ClosingServer.closed
+
+
 def cancel_start(client: BriosaClient) -> None:
     task = client._start_task
     assert task is not None
