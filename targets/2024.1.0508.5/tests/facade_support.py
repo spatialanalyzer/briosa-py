@@ -33,6 +33,7 @@ from briosa.protocol_identity import (
     SOURCE_REVISION,
     SPATIAL_ANALYZER_TARGET,
 )
+from briosa.transport import StartupCheckpoint
 from briosa.wave_a_operations import WAVE_A_OPERATIONS
 from briosa.wave_b_operations import (
     WAVE_B_OPERATIONS,
@@ -130,13 +131,24 @@ class RecordingTransport:
         return self.server_info(), await self.list_capabilities(timeout=timeout)
 
     async def get_server_info(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> discovery_pb2.GetServerInfoResponse:
+        if checkpoint is not None:
+            await checkpoint()
         return self.server_info()
 
     async def list_capabilities(
-        self, *, include_denied: bool = False, timeout: float | None = None
+        self,
+        *,
+        include_denied: bool = False,
+        timeout: float | None = None,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> discovery_pb2.ListCapabilitiesResponse:
+        if checkpoint is not None:
+            await checkpoint()
         self.include_denied_requests.append(include_denied)
         operations = [*self.capabilities]
         if include_denied:
@@ -179,7 +191,11 @@ class RecordingTransport:
         self,
         options: SpatialAnalyzerLaunchOptions,
         timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
+        if checkpoint is not None:
+            await checkpoint()
         return self._application_state()
 
     async def close_application(
@@ -188,13 +204,23 @@ class RecordingTransport:
         return self._application_state()
 
     async def get_sdk_state(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        if checkpoint is not None:
+            await checkpoint()
         return self._sdk_state()
 
     async def start_sdk(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        if checkpoint is not None:
+            await checkpoint()
         return self._sdk_state()
 
     async def connect_sdk(
@@ -203,7 +229,10 @@ class RecordingTransport:
         *,
         reconnect: bool,
         timeout: float | None = None,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        if checkpoint is not None:
+            await checkpoint()
         return self._sdk_state()
 
     async def stop_sdk(

@@ -83,13 +83,18 @@ return the result computed for the other.
 
 With a server that publishes lifecycle bounds, the client also reads the clock
 and the startup's cancellation before it takes ownership of the session, before
-each request it sends during startup, and before it reports success. A startup
-whose budget has run out, or that was cancelled, therefore sends no further
-request and never reports success, even if the event loop was too busy to run
-its timer. A request that fails once the budget has run out raises
-`BriosaStartupError` with `startup-timeout`, with that failure as its
-`__cause__`. After a startup fails that way, the client admits no MP command
-until a lifecycle call refreshes the session's state. Against Server 0.10.0
+it reports success, and for each request it sends during startup after the
+request is built and immediately before it is sent. A startup whose budget has
+run out, or that was cancelled, therefore sends no further request and never
+reports success, even if the event loop was too busy to run its timer. A
+request that fails once the budget has run out raises `BriosaStartupError`
+with `startup-timeout`, with that failure as its `__cause__`; one that fails
+earlier keeps its own error, including a `TimeoutError` of its own. If such a
+startup fails after the client took ownership of the session, that session
+admits no MP command for the rest of its life, whatever later state reads
+report; call `stop()` and then `start()` to begin a new one. If cleaning up
+after a failed startup also fails, the startup's error is still the one
+raised, with a note naming what could not be closed. Against Server 0.10.0
 each step runs as with client 0.5.0.
 
 Lifecycle methods send no deadline unless you pass `timeout`. If the budget

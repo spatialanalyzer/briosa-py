@@ -187,9 +187,18 @@ a plain `float`, so a value passed back, however obtained, is explicit, and
 the omission, and equality and hashing compare values as in 0.5.0. Against
 Server 0.10.0, which publishes no bounds, an omitted budget stays at two minutes
 and every startup step runs as in client 0.5.0. With a server that publishes
-bounds, the client checks the budget before each later step, so a startup whose
-budget ran out sends no further request even when its timer has not yet run.
-Expiry raises `BriosaStartupError` (`startup-timeout`) chained to the same
+bounds, the client reads the clock and the startup's cancellation before it
+takes ownership of the session, before it reports success, and for each startup
+request after the request is built and immediately before it is sent. A startup
+whose budget ran out, or that was cancelled, therefore sends no further request
+and never reports success, even when its timer has not yet run. A request that
+fails once the budget ran out raises `startup-timeout` with that failure as its
+`__cause__`; one that fails earlier keeps its own error, including a
+`TimeoutError` of its own. If such a startup fails after the client took
+ownership, that session admits no MP call again; `stop()` and then `start()`
+begin a new one. A cleanup failure after a failed startup becomes a note on the
+startup's error instead of replacing it. When the timer ends the startup, expiry
+raises `BriosaStartupError` (`startup-timeout`) chained to the same
 `TimeoutError` as with client 0.5.0, because each Python version times the
 startup as its `asyncio.wait_for` did for 0.5.0; on Python 3.10 the error also
 derives from `asyncio.TimeoutError`.
@@ -233,7 +242,11 @@ whether the caller stopped waiting through the startup budget, a `timeout`, or
 task cancellation. A start the client abandoned may therefore still produce a
 ready generation. Refresh SDK state with `get_spatial_analyzer_sdk_state()`
 before deciding what to do next, and call `get_server_snapshot()` to reopen MP
-calls on a generation that became ready. A second lifecycle call during the
+calls on a generation that became ready. The exception is a session whose
+startup failed after the client took ownership while a server that publishes
+lifecycle bounds (Server 0.10.1 and later) was guarding it: that session never
+admits MP calls again, so call `stop()` and then `start()`. A second lifecycle
+call during the
 accepted transition fails with `sdk-lifecycle-transition-in-progress`
 (`STATE_CONFLICT`, `REFRESH_STATE`): refresh and retry later, and stop a
 generation you own only after the transition has ended. The same applies to

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Iterable
+from collections.abc import Awaitable, Callable, Iterable
 from datetime import timedelta
 from typing import Any, Protocol, TypeVar, cast
 
@@ -82,6 +82,19 @@ _OPERATION_ERROR_TRAILER = "briosa-operation-error-bin"
 
 _EnumValue = TypeVar("_EnumValue")
 
+StartupCheckpoint = Callable[[], Awaitable[None]]
+"""Awaited by a guarded startup request once it is built, right before it is sent.
+
+The request is complete when the checkpoint runs, and nothing but the call to
+the generated stub follows it, so nothing that runs while the request is
+built can act after the startup's last check.
+"""
+
+
+def _exact_str(value: Any) -> Any:
+    """A ``str`` subclass value as a plain ``str``, copied without its methods."""
+    return str.__str__(value) if isinstance(value, str) else value
+
 
 class ClientTransport(Protocol):
     async def get_server_snapshot(
@@ -92,11 +105,18 @@ class ClientTransport(Protocol):
     ]: ...
 
     async def get_server_info(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> discovery_pb2.GetServerInfoResponse: ...
 
     async def list_capabilities(
-        self, *, include_denied: bool = False, timeout: float | None = None
+        self,
+        *,
+        include_denied: bool = False,
+        timeout: float | None = None,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> discovery_pb2.ListCapabilitiesResponse: ...
 
     async def get_application_state(
@@ -107,6 +127,8 @@ class ClientTransport(Protocol):
         self,
         options: SpatialAnalyzerLaunchOptions,
         timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState: ...
 
     async def close_application(
@@ -114,11 +136,17 @@ class ClientTransport(Protocol):
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState: ...
 
     async def get_sdk_state(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState: ...
 
     async def start_sdk(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState: ...
 
     async def connect_sdk(
@@ -127,6 +155,7 @@ class ClientTransport(Protocol):
         *,
         reconnect: bool,
         timeout: float | None = None,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState: ...
 
     async def stop_sdk(
@@ -172,20 +201,28 @@ class GrpcClientTransport:
         return server, capabilities
 
     async def get_server_info(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> discovery_pb2.GetServerInfoResponse:
-        server = await self._discovery.GetServerInfo(
-            discovery_pb2.GetServerInfoRequest(), timeout=timeout
-        )
+        request = discovery_pb2.GetServerInfoRequest()
+        if checkpoint is not None:
+            await checkpoint()
+        server = await self._discovery.GetServerInfo(request, timeout=timeout)
         return cast(discovery_pb2.GetServerInfoResponse, server)
 
     async def list_capabilities(
-        self, *, include_denied: bool = False, timeout: float | None = None
+        self,
+        *,
+        include_denied: bool = False,
+        timeout: float | None = None,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> discovery_pb2.ListCapabilitiesResponse:
-        response = await self._discovery.ListCapabilities(
-            discovery_pb2.ListCapabilitiesRequest(include_denied=include_denied),
-            timeout=timeout,
-        )
+        request = discovery_pb2.ListCapabilitiesRequest(include_denied=include_denied)
+        if checkpoint is not None:
+            await checkpoint()
+        response = await self._discovery.ListCapabilities(request, timeout=timeout)
         return cast(discovery_pb2.ListCapabilitiesResponse, response)
 
     async def get_application_state(
@@ -200,14 +237,22 @@ class GrpcClientTransport:
         self,
         options: SpatialAnalyzerLaunchOptions,
         timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
-        request = lifecycle_pb2.LaunchSpatialAnalyzerRequest(
-            start_minimized=options.start_minimized
-        )
-        if options.job_file_path is not None:
-            request.job_file_path = options.job_file_path
-        elif options.quick_start_instrument_name is not None:
-            request.quick_start_instrument_name = options.quick_start_instrument_name
+        if checkpoint is None:
+            request = lifecycle_pb2.LaunchSpatialAnalyzerRequest(
+                start_minimized=options.start_minimized
+            )
+            if options.job_file_path is not None:
+                request.job_file_path = options.job_file_path
+            elif options.quick_start_instrument_name is not None:
+                request.quick_start_instrument_name = (
+                    options.quick_start_instrument_name
+                )
+        else:
+            request = _guarded_launch_request(options)
+            await checkpoint()
         response = await self._application.LaunchSpatialAnalyzer(
             request, timeout=timeout
         )
@@ -225,19 +270,27 @@ class GrpcClientTransport:
         return cast(lifecycle_pb2.CloseOwnedSpatialAnalyzerResponse, response).state
 
     async def get_sdk_state(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
-        response = await self._sdk.GetSpatialAnalyzerSdkState(
-            lifecycle_pb2.GetSpatialAnalyzerSdkStateRequest(), timeout=timeout
-        )
+        request = lifecycle_pb2.GetSpatialAnalyzerSdkStateRequest()
+        if checkpoint is not None:
+            await checkpoint()
+        response = await self._sdk.GetSpatialAnalyzerSdkState(request, timeout=timeout)
         return cast(lifecycle_pb2.GetSpatialAnalyzerSdkStateResponse, response).state
 
     async def start_sdk(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
-        response = await self._sdk.StartSpatialAnalyzerSdk(
-            lifecycle_pb2.StartSpatialAnalyzerSdkRequest(), timeout=timeout
-        )
+        request = lifecycle_pb2.StartSpatialAnalyzerSdkRequest()
+        if checkpoint is not None:
+            await checkpoint()
+        response = await self._sdk.StartSpatialAnalyzerSdk(request, timeout=timeout)
         return cast(lifecycle_pb2.StartSpatialAnalyzerSdkResponse, response).state
 
     async def connect_sdk(
@@ -246,7 +299,18 @@ class GrpcClientTransport:
         *,
         reconnect: bool,
         timeout: float | None = None,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        if checkpoint is not None and not reconnect:
+            # Startup connects, never reconnects; this is its guarded form.
+            request = lifecycle_pb2.ConnectToSpatialAnalyzerRequest(
+                expected_sdk_generation=int.__index__(expected_generation)
+            )
+            await checkpoint()
+            connected = await self._sdk.ConnectToSpatialAnalyzer(
+                request, timeout=timeout
+            )
+            return cast(lifecycle_pb2.ConnectToSpatialAnalyzerResponse, connected).state
         if reconnect:
             response = await self._sdk.ReconnectToSpatialAnalyzer(
                 lifecycle_pb2.ReconnectToSpatialAnalyzerRequest(
@@ -587,6 +651,26 @@ def map_capability_listing(
             for item in capabilities.operations
         ),
     )
+
+
+def _guarded_launch_request(
+    options: SpatialAnalyzerLaunchOptions,
+) -> lifecycle_pb2.LaunchSpatialAnalyzerRequest:
+    """Build the launch request of a guarded startup from plain values.
+
+    Each option is read once and each text value copied to a plain ``str``, so
+    neither building nor serializing the request runs code of the caller's.
+    """
+    job_file_path = _exact_str(options.job_file_path)
+    instrument = _exact_str(options.quick_start_instrument_name)
+    request = lifecycle_pb2.LaunchSpatialAnalyzerRequest(
+        start_minimized=bool(options.start_minimized)
+    )
+    if job_file_path is not None:
+        request.job_file_path = job_file_path
+    elif instrument is not None:
+        request.quick_start_instrument_name = instrument
+    return request
 
 
 def map_application_state(

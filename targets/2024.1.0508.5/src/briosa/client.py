@@ -13,7 +13,7 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import timedelta
 from types import TracebackType
-from typing import Any, Protocol, TypeVar, cast
+from typing import Any, Protocol, TypedDict, TypeVar, cast
 
 import grpc
 
@@ -49,6 +49,7 @@ from briosa.operation_protocol import (
 from briosa.transport import (
     ClientTransport,
     GrpcClientTransport,
+    StartupCheckpoint,
     map_application_state,
     map_capability_listing,
     map_rpc_error,
@@ -73,9 +74,6 @@ _Result = TypeVar("_Result")
 # discovery, and round trips.
 _STARTUP_BUDGET_FLOOR_SECONDS = 120.0
 _STARTUP_BUDGET_MARGIN_SECONDS = 20.0
-# What an event loop raises for a timer it cannot arm, for example qasync's
-# OverflowError for a delay beyond Qt's timer range.
-_TIMER_REJECTIONS = (OverflowError, ValueError, OSError)
 
 
 def _startup_timeout_error(
@@ -199,7 +197,10 @@ class _NativeDeadline:
         original = self._when
         try:
             handle = self._loop.call_at(when, self._expire)
-        except _TIMER_REJECTIONS:
+        except Exception:
+            # Whatever the loop raises for a timer it cannot arm (qasync's
+            # OverflowError beyond Qt's range, or anything else), the
+            # bootstrap timer is still armed and stays the deadline.
             return False
         if self._loop.time() >= original:
             # The budget ran out while the timer was registered: never revive it.
@@ -256,7 +257,8 @@ class _LoopDeadline:
         original = self._when
         try:
             handle = self._loop.call_at(when, self._expire)
-        except _TIMER_REJECTIONS:
+        except Exception:
+            # The current timer is still armed and stays the deadline.
             return False
         if self._loop.time() >= original:
             # The budget ran out while the timer was registered: never revive it.
@@ -276,12 +278,13 @@ class _StartupBudget:
 
     The budget runs on the loop's monotonic clock from one start instant. With a
     server that publishes lifecycle bounds, the startup is guarded: before it
-    takes ownership of the session, before each request it hands to the
-    transport and before it reports success, it reads the clock and the startup
-    task's cancellation, so a startup whose budget ran out or that was cancelled
-    stops there, even if its timer or cancellation has not been delivered yet.
-    With a server that publishes none, such as Server 0.10.0, the startup
-    proceeds exactly as client 0.5.0's did.
+    takes ownership of the session, before it reports success, and between
+    building each request and handing it to the generated stub, it passes a
+    cancellation checkpoint and then reads the clock and the startup's
+    cancellation. A startup whose budget ran out or that was cancelled stops
+    there, even if its timer or cancellation has not been delivered yet. With a
+    server that publishes none, such as Server 0.10.0, the startup proceeds
+    exactly as client 0.5.0's did.
     """
 
     def __init__(
@@ -327,17 +330,78 @@ class _StartupBudget:
         self._deadline.replace(deadline)
 
     async def check(self) -> None:
-        """Stop a guarded startup that was cancelled or whose budget is spent."""
+        """Stop a guarded startup that was cancelled or whose budget is spent.
+
+        A cancellation of the task running the startup, requested by anything
+        it ran, arrives at the yield. The clock and the cancellation of the
+        startup task are read after it, with nothing in between, so a request
+        that follows this check is handed to the stub at once.
+        """
         if not self.guarded:
             return
+        await asyncio.sleep(0)
         if self._cancel_requested():
-            # A cancellation of this task arrives at this yield. On Python 3.10
-            # and 3.11 the cancelled task is the one waiting on this startup, so
-            # stop here whether or not it has cancelled this one yet.
-            await asyncio.sleep(0)
+            # On Python 3.10 and 3.11 the cancelled task is the one waiting on
+            # this startup, which cancels this one only when it next runs.
             raise asyncio.CancelledError
         if self.spent():
             raise _StartupBudgetExpired
+
+    def handoff(self) -> _Handoff:
+        """The transport arguments of a startup request: a checkpoint if guarded."""
+        return {"checkpoint": self.check} if self.guarded else {}
+
+
+class _Handoff(TypedDict, total=False):
+    """Transport keyword arguments of a startup request; empty when unguarded."""
+
+    checkpoint: StartupCheckpoint
+
+
+@dataclass(slots=True)
+class _StartupHold:
+    """What a startup holds, and whether its session has taken ownership yet."""
+
+    server: OwnedServer | None = None
+    transport: ClientTransport | None = None
+    session: _Session | None = None
+
+
+def _note_cleanup_failure(
+    primary: BaseException, resource: str, failure: Exception
+) -> None:
+    note = (
+        f"Closing the {resource} after this startup failure also failed "
+        f"({type(failure).__name__})."
+    )
+    if sys.version_info >= (3, 11):
+        primary.add_note(note)
+    else:
+        setattr(primary, "__notes__", [*getattr(primary, "__notes__", ()), note])  # noqa: B010
+
+
+async def _close_unowned(
+    transport: ClientTransport | None,
+    server: OwnedServer | None,
+    primary: BaseException,
+) -> None:
+    """Close what a guarded startup never handed to its session.
+
+    The server is closed even when closing the transport fails, and a cleanup
+    failure becomes a note on the startup's own failure instead of replacing it.
+    """
+    try:
+        if transport is not None:
+            try:
+                await transport.close()
+            except Exception as failure:
+                _note_cleanup_failure(primary, "transport", failure)
+    finally:
+        if server is not None:
+            try:
+                await server.close()
+            except Exception as failure:
+                _note_cleanup_failure(primary, "owned server", failure)
 
 
 async def _cancel_and_wait(
@@ -437,6 +501,9 @@ class _Session:
     sdk_state: SpatialAnalyzerSdkLifecycleState | None = None
     startup_completed: bool = False
     command_admission_open: bool = False
+    # Set when a guarded startup fails after taking ownership; only a new
+    # session, after stop() and start(), admits MP commands again.
+    startup_failed: bool = False
     active_commands: int = 0
     commands_drained: asyncio.Event = field(default_factory=asyncio.Event)
 
@@ -457,7 +524,8 @@ class _Session:
 
     def _refresh_command_admission(self) -> None:
         self.command_admission_open = bool(
-            self.snapshot.ready_for_mp
+            not self.startup_failed
+            and self.snapshot.ready_for_mp
             and self.sdk_state is not None
             and self.sdk_state.ready_for_mp
         )
@@ -763,6 +831,7 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         # Python 3.12, and a waiter on Python 3.10 and 3.11.
         loop = asyncio.get_running_loop()
         started_at = loop.time()
+        budget: _StartupBudget | None = None
         try:
             if sys.version_info >= (3, 12):
                 task = asyncio.current_task()
@@ -770,28 +839,41 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                 when = started_at + options.startup_timeout
                 async with asyncio.timeout_at(when) as timeout:
                     deadline = _NativeDeadline(loop, timeout, when)
+                    budget = _StartupBudget(
+                        loop, started_at, deadline, lambda: task.cancelling() > 0
+                    )
                     try:
-                        await self._start_inner(
-                            options,
-                            _StartupBudget(
-                                loop,
-                                started_at,
-                                deadline,
-                                lambda: task.cancelling() > 0,
-                            ),
-                        )
+                        await self._start_inner(options, budget)
                     finally:
                         deadline.cancel()
             else:
-                await self._run_start_with_waiter(options, loop, started_at)
+                waiter: asyncio.Future[None] = loop.create_future()
+
+                def release(_: object = None) -> None:
+                    if not waiter.done():
+                        waiter.set_result(None)
+
+                waiting = _LoopDeadline(
+                    loop, started_at + options.startup_timeout, release
+                )
+                budget = _StartupBudget(loop, started_at, waiting, waiter.cancelled)
+                await self._run_start_with_waiter(
+                    options, budget, waiter, release, waiting
+                )
         except TimeoutError as error:
+            if budget is not None and budget.guarded and not budget.spent():
+                # A phase's own TimeoutError before a guarded startup's
+                # deadline keeps its own error.
+                raise
             raise BriosaStartupError("startup-timeout") from error
 
     async def _run_start_with_waiter(
         self,
         options: BriosaStartOptions,
-        loop: asyncio.AbstractEventLoop,
-        started_at: float,
+        budget: _StartupBudget,
+        waiter: asyncio.Future[None],
+        release: Callable[[object], None],
+        deadline: _LoopDeadline,
     ) -> None:
         """Time the startup the way ``asyncio.wait_for`` does on Python 3.10-3.11.
 
@@ -801,19 +883,8 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         cancels that future at once, which is how a guarded startup sees the
         cancellation before this task has run to pass it on.
         """
-        waiter: asyncio.Future[None] = loop.create_future()
-
-        def release(_: object = None) -> None:
-            if not waiter.done():
-                waiter.set_result(None)
-
-        deadline = _LoopDeadline(loop, started_at + options.startup_timeout, release)
-        startup = loop.create_task(
-            self._start_inner(
-                options,
-                _StartupBudget(loop, started_at, deadline, waiter.cancelled),
-            )
-        )
+        loop = asyncio.get_running_loop()
+        startup = loop.create_task(self._start_inner(options, budget))
         startup.add_done_callback(release)
         try:
             try:
@@ -840,16 +911,33 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
     async def _start_inner(
         self, options: BriosaStartOptions, budget: _StartupBudget
     ) -> None:
-        server: OwnedServer | None = None
-        transport: ClientTransport | None = None
-        session: _Session | None = None
+        held = _StartupHold()
+        try:
+            await self._start_held(options, budget, held)
+        except BaseException as primary:
+            if held.session is None and budget.guarded:
+                # A guarded startup closes what it never handed to the session,
+                # and its own failure stays the one raised.
+                await _close_unowned(held.transport, held.server, primary)
+            raise
+        finally:
+            if held.session is None and not budget.guarded:
+                # As client 0.5.0.
+                if held.transport is not None:
+                    await held.transport.close()
+                if held.server is not None:
+                    await held.server.close()
+
+    async def _start_held(
+        self, options: BriosaStartOptions, budget: _StartupBudget, held: _StartupHold
+    ) -> None:
         try:
             try:
-                server = await self._server_launcher.launch(
+                held.server = await self._server_launcher.launch(
                     options.logging, options.server_selection
                 )
-                transport = self._transport_factory(server.target)
-                snapshot = await self._wait_for_server(server, transport)
+                held.transport = self._transport_factory(held.server.target)
+                snapshot = await self._wait_for_server(held.server, held.transport)
                 # A server that publishes lifecycle bounds (Server 0.10.1 and
                 # later) guards the rest of the startup. The first validated
                 # snapshot is the only adoption point, and an explicit
@@ -861,85 +949,84 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
                         _published_startup_allowance(snapshot.lifecycle_bounds, options)
                     )
                 await budget.check()
-                candidate = _Session(server, transport, snapshot)
+                session = _Session(held.server, held.transport, snapshot)
                 if not budget.guarded:
                     # As client 0.5.0: the session owns the server from here.
-                    session = candidate
+                    held.session = session
                 lock = self._required_lock()
                 async with lock:
                     self._ensure_open()
                     # The last check before the client takes ownership: until
                     # then, a failure closes the transport and the server.
                     await budget.check()
-                    self._session = candidate
-                    session = candidate
-                server = None
-                transport = None
+                    self._session = session
+                    held.session = session
+                held.server = None
+                held.transport = None
                 await self._start_phases(options, session, budget)
                 await budget.check()
                 session.publish_startup()
             except grpc.RpcError as error:
                 raise map_rpc_error(
-                    error, session.application_state if session is not None else None
+                    error,
+                    held.session.application_state
+                    if held.session is not None
+                    else None,
                 ) from error
         except _StartupBudgetExpired:
-            self._close_admission(session, budget)
+            self._close_admission(held.session, budget)
             raise _startup_timeout_error() from None
         except Exception as failure:
-            self._close_admission(session, budget)
+            self._close_admission(held.session, budget)
             if budget.guarded and budget.spent():
                 # A phase that fails once the budget has run out, even before
                 # its timer runs, ends the startup as a timeout.
                 raise _startup_timeout_error() from failure
             raise
         except BaseException:
-            self._close_admission(session, budget)
+            self._close_admission(held.session, budget)
             raise
-        finally:
-            if session is None:
-                if transport is not None:
-                    await transport.close()
-                if server is not None:
-                    await server.close()
 
     async def _start_phases(
         self, options: BriosaStartOptions, session: _Session, budget: _StartupBudget
     ) -> None:
-        """Run the selected startup phases; a guarded startup checks each handoff.
+        """Run the selected startup phases.
 
-        A guarded startup reads every argument of a request before its last
-        check, so nothing it calls can spend the budget or cancel the startup
-        after that check. Unguarded, the phases run as client 0.5.0's did.
+        A guarded startup reads every option a request needs, then the transport
+        builds the request, then the budget's checkpoint runs, and only then is
+        the request handed to the stub: StartSpatialAnalyzerSdk,
+        LaunchSpatialAnalyzer, GetSpatialAnalyzerSdkState (when no SDK state is
+        known before Connect), ConnectToSpatialAnalyzer, and the post-Connect
+        GetServerInfo and ListCapabilities. Unguarded, the phases run as client
+        0.5.0's did.
         """
+        handoff = budget.handoff()
         if options.start_spatial_analyzer_sdk:
-            await budget.check()
-            session.update_sdk_state(map_sdk_state(await session.transport.start_sdk()))
+            session.update_sdk_state(
+                map_sdk_state(await session.transport.start_sdk(**handoff))
+            )
         if options.launch_spatial_analyzer:
             launch_options = options.launch_options
             if budget.guarded:
                 launch_options = _resolved_launch_options(launch_options)
-                await budget.check()
             session.application_state = map_application_state(
-                await session.transport.launch_application(launch_options)
+                await session.transport.launch_application(launch_options, **handoff)
             )
         if options.connect_to_spatial_analyzer:
-            if session.sdk_state is None:
-                await budget.check()
-            sdk = await self._ensure_sdk_state(session, None)
+            sdk = await self._ensure_sdk_state(session, None, handoff)
             generation = _require_generation(
                 sdk.sdk_generation, "sdk-generation-unavailable"
             )
-            await budget.check()
             connected_state = map_sdk_state(
-                await session.transport.connect_sdk(generation, reconnect=False)
+                await session.transport.connect_sdk(
+                    generation, reconnect=False, **handoff
+                )
             )
             session.update_sdk_state(connected_state)
             if budget.guarded:
-                await budget.check()
-                server = await session.transport.get_server_info()
-                await budget.check()
+                server = await session.transport.get_server_info(**handoff)
                 refreshed = map_snapshot(
-                    server, await session.transport.list_capabilities()
+                    server, await session.transport.list_capabilities(**handoff)
                 )
             else:
                 refreshed = map_snapshot(
@@ -951,9 +1038,10 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
 
     @staticmethod
     def _close_admission(session: _Session | None, budget: _StartupBudget) -> None:
-        # A guarded startup that fails after taking ownership admits no MP
-        # command until a later lifecycle call refreshes the session's state.
+        # A guarded startup that fails after taking ownership leaves its session
+        # admitting no MP command, whatever later state refreshes report.
         if session is not None and budget.guarded:
+            session.startup_failed = True
             session.command_admission_open = False
 
     async def _wait_for_server(
@@ -1052,11 +1140,17 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         )
 
     async def _refresh_sdk_state(
-        self, session: _Session, timeout: float | None
+        self,
+        session: _Session,
+        timeout: float | None,
+        handoff: _Handoff | None = None,
     ) -> SpatialAnalyzerSdkLifecycleState:
+        extra: _Handoff = handoff if handoff is not None else {}
         try:
             state = map_sdk_state(
-                await session.transport.get_sdk_state(_validate_timeout(timeout))
+                await session.transport.get_sdk_state(
+                    _validate_timeout(timeout), **extra
+                )
             )
         except grpc.RpcError as error:
             raise map_rpc_error(error, session.application_state) from error
@@ -1064,9 +1158,14 @@ class BriosaClient(WaveBOperationsMixin, WaveAOperationsMixin):
         return state
 
     async def _ensure_sdk_state(
-        self, session: _Session, timeout: float | None
+        self,
+        session: _Session,
+        timeout: float | None,
+        handoff: _Handoff | None = None,
     ) -> SpatialAnalyzerSdkLifecycleState:
-        return session.sdk_state or await self._refresh_sdk_state(session, timeout)
+        return session.sdk_state or await self._refresh_sdk_state(
+            session, timeout, handoff
+        )
 
     async def _exit_command(self, session: _Session) -> None:
         lock = self._required_lock()
