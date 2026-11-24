@@ -55,7 +55,12 @@ from briosa.protocol_identity import (
     SOURCE_REVISION,
     SPATIAL_ANALYZER_TARGET,
 )
-from briosa.transport import ClientTransport, map_rpc_error, map_sdk_state
+from briosa.transport import (
+    ClientTransport,
+    StartupCheckpoint,
+    map_rpc_error,
+    map_sdk_state,
+)
 from briosa.wave_a_operations import WAVE_A_OPERATIONS
 from briosa.wave_b_operations import WAVE_B_OPERATIONS
 
@@ -183,9 +188,26 @@ class FakeTransport:
         self.calls.append("snapshot")
         return matching_snapshot(self.connected and self.publish_ready_snapshot)
 
+    async def get_server_info(
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
+    ) -> discovery_pb2.GetServerInfoResponse:
+        if checkpoint is not None:
+            await checkpoint()
+        self.calls.append("server-info")
+        return matching_snapshot(self.connected and self.publish_ready_snapshot)[0]
+
     async def list_capabilities(
-        self, *, include_denied: bool = False, timeout: float | None = None
+        self,
+        *,
+        include_denied: bool = False,
+        timeout: float | None = None,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> discovery_pb2.ListCapabilitiesResponse:
+        if checkpoint is not None:
+            await checkpoint()
         self.calls.append("list-capabilities")
         return matching_snapshot(self.connected and self.publish_ready_snapshot)[1]
 
@@ -199,7 +221,11 @@ class FakeTransport:
         self,
         options: SpatialAnalyzerLaunchOptions,
         timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerLifecycleState:
+        if checkpoint is not None:
+            await checkpoint()
         self.calls.append("launch-sa")
         if self.launch_failure is not None:
             raise self.launch_failure
@@ -219,14 +245,24 @@ class FakeTransport:
         return application_not_running()
 
     async def get_sdk_state(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        if checkpoint is not None:
+            await checkpoint()
         self.calls.append("get-sdk-state")
         return self._sdk_state()
 
     async def start_sdk(
-        self, timeout: float | None = None
+        self,
+        timeout: float | None = None,
+        *,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        if checkpoint is not None:
+            await checkpoint()
         self.calls.append("start-sdk")
         self.sdk_generation += 1
         self.connected = False
@@ -238,7 +274,10 @@ class FakeTransport:
         *,
         reconnect: bool,
         timeout: float | None = None,
+        checkpoint: StartupCheckpoint | None = None,
     ) -> lifecycle_pb2.SpatialAnalyzerSdkLifecycleState:
+        if checkpoint is not None:
+            await checkpoint()
         self.calls.append("reconnect-sdk" if reconnect else "connect-sdk")
         self.connect_generations.append(expected_generation)
         self.connected = True
@@ -393,8 +432,8 @@ def application_lifecycle_failure() -> FakeRpcError:
 
 
 def test_protocol_identity_matches_reviewed_compatibility_artifact() -> None:
-    assert ARTIFACT_NAME == "briosa-protocol-0.10.0-dev.1-sa-2024.1.0508.5"
-    assert SOURCE_REVISION == "2960705eb3152646513dca2b5d2043cd7cfffb75"
+    assert ARTIFACT_NAME == "briosa-protocol-0.10.1-dev.1-sa-2024.1.0508.5"
+    assert SOURCE_REVISION == "d405779027085b3dc26dc09c62a669820db5c164"
     assert PROTOCOL_PACKAGE == "briosa"
     assert CLIENT_GENERATION_CONTRACT == "standard-protobuf-grpc"
     assert SPATIAL_ANALYZER_TARGET == "2024.1.0508.5"

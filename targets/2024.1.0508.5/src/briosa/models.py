@@ -2,14 +2,59 @@
 
 from __future__ import annotations
 
+import functools
+import inspect
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from contextlib import suppress
+from dataclasses import MISSING, dataclass, field, fields
+from datetime import timedelta
 from enum import Enum
 from pathlib import Path
-from typing import cast
+from typing import Any, TypeVar, cast
 
 from briosa.installation_models import BriosaServerSelection
 from briosa.logging_options import BriosaLoggingOptions
+
+_T = TypeVar("_T")
+
+# The fields that 0.5.1 added to each 0.5.0 dataclass, filled in below. A value
+# pickled by 0.5.0 holds the 0.5.0 fields, then any subclass fields, in order.
+_FIELDS_ADDED_IN_0_5_1: dict[type[Any], tuple[str, ...]] = {}
+
+
+def _dataclass_state(self: Any) -> list[Any]:
+    """The pickle state of a frozen slotted dataclass, as ``dataclasses`` writes it."""
+    return [getattr(self, item.name) for item in fields(self)]
+
+
+def _restore_dataclass_state(self: Any, state: list[Any]) -> None:
+    """Restore a pickle state, giving fields it predates their defaults.
+
+    A value pickled by client 0.5.0, of the class or of a subclass, lacks the
+    fields that 0.5.1 added. Its values belong, in order, to the other fields,
+    and the added fields take their defaults.
+    """
+    declared = fields(self)
+    added = {
+        name
+        for owner in type(self).__mro__
+        for name in _FIELDS_ADDED_IN_0_5_1.get(owner, ())
+    }
+    targets = declared
+    if added and len(state) == len(declared) - len(added):
+        targets = tuple(item for item in declared if item.name not in added)
+    restored = set()
+    # An unexpected length restores what it can, as dataclasses does.
+    for item, value in zip(targets, state, strict=False):
+        object.__setattr__(self, item.name, value)
+        restored.add(item.name)
+    for item in declared:
+        if item.name in restored:
+            continue
+        if item.default is not MISSING:
+            object.__setattr__(self, item.name, item.default)
+        elif item.default_factory is not MISSING:
+            object.__setattr__(self, item.name, item.default_factory())
 
 
 class _StrEnum(str, Enum):
@@ -285,6 +330,199 @@ class OperationAdmission(_StrEnum):
     """A value from a later compatible server release; it never admits the operation."""
 
 
+class PolicyDenialRule(_StrEnum):
+    """The policy step that denied a call, a capability, or a request option.
+
+    Each rule names the same step as the denied ``OperationAdmission`` value of
+    the same name, for example ``FLAG`` and ``DENIED_FLAG``.
+    """
+
+    UNSPECIFIED = "unspecified"
+    PROFILE = "profile"
+    """The admission profile, widened by flags set to allow, doesn't admit every
+    risk flag, or the read-only profile excludes the operation."""
+    FLAG = "flag"
+    """A risk flag is set to deny."""
+    OVERRIDE = "override"
+    """A per-operation override is set to deny."""
+    EXCLUSIVE = "exclusive"
+    """An exclusive workflow, which no setting admits in the current isolation
+    mode."""
+    UNREVIEWED = "unreviewed"
+    """The operation's classification is not reviewed, or the request couldn't be
+    read against its reviewed request options."""
+    UNKNOWN = "unknown"
+    """A value from a later compatible server release that this client doesn't
+    recognize. It is metadata only and never admits anything."""
+
+
+class OperationRequestOptionEffect(_StrEnum):
+    """What a request option turns on."""
+
+    UNSPECIFIED = "unspecified"
+    INTERACTIVE_UI = "interactive_ui"
+    """The request opens or blocks on operator UI."""
+    BACKGROUND_WORK = "background_work"
+    """The call returns while device or operator work keeps running."""
+    UNKNOWN = "unknown"
+    """A value from a later compatible server release that this client doesn't
+    recognize."""
+
+
+class OperationRequestOptionCondition(_StrEnum):
+    """Which values of a request option's field turn its effect on."""
+
+    UNSPECIFIED = "unspecified"
+    WHEN_TRUE = "when_true"
+    """A Boolean field set to true."""
+    WHEN_FALSE = "when_false"
+    """A Boolean field set to false."""
+    WHEN_PRESENT = "when_present"
+    """A message field that is present."""
+    WHEN_NON_EMPTY = "when_non_empty"
+    """A string field that is present and not empty."""
+    WHEN_ONE_OF = "when_one_of"
+    """An enum field set to one of ``enabling_enum_values``, or to a number the
+    server doesn't recognize."""
+    UNKNOWN = "unknown"
+    """A value from a later compatible server release that this client doesn't
+    recognize."""
+
+
+class OperationRequestOptionOmission(_StrEnum):
+    """What omitting a request option's field does."""
+
+    UNSPECIFIED = "unspecified"
+    DOES_NOT_ACTIVATE = "does_not_activate"
+    """Omitting the field doesn't turn the effect on."""
+    ACTIVATES = "activates"
+    """Omitting the field turns the effect on."""
+    REQUIRED = "required"
+    """The server's request mapping requires the field: omitting it fails
+    validation before the call reaches SpatialAnalyzer."""
+    UNKNOWN = "unknown"
+    """A value from a later compatible server release that this client doesn't
+    recognize."""
+
+
+class ConfiguredSpatialAnalyzerInteractionMode(_StrEnum):
+    """The SpatialAnalyzer interaction mode the server is configured to set.
+
+    This is the server's configuration (``Briosa:SpatialAnalyzer:InteractionMode``),
+    which it applies after each verified Connect. It is never SpatialAnalyzer's
+    live mode: SpatialAnalyzer has no getter for it, and an operator or a
+    ``set_interaction_mode`` call can change it at any time.
+    """
+
+    UNKNOWN = "unknown"
+    """Not reported, as with Server 0.10.0, or a value from a later compatible
+    server release that this client doesn't recognize."""
+    UNCHANGED = "unchanged"
+    """The server never sets the mode and leaves SpatialAnalyzer's mode as it is."""
+    SILENT = "silent"
+    AUTOMATIC = "automatic"
+    MANUAL = "manual"
+
+
+class GracefulShutdownBoundKind(_StrEnum):
+    """Whether the server host's graceful shutdown wait is known, and how."""
+
+    UNAVAILABLE = "unavailable"
+    """The server reported no usable bound. This never means unbounded."""
+    FINITE = "finite"
+    UNBOUNDED = "unbounded"
+    """The server host is configured with no graceful shutdown time limit."""
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class GracefulShutdownBound:
+    """The server host's graceful shutdown wait.
+
+    ``duration`` is present exactly when ``kind`` is ``FINITE``. The bound is the
+    most a graceful stop of the server host may wait before it cancels the
+    remaining shutdown work; it doesn't promise that any process exits.
+    """
+
+    kind: GracefulShutdownBoundKind = GracefulShutdownBoundKind.UNAVAILABLE
+    duration: timedelta | None = None
+
+    def __post_init__(self) -> None:
+        if (self.kind is GracefulShutdownBoundKind.FINITE) != (
+            self.duration is not None
+        ):
+            raise ValueError("duration must be present exactly when kind is FINITE")
+        if self.duration is not None and self.duration <= timedelta(0):
+            raise ValueError("duration must be positive")
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class BriosaLifecycleBounds:
+    """The lifecycle wait allowances the server computes from its own settings.
+
+    Server 0.10.1 and later publish them; ``BriosaServerSnapshot.lifecycle_bounds``
+    is ``None`` against Server 0.10.0. Each allowance is ``None`` when the server
+    reported it absent or zero, which means unavailable, never unbounded. Each
+    covers only the server's own work for that request, without transport time;
+    none promises that a response arrives or a process exits within it.
+    ``startup_with_launch`` and ``startup_without_launch`` size a startup of
+    several requests and are not server deadlines; the client sizes its default
+    startup budget from them.
+    """
+
+    start_sdk: timedelta | None = None
+    launch_spatial_analyzer: timedelta | None = None
+    connect_spatial_analyzer: timedelta | None = None
+    recover_sdk: timedelta | None = None
+    stop_sdk: timedelta | None = None
+    close_owned_spatial_analyzer: timedelta | None = None
+    startup_with_launch: timedelta | None = None
+    startup_without_launch: timedelta | None = None
+    host_graceful_shutdown: GracefulShutdownBound = field(
+        default_factory=GracefulShutdownBound
+    )
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class PolicyDenialDetails:
+    """Which policy step denied a call, a capability, or a request option.
+
+    Server 0.10.1 and later send it; against Server 0.10.0 it is absent.
+    ``denied_flag`` is present for a ``FLAG`` denial and is
+    ``OperationRiskFlag.UNKNOWN`` for a flag this client doesn't know.
+    ``admission_profile`` is present for a ``PROFILE`` denial.
+    ``request_option_field`` is the protobuf field name of the request option the
+    server attributed the denial to, never a request value. The client reports
+    the detail as the server sent it: it never changes the failure or the
+    capability's admission, and the client never pre-validates a request from it.
+    """
+
+    rule: PolicyDenialRule
+    denied_flag: OperationRiskFlag | None = None
+    admission_profile: str | None = None
+    request_option_field: str | None = None
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class OperationRequestOption:
+    """One reviewed request option that opens operator UI or leaves work running.
+
+    ``field_name`` is the protobuf field name in the operation's request, and
+    ``enabling_enum_values`` holds protobuf enum value names for ``WHEN_ONE_OF``.
+    ``admission`` and ``policy_denial`` answer one question: what the active
+    policy decides for a request that turns on this option alone. The server
+    still decides every actual request, so the client never pre-validates a
+    request from this description.
+    """
+
+    field_name: str
+    effect: OperationRequestOptionEffect
+    condition: OperationRequestOptionCondition
+    enabling_enum_values: tuple[str, ...] = ()
+    omission: OperationRequestOptionOmission
+    admission: OperationAdmission
+    policy_denial: PolicyDenialDetails | None = None
+
+
 @dataclass(frozen=True, slots=True)
 class BriosaClientOptions:
     command_timeout: float | None = None
@@ -329,18 +567,96 @@ class SpatialAnalyzerLaunchOptions:
         )
 
 
+# What a pickle of options that omitted the budget appends to the field values.
+# Client 0.5.0 restores only the field values and ignores it.
+_OMITTED_STARTUP_TIMEOUT_STATE = "startup_timeout-omitted"
+# The slot, apart from every field, that records that ``BriosaStartOptions``
+# itself was built without ``startup_timeout``. The field holds the plain value.
+_STARTUP_TIMEOUT_OMISSION_SLOT = "_briosa_startup_timeout_omitted"
+_STARTUP_TIMEOUT_OMISSION: Any = None
+
+
+def _with_startup_timeout_omission(cls: type[_T]) -> type[_T]:
+    """Rebuild a slotted dataclass with one more slot, outside its fields.
+
+    The slot is reached only through ``_STARTUP_TIMEOUT_OMISSION``: the class's
+    namespace, ``__slots__`` and ``dir()`` stay as ``dataclasses`` made them.
+    Closures that refer to the class, such as a frozen dataclass's
+    ``__setattr__`` and, on Python 3.14, the generated ``__init__``'s
+    annotations, are pointed at the rebuilt class, as ``dataclasses`` does for
+    the class it rebuilds.
+    """
+    global _STARTUP_TIMEOUT_OMISSION
+    namespace = dict(vars(cls))
+    slots = namespace["__slots__"]
+    for name in slots:
+        del namespace[name]
+    namespace["__slots__"] = (*slots, _STARTUP_TIMEOUT_OMISSION_SLOT)
+    metaclass: Any = type(cls)
+    rebuilt: type[_T] = metaclass(cls.__name__, cls.__bases__, namespace)
+    rebuilt.__qualname__ = cls.__qualname__
+    for member in namespace.values():
+        for function in (member, inspect.unwrap(member)):
+            for candidate in (function, getattr(function, "__annotate__", None)):
+                for cell in getattr(candidate, "__closure__", None) or ():
+                    with suppress(ValueError):
+                        if cell.cell_contents is cls:
+                            cell.cell_contents = rebuilt
+    _STARTUP_TIMEOUT_OMISSION = vars(rebuilt)[_STARTUP_TIMEOUT_OMISSION_SLOT]
+    delattr(rebuilt, _STARTUP_TIMEOUT_OMISSION_SLOT)
+    setattr(rebuilt, "__slots__", slots)  # noqa: B010
+    return rebuilt
+
+
+def _startup_timeout_omitted(options: object) -> bool:
+    """Whether ``options`` is a ``BriosaStartOptions`` built without a budget.
+
+    Only the exact class records an omission; every subclass has an explicit
+    budget, as all options did with client 0.5.0. The record holds only while
+    the field still holds the default it was given.
+    """
+    if type(options) is not BriosaStartOptions:
+        return False
+    try:
+        omitted = _STARTUP_TIMEOUT_OMISSION.__get__(options, BriosaStartOptions)
+    except AttributeError:
+        return False
+    return omitted is True and options.startup_timeout == 120.0
+
+
+@_with_startup_timeout_omission
 @dataclass(frozen=True, slots=True)
 class BriosaStartOptions:
     """Selects the phases of one client-owned server startup.
 
     ``startup_timeout`` is one overall budget, in seconds, for the whole
     ``start()``, whichever phases are selected. Expiry raises
-    ``BriosaStartupError`` with ``startup-timeout``. The default of two minutes
-    covers the server's default worst case of 100 seconds (SDK start 10 s,
+    ``BriosaStartupError`` with ``startup-timeout``. Omitted, it is two minutes,
+    which covers the server's default worst case of 100 seconds (SDK start 10 s,
     SpatialAnalyzer launch 30 s, Connect with readiness probe and application
     association 60 s) plus 20 seconds for server host startup, process
-    observation, and round trips. Raise it when the server's lifecycle bounds are
-    raised. Expiry during an in-flight RPC is reported the same way; cancelling the
+    observation, and round trips. With Server 0.10.1 and later, an omitted budget
+    follows the server's own settings: once the client has verified the server,
+    the budget becomes the server's published startup allowance for the selected
+    phases plus 20 seconds, counted from the start of ``start()``, and never less
+    than two minutes. Against Server 0.10.0, which publishes no allowance, it stays
+    at two minutes, so raise it when you raise that server's lifecycle bounds. An
+    explicit value, including ``120.0``, is always used as given.
+
+    Only constructing ``BriosaStartOptions`` itself without passing
+    ``startup_timeout`` omits it; the client records that from the constructor's
+    arguments, never from the value. Any value you pass is explicit, however you
+    obtained it, including ``BriosaStartOptions().startup_timeout``, the
+    signature's default and the field's default, each a plain ``120.0``.
+    ``dataclasses.replace()`` and ``copy.replace()`` pass every field's current
+    value, so their result has an explicit budget; build new options without
+    ``startup_timeout`` to keep the automatic one. Copying and pickling keep the
+    omission. Equality and hashing compare values, as in 0.5.0, so omitted options
+    equal options with an explicit ``120.0``. Subclasses keep the 0.5.0
+    behaviour: a subclass's startup always uses its own ``startup_timeout``, never
+    the server's published allowance.
+
+    Expiry during an in-flight RPC is reported the same way; cancelling the
     caller's task only stops that caller from waiting. The server finishes an SDK
     start or connection it has accepted after the client stops waiting
     (spatialanalyzer/briosa#315), so refresh SDK state before retrying.
@@ -371,6 +687,55 @@ class BriosaStartOptions:
             raise ValueError(
                 "launch_options must be default when launch_spatial_analyzer is false"
             )
+
+
+def _start_options_state(self: BriosaStartOptions) -> list[Any]:
+    # The values pickled as dataclasses writes them, then, for options that
+    # omitted the budget, a marker that client 0.5.0 ignores.
+    state = [getattr(self, item.name) for item in fields(self)]
+    if _startup_timeout_omitted(self):
+        state.append(_OMITTED_STARTUP_TIMEOUT_STATE)
+    return state
+
+
+def _restore_start_options_state(self: BriosaStartOptions, state: list[Any]) -> None:
+    # Restored as dataclasses restores it, so subclasses load as with 0.5.0. A
+    # value pickled by 0.5.0 has no marker, so its budget stays explicit.
+    declared = fields(self)
+    for item, value in zip(declared, state, strict=False):
+        object.__setattr__(self, item.name, value)
+    if type(self) is BriosaStartOptions:
+        _STARTUP_TIMEOUT_OMISSION.__set__(
+            self, state[len(declared) :] == [_OMITTED_STARTUP_TIMEOUT_STATE]
+        )
+
+
+_GENERATED_INIT = BriosaStartOptions.__init__
+_STARTUP_TIMEOUT_POSITION = [item.name for item in fields(BriosaStartOptions)].index(
+    "startup_timeout"
+)
+
+
+@functools.wraps(_GENERATED_INIT)
+def _start_options_init(self: BriosaStartOptions, *args: Any, **kwargs: Any) -> None:
+    _GENERATED_INIT(self, *args, **kwargs)
+    if type(self) is BriosaStartOptions:
+        # Only the exact class, built without the argument, has an omitted budget.
+        _STARTUP_TIMEOUT_OMISSION.__set__(
+            self,
+            "startup_timeout" not in kwargs and len(args) <= _STARTUP_TIMEOUT_POSITION,
+        )
+
+
+# The signature, name, qualified name, documentation, annotations and defaults
+# are the dataclass __init__'s, as in 0.5.0, so every way of reflecting on the
+# constructor shows its parameters and a plain 120.0.
+_init = cast(Any, _start_options_init)
+_init.__signature__ = inspect.signature(_GENERATED_INIT)
+_init.__defaults__ = _GENERATED_INIT.__defaults__
+_init.__kwdefaults__ = _GENERATED_INIT.__kwdefaults__
+del _init
+setattr(BriosaStartOptions, "__init__", _start_options_init)  # noqa: B010
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -424,6 +789,22 @@ outputs, so it hears of a success even when the outputs then fail to map.
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class OperationFailure:
+    """A typed operation failure as the server reported it.
+
+    ``policy_denial`` is the denial detail of a ``POLICY_DENIED`` failure, sent
+    by Server 0.10.1 and later. It is present only on policy denials: ``None``
+    for every other failure kind and against Server 0.10.0. It never changes the
+    other fields.
+
+    Like 0.5.0, ``repr()``, equality, hashing and positional construction and
+    ``match`` cover only the fields that 0.5.0 had: the 0.5.1 fields are
+    keyword-only, so a subclass's own fields keep their 0.5.0 positions. Read the
+    0.5.1 fields directly. A value of this class pickled by 0.5.0 loads with those
+    fields at their defaults. ``dataclasses.fields()``, ``astuple()`` and
+    ``asdict()`` include them, and pickles of subclasses written by 0.5.0 are not
+    guaranteed to load correctly: see the README's known differences from 0.5.0.
+    """
+
     operation_id: str
     kind: OperationFailureKind
     diagnostic_code: str
@@ -433,6 +814,9 @@ class OperationFailure:
     replay_safety: ReplaySafety
     mp_execution: MpExecutionDetails | None = None
     worker_generation: int | None = None
+    policy_denial: PolicyDenialDetails | None = field(
+        default=None, repr=False, compare=False, kw_only=True
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -474,6 +858,20 @@ class BriosaOperationCapability:
     ``risk_flags`` is an ordered set; empty means no reviewed risk applies. A
     request option can still open operator UI or leave work running, and the
     server can deny that request; the client doesn't pre-validate it.
+
+    With Server 0.10.1 and later, ``policy_denial`` says which policy step denied
+    a denied operation, and ``request_options`` describes the operation's
+    reviewed request options; an empty tuple means none apply. Against Server
+    0.10.0 both are ``None``: the server doesn't describe them. Neither changes
+    ``admission``.
+
+    Like 0.5.0, ``repr()``, equality, hashing and positional construction and
+    ``match`` cover only the fields that 0.5.0 had: the 0.5.1 fields are
+    keyword-only, so a subclass's own fields keep their 0.5.0 positions. Read the
+    0.5.1 fields directly. A value of this class pickled by 0.5.0 loads with those
+    fields at their defaults. ``dataclasses.fields()``, ``astuple()`` and
+    ``asdict()`` include them, and pickles of subclasses written by 0.5.0 are not
+    guaranteed to load correctly: see the README's known differences from 0.5.0.
     """
 
     operation_id: str
@@ -484,6 +882,12 @@ class BriosaOperationCapability:
     duration_class: OperationDurationClass = OperationDurationClass.UNSPECIFIED
     validation_status: OperationValidationStatus = OperationValidationStatus.UNSPECIFIED
     admission: OperationAdmission = OperationAdmission.UNSPECIFIED
+    policy_denial: PolicyDenialDetails | None = field(
+        default=None, repr=False, compare=False, kw_only=True
+    )
+    request_options: tuple[OperationRequestOption, ...] | None = field(
+        default=None, repr=False, compare=False, kw_only=True
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -493,6 +897,20 @@ class BriosaServerSnapshot:
     ``operations`` holds only capabilities the server admitted.
     ``policy_fingerprint`` is opaque: compare it only for equality, for example
     to tell whether a replacement generation runs under the same policy.
+
+    ``lifecycle_bounds`` holds the server's published lifecycle wait allowances,
+    and ``configured_interaction_mode`` the SpatialAnalyzer interaction mode the
+    server is configured to set after each Connect, never SpatialAnalyzer's live
+    mode. Server 0.10.1 and later report both; against Server 0.10.0
+    ``lifecycle_bounds`` is ``None`` and the mode is ``UNKNOWN``.
+
+    Like 0.5.0, ``repr()``, equality, hashing and positional construction and
+    ``match`` cover only the fields that 0.5.0 had: the 0.5.1 fields are
+    keyword-only, so a subclass's own fields keep their 0.5.0 positions. Read the
+    0.5.1 fields directly. A value of this class pickled by 0.5.0 loads with those
+    fields at their defaults. ``dataclasses.fields()``, ``astuple()`` and
+    ``asdict()`` include them, and pickles of subclasses written by 0.5.0 are not
+    guaranteed to load correctly: see the README's known differences from 0.5.0.
     """
 
     briosa_version: str
@@ -503,6 +921,15 @@ class BriosaServerSnapshot:
     operations: tuple[BriosaOperationCapability, ...]
     admission_profile: str
     policy_fingerprint: str
+    lifecycle_bounds: BriosaLifecycleBounds | None = field(
+        default=None, repr=False, compare=False, kw_only=True
+    )
+    configured_interaction_mode: ConfiguredSpatialAnalyzerInteractionMode = field(
+        default=ConfiguredSpatialAnalyzerInteractionMode.UNKNOWN,
+        repr=False,
+        compare=False,
+        kw_only=True,
+    )
 
     def supports(self, fully_qualified_method: str) -> bool:
         return any(
@@ -516,8 +943,9 @@ class BriosaServerSnapshot:
 class BriosaCapabilityListing:
     """A diagnostic capability listing, optionally with denied operations.
 
-    Denied entries carry their denial reason in ``admission``. They never
-    enter the generation's admitted set and never make an operation callable.
+    Denied entries carry their denial reason in ``admission``, and with Server
+    0.10.1 and later the denial detail in ``policy_denial``. They never enter the
+    generation's admitted set and never make an operation callable.
     """
 
     admission_profile: str
@@ -539,3 +967,20 @@ class BriosaCapabilityListing:
             for item in self.operations
             if item.admission is not OperationAdmission.ADMITTED
         )
+
+
+# Python 3.10's dataclass(slots=True) replaces a frozen class's own
+# __getstate__ and __setstate__, so they are attached after decoration.
+setattr(BriosaStartOptions, "__getstate__", _start_options_state)  # noqa: B010
+setattr(BriosaStartOptions, "__setstate__", _restore_start_options_state)  # noqa: B010
+_FIELDS_ADDED_IN_0_5_1.update(
+    {
+        OperationFailure: ("policy_denial",),
+        BriosaOperationCapability: ("policy_denial", "request_options"),
+        BriosaServerSnapshot: ("lifecycle_bounds", "configured_interaction_mode"),
+    }
+)
+for _grown in _FIELDS_ADDED_IN_0_5_1:
+    setattr(_grown, "__getstate__", _dataclass_state)  # noqa: B010
+    setattr(_grown, "__setstate__", _restore_dataclass_state)  # noqa: B010
+del _grown

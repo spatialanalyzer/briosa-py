@@ -77,7 +77,7 @@ target selector.
   with `TypeError` before any call. An input stays optional only when the server
   accepts it absent.
 - Every MP method takes the keyword-only call control
-  `on_mp_completion: MpCompletionObserver | None = None` (contract major 3). The
+  `on_mp_completion: MpCompletionObserver | None = None` (Server 0.10.x). The
   client checks every MP success, observed or not: its execution details must
   pair `SUCCEEDED` with MP code 2 or `PARTIAL_SUCCESS` with code 4, and anything
   else, including a missing code, is `BriosaProtocolError`
@@ -159,6 +159,57 @@ Cancelling the task that awaits `start()` only stops that caller from waiting an
 raises `asyncio.CancelledError`; the start continues until it completes or its
 budget expires.
 
+From client 0.5.1, an omitted `startup_timeout` follows the server's published
+lifecycle bounds, which Server 0.10.1 and later report in
+`BriosaServerSnapshot.lifecycle_bounds`. The budget runs on the event loop's
+monotonic clock from one start instant, before the server is launched, and the
+client adopts the allowance once, at the first verified server snapshot:
+
+- the allowance is `startup_with_launch` for Start SDK, Launch, and Connect;
+  `startup_without_launch` for Start SDK and Connect; `start_sdk` plus
+  `launch_spatial_analyzer` for Start SDK and Launch; `start_sdk` or
+  `launch_spatial_analyzer` alone for one phase; and none for a control-plane
+  start. If any allowance the selection needs is unavailable, the budget stays
+  at two minutes; a partial budget is never summed;
+- the deadline becomes the start instant plus the larger of two minutes and
+  the allowance plus 20 seconds, so adoption only ever lengthens the budget and
+  the time already spent counts;
+- a budget that has already run out when the snapshot arrives is never
+  extended, and no further phase starts; the client keeps the current deadline
+  when the new one cannot be scheduled; and
+- no budget restarts at the snapshot after Connect, and caller cancellation
+  stays independent.
+
+An explicit `startup_timeout`, including `120.0`, is always used as given.
+Only constructing the options without the argument omits it: the field reads as
+a plain `float`, so a value passed back, however obtained, is explicit, and
+`dataclasses.replace()` passes the budget explicitly. Copies and pickles keep
+the omission, and equality and hashing compare values as in 0.5.0. Subclasses
+of `BriosaStartOptions` keep the 0.5.0 behaviour and do not take the server's
+published startup allowance. Against Server 0.10.0, which publishes no bounds,
+an omitted budget stays at two minutes
+and every startup step runs as in client 0.5.0. With a server that publishes
+bounds, the client reads the clock and the startup's cancellation before it
+takes ownership of the session, before it reports success, and for each startup
+request after the request is built and immediately before it is sent. A startup
+whose budget ran out, or that was cancelled, therefore sends no further request
+and never reports success, even when its timer has not yet run. A request that
+fails once the budget ran out raises `startup-timeout` with that failure as its
+`__cause__`; one that fails earlier keeps its own error, including a
+`TimeoutError` of its own. If such a startup fails after the client took
+ownership, that session admits no MP call again; `stop()` and then `start()`
+begin a new one. A cleanup failure after a failed startup becomes a note on the
+startup's error instead of replacing it. That cleanup runs after the startup
+budget has ended and before `start()` returns.
+The client schedules a ten-second timeout for each close. Cleanup can
+take longer than twenty seconds if the event loop is blocked.
+If a close is still pending when its timeout fires, the client cancels it and
+adds a note that it was abandoned. When the timer ends the startup, expiry
+raises `BriosaStartupError` (`startup-timeout`) chained to the same
+`TimeoutError` as with client 0.5.0, because each Python version times the
+startup as its `asyncio.wait_for` did for 0.5.0; on Python 3.10 the error also
+derives from `asyncio.TimeoutError`.
+
 The default follows the server's default lifecycle bounds
 ([spatialanalyzer/briosa#298](https://github.com/spatialanalyzer/briosa/pull/298),
 [#315](https://github.com/spatialanalyzer/briosa/pull/315)) for the ordinary
@@ -179,8 +230,9 @@ observation further until
 [spatialanalyzer/briosa#317](https://github.com/spatialanalyzer/briosa/issues/317)
 lands.
 
-When the server's lifecycle bounds are raised, size the client budget to at
-least three times `StartupTimeout`, plus `ReadinessProbeTimeout`, plus
+When the lifecycle bounds of a server that publishes none, such as Server
+0.10.0, are raised, or when you pass an explicit budget, size the client budget
+to at least three times `StartupTimeout`, plus `ReadinessProbeTimeout`, plus
 `ApplicationStartupTimeout` when launching, plus 10 s, plus a margin. For
 example, a server `StartupTimeout` of 30 s and `ReadinessProbeTimeout` of 60 s
 with the default 30 s application startup need at least 90 + 60 + 30 + 10 =
@@ -190,14 +242,18 @@ Each lifecycle method takes a keyword-only `timeout: float | None = None`. The
 client sends a gRPC deadline only when the caller supplies one, and
 `command_timeout` applies only to MP commands.
 
-A contract-major-3 server finishes an SDK start, connection, or recovery it
+Server 0.10.x finishes an SDK start, connection, or recovery it
 has accepted under its own bounds
 ([spatialanalyzer/briosa#315](https://github.com/spatialanalyzer/briosa/pull/315)),
 whether the caller stopped waiting through the startup budget, a `timeout`, or
 task cancellation. A start the client abandoned may therefore still produce a
 ready generation. Refresh SDK state with `get_spatial_analyzer_sdk_state()`
 before deciding what to do next, and call `get_server_snapshot()` to reopen MP
-calls on a generation that became ready. A second lifecycle call during the
+calls on a generation that became ready. The exception is a session whose
+startup failed after the client took ownership while a server that publishes
+lifecycle bounds (Server 0.10.1 and later) was guarding it: that session never
+admits MP calls again, so call `stop()` and then `start()`. A second lifecycle
+call during the
 accepted transition fails with `sdk-lifecycle-transition-in-progress`
 (`STATE_CONFLICT`, `REFRESH_STATE`): refresh and retry later, and stop a
 generation you own only after the transition has ended. The same applies to

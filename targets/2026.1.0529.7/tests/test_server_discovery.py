@@ -200,3 +200,57 @@ def test_missing_contract_is_rejected_including_legacy_build() -> None:
     server.version.source_revision = "a" * 40
     with pytest.raises(BriosaCompatibilityError):
         _validate_compatibility(server, capabilities)
+
+
+def candidate(identifier: str, version: str, revision: int) -> BriosaInstallation:
+    return BriosaInstallation(
+        identifier,
+        Path(f"C:/Briosa/{identifier}/Briosa.Server.exe"),
+        version,
+        "a" * 40,
+        SPATIAL_ANALYZER_TARGET,
+        "win-x64",
+        3,
+        revision,
+        "b" * 64,
+        "user",
+    )
+
+
+@pytest.mark.parametrize(("version", "revision"), [("0.10.0", 0), ("0.10.1", 1)])
+def test_selection_accepts_server_0_10_0_and_0_10_1(
+    version: str, revision: int
+) -> None:
+    # The pinned protocol declares revision 1, but the client's minimum is 0.
+    only = candidate("only", version, revision)
+    assert select_installation((only,), BriosaServerSelection()) == (only, None)
+
+
+def test_selection_keeps_choosing_by_version_across_revisions() -> None:
+    older = candidate("older", "0.10.0", 0)
+    newer = candidate("newer", "0.10.1", 1)
+    assert select_installation((older, newer), BriosaServerSelection()) == (
+        newer,
+        None,
+    )
+    assert select_installation(
+        (older, newer), BriosaServerSelection(maximum_version_exclusive="0.10.1")
+    ) == (older, None)
+
+
+@pytest.mark.parametrize(("version", "revision"), [("0.10.0", 0), ("0.10.1", 1)])
+def test_live_discovery_accepts_revision_zero_and_one_and_matches_the_manifest(
+    version: str, revision: int
+) -> None:
+    server, capabilities = snapshot()
+    server.version.briosa_version = version
+    server.compatibility.revision = revision
+    _validate_compatibility(server, capabilities)
+    selected = candidate("selected", version, revision)
+    validate_installation(server, selected)
+    # A live revision that differs from the selected manifest is still rejected.
+    other = candidate("selected", version, 1 - revision)
+    with pytest.raises(
+        BriosaCompatibilityError, match="server-installation-identity-mismatch"
+    ):
+        validate_installation(server, other)

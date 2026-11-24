@@ -73,6 +73,15 @@ class OperationFailureKind(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     OPERATION_FAILURE_KIND_SDK_ARGUMENT_REJECTED: _ClassVar[OperationFailureKind]
     OPERATION_FAILURE_KIND_OVERLOADED: _ClassVar[OperationFailureKind]
     OPERATION_FAILURE_KIND_SDK_CALL_FAULTED: _ClassVar[OperationFailureKind]
+
+class PolicyDenialRule(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    POLICY_DENIAL_RULE_UNSPECIFIED: _ClassVar[PolicyDenialRule]
+    POLICY_DENIAL_RULE_PROFILE: _ClassVar[PolicyDenialRule]
+    POLICY_DENIAL_RULE_FLAG: _ClassVar[PolicyDenialRule]
+    POLICY_DENIAL_RULE_OVERRIDE: _ClassVar[PolicyDenialRule]
+    POLICY_DENIAL_RULE_EXCLUSIVE: _ClassVar[PolicyDenialRule]
+    POLICY_DENIAL_RULE_UNREVIEWED: _ClassVar[PolicyDenialRule]
 MP_EXECUTION_STATE_UNSPECIFIED: MpExecutionState
 MP_EXECUTION_STATE_SUCCEEDED: MpExecutionState
 MP_EXECUTION_STATE_EXECUTE_STEP_REJECTED: MpExecutionState
@@ -119,6 +128,12 @@ OPERATION_FAILURE_KIND_MP_RESULT_RETRIEVAL_FAILURE: OperationFailureKind
 OPERATION_FAILURE_KIND_SDK_ARGUMENT_REJECTED: OperationFailureKind
 OPERATION_FAILURE_KIND_OVERLOADED: OperationFailureKind
 OPERATION_FAILURE_KIND_SDK_CALL_FAULTED: OperationFailureKind
+POLICY_DENIAL_RULE_UNSPECIFIED: PolicyDenialRule
+POLICY_DENIAL_RULE_PROFILE: PolicyDenialRule
+POLICY_DENIAL_RULE_FLAG: PolicyDenialRule
+POLICY_DENIAL_RULE_OVERRIDE: PolicyDenialRule
+POLICY_DENIAL_RULE_EXCLUSIVE: PolicyDenialRule
+POLICY_DENIAL_RULE_UNREVIEWED: PolicyDenialRule
 
 class OutputRetrievalDetails(_message.Message):
     __slots__ = ("field_name", "state", "diagnostic_code")
@@ -140,8 +155,20 @@ class MpExecutionDetails(_message.Message):
     output_retrievals: _containers.RepeatedCompositeFieldContainer[OutputRetrievalDetails]
     def __init__(self, state: _Optional[_Union[MpExecutionState, str]] = ..., mp_result_code: _Optional[int] = ..., output_retrievals: _Optional[_Iterable[_Union[OutputRetrievalDetails, _Mapping]]] = ...) -> None: ...
 
+class PolicyDenialDetails(_message.Message):
+    __slots__ = ("rule", "denied_flag", "request_option_field", "admission_profile")
+    RULE_FIELD_NUMBER: _ClassVar[int]
+    DENIED_FLAG_FIELD_NUMBER: _ClassVar[int]
+    REQUEST_OPTION_FIELD_FIELD_NUMBER: _ClassVar[int]
+    ADMISSION_PROFILE_FIELD_NUMBER: _ClassVar[int]
+    rule: PolicyDenialRule
+    denied_flag: str
+    request_option_field: str
+    admission_profile: str
+    def __init__(self, rule: _Optional[_Union[PolicyDenialRule, str]] = ..., denied_flag: _Optional[str] = ..., request_option_field: _Optional[str] = ..., admission_profile: _Optional[str] = ...) -> None: ...
+
 class OperationError(_message.Message):
-    __slots__ = ("operation_id", "kind", "diagnostic_code", "worker_generation", "mp_execution", "execution_disposition", "recovery_guidance", "replay_guidance", "replay_safety")
+    __slots__ = ("operation_id", "kind", "diagnostic_code", "worker_generation", "mp_execution", "execution_disposition", "recovery_guidance", "replay_guidance", "replay_safety", "policy_denial")
     OPERATION_ID_FIELD_NUMBER: _ClassVar[int]
     KIND_FIELD_NUMBER: _ClassVar[int]
     DIAGNOSTIC_CODE_FIELD_NUMBER: _ClassVar[int]
@@ -151,6 +178,7 @@ class OperationError(_message.Message):
     RECOVERY_GUIDANCE_FIELD_NUMBER: _ClassVar[int]
     REPLAY_GUIDANCE_FIELD_NUMBER: _ClassVar[int]
     REPLAY_SAFETY_FIELD_NUMBER: _ClassVar[int]
+    POLICY_DENIAL_FIELD_NUMBER: _ClassVar[int]
     operation_id: str
     kind: OperationFailureKind
     diagnostic_code: str
@@ -160,4 +188,5 @@ class OperationError(_message.Message):
     recovery_guidance: RecoveryGuidance
     replay_guidance: ReplayGuidance
     replay_safety: ReplaySafety
-    def __init__(self, operation_id: _Optional[str] = ..., kind: _Optional[_Union[OperationFailureKind, str]] = ..., diagnostic_code: _Optional[str] = ..., worker_generation: _Optional[int] = ..., mp_execution: _Optional[_Union[MpExecutionDetails, _Mapping]] = ..., execution_disposition: _Optional[_Union[ExecutionDisposition, str]] = ..., recovery_guidance: _Optional[_Union[RecoveryGuidance, str]] = ..., replay_guidance: _Optional[_Union[ReplayGuidance, str]] = ..., replay_safety: _Optional[_Union[ReplaySafety, str]] = ...) -> None: ...
+    policy_denial: PolicyDenialDetails
+    def __init__(self, operation_id: _Optional[str] = ..., kind: _Optional[_Union[OperationFailureKind, str]] = ..., diagnostic_code: _Optional[str] = ..., worker_generation: _Optional[int] = ..., mp_execution: _Optional[_Union[MpExecutionDetails, _Mapping]] = ..., execution_disposition: _Optional[_Union[ExecutionDisposition, str]] = ..., recovery_guidance: _Optional[_Union[RecoveryGuidance, str]] = ..., replay_guidance: _Optional[_Union[ReplayGuidance, str]] = ..., replay_safety: _Optional[_Union[ReplaySafety, str]] = ..., policy_denial: _Optional[_Union[PolicyDenialDetails, _Mapping]] = ...) -> None: ...

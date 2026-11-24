@@ -9,6 +9,14 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class ConfiguredSpatialAnalyzerInteractionMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_UNSPECIFIED: _ClassVar[ConfiguredSpatialAnalyzerInteractionMode]
+    CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_UNCHANGED: _ClassVar[ConfiguredSpatialAnalyzerInteractionMode]
+    CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_SILENT: _ClassVar[ConfiguredSpatialAnalyzerInteractionMode]
+    CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_AUTOMATIC: _ClassVar[ConfiguredSpatialAnalyzerInteractionMode]
+    CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_MANUAL: _ClassVar[ConfiguredSpatialAnalyzerInteractionMode]
+
 class RuntimeIdentityEvidenceSource(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     RUNTIME_IDENTITY_EVIDENCE_SOURCE_UNSPECIFIED: _ClassVar[RuntimeIdentityEvidenceSource]
@@ -65,6 +73,28 @@ class ConnectedSpatialAnalyzerVersionState(int, metaclass=_enum_type_wrapper.Enu
     CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MATCH: _ClassVar[ConnectedSpatialAnalyzerVersionState]
     CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MISMATCH: _ClassVar[ConnectedSpatialAnalyzerVersionState]
 
+class OperationRequestOptionEffect(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    OPERATION_REQUEST_OPTION_EFFECT_UNSPECIFIED: _ClassVar[OperationRequestOptionEffect]
+    OPERATION_REQUEST_OPTION_EFFECT_INTERACTIVE_UI: _ClassVar[OperationRequestOptionEffect]
+    OPERATION_REQUEST_OPTION_EFFECT_BACKGROUND_WORK: _ClassVar[OperationRequestOptionEffect]
+
+class OperationRequestOptionCondition(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    OPERATION_REQUEST_OPTION_CONDITION_UNSPECIFIED: _ClassVar[OperationRequestOptionCondition]
+    OPERATION_REQUEST_OPTION_CONDITION_WHEN_TRUE: _ClassVar[OperationRequestOptionCondition]
+    OPERATION_REQUEST_OPTION_CONDITION_WHEN_FALSE: _ClassVar[OperationRequestOptionCondition]
+    OPERATION_REQUEST_OPTION_CONDITION_WHEN_PRESENT: _ClassVar[OperationRequestOptionCondition]
+    OPERATION_REQUEST_OPTION_CONDITION_WHEN_NON_EMPTY: _ClassVar[OperationRequestOptionCondition]
+    OPERATION_REQUEST_OPTION_CONDITION_WHEN_ONE_OF: _ClassVar[OperationRequestOptionCondition]
+
+class OperationRequestOptionOmission(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    OPERATION_REQUEST_OPTION_OMISSION_UNSPECIFIED: _ClassVar[OperationRequestOptionOmission]
+    OPERATION_REQUEST_OPTION_OMISSION_DOES_NOT_ACTIVATE: _ClassVar[OperationRequestOptionOmission]
+    OPERATION_REQUEST_OPTION_OMISSION_ACTIVATES: _ClassVar[OperationRequestOptionOmission]
+    OPERATION_REQUEST_OPTION_OMISSION_REQUIRED: _ClassVar[OperationRequestOptionOmission]
+
 class OperationRiskFlag(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     OPERATION_RISK_FLAG_UNSPECIFIED: _ClassVar[OperationRiskFlag]
@@ -119,6 +149,11 @@ class OperationEffect(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     OPERATION_EFFECT_READ_ONLY: _ClassVar[OperationEffect]
     OPERATION_EFFECT_MUTATING: _ClassVar[OperationEffect]
     OPERATION_EFFECT_UNKNOWN: _ClassVar[OperationEffect]
+CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_UNSPECIFIED: ConfiguredSpatialAnalyzerInteractionMode
+CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_UNCHANGED: ConfiguredSpatialAnalyzerInteractionMode
+CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_SILENT: ConfiguredSpatialAnalyzerInteractionMode
+CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_AUTOMATIC: ConfiguredSpatialAnalyzerInteractionMode
+CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_MANUAL: ConfiguredSpatialAnalyzerInteractionMode
 RUNTIME_IDENTITY_EVIDENCE_SOURCE_UNSPECIFIED: RuntimeIdentityEvidenceSource
 RUNTIME_IDENTITY_EVIDENCE_SOURCE_UNAVAILABLE: RuntimeIdentityEvidenceSource
 RUNTIME_IDENTITY_EVIDENCE_SOURCE_RUNTIME_VERIFICATION: RuntimeIdentityEvidenceSource
@@ -154,6 +189,19 @@ CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_VERIFIED_MATCH: ConnectedSpatialAnalyze
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_VERIFIED_MISMATCH: ConnectedSpatialAnalyzerVersionState
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MATCH: ConnectedSpatialAnalyzerVersionState
 CONNECTED_SPATIAL_ANALYZER_VERSION_STATE_OPERATOR_ATTESTED_MISMATCH: ConnectedSpatialAnalyzerVersionState
+OPERATION_REQUEST_OPTION_EFFECT_UNSPECIFIED: OperationRequestOptionEffect
+OPERATION_REQUEST_OPTION_EFFECT_INTERACTIVE_UI: OperationRequestOptionEffect
+OPERATION_REQUEST_OPTION_EFFECT_BACKGROUND_WORK: OperationRequestOptionEffect
+OPERATION_REQUEST_OPTION_CONDITION_UNSPECIFIED: OperationRequestOptionCondition
+OPERATION_REQUEST_OPTION_CONDITION_WHEN_TRUE: OperationRequestOptionCondition
+OPERATION_REQUEST_OPTION_CONDITION_WHEN_FALSE: OperationRequestOptionCondition
+OPERATION_REQUEST_OPTION_CONDITION_WHEN_PRESENT: OperationRequestOptionCondition
+OPERATION_REQUEST_OPTION_CONDITION_WHEN_NON_EMPTY: OperationRequestOptionCondition
+OPERATION_REQUEST_OPTION_CONDITION_WHEN_ONE_OF: OperationRequestOptionCondition
+OPERATION_REQUEST_OPTION_OMISSION_UNSPECIFIED: OperationRequestOptionOmission
+OPERATION_REQUEST_OPTION_OMISSION_DOES_NOT_ACTIVATE: OperationRequestOptionOmission
+OPERATION_REQUEST_OPTION_OMISSION_ACTIVATES: OperationRequestOptionOmission
+OPERATION_REQUEST_OPTION_OMISSION_REQUIRED: OperationRequestOptionOmission
 OPERATION_RISK_FLAG_UNSPECIFIED: OperationRiskFlag
 OPERATION_RISK_FLAG_FILESYSTEM_METADATA: OperationRiskFlag
 OPERATION_RISK_FLAG_FILESYSTEM_READ: OperationRiskFlag
@@ -197,7 +245,7 @@ class GetServerInfoRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class GetServerInfoResponse(_message.Message):
-    __slots__ = ("version", "worker_state", "spatial_analyzer_connection_state", "ready_for_mp", "connected_spatial_analyzer_version", "connected_spatial_analyzer_version_state", "spatial_analyzer_execution_readiness_state", "target_isolation_mode", "activated_sdk_identity", "connected_spatial_analyzer_identity", "compatibility")
+    __slots__ = ("version", "worker_state", "spatial_analyzer_connection_state", "ready_for_mp", "connected_spatial_analyzer_version", "connected_spatial_analyzer_version_state", "spatial_analyzer_execution_readiness_state", "target_isolation_mode", "activated_sdk_identity", "connected_spatial_analyzer_identity", "compatibility", "lifecycle_bounds", "configured_spatial_analyzer_interaction_mode")
     VERSION_FIELD_NUMBER: _ClassVar[int]
     WORKER_STATE_FIELD_NUMBER: _ClassVar[int]
     SPATIAL_ANALYZER_CONNECTION_STATE_FIELD_NUMBER: _ClassVar[int]
@@ -209,6 +257,8 @@ class GetServerInfoResponse(_message.Message):
     ACTIVATED_SDK_IDENTITY_FIELD_NUMBER: _ClassVar[int]
     CONNECTED_SPATIAL_ANALYZER_IDENTITY_FIELD_NUMBER: _ClassVar[int]
     COMPATIBILITY_FIELD_NUMBER: _ClassVar[int]
+    LIFECYCLE_BOUNDS_FIELD_NUMBER: _ClassVar[int]
+    CONFIGURED_SPATIAL_ANALYZER_INTERACTION_MODE_FIELD_NUMBER: _ClassVar[int]
     version: _version_coordinates_pb2.VersionCoordinates
     worker_state: WorkerRuntimeState
     spatial_analyzer_connection_state: SpatialAnalyzerConnectionState
@@ -220,7 +270,43 @@ class GetServerInfoResponse(_message.Message):
     activated_sdk_identity: RuntimeIdentityEvidence
     connected_spatial_analyzer_identity: RuntimeIdentityEvidence
     compatibility: CompatibilityContract
-    def __init__(self, version: _Optional[_Union[_version_coordinates_pb2.VersionCoordinates, _Mapping]] = ..., worker_state: _Optional[_Union[WorkerRuntimeState, str]] = ..., spatial_analyzer_connection_state: _Optional[_Union[SpatialAnalyzerConnectionState, str]] = ..., ready_for_mp: bool = ..., connected_spatial_analyzer_version: _Optional[str] = ..., connected_spatial_analyzer_version_state: _Optional[_Union[ConnectedSpatialAnalyzerVersionState, str]] = ..., spatial_analyzer_execution_readiness_state: _Optional[_Union[SpatialAnalyzerExecutionReadinessState, str]] = ..., target_isolation_mode: _Optional[_Union[TargetIsolationMode, str]] = ..., activated_sdk_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ..., connected_spatial_analyzer_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ..., compatibility: _Optional[_Union[CompatibilityContract, _Mapping]] = ...) -> None: ...
+    lifecycle_bounds: LifecycleBounds
+    configured_spatial_analyzer_interaction_mode: ConfiguredSpatialAnalyzerInteractionMode
+    def __init__(self, version: _Optional[_Union[_version_coordinates_pb2.VersionCoordinates, _Mapping]] = ..., worker_state: _Optional[_Union[WorkerRuntimeState, str]] = ..., spatial_analyzer_connection_state: _Optional[_Union[SpatialAnalyzerConnectionState, str]] = ..., ready_for_mp: bool = ..., connected_spatial_analyzer_version: _Optional[str] = ..., connected_spatial_analyzer_version_state: _Optional[_Union[ConnectedSpatialAnalyzerVersionState, str]] = ..., spatial_analyzer_execution_readiness_state: _Optional[_Union[SpatialAnalyzerExecutionReadinessState, str]] = ..., target_isolation_mode: _Optional[_Union[TargetIsolationMode, str]] = ..., activated_sdk_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ..., connected_spatial_analyzer_identity: _Optional[_Union[RuntimeIdentityEvidence, _Mapping]] = ..., compatibility: _Optional[_Union[CompatibilityContract, _Mapping]] = ..., lifecycle_bounds: _Optional[_Union[LifecycleBounds, _Mapping]] = ..., configured_spatial_analyzer_interaction_mode: _Optional[_Union[ConfiguredSpatialAnalyzerInteractionMode, str]] = ...) -> None: ...
+
+class LifecycleBounds(_message.Message):
+    __slots__ = ("start_sdk_milliseconds", "launch_spatial_analyzer_milliseconds", "connect_spatial_analyzer_milliseconds", "recover_sdk_milliseconds", "stop_sdk_milliseconds", "close_owned_spatial_analyzer_milliseconds", "startup_with_launch_milliseconds", "startup_without_launch_milliseconds", "host_graceful_shutdown")
+    START_SDK_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    LAUNCH_SPATIAL_ANALYZER_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    CONNECT_SPATIAL_ANALYZER_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    RECOVER_SDK_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    STOP_SDK_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    CLOSE_OWNED_SPATIAL_ANALYZER_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    STARTUP_WITH_LAUNCH_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    STARTUP_WITHOUT_LAUNCH_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    HOST_GRACEFUL_SHUTDOWN_FIELD_NUMBER: _ClassVar[int]
+    start_sdk_milliseconds: int
+    launch_spatial_analyzer_milliseconds: int
+    connect_spatial_analyzer_milliseconds: int
+    recover_sdk_milliseconds: int
+    stop_sdk_milliseconds: int
+    close_owned_spatial_analyzer_milliseconds: int
+    startup_with_launch_milliseconds: int
+    startup_without_launch_milliseconds: int
+    host_graceful_shutdown: GracefulShutdownBound
+    def __init__(self, start_sdk_milliseconds: _Optional[int] = ..., launch_spatial_analyzer_milliseconds: _Optional[int] = ..., connect_spatial_analyzer_milliseconds: _Optional[int] = ..., recover_sdk_milliseconds: _Optional[int] = ..., stop_sdk_milliseconds: _Optional[int] = ..., close_owned_spatial_analyzer_milliseconds: _Optional[int] = ..., startup_with_launch_milliseconds: _Optional[int] = ..., startup_without_launch_milliseconds: _Optional[int] = ..., host_graceful_shutdown: _Optional[_Union[GracefulShutdownBound, _Mapping]] = ...) -> None: ...
+
+class GracefulShutdownBound(_message.Message):
+    __slots__ = ("finite_milliseconds", "unbounded")
+    FINITE_MILLISECONDS_FIELD_NUMBER: _ClassVar[int]
+    UNBOUNDED_FIELD_NUMBER: _ClassVar[int]
+    finite_milliseconds: int
+    unbounded: UnboundedShutdownWait
+    def __init__(self, finite_milliseconds: _Optional[int] = ..., unbounded: _Optional[_Union[UnboundedShutdownWait, _Mapping]] = ...) -> None: ...
+
+class UnboundedShutdownWait(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
 
 class CompatibilityContract(_message.Message):
     __slots__ = ("major", "revision")
@@ -261,7 +347,7 @@ class ListCapabilitiesResponse(_message.Message):
     def __init__(self, spatial_analyzer_target: _Optional[str] = ..., protocol_package: _Optional[str] = ..., operations: _Optional[_Iterable[_Union[OperationCapability, _Mapping]]] = ..., admission_profile: _Optional[str] = ..., policy_fingerprint: _Optional[str] = ...) -> None: ...
 
 class OperationCapability(_message.Message):
-    __slots__ = ("operation_id", "grpc_service", "rpc", "fully_qualified_method", "effect", "replay_safety", "execution_scope", "risk_flags", "duration_class", "validation_status", "admission")
+    __slots__ = ("operation_id", "grpc_service", "rpc", "fully_qualified_method", "effect", "replay_safety", "execution_scope", "risk_flags", "duration_class", "validation_status", "admission", "policy_denial", "request_options")
     OPERATION_ID_FIELD_NUMBER: _ClassVar[int]
     GRPC_SERVICE_FIELD_NUMBER: _ClassVar[int]
     RPC_FIELD_NUMBER: _ClassVar[int]
@@ -273,6 +359,8 @@ class OperationCapability(_message.Message):
     DURATION_CLASS_FIELD_NUMBER: _ClassVar[int]
     VALIDATION_STATUS_FIELD_NUMBER: _ClassVar[int]
     ADMISSION_FIELD_NUMBER: _ClassVar[int]
+    POLICY_DENIAL_FIELD_NUMBER: _ClassVar[int]
+    REQUEST_OPTIONS_FIELD_NUMBER: _ClassVar[int]
     operation_id: str
     grpc_service: str
     rpc: str
@@ -284,4 +372,30 @@ class OperationCapability(_message.Message):
     duration_class: OperationDurationClass
     validation_status: OperationValidationStatus
     admission: OperationAdmission
-    def __init__(self, operation_id: _Optional[str] = ..., grpc_service: _Optional[str] = ..., rpc: _Optional[str] = ..., fully_qualified_method: _Optional[str] = ..., effect: _Optional[_Union[OperationEffect, str]] = ..., replay_safety: _Optional[_Union[_operation_outcomes_pb2.ReplaySafety, str]] = ..., execution_scope: _Optional[_Union[OperationExecutionScope, str]] = ..., risk_flags: _Optional[_Iterable[_Union[OperationRiskFlag, str]]] = ..., duration_class: _Optional[_Union[OperationDurationClass, str]] = ..., validation_status: _Optional[_Union[OperationValidationStatus, str]] = ..., admission: _Optional[_Union[OperationAdmission, str]] = ...) -> None: ...
+    policy_denial: _operation_outcomes_pb2.PolicyDenialDetails
+    request_options: OperationRequestOptions
+    def __init__(self, operation_id: _Optional[str] = ..., grpc_service: _Optional[str] = ..., rpc: _Optional[str] = ..., fully_qualified_method: _Optional[str] = ..., effect: _Optional[_Union[OperationEffect, str]] = ..., replay_safety: _Optional[_Union[_operation_outcomes_pb2.ReplaySafety, str]] = ..., execution_scope: _Optional[_Union[OperationExecutionScope, str]] = ..., risk_flags: _Optional[_Iterable[_Union[OperationRiskFlag, str]]] = ..., duration_class: _Optional[_Union[OperationDurationClass, str]] = ..., validation_status: _Optional[_Union[OperationValidationStatus, str]] = ..., admission: _Optional[_Union[OperationAdmission, str]] = ..., policy_denial: _Optional[_Union[_operation_outcomes_pb2.PolicyDenialDetails, _Mapping]] = ..., request_options: _Optional[_Union[OperationRequestOptions, _Mapping]] = ...) -> None: ...
+
+class OperationRequestOptions(_message.Message):
+    __slots__ = ("options",)
+    OPTIONS_FIELD_NUMBER: _ClassVar[int]
+    options: _containers.RepeatedCompositeFieldContainer[OperationRequestOption]
+    def __init__(self, options: _Optional[_Iterable[_Union[OperationRequestOption, _Mapping]]] = ...) -> None: ...
+
+class OperationRequestOption(_message.Message):
+    __slots__ = ("field_name", "effect", "condition", "enabling_enum_values", "omission", "admission", "policy_denial")
+    FIELD_NAME_FIELD_NUMBER: _ClassVar[int]
+    EFFECT_FIELD_NUMBER: _ClassVar[int]
+    CONDITION_FIELD_NUMBER: _ClassVar[int]
+    ENABLING_ENUM_VALUES_FIELD_NUMBER: _ClassVar[int]
+    OMISSION_FIELD_NUMBER: _ClassVar[int]
+    ADMISSION_FIELD_NUMBER: _ClassVar[int]
+    POLICY_DENIAL_FIELD_NUMBER: _ClassVar[int]
+    field_name: str
+    effect: OperationRequestOptionEffect
+    condition: OperationRequestOptionCondition
+    enabling_enum_values: _containers.RepeatedScalarFieldContainer[str]
+    omission: OperationRequestOptionOmission
+    admission: OperationAdmission
+    policy_denial: _operation_outcomes_pb2.PolicyDenialDetails
+    def __init__(self, field_name: _Optional[str] = ..., effect: _Optional[_Union[OperationRequestOptionEffect, str]] = ..., condition: _Optional[_Union[OperationRequestOptionCondition, str]] = ..., enabling_enum_values: _Optional[_Iterable[str]] = ..., omission: _Optional[_Union[OperationRequestOptionOmission, str]] = ..., admission: _Optional[_Union[OperationAdmission, str]] = ..., policy_denial: _Optional[_Union[_operation_outcomes_pb2.PolicyDenialDetails, _Mapping]] = ...) -> None: ...

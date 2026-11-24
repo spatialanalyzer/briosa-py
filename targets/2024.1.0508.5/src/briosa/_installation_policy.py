@@ -10,12 +10,18 @@ from briosa.installation_models import (
 )
 from briosa.protocol_identity import (
     COMPATIBILITY_MAJOR,
-    COMPATIBILITY_REVISION,
     SPATIAL_ANALYZER_TARGET,
 )
 
 LEGACY_VERSION = "0.6.1"
 LEGACY_REVISION = "32a3b56ba4ae31ea5ec6ec3b2aa051eb61c866aa"
+
+# The lowest server revision this client accepts, in installation selection and
+# in live discovery alike. It is deliberately not the generated
+# COMPATIBILITY_REVISION of the pinned protocol (1, Server 0.10.1): every feature
+# this client uses from revision 1 is optional, so it keeps working with Server
+# 0.10.0, which declares revision 0.
+MINIMUM_COMPATIBILITY_REVISION = 0
 
 
 def compatible(
@@ -24,7 +30,7 @@ def compatible(
     version: str,
     source: str,
     required_major: int = COMPATIBILITY_MAJOR,
-    minimum_revision: int = COMPATIBILITY_REVISION,
+    minimum_revision: int = MINIMUM_COMPATIBILITY_REVISION,
 ) -> bool:
     return (major == required_major and major > 0 and revision >= minimum_revision) or (
         major == 0
@@ -41,7 +47,7 @@ def select_installation(
     options: BriosaServerSelection,
     target: str = SPATIAL_ANALYZER_TARGET,
     required_major: int = COMPATIBILITY_MAJOR,
-    minimum_revision: int = COMPATIBILITY_REVISION,
+    minimum_revision: int = MINIMUM_COMPATIBILITY_REVISION,
 ) -> tuple[BriosaInstallation | None, str | None]:
     eligible = [
         c
