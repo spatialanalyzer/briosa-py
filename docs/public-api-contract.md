@@ -200,9 +200,11 @@ fails once the budget ran out raises `startup-timeout` with that failure as its
 ownership, that session admits no MP call again; `stop()` and then `start()`
 begin a new one. A cleanup failure after a failed startup becomes a note on the
 startup's error instead of replacing it. That cleanup runs after the startup
-budget has ended and before `start()` returns, and gives each of the transport
-and the owned server up to 10 seconds; a close that takes longer is cancelled
-and left behind, with a note saying so. When the timer ends the startup, expiry
+budget has ended and before `start()` returns.
+The client schedules a ten-second timeout for each close. Cleanup can
+take longer than twenty seconds if the event loop is blocked.
+If a close is still pending when its timeout fires, the client cancels it and
+adds a note that it was abandoned. When the timer ends the startup, expiry
 raises `BriosaStartupError` (`startup-timeout`) chained to the same
 `TimeoutError` as with client 0.5.0, because each Python version times the
 startup as its `asyncio.wait_for` did for 0.5.0; on Python 3.10 the error also

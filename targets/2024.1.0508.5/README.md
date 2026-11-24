@@ -98,10 +98,12 @@ report; call `stop()` and then `start()` to begin a new one. If cleaning up
 after a failed startup also fails, the startup's error is still the one
 raised, with a note naming what could not be closed. That cleanup runs after
 the startup budget has ended, so the budget never interrupts it, and finishes
-before `start()` returns. It gives each of the transport and the owned server
-up to 10 seconds to close; a close that takes longer is cancelled and left
-behind, with a note saying so. Against Server 0.10.0 each step runs as with
-client 0.5.0.
+before `start()` returns.
+The client schedules a ten-second timeout for each close. Cleanup can
+take longer than twenty seconds if the event loop is blocked.
+If a close is still pending when its timeout fires, the client cancels it and
+adds a note that it was abandoned. Against Server 0.10.0 each step runs as
+with client 0.5.0.
 
 Lifecycle methods send no deadline unless you pass `timeout`. If the budget
 expires while the server is starting or connecting the SDK, read the SDK state
@@ -216,12 +218,21 @@ Not guaranteed; known differences from 0.5.0:
   declares a field or property with the name of a field 0.5.1 added, may need
   changes, and pickles of such subclasses written by 0.5.0 are not guaranteed
   to load correctly.
-- A subclass of one of those three types that defines a read-only property with
-  the name of a field 0.5.1 added can no longer be created.
-- A pickle written by 0.5.0 of a subclass of one of those three types that was
-  declared with `@dataclass(slots=True)` and adds a field loads with that
-  field's value in a field 0.5.1 added and the subclass's own field missing;
-  reading the missing field raises `AttributeError`.
+- A subclass of one of those three types can define a read-only property
+  named like a field added in 0.5.1. Constructing an instance with the
+  inherited initializer raises `AttributeError`.
+- Field changes can affect 0.5.0 pickles of `@dataclass(slots=True)`
+  subclasses of those three types. Positional restoration can put a subclass
+  value into a field added in 0.5.1 and leave a subclass field unset. Reading
+  an unset field raises `AttributeError`.
+- On 64-bit CPython, `BriosaStartOptions` and its subclasses occupy one
+  additional pointer-sized slot.
+- On Python 3.10, `get_type_hints(BriosaStartOptions.__init__)["logging"]`
+  displays `BriosaLoggingOptions | None`. Version 0.5.0 displayed
+  `typing.Optional[BriosaLoggingOptions]`. The two compare equal.
+- With an eager task factory and a subclass that permits a nonpositive
+  timeout, 0.5.0 could enter the launcher before timing out. Version 0.5.1
+  times out before launch.
 - Client 0.5.0 can't load a `BriosaServerSnapshot` pickled by 0.5.1, or an
   `OperationFailure` or `BriosaOperationCapability` pickled by 0.5.1 that
   carries a policy denial detail or request options.

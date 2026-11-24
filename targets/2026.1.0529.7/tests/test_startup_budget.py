@@ -17,6 +17,7 @@ from __future__ import annotations
 import asyncio
 import copy
 import dataclasses
+import gc
 import inspect
 import json
 import os
@@ -24,7 +25,8 @@ import pickle
 import subprocess
 import sys
 import time
-from collections.abc import Callable
+import weakref
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, cast
@@ -2272,6 +2274,140 @@ def test_cleanup_after_a_guarded_expiry_runs_outside_the_budget(
         assert record[-1] == "server-closed-late"
 
 
+def late_start_client(
+    loop: VirtualClockLoop,
+    transport_close: Callable[[], Awaitable[None]],
+    server_close: Callable[[], Awaitable[None]],
+) -> BriosaClient:
+    class Transport(GuardedTransport):
+        async def close(self) -> None:
+            await transport_close()
+
+    class Server(RecordingServer):
+        async def close(self) -> None:
+            await server_close()
+
+    class Launcher:
+        async def launch(
+            self,
+            logging: BriosaLoggingOptions | None = None,
+            selection: BriosaServerSelection | None = None,
+        ) -> OwnedServer:
+            return Server()
+
+    fake = Transport(
+        loop,
+        published=EMPTY,
+        silent=frozenset({"snapshot"}),
+        on={"snapshot": at(loop, 121.0)},
+    )
+    return BriosaClient(_server_launcher=Launcher(), _transport_factory=lambda _: fake)
+
+
+def test_guarded_cleanup_enters_server_close_during_loop_shutdown(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    loop = VirtualClockLoop(T0)
+    monkeypatch.setattr(asyncio.events, "new_event_loop", lambda: loop)
+    record: list[str] = []
+
+    async def body() -> None:
+        transport_entered = asyncio.Event()
+
+        async def transport_close() -> None:
+            transport_entered.set()
+            await asyncio.Event().wait()
+
+        async def server_close() -> None:
+            record.append("server-close")
+            await asyncio.sleep(0)
+            record.append("server-closed")
+
+        client = late_start_client(loop, transport_close, server_close)
+        caller = asyncio.create_task(client.start())
+        await transport_entered.wait()
+        caller.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await caller
+
+    asyncio.run(body())
+    assert record == ["server-close", "server-closed"]
+
+
+def test_guarded_cleanup_still_closes_when_timer_registration_fails() -> None:
+    record: list[str] = []
+
+    async def body(loop: VirtualClockLoop) -> BriosaStartupError:
+        def reject_cleanup_timeout(when: float) -> None:
+            if when == T0 + 131.0:
+                raise RuntimeError("cannot register cleanup timeout")
+
+        loop.on_call_at = reject_cleanup_timeout
+
+        async def transport_close() -> None:
+            record.append("transport-close")
+            await asyncio.Event().wait()
+
+        async def server_close() -> None:
+            record.append("server-closed")
+
+        client = late_start_client(loop, transport_close, server_close)
+        error = await expect_startup_timeout(client)
+        await client.stop()
+        return error
+
+    error = run_virtual(body, now=T0)
+    assert record == ["transport-close", "server-closed"]
+    notes = list(getattr(error, "__notes__", ()))
+    assert len(notes) == 2
+    assert all("could not schedule a timeout" in note for note in notes)
+    assert "was abandoned" in notes[0]
+
+
+def test_abandoned_guarded_close_does_not_keep_closed_loop_alive() -> None:
+    def close_loop() -> tuple[
+        weakref.ReferenceType[VirtualClockLoop],
+        weakref.ReferenceType[asyncio.Task[Any]],
+    ]:
+        loop = VirtualClockLoop(T0)
+        # The close deliberately stays pending when this loop stops.
+        loop.set_exception_handler(lambda *_: None)
+
+        async def body() -> weakref.ReferenceType[asyncio.Task[Any]]:
+            closing: weakref.ReferenceType[asyncio.Task[Any]] | None = None
+            cancelled = asyncio.Event()
+
+            async def stubborn_close() -> None:
+                nonlocal closing
+                task = asyncio.current_task()
+                assert task is not None
+                closing = weakref.ref(task)
+                try:
+                    await asyncio.Event().wait()
+                except asyncio.CancelledError:
+                    cancelled.set()
+                    await asyncio.Event().wait()
+
+            async def server_close() -> None:
+                pass
+
+            client = late_start_client(loop, stubborn_close, server_close)
+            await expect_startup_timeout(client)
+            await client.stop()
+            await cancelled.wait()
+            assert closing is not None and closing() is not None
+            return closing
+
+        try:
+            return weakref.ref(loop), loop.run_until_complete(body())
+        finally:
+            loop.close()
+
+    loop_ref, close_ref = close_loop()
+    gc.collect()
+    assert (loop_ref(), close_ref()) == (None, None)
+
+
 @dataclass(frozen=True)
 class UnvalidatedStartOptions(BriosaStartOptions):
     """A subclass whose own __post_init__ skips the base class's validation."""
@@ -2281,10 +2417,15 @@ class UnvalidatedStartOptions(BriosaStartOptions):
 
 
 @pytest.mark.parametrize("budget", [0.0, -1.0, 0])
+@pytest.mark.parametrize("eager", [False, True], ids=["default", "eager"])
 def test_a_nonpositive_budget_times_out_before_anything_is_launched(
     budget: float,
+    eager: bool,
 ) -> None:
-    """As client 0.5.0's asyncio.wait_for did, on each Python version."""
+    """The native timeout chain is preserved with either task factory."""
+    eager_factory = getattr(asyncio, "eager_task_factory", None)
+    if eager and eager_factory is None:
+        pytest.skip("asyncio.eager_task_factory requires Python 3.12+")
     launches: list[str] = []
     transports: list[str] = []
 
@@ -2304,6 +2445,8 @@ def test_a_nonpositive_budget_times_out_before_anything_is_launched(
     async def body(
         loop: VirtualClockLoop,
     ) -> tuple[BriosaStartupError, float, list[float]]:
+        if eager:
+            loop.set_task_factory(eager_factory)
         client = BriosaClient(_server_launcher=Launcher(), _transport_factory=transport)
         try:
             with pytest.raises(BriosaStartupError) as raised:

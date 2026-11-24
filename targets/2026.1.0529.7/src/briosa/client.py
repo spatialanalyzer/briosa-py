@@ -75,8 +75,8 @@ _Result = TypeVar("_Result")
 _STARTUP_BUDGET_FLOOR_SECONDS = 120.0
 _STARTUP_BUDGET_MARGIN_SECONDS = 20.0
 
-# After a guarded startup fails, closing each resource it still holds is given
-# this long, outside the startup budget; a close that takes longer is abandoned.
+# Schedule each close's timeout outside the startup budget after a guarded
+# startup fails.
 _STARTUP_CLEANUP_CLOSE_SECONDS = 10.0
 
 
@@ -382,21 +382,31 @@ def _add_note(primary: BaseException, note: str) -> None:
         setattr(primary, "__notes__", [*getattr(primary, "__notes__", ()), note])  # noqa: B010
 
 
-# Closes abandoned after a guarded startup failure, kept referenced until they
-# end so that they are neither collected while pending nor logged.
-_ABANDONED_CLOSES: set[asyncio.Future[Any]] = set()
+def _abandon_close(closing: asyncio.Future[Any]) -> None:
+    # Keep pending closes alive with their own loop. When the loop is released,
+    # a close that ignored cancellation can be collected along with it.
+    loop = closing.get_loop()
+    pending: set[asyncio.Future[Any]] | None = getattr(
+        loop, "_briosa_abandoned_closes", None
+    )
+    if pending is None:
+        pending = set()
+        setattr(loop, "_briosa_abandoned_closes", pending)  # noqa: B010
+    pending.add(closing)
 
+    def forget(done: asyncio.Future[Any]) -> None:
+        pending.discard(done)
+        if not done.cancelled():
+            done.exception()
 
-def _forget_abandoned_close(closing: asyncio.Future[Any]) -> None:
-    _ABANDONED_CLOSES.discard(closing)
-    if not closing.cancelled():
-        closing.exception()
+    closing.add_done_callback(forget)
+    closing.cancel()
 
 
 async def _close_within(
     close: Callable[[], Awaitable[None]], resource: str, primary: BaseException
 ) -> None:
-    """Close one resource, for at most ``_STARTUP_CLEANUP_CLOSE_SECONDS``.
+    """Schedule a timeout for closing one resource.
 
     A close that has not finished by then is cancelled and abandoned, without
     waiting for it. A close that fails or is abandoned becomes a note on
@@ -408,14 +418,29 @@ async def _close_within(
         failed: BaseException | None = failure
     else:
         abandoned = False
+        timer_failure: Exception | None = None
         try:
-            await asyncio.wait({closing}, timeout=_STARTUP_CLEANUP_CLOSE_SECONDS)
+            try:
+                await asyncio.wait({closing}, timeout=_STARTUP_CLEANUP_CLOSE_SECONDS)
+            except Exception as failure:
+                timer_failure = failure
+                # Let the close enter even if the loop refused the timer.
+                # Abandon it if it still needs the loop after that turn.
+                await asyncio.sleep(0)
         finally:
             if not closing.done():
                 abandoned = True
-                closing.cancel()
-                _ABANDONED_CLOSES.add(closing)
-                closing.add_done_callback(_forget_abandoned_close)
+                _abandon_close(closing)
+        if timer_failure is not None:
+            note = (
+                f"The client could not schedule a timeout for closing the {resource} "
+                f"after this startup failure ({type(timer_failure).__name__})."
+            )
+            if abandoned:
+                note += " The close was abandoned."
+            _add_note(primary, note)
+            if abandoned:
+                return
         if abandoned:
             _add_note(
                 primary,
@@ -444,31 +469,29 @@ async def _close_unowned(held: _StartupHold, primary: BaseException) -> None:
     server is closed even when closing the transport fails, and a cleanup
     failure becomes a note instead of replacing ``primary``.
     """
-    transport, server = held.transport, held.server
-    held.transport = None
-    held.server = None
-    if transport is not None:
-        await _close_within(transport.close, "transport", primary)
-    if server is not None:
-        await _close_within(server.close, "owned server", primary)
-
-
-async def _startup_not_begun() -> None:
-    """Stands for a startup that ``asyncio.wait_for`` cancels before it runs."""
+    try:
+        if held.transport is not None:
+            await _close_within(held.transport.close, "transport", primary)
+            held.transport = None
+    finally:
+        if held.server is not None:
+            await _close_within(held.server.close, "owned server", primary)
+            held.server = None
 
 
 async def _run_spent_start(startup_timeout: Any) -> None:
     """Time out a startup whose budget is nonpositive, before it begins.
 
-    ``asyncio.wait_for`` timed client 0.5.0's startup, and with a nonpositive
-    timeout it cancels the startup before it runs. This does the same through
-    ``asyncio.wait_for`` itself, so nothing is launched and each Python version
-    raises what its ``wait_for`` raised: ``startup-timeout`` from the
+    A pending future keeps ``asyncio.wait_for`` on its native timeout path
+    even under an eager task factory. Nothing is launched, and each Python
+    version keeps its own exception chain: ``startup-timeout`` from the
     ``TimeoutError``, and on Python 3.10, where 0.5.0 let ``wait_for``'s
     ``asyncio.TimeoutError`` through, the startup timeout of that version.
     """
     try:
-        await asyncio.wait_for(_startup_not_begun(), timeout=startup_timeout)
+        await asyncio.wait_for(
+            asyncio.get_running_loop().create_future(), timeout=startup_timeout
+        )
     except asyncio.TimeoutError as error:
         if sys.version_info < (3, 11):
             raise _startup_timeout_error() from error.__cause__
