@@ -2334,6 +2334,40 @@ def test_guarded_cleanup_enters_server_close_during_loop_shutdown(
     assert record == ["server-close", "server-closed"]
 
 
+def test_guarded_cleanup_shutdown_between_closes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    loop = VirtualClockLoop(T0)
+    monkeypatch.setattr(asyncio.events, "new_event_loop", lambda: loop)
+    record: list[str] = []
+
+    async def body() -> None:
+        entered, release, finished = asyncio.Event(), asyncio.Event(), asyncio.Event()
+
+        async def transport_close() -> None:
+            entered.set()
+            await release.wait()
+            record.append("transport-closed")
+            finished.set()
+
+        async def server_close() -> None:
+            record.append("server-close")
+            await asyncio.sleep(0)
+            record.append("server-closed")
+
+        client = late_start_client(loop, transport_close, server_close)
+        caller = asyncio.create_task(client.start())
+        await entered.wait()
+        caller.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await caller
+        release.set()
+        await finished.wait()
+
+    asyncio.run(body())
+    assert record == ["transport-closed", "server-close", "server-closed"]
+
+
 def test_guarded_cleanup_still_closes_when_timer_registration_fails() -> None:
     record: list[str] = []
 
@@ -2471,3 +2505,5 @@ def test_a_nonpositive_budget_times_out_before_anything_is_launched(
         # is now the startup timeout of that version, from the same cancellation.
         assert isinstance(error, asyncio.TimeoutError)
         assert isinstance(error.__cause__, asyncio.CancelledError)
+        assert error.__context__ is error.__cause__
+        assert isinstance(error.__cause__.__context__, asyncio.CancelledError)

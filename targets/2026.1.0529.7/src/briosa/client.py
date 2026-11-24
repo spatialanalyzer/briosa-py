@@ -404,21 +404,35 @@ def _abandon_close(closing: asyncio.Future[Any]) -> None:
 
 
 async def _close_within(
-    close: Callable[[], Awaitable[None]], resource: str, primary: BaseException
-) -> None:
+    close: Callable[[], Awaitable[None]],
+    resource: str,
+    primary: BaseException,
+    *,
+    retry_unentered: bool = True,
+) -> bool:
     """Schedule a timeout for closing one resource.
 
     A close that has not finished by then is cancelled and abandoned, without
     waiting for it. A close that fails or is abandoned becomes a note on
     ``primary``.
     """
+    entered = False
+
+    async def enter() -> None:
+        nonlocal entered
+        entered = True
+        await close()
+
+    attempt = enter()
     try:
-        closing = asyncio.ensure_future(close())
+        closing = asyncio.create_task(attempt)
     except Exception as failure:
+        attempt.close()
         failed: BaseException | None = failure
     else:
         abandoned = False
         timer_failure: Exception | None = None
+        interrupted: asyncio.CancelledError | None = None
         try:
             try:
                 await asyncio.wait({closing}, timeout=_STARTUP_CLEANUP_CLOSE_SECONDS)
@@ -427,6 +441,8 @@ async def _close_within(
                 # Let the close enter even if the loop refused the timer.
                 # Abandon it if it still needs the loop after that turn.
                 await asyncio.sleep(0)
+        except asyncio.CancelledError as cancellation:
+            interrupted = cancellation
         finally:
             if not closing.done():
                 abandoned = True
@@ -439,25 +455,45 @@ async def _close_within(
             if abandoned:
                 note += " The close was abandoned."
             _add_note(primary, note)
-            if abandoned:
-                return
-        if abandoned:
+        if not entered:
+            if retry_unentered and (abandoned or closing.cancelled()):
+                entered = await _close_within(
+                    close, resource, primary, retry_unentered=False
+                )
+            else:
+                _add_note(primary, f"The {resource} close never entered.")
+            if interrupted is not None and timer_failure is None:
+                raise interrupted
+            return entered
+        if abandoned and interrupted is not None:
+            _add_note(primary, f"Closing the {resource} was interrupted and abandoned.")
+        elif abandoned and timer_failure is None:
             _add_note(
                 primary,
                 f"Closing the {resource} after this startup failure did not "
                 f"finish within {_STARTUP_CLEANUP_CLOSE_SECONDS:g} seconds and "
                 "was abandoned.",
             )
-            return
+        if abandoned:
+            if interrupted is not None and timer_failure is None:
+                raise interrupted
+            return entered
         failed = (
             asyncio.CancelledError() if closing.cancelled() else closing.exception()
         )
+        if interrupted is not None and timer_failure is None:
+            if failed is not None:
+                _add_note(
+                    primary, f"Closing the {resource} failed ({type(failed).__name__})."
+                )
+            raise interrupted
     if failed is not None:
         _add_note(
             primary,
             f"Closing the {resource} after this startup failure also failed "
             f"({type(failed).__name__}).",
         )
+    return entered
 
 
 async def _close_unowned(held: _StartupHold, primary: BaseException) -> None:
@@ -470,12 +506,14 @@ async def _close_unowned(held: _StartupHold, primary: BaseException) -> None:
     failure becomes a note instead of replacing ``primary``.
     """
     try:
-        if held.transport is not None:
-            await _close_within(held.transport.close, "transport", primary)
+        if held.transport is not None and await _close_within(
+            held.transport.close, "transport", primary
+        ):
             held.transport = None
     finally:
-        if held.server is not None:
-            await _close_within(held.server.close, "owned server", primary)
+        if held.server is not None and await _close_within(
+            held.server.close, "owned server", primary
+        ):
             held.server = None
 
 
@@ -488,14 +526,28 @@ async def _run_spent_start(startup_timeout: Any) -> None:
     ``TimeoutError``, and on Python 3.10, where 0.5.0 let ``wait_for``'s
     ``asyncio.TimeoutError`` through, the startup timeout of that version.
     """
+    pending: asyncio.Future[None] = asyncio.get_running_loop().create_future()
+
+    async def wait_pending() -> None:
+        await pending
+
     try:
         await asyncio.wait_for(
-            asyncio.get_running_loop().create_future(), timeout=startup_timeout
+            wait_pending() if sys.version_info < (3, 11) else pending,
+            timeout=startup_timeout,
         )
     except asyncio.TimeoutError as error:
         if sys.version_info < (3, 11):
-            raise _startup_timeout_error() from error.__cause__
-        raise BriosaStartupError("startup-timeout") from error
+            timeout = _startup_timeout_error()
+            timeout.__cause__ = error.__cause__
+            timeout.__context__ = error.__context__
+        else:
+            raise BriosaStartupError("startup-timeout") from error
+    else:
+        return
+    finally:
+        pending.cancel()
+    raise timeout
 
 
 async def _cancel_and_wait(

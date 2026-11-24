@@ -230,6 +230,9 @@ Not guaranteed; known differences from 0.5.0:
 - On Python 3.10, `get_type_hints(BriosaStartOptions.__init__)["logging"]`
   displays `BriosaLoggingOptions | None`. Version 0.5.0 displayed
   `typing.Optional[BriosaLoggingOptions]`. The two compare equal.
+- On an event loop that disallows application-defined attributes, abandoning
+  a close can replace the startup error with an attribute-assignment error
+  and leave the unfinished close uncancelled and untracked.
 - With an eager task factory and a subclass that permits a nonpositive
   timeout, 0.5.0 could enter the launcher before timing out. Version 0.5.1
   times out before launch.
